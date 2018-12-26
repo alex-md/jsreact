@@ -1,2 +1,2 @@
-### In-Browser Monaco Editor
-Free, online javascript editor using the Monaco editor created my Microsoft and in use in the VScode editor.
+### In-Browser HTML editor
+Live demo at jsreact.com, editor forked from Mr.Doob's HTML editor
