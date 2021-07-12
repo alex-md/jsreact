@@ -1,56 +1,21 @@
 <!DOCTYPE html>
-
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible">
-  <link href="style.css" rel="stylesheet" type="text/css">
-  <link href="apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
-  <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
-  <link href="favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
-  <link href="site.webmanifest" rel="manifest">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <title>Monaco - Javascript VScode Editor</title>
+  </head>
 
-  <title>Monaco - Javascript VScode Editor</title>
-</head>
+  <body>
+    <div id="container"></div>
 
-<body>
-  <div id="container">
-  </div>
-  <script>
-  require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor/min/vs' }});
-  window.MonacoEnvironment = { getWorkerUrl: () => proxy };
-
-  let proxy = URL.createObjectURL(new Blob([`
-    self.MonacoEnvironment = {
-        baseUrl: 'https://unpkg.com/monaco-editor/min/'
-    };
-    importScripts('https://unpkg.com/monaco-editor/min/vs/base/worker/workerMain.js');
-  `], { type: 'text/javascript' }));
-
-  require(["vs/editor/editor.main"], function () {
-    let editor = monaco.editor.create(document.getElementById('container'), {
-        value: [
-            'function x() {',
-            '\tconsole.log("Hello world!");',
-            '}'
-        ].join('\n'),
-        language: 'javascript',
-        theme: 'vs-dark',
-    scrollBeyondLastLine: true,
-    roundedSelection: true,
-    showFoldingControls: false,
-    autoIndent: true,
-    cursorStyle: "line",
-    fontWeight: 400,
-    minimap: false
-    });
-
-  console.log(editor)
-    
-    editor.onDidType(() => {
-        console.log(editor.getValue());
-    });
-  });
-  </script> <!--><script src="index.js"></script></!-->
-</body>
+    <script src="https://unpkg.com/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <script src="https://unpkg.com/monaco-editor/min/vs/loader.js"></script>
+    <script src="index.js"></script>
+  </body>
 </html>
