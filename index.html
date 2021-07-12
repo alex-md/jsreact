@@ -8,15 +8,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="site.webmanifest">
-    <title>Monaco - Javascript VSCode Editor</title>
+    <title>Monaco - Javascript VScode Editor</title>
   </head>
 
   <body>
     <div id="container"></div>
-    <script>
-      "use strict";require.config({paths:{vs:"https://unpkg.com/monaco-editor/min/vs"}}),window.MonacoEnvironment={getWorkerUrl:function(){return proxy}};var proxy=URL.createObjectURL(new Blob(["\n\tself.MonacoEnvironment = {\n\t\tbaseUrl: 'https://unpkg.com/monaco-editor/min/'\n\t};\n\timportScripts('https://unpkg.com/monaco-editor/min/vs/base/worker/workerMain.js');\n"],{type:"text/javascript"}));require(["vs/editor/editor.main"],function(){var a=monaco.editor.create(document.getElementById("container"),{value:["/**\n * Monaco code editor\n * Language: Javascript\n * Theme: vs-dark\n * \n * Write code here...\n */"].join("\n"),language:"javascript",theme:"vs-dark"});a.addListener("didType",function(){console.log(a.getValue())})});
-    </script>
+
     <script src="https://unpkg.com/monaco-editor/min/vs/editor/editor.main.js"></script>
     <script src="https://unpkg.com/monaco-editor/min/vs/loader.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>
