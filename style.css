@@ -100,3 +100,8 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	border-radius: 2%;
 	box-shadow: 2px 6px 22px #8a8a8a;
 }
+
+.cm-s-react .CodeMirror-gutters {
+	background: #007ed7;
+	border-left: 4px solid rgba(238, 238, 238, 1);
+}
