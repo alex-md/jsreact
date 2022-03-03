@@ -46,18 +46,27 @@
     border-radius: 2%;
   }
   
-  
+body {
+  margin: 0;
+	padding: 0;
+	border: 0;
+	font: inherit;
+	vertical-align: baseline;
+	line-height: 1;
+	width: 100%;
+	height: 100%;
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+	border-top: solid;
+	border-top-color: #007effd4;
+}
+
   body > iframe:nth-child(2) {
-    width: 80vw;
-    height: 100%;
-    grid-template: ;
     margin: 0 auto;
     max-width: 90%;
     display: inline-flex;
-    border-style: dashed;
-    border-color: #9a9a9a;
-    padding: 3%;
-    border-width: 0.2em;
+		flex-wrap:wrap;
   }
   
   
@@ -89,6 +98,12 @@
     border: 0;
     font-size: 100%;
     vertical-align: baseline;
+    border: dashed;
+		padding: 5%;
+		border-style: dashed;
+		border-width: thin;
+		background: #fafafa;
+		box-shadow: inset 0px -1px 20px 0px #e0e0e0;
   }
   
   
