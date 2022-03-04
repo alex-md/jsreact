@@ -1,3 +1,12 @@
+html {
+	-webkit-locale: "en";
+	vertical-align: baseline;
+	padding: 5%;
+	box-shadow: 0px 0px 20px 20px #f5f5f5;
+	display: flex;	
+}
+
+
 #app > div:nth-child(1) {
 	text-align: center;
 	background: rgb(24, 238, 175) none repeat scroll 0% 0%;
@@ -99,9 +108,4 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	flex-basis: ;
 	border-radius: 2%;
 	box-shadow: 2px 6px 22px #8a8a8a;
-}
-
-.cm-s-react .CodeMirror-gutters {
-	background: #007ed7;
-	border-left: 4px solid rgba(238, 238, 238, 1);
 }
