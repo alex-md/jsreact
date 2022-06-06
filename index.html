@@ -19,85 +19,80 @@
 	"stylesheet"><!--Let browser know website is optimized for mobile-->
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<style>
-	       html,
-	       body {
-	           background-color: #f1f1f1;
-	           color: rgb(70, 111, 165);
-	           font-family: 'Roboto', sans-serif;
-	           font-size: 1rem;
-	           font-weight: 400;
-	           line-height: 1.5;
-	           margin: 0;
-	           padding: 0;
-	           text-align: left;
-	           -webkit-font-smoothing: antialiased;
-	       }
+ html, body {
+ 	background-color: #f1f1f1;
+ 	color: rgb(70, 111, 165);
+ 	font-family: 'Roboto', sans-serif;
+ 	font-size: 1rem;
+ 	font-weight: 400;
+ 	line-height: 1.5;
+ 	margin: 0;
+ 	padding: 0;
+ 	text-align: left;
+ 	-webkit-font-smoothing: antialiased;
+ }
+ #container {
+ 	display: flex;
+ 	flex-direction: column;
+ 	justify-content: center;
+ 	align-items: center;
+ }
+ #header {
+ 	font-size: 2rem;
+ 	font-weight: 700;
+ 	margin: 1rem;
+ }
+ #subtext, #small {
+ 	visibility: hidden;
+ 	z-index: -1;
+ }
+ #bold {
+ 	visibility: inherit;
+ }
+ #app {
+ 	display: flex;
+ 	flex-direction: column;
+ 	justify-content: center;
+ 	align-items: center;
+ }
+ iframe {
+ 	display: flex;
+ }
+ .CodeMirror-scroll {
+ 	overflow: scroll !important;
+ 	margin-bottom: -50px;
+ 	margin-right: -50px;
+ 	padding-bottom: 50px;
+ 	height: 100%;
+ 	outline: none;
+ 	position: relative;
+ 	font-family: monospace;
+ }
+ /* sticky footer bottom centered */
 
-	       #container {
-	           display: flex;
-	           flex-direction: column;
-	           justify-content: center;
-	           align-items: center;
-	       }
+ footer {
+ 	position: fixed;
+ 	bottom: 20px;
+ 	width: 100%;
+ 	text-align: center;
+ }
+ /* on mobile, hide the iframe and display the subtext */
 
-	       #header {
-	           font-size: 2rem;
-	           font-weight: 700;
-	           margin: 1rem;
-	       }
-
-	       #subtext,
-	       #small {
-	           visibility: hidden;
-	           z-index: -1;
-	       }
-
-	       #bold {
-	           visibility: inherit;
-	       }
-
-	       #app {
-	           display: flex;
-	           flex-direction: column;
-	           justify-content: center;
-	           align-items: center;
-	       }
-
-	       iframe {
-	           display: flex;
-	       }
-
-	       /* sticky footer bottom centered */
-	       footer {
-	           position: fixed;
-	           bottom: 20px;
-	           width: 100%;
-	           text-align: center;
-	       }
-
-	       /* on mobile, hide the iframe and display the subtext */
-	       @media (max-width: 630px) {
-	           iframe {
-	               display: none;
-	           }
-
-	           #header {
-	               text-decoration: underline;
-	           }
-
-	           #subtext,
-	           #small {
-	               visibility: visible;
-	               display: inline-flex;
-	               padding: 5%;
-	               margin: 0 auto;
-	               ;
-	               text-align: center;
-	           }
-
-
-	       }
-	</style><!--============== End Head============================-->
+ @media (max-width: 630px) {
+ 	iframe {
+ 		display: none;
+ 	}
+ 	#header {
+ 		text-decoration: underline;
+ 	}
+ 	#subtext, #small {
+ 		visibility: visible;
+ 		display: inline-flex;
+ 		padding: 5%;
+ 		margin: 0 auto;
+ 		text-align: center;
+ 	}
+ }	</style><!--============== End Head============================-->
 </head><!--===================Begin Body===================-->
 <!-- container -->
 <body>
