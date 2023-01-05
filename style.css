@@ -1,108 +1,62 @@
 div#repl {
-	font-size: 1.1rem;
-	color: #277be8;
-	padding-bottom: 0.5rem;
-	margin: 0 auto;
-	text-align: center;
-	font-weight: 400;
-	font-family: 'DM Sans', sans-serif;
-	display: contents;
+  font-size: 1.1rem;
+  color: #277be8;
+  padding-bottom: 0.5rem;
+  margin: 0 auto;
+  text-align: center;
+  font-weight: 400;
+  font-family: "DM Sans", sans-serif;
+  display: contents;
 }
-
 h1 {
-	font-family: 'DM Mono', monospace;
-	border-bottom: inset;
-	background-color: ghostwhite;
-	margin: auto;
-	padding: 0 2rem;
-	font-size: 2.7rem;
+  font-family: "DM Mono", monospace;
+  border-bottom: inset;
+  background-color: #f8f8ff;
+  margin: auto;
+  padding: 0 2rem;
+  font-size: 2.7rem;
 }
-
 #header {
-	border-bottom: 3px solid rgb(67 139 234);
+  border-bottom: 3px solid rgb(67 139 234);
 }
-
-html,
-body {
-
-	display: grid;
-	justify-items: center;
-	background-color: #f5f5f5;
+body,
+html {
+  display: grid;
+  justify-items: center;
+  background-color: #f5f5f5;
 }
-
-
-
 #container {
-	display: grid;
-	place-content: center;
+  display: grid;
+  place-content: center;
 }
-
-
 #app {
-	display: grid;
-	place-content: center;
-	grid-template-areas: 1fr 1fr;
-	display: contents;
-	align-items: stretch;
-	align-content: stretch;
+  display: grid;
+  place-content: center;
+  grid-template-areas: 1fr 1fr;
+  display: contents;
+  align-items: stretch;
+  align-content: stretch;
 }
-
 iframe {
-	max-height: 80vh;
-	min-height: 80vh;
-	min-width: 80vw;
-	box-shadow: 0px 2px 3px 4px #e6e6e6;
-	border-radius: 1rem;
+  max-height: 80vh;
+  min-height: 80vh;
+  min-width: 80vw;
+  box-shadow: 0 2px 3px 4px #e6e6e6;
+  border-radius: 1rem;
 }
-
-
-
-.CodeMirror-scroll {
-	margin-bottom: -50px;
-	margin-right: -50px;
-	padding-bottom: 50px;
-	outline: none;
-	position: relative;
-	font-family: monospace;
-}
-
-
-footer {
-	margin: 0 auto;
-	place-self: right;
-	position: fixed;
-	color: #68217ace;
-	font-size: small;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-
 @media only screen and (max-width: 768px) {
-	div#repl {
-		font-size: 0.9rem;
-	}
-
-	h1 {
-		font-size: 2.4rem;
-	}
-
-	#app {
-		grid-template-areas: 1fr;
-	}
-
-	iframe {
-		max-height: 70vh;
-		min-height: 70vh;
-		min-width: 90vw;
-	}
-
-	.CodeMirror-scroll {
-		margin-bottom: -40px;
-		margin-right: -40px;
-		padding-bottom: 40px;
-	}
-
-	footer {
-		font-size: x-small;
-	}
+  div#repl {
+    font-size: 0.9rem;
+  }
+  h1 {
+    font-size: 2.4rem;
+  }
+  #app {
+    grid-template-areas: 1fr;
+  }
+  iframe {
+    max-height: 70vh;
+    min-height: 70vh;
+    min-width: 90vw;
+  }
 }
