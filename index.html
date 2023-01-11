@@ -1,41 +1,44 @@
 <html lang="en">
 
 	<head>
-		<meta charset="UTF-8">
-		<meta content="width=device-width, initial-scale=1.0" name="viewport">
+		<meta charset="UTF-8" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 		<title>JSreact</title>
-		<link rel="icon" href="favicon.ico" type="image/x-icon">
-		<link href="manifest.json" rel="manifest">
-		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-		<link rel="manifest" href="/site.webmanifest">
-		<link href="/site.webmanifest" rel="manifest">
-		<meta content="width=device-width, initial-scale=1.0" name="viewport">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
-		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>
-		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css'>
-		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.0/css/foundation.min.css'>
-		<link rel="stylesheet" href="style.css">
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<link href="manifest.json" rel="manifest" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css" />
+		<link rel="stylesheet" href="/style.css" />
 		<style>
-			@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300&display=swap');
-			@import url('https://fonts.googleapis.com/css2?family=DM+Sans&display=swap');
+			@import url("https://fonts.googleapis.com/css2?family=DM+Sans&display=swap");
 
 		</style>
-		</head>
+	</head>
 
 	<body>
+		<!-- Container for the app -->
 		<div id="container">
+			<!-- Logo for the app -->
+			<div id="logo">
+				<img src="logo.png" alt="logo" />
+			</div>
+			<!-- Header for the app -->
 			<div id="header">
-				<h1>JSreact <div id="repl">Free Javascript REPL | Copy and save your code!(There is no save)</div>
-				</h1>
+				<!-- Main title of the app -->
+				<div id="repl"> Copy your code <div id="repl">(There is no save!)</div>
 				</div>
-				<div id="app">
-					<div id="iframe">
-				</div>
+			</div>
+			<!-- Main code editor -->
+			<div id="app">
+				<!-- Iframe for the code preview -->
+				<div id="iframe"></div>
 				</div>
 			<script src="/script.js"></script>
-			</body>
+		</div>
+	</body>
 
 </html>
