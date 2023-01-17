@@ -1,77 +1,90 @@
-@media (min-width: 600px) {
-  #header {
-    min-width: 60vw;
-    max-width: fit-content;
-  }
-
-  img {
-    max-width: 40vw;
-  }
+:root {
+  --primary-color: #277be8;
+  --header-bg-color: #f4f4f4;
+  --header-border-color: #439eea;
+  --font-family: "DM Sans", sans-serif;
+  --font-size: 1.1rem;
+  --logo-height: 5.5em;
+  --gap: 1em;
+  --shadow: 0 2px 3px 4px #e6e6e6;
+  --border-radius: 1rem;
+  --max-height: 80vh;
+  --min-height: 80vh;
+  --min-width: 80vw;
 }
 
-@media (max-width: 599px) {
-  #header {
-    min-width: 80vw;
-    max-width: fit-content;
-  }
-
-  img {
-    max-width: 60vw;
-  }
-}
 div#repl {
-  font-size: 1.1rem;
-  color: #277be8;
+  font-size: var(--font-size);
+  color: var(--primary-color);
   margin: 0 auto;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-family);
   display: contents;
 }
 
 #header {
-  border-bottom: 3px solid rgb(67 139 234);
+  border-bottom: 3px solid var(--header-border-color);
   display: grid;
-    place-content: center;
-    min-width: 60vw;
-    max-width: fit-content
+  place-content: center;
+  min-width: 60vw;
+  max-width: 100%;
 }
 
 body,
 html {
   display: grid;
   place-items: center;
-    background-color: #f4f4f4;
-    max-height: 85vh;
-    grid-gap: 1em
-  }
-  
-  #logo {
-    display: grid;
-    margin: 0 auto;
-  }
-  
-  img {
-    height: 5.5em;
-    max-width: fit-content;
-    min-width: fit-content;
+  background-color: var(--header-bg-color);
+  max-height: 85vh;
+  grid-gap: var(--gap);
 }
+
+#logo {
+  display: grid;
+  margin: 0 auto;
+}
+
+img {
+  height: var(--logo-height);
+  max-width: 100%;
+}
+
 #container {
   display: grid;
-  place-content: center
+  place-content: center;
 }
 
 #app {
   display: grid;
   place-content: center;
-  grid-template-areas: 1fr 1fr;
-  display: contents;
+  grid-template-columns: 1fr 1fr;
   align-items: stretch;
-  align-content: stretch
+  align-content: stretch;
 }
 
 iframe {
-  max-height: 80vh;
-  min-height: 80vh;
-  min-width: 80vw;
-  box-shadow: 0 2px 3px 4px #e6e6e6;
-  border-radius: 1rem
+  max-height: var(--max-height);
+  min-height: var(--min-height);
+  min-width: var(--min-width);
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+}
+
+@media screen and (max-width: 600px) {
+  :root {
+    --font-size: 1rem;
+    --logo-height: 4em;
+    --max-height: 75vh;
+    --min-height: 75vh;
+    --min-width: 90vw;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  :root {
+    --font-size: 0.9rem;
+    --logo-height: 3em;
+    --max-height: 70vh;
+    --min-height: 70vh;
+    --min-width: 95vw;
+  }
 }
