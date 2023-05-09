@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 
 	<head>
@@ -6,39 +7,39 @@
 		<title>JSreact</title>
 		<link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<link href="manifest.json" rel="manifest" />
-		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 		<link rel="manifest" href="/site.webmanifest" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css" />
 		<link rel="stylesheet" href="/style.css" />
-		<style>
-			@import url("https://fonts.googleapis.com/css2?family=DM+Sans&display=swap");
-
-		</style>
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>
 	</head>
 
 	<body>
-		<!-- Container for the app -->
-		<div id="container">
-			<!-- Logo for the app -->
-			<div id="logo">
-				<img src="logo.png" alt="logo" />
-			</div>
-			<!-- Header for the app -->
-			<div id="header">
-				<!-- Main title of the app -->
-				<div id="repl"> Copy your code <div id="repl">(There is no save!)</div>
-				</div>
-			</div>
-			<!-- Main code editor -->
-			<div id="app">
-				<!-- Iframe for the code preview -->
+		<header id="header"></header>
+		<main>
+			<section id="intro" class="my-4">
+				<img src="logo.png" alt="logo" class="max-w-full" />
+			</section>
+			<section id="about" class="mb-8">
+				<h1 class="text-3xl font-bold text-center">JSreact: A playground for developers and learners to
+					experiment with code, write, test and view their javascript code instantly.</h1>
+				<p class="text-lg text-gray-600 text-center">Learn by experimenting with code and preview your
+					creations. Whether you're a beginner or an experienced developer, JSreact is the quickest and
+					easiest way to quickly test and review your code on the fly.</p>
+			</section>
+			<section id="learn" class="bg-green-500 text-white text-center py-2 rounded-md mb-4">
+				<button id="practice-button" class="bg-green-500 text-white text-center py-1 px-2 rounded-md mb-4"
+					style="font-size: 0.9em;">
+					<strong><a href="https://practice.geeksforgeeks.org/problem-of-the-day">Problem of the
+							day</a></strong>
+				</button>
+			</section>
+			<section id="code-editor" class="p-4">
 				<div id="iframe"></div>
-				</div>
-			<script src="/script.js"></script>
-		</div>
+			</section>
+		</main>
+		<script src="/script.js"></script>
 	</body>
 
 </html>
