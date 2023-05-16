@@ -5,40 +5,41 @@
 		<meta charset="UTF-8" />
 		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 		<title>JSreact</title>
-		<link rel="icon" href="favicon.ico" type="image/x-icon" />
-		<link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
-		<link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
-
-		<link rel="manifest" href="/site.webmanifest" />
-		<link rel="stylesheet" href="/style.css" />
+		<link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+		<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16" />
+		<link rel="stylesheet" href="/style/home.css" />
 		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>
 	</head>
 
 	<body>
-		<header id="header"></header>
+		<nav>
+			<div class="nav-wrapper">
+
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="index.html">Code Editor</a></li>
+					<li><a href="chat.html">Talk to GPT</a></li>
+				</ul>
+			</div>
+		</nav>
 		<main>
-			<section id="intro" class="my-4">
-				<img src="logo.png" alt="logo" class="max-w-full" />
-			</section>
 			<section id="about" class="mb-8">
+				<img src="/images/logo.png" alt="logo" class="max-w-full logo" />
 				<h1 class="text-3xl font-bold text-center">JSreact: A playground for developers and learners to
-					experiment with code, write, test and view their javascript code instantly.</h1>
+					experiment with
+					code, write, test and view their JavaScript code instantly.</h1>
 				<p class="text-lg text-gray-600 text-center">Learn by experimenting with code and preview your
-					creations. Whether you're a beginner or an experienced developer, JSreact is the quickest and
-					easiest way to quickly test and review your code on the fly.</p>
+					creations.
+					Whether you're a beginner or an experienced developer, JSreact is the quickest and easiest way to
+					quickly
+					test and review your code on the fly.</p>
+				<section id="code-editor" class="p-0">
+					<div id="iframe"></div>
+				</section>
 			</section>
-			<section id="learn" class="bg-green-500 text-white text-center py-2 rounded-md mb-4">
-				<button id="practice-button" class="bg-green-500 text-white text-center py-1 px-2 rounded-md mb-4"
-					style="font-size: 0.9em;">
-					<strong><a href="https://practice.geeksforgeeks.org/problem-of-the-day">Problem of the
-							day</a></strong>
-				</button>
-			</section>
-			<section id="code-editor" class="p-4">
-				<div id="iframe"></div>
-			</section>
+
 		</main>
-		<script src="/script.js"></script>
+		<script src="/scripts/home.js"></script>
 	</body>
 
 </html>
