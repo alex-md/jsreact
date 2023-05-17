@@ -8,23 +8,26 @@
 		<link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
 		<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32" />
 		<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16" />
-		<link rel="stylesheet" href="/style/home.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+		<link rel="stylesheet" href="/style/home.css">
 	</head>
 
 	<body>
 		<nav>
 			<div class="nav-wrapper">
-
-				<ul id="nav-mobile" class="right hide-on-med-and-down">
+				<a href="index.html" class="brand-logo">
+					<img src="/images/logo.png" alt="logo">
+				</a>
+				<ul id="nav" class="right">
 					<li><a href="index.html">Code Editor</a></li>
 					<li><a href="chat.html">Talk to GPT</a></li>
 				</ul>
 			</div>
 		</nav>
 		<main>
-			<section id="about" class="mb-8">
-				<img src="/images/logo.png" alt="logo" class="max-w-full logo" />
+			<section id="about">
 				<h1 class="text-3xl font-bold text-center">JSreact: A playground for developers and learners to
 					experiment with
 					code, write, test and view their JavaScript code instantly.</h1>
@@ -34,7 +37,6 @@
 					quickly
 					test and review your code on the fly.</p>
 				<section id="code-editor" class="p-0">
-					<div id="iframe"></div>
 				</section>
 			</section>
 
