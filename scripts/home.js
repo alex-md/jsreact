@@ -6,4 +6,4 @@ const iframe = document.createElement("iframe");
 iframe.src =
 	"//unpkg.com/javascript-playgrounds/public/index.html" + hashString;
 // place the iframe below the main
-document.querySelector("main").insertAdjacentElement("afterend", iframe);
+document.getElementById("code-editor").insertAdjacentElement("afterend", iframe);

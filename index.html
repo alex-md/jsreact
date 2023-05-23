@@ -8,40 +8,63 @@
 		<link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
 		<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32" />
 		<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 		<link rel="stylesheet" href="/style/home.css">
 	</head>
 
 	<body>
-		<nav>
-			<div class="nav-wrapper">
-				<a href="index.html" class="brand-logo">
+		<nav class="navbar is-primary">
+			<div class="navbar-brand">
+				<a class="navbar-item" href="/index.html">
 					<img src="/images/logo.png" alt="logo">
 				</a>
-				<ul id="nav" class="right">
-					<li><a href="index.html">Code Editor</a></li>
-					<li><a href="chat.html">Talk to GPT</a></li>
-				</ul>
+				<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+				</a>
+			</div>
+			<div id="navbarMenu" class="navbar-menu">
+				<div class="navbar-end">
+					<a class="navbar-item" href="/index.html">Code Editor</a>
+					<a class="navbar-item" href="/chat.html">Talk to GPT</a>
+				</div>
 			</div>
 		</nav>
-		<main>
+		<main class="container mx-auto py-8">
 			<section id="about">
-				<h1 class="text-3xl font-bold text-center">JSreact: A playground for developers and learners to
-					experiment with
-					code, write, test and view their JavaScript code instantly.</h1>
-				<p class="text-lg text-gray-600 text-center">Learn by experimenting with code and preview your
-					creations.
-					Whether you're a beginner or an experienced developer, JSreact is the quickest and easiest way to
-					quickly
-					test and review your code on the fly.</p>
+				<h1 class="text-3xl font-bold text-center">JSreact: A code playground for JavaScript enthusiasts.</h1>
+				<p class="text-lg text-gray-600 text-center">Write, test and view your code in real time with JSreact.
+					Whether you're a novice or a pro, JSreact lets you experiment
+					with code and see your results instantly.</p>
 				<section id="code-editor" class="p-0">
 				</section>
 			</section>
-
 		</main>
 		<script src="/scripts/home.js"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				// Get all "navbar-burger" elements
+				const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+				// Check if there are any navbar burgers
+				if (navbarBurgers.length > 0) {
+					// Add a click event on each of them
+					navbarBurgers.forEach((navbarBurger) => {
+						navbarBurger.addEventListener('click', () => {
+							// Get the target from the "data-target" attribute
+							const target = navbarBurger.dataset.target;
+							const targetElement = document.getElementById(target);
+
+							// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+							navbarBurger.classList.toggle('is-active');
+							targetElement.classList.toggle('is-active');
+						});
+					});
+				}
+			});
+		</script>
 	</body>
 
 </html>

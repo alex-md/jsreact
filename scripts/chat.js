@@ -1,18 +1,7 @@
 // Get elements
-const inputText = document.getElementById("input-text");
-const submitButton = document.getElementById("submit-button");
-const responseDiv = document.getElementById("response");
-const apiKeyInput = document.createElement("input");
-const apiKeyLabel = document.createElement("label");
-
-apiKeyInput.type = "text";
-apiKeyInput.id = "api-key-input";
-apiKeyInput.placeholder = "Enter your OpenAI API key";
-apiKeyLabel.htmlFor = "api-key-input";
-apiKeyLabel.innerText = "API Key:";
-
-// Add input elements to the DOM
-document.querySelector(".card-content").prepend(apiKeyLabel, apiKeyInput);
+const inputText = document.getElementById("input-text"); // Text input
+const submitButton = document.getElementById("submit-button"); // Submit button
+const responseDiv = document.getElementById("response"); // Response div
 
 // Initialize prompt history
 let promptHistory = [];
@@ -80,6 +69,27 @@ submitButton.addEventListener("click", async () => {
 		.catch((error) => {
 			console.error(error);
 		});
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+	// Get all "navbar-burger" elements
+	const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+	// Check if there are any navbar burgers
+	if (navbarBurgers.length > 0) {
+		// Add a click event on each of them
+		navbarBurgers.forEach((navbarBurger) => {
+			navbarBurger.addEventListener('click', () => {
+				// Get the target from the "data-target" attribute
+				const target = navbarBurger.dataset.target;
+				const targetElement = document.getElementById(target);
+
+				// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+				navbarBurger.classList.toggle('is-active');
+				targetElement.classList.toggle('is-active');
+			});
+		});
+	}
 });
 
 // Add event listener to input text element
