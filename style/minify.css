@@ -1,0 +1,184 @@
+@import url(https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap);
+
+/* Navigation */
+
+.navbar {
+    background-color: #65b393;
+}
+
+nav.navbar.is-primary {
+    background: #65b393;
+    width: 100vw;
+}
+
+.navbar-item img {
+    max-height: 60px;
+}
+
+.navbar-burger {
+    color: #fff;
+}
+
+.navbar-menu {
+    background-color: #65b393;
+}
+
+.navbar-end .navbar-item {
+    color: #fff;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: stretch;
+}
+
+.flex.justify-center {
+    width: 50vw;
+    margin: 0 auto;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.navbar-brand {
+    background: #65b393;
+}
+
+.navbar-end .navbar-item:hover {
+    color: #ccc;
+}
+
+.inputs,
+div {
+    display: grid;
+}
+
+.text-2xl,
+h1 {
+    font-weight: 700;
+}
+
+#output,
+textarea {
+    height: 200px;
+}
+
+#stats,
+.text-xl {
+    color: #777;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 960px;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+.text-xl {
+    font-size: 1.5rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 2rem 0;
+}
+
+div#options {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+p.text-xl.text-gray-600 {
+    color: #0288d1;
+    font-weight: 300;
+}
+
+.grid.grid-cols-1.md\:grid-cols-2.gap-4.inputs {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    margin: 0 auto;
+    background: #f1f1f1;
+    padding: 1.1em;
+    border-radius: 1em;
+    box-shadow: 0 0 5px 1px #ccc;
+}
+
+textarea#input,
+textarea#output {
+    width: 35dvw;
+    margin: 0 auto;
+}
+
+button#go {
+    background: #0088d1;
+    color: #fafafa;
+}
+
+.inputs {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+main.p-4 {
+    margin: 0 auto;
+    width: 100vw;
+    background: #f8f8f8;
+}
+
+div {
+    align-content: stretch;
+}
+
+hr.my-4.border-gray-300 {
+    color: #bdbdbd;
+}
+
+h4.text-2xl.font-semibold {
+    font-family: Inter;
+    border-bottom: thin solid #ddd;
+    color: #0088d1;
+}
+
+.text-2xl {
+    font-size: 1.25rem;
+}
+
+.input-group {
+    position: relative;
+}
+
+textarea {
+    width: 100%;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+#options {
+    display: flex;
+    align-items: center;
+    margin-top: 2rem;
+}

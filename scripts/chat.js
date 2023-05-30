@@ -71,6 +71,8 @@ submitButton.addEventListener("click", async () => {
 		});
 });
 
+
+// Wait for the DOM to load
 document.addEventListener('DOMContentLoaded', () => {
 	// Get all "navbar-burger" elements
 	const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
@@ -92,10 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 });
 
+
 // Add event listener to input text element
-inputText.addEventListener("keydown", (event) => {
+inputText.addEventListener("keydown", handleKeyDown);
+
+function handleKeyDown(event) {
 	if (event.key === "Enter") {
 		event.preventDefault();
 		submitButton.click();
 	}
-});
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="index, follow">
+        <title>JS Minify | Google Closure Compiler</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <link rel='stylesheet' href='/jsreact/style/minify.css'>
+    </head>
+
+    <body>
+        <nav class="navbar is-primary">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="/jsreact/index.html">
+                    <img src="/jsreact/images/logo.png" alt="logo">
+                </a>
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+            <div id="navbarMenu" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item" href="/jsreact/index.html">Code Editor</a>
+                    <a class="navbar-item" href="/jsreact/chat.html">Talk to GPT</a>
+                    <a class="navbar-item" href="/jsreact/minify.html">Minify Code</a>
+                </div>
+            </div>
+        </nav>
+        <main class="p-4">
+            <div class="container mx-auto">
+                <h1 class="text-4xl font-bold">JavaScript Minifier</h1>
+                <p class="text-xl text-gray-600">With Google Closure Compiler</p>
+                <hr class="my-4 border-gray-300">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 inputs">
+                    <div>
+                        <h4 class="text-2xl font-semibold">Enter JavaScript Here</h4>
+                        <div class="input-group">
+                            <textarea id="input" class="form-control h-64 resize-none border rounded p-2">// ADD YOUR CODE HERE
+        function hello(name) {
+        
+        alert('Hello, ' + name);
+        }
+        hello('New user');</textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-semibold">Get your compressed code here !</h4>
+                        <div class="input-group">
+                            <textarea id="output" class="form-control h-64 resize-none border rounded p-2"
+                                readonly></textarea>
+                        </div>
+                        <small id="stats" class="text-gray-500"></small>
+                    </div>
+                </div>
+                <hr class="my-4 border-gray-300">
+                <button id="go"
+                    class="btn btn-outline-primary btn-lg d-block w-full mt-4 py-2 px-4 border rounded text-lg font-bold text-blue-600 hover:bg-blue-100">Compile</button>
+
+
+                <div id="options" class="flex items-center">
+                    <h4 class="text-2xl font-semibold mr-2">Advanced Options...</h4>
+
+                </div>
+            </div>
+        </main>
+        <script src="/jsreact/scripts/minify.js"></script>
+    </body>
+
+</html>
