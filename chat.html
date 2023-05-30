@@ -3,57 +3,69 @@
 
 	<head>
 		<meta charset="UTF-8" />
+		<meta name="robots" content="index, follow">
 		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 		<title>Talk to GPT</title>
 		<link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
 		<link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32" />
 		<link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
-		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
 		<link rel="stylesheet" href="./style/chat.css">
+		<link rel='stylesheet' href='./style/navbar.css'> <!-- Link to the navbar css file -->
+
 	</head>
 
 	<body>
-		<nav class="navbar is-primary">
-			<div class="navbar-brand">
-				<a class="navbar-item" href="./index.html">
-					<img src="./images/logo.png" alt="logo">
-				</a>
-				<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-					<span aria-hidden="true"></span>
-					<span aria-hidden="true"></span>
-					<span aria-hidden="true"></span>
-				</a>
+		<!-- Use the navbar class for the navigation bar -->
+		<div class="navbar">
+			<!-- Use the logo class for the logo image -->
+			<img src="./images/logo.png" alt="logo" class="logo">
+			<!-- Use the hamburger class for the hamburger menu -->
+			<div class="hamburger" id="hamburger">
+				<div></div>
+				<div></div>
+				<div></div>
 			</div>
-			<div id="navbarMenu" class="navbar-menu">
-				<div class="navbar-end">
-					<a class="navbar-item" href="./index.html">Code Editor</a>
-					<a class="navbar-item" href="./chat.html">Talk to GPT</a>
-					<a class="navbar-item" href="./minify.html">Minify Code</a>
-				</div>
-			</div>
-		</nav>
+			<!-- Use the nav-links class for the list of links -->
+			<ul class="nav-links" id="nav-links">
+				<!-- Use the nav-link class for each link -->
+				<li><a href="./index.html" class="nav-link">Code Editor</a></li>
+				<li><a href="./chat.html" class="nav-link">Talk to GPT</a></li>
+				<li><a href="./minify.html" class="nav-link">Minify Code</a></li>
+			</ul>
+		</div>
+		<script>
+			const hamburger = document.getElementById('hamburger');
+			const navLinks = document.getElementById('nav-links');
+
+			hamburger.addEventListener('click', function () {
+				navLinks.classList.toggle('show');
+			});
+		</script>
 		<div class="container mx-auto py-8">
-			<div class="flex justify-center">
-				<div class="w-full md:w-1/2 lg:w-2/3">
+			<div class="row justify-content-center">
+				<div class="col-md-6 col-lg-8">
 					<div class="card">
-						<div class="card-content">
-							<h2 class="title is-4 text-center">Talk to GPT</h2>
-							<label for="api-key-input"></label>
-							<input type="text" id="api-key-input" placeholder="Enter your OpenAI API key" class="input">
-							<div class="field">
-								<div class="control">
+						<div class="card-body">
+							<h2 class="card-title text-center">Talk to GPT</h2>
+							<div class="form-group">
+								<label for="api-key-input"></label>
+								<input type="text" id="api-key-input" placeholder="Enter your OpenAI API key"
+									class="form-control">
+							</div>
+							<div class="form-group">
+								<div class="input-group">
 									<input type="text" id="input-text" placeholder="Enter your message here"
-										class="input custom-input">
+										class="form-control">
 								</div>
 							</div>
-							<div class="field">
-								<div class="control">
-									<button id="submit-button" class="button is-primary is-fullwidth">Get
-										Prediction</button>
+							<div class="form-group">
+								<div class="text-center">
+									<button id="submit-button" class="btn btn-primary btn-block">Get Prediction</button>
 								</div>
 							</div>
-							<div id="response" class="box"></div>
+							<div id="response" class="card"></div>
 						</div>
 					</div>
 				</div>
