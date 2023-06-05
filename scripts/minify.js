@@ -91,7 +91,6 @@ let DOM = {
                 'statistics'
             ],
             formatting: DOM.options.formatting.value,
-            language: 'ECMASCRIPT6',
             language_out: 'ECMASCRIPT_2015'
         });
 
