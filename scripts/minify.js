@@ -7,7 +7,7 @@ let DOM = {
     optionsWrapper: document.getElementById("options"),
     options: {}
 };
-!function (options, wrapper, domOptions) {
+!((options, wrapper, domOptions) => {
     let row, keys = Object.keys(options);
     for (let i = 0; i < keys.length; i++) {
         i % 2 == 0 && ((row = document.createElement("div")).classList.add("row"), wrapper.appendChild(row));
@@ -28,7 +28,7 @@ let DOM = {
         }
         select.value = selectoptions.default, inputgroupprepend.appendChild(title), inputgroup.appendChild(inputgroupprepend), inputgroup.appendChild(select), col.appendChild(inputgroup), row.appendChild(col);
     }
-}({
+})({
     compilation_level: {
         names: [
             "Whitespace",
@@ -55,46 +55,96 @@ let DOM = {
         default: "print_input_delimiter",
         label: "Formatting"
     }
-}, DOM.optionsWrapper, DOM.options), DOM.go.onclick = function () {
-    var url, callback;
-    let xhttp;
-    this.disabled = !0, this.innerHTML = "Compiling...", url = function (domain, params) {
-        -1 === domain.indexOf("?") && (domain += "?");
-        let keys = Object.keys(params);
-        for (keys of keys) if (Array.isArray(params[keys])) for (let i = 0; i < params[keys].length; i++)addParameter(params[keys][i]);
-        else addParameter(params[keys]);
-        return domain = domain.slice(0, -1);
-        function addParameter(param) {
-            domain += `${keys}=${encodeURIComponent(param)}&`;
-        }
-    }("https://closure-compiler.appspot.com/compile", {
-        js_code: DOM.input.value,
-        compilation_level: DOM.options.compilation_level.value,
-        output_format: "json",
-        output_info: [
-            "compiled_code",
-            "warnings",
-            "errors",
-            "statistics"
-        ],
-        formatting: DOM.options.formatting.value,
-        language: "ECMASCRIPT5_STRICT",
-        language_out: "ECMASCRIPT6"
-    }), callback = function (data) {
-        let parsed = JSON.parse(data), keys = Object.keys(parsed);
-        for (let i = 0; i < keys.length; i++)switch (keys[i]) {
-            case "compiledCode":
-                DOM.output.innerHTML = parsed.compiledCode.replace("// Input 0", "").trim();
-                break;
-            case "statistics":
-                let s = parsed.statistics;
-                DOM.stats.innerHTML = `Compressed ${s.originalSize} bytes down to ${s.compressedSize} bytes (${Math.round((s.originalSize - s.compressedSize) / s.originalSize * 100)}%)`;
-                break;
-            default:
-                console.log(parsed[keys[i]]);
-        }
-        DOM.go.disabled = !1, DOM.go.innerHTML = "Compile !";
-    }, (xhttp = new XMLHttpRequest()).onreadystatechange = function () {
-        4 == this.readyState && 200 == this.status && callback.call(window, xhttp.responseText);
-    }, xhttp.open("POST", url), xhttp.withCredentials = !1, xhttp.send();
-};
+}, DOM.optionsWrapper, DOM.options), DOM.go.onclick = function blink() {
+    DOM.go.classList.add('blinking');
+    const blinkingInterval = setInterval(() => {
+        DOM.go.classList.toggle('blink');
+    }, 500);
+
+    compile();
+
+    function compile() {
+        DOM.go.disabled = true;
+        DOM.go.innerHTML = 'Compiling...';
+
+        let url, callback;
+        let xhttp;
+        url = ((domain, params) => {
+            !domain.includes('?') && (domain += '?');
+            let keys = Object.keys(params);
+            for (keys of keys)
+                if (Array.isArray(params[keys])) {
+                    for (let i = 0; i < params[keys].length; i++) addParameter(params[keys][i]);
+                } else addParameter(params[keys]);
+            return domain = domain.slice(0, -1);
+            function addParameter(param) {
+                domain += `${keys}=${encodeURIComponent(param)}&`;
+            }
+        })('https://closure-compiler.appspot.com/compile', {
+            js_code: DOM.input.value,
+            compilation_level: DOM.options.compilation_level.value,
+            output_format: 'json',
+            output_info: [
+                'compiled_code',
+                'warnings',
+                'errors',
+                'statistics'
+            ],
+            formatting: DOM.options.formatting.value,
+            language: 'ECMASCRIPT6',
+            language_out: 'ECMASCRIPT_2015'
+        });
+
+        callback = data => {
+            let parsed = JSON.parse(data);
+            let keys = Object.keys(parsed);
+
+            for (let i = 0; i < keys.length; i++) {
+                switch (keys[i]) {
+                    case 'compiledCode':
+                        DOM.output.innerHTML = parsed.compiledCode.replace('// Input 0', '').trim();
+                        break;
+                    case 'statistics':
+                        let s = parsed.statistics;
+                        DOM.stats.innerHTML = `Compressed ${s.originalSize} bytes down to ${s.compressedSize} bytes (${Math.round((s.originalSize - s.compressedSize) / s.originalSize * 100)}%)`;
+                        break;
+                    default:
+                        console.log(parsed[keys[i]]);
+                }
+            }
+
+            DOM.go.disabled = false;
+            DOM.go.innerHTML = 'Compile!';
+            clearInterval(blinkingInterval);
+            DOM.go.classList.remove('blinking');
+            DOM.go.classList.remove('blink');
+        };
+
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                callback.call(window, xhttp.responseText);
+            }
+        };
+        xhttp.open('POST', url);
+        xhttp.withCredentials = false;
+        xhttp.send();
+    }
+}
+
+
+function synchronizeScroll(inputElement, outputElement) {
+    function handleScroll() {
+        const { scrollTop, scrollHeight, clientHeight } = this;
+        const outputScrollHeight = outputElement.scrollHeight;
+        const outputClientHeight = outputElement.clientHeight;
+
+        const ratio = scrollTop / (scrollHeight - clientHeight);
+        const outputScrollTop = Math.round((outputScrollHeight - outputClientHeight) * ratio);
+
+        outputElement.scrollTop = outputScrollTop;
+    }
+
+    inputElement.addEventListener('scroll', handleScroll);
+    outputElement.addEventListener('scroll', handleScroll);
+}

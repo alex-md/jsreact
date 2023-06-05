@@ -19,7 +19,6 @@
         <link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
         <link rel='stylesheet' href='./style/minify.css'>
         <link rel='stylesheet' href='./style/navbar.css'>
     </head>
@@ -80,7 +79,8 @@
                 </div>
                 <hr class="my-4 border-gray-300">
                 <button id="go"
-                    class="btn btn-outline-primary btn-lg d-block w-full mt-4 py-2 px-4 border rounded text-lg font-bold text-blue-600 hover:bg-blue-100">Compile</button>
+                    class="btn btn-outline-primary btn-lg d-block w-full mt-4 py-2 px-4 border rounded text-lg font-bold text-blue-600 hover:bg-blue-100"
+                    onclick="blink()">Compile</button>
 
 
                 <div id="options" class="flex items-center">
@@ -90,6 +90,13 @@
             </div>
         </main>
         <script src="./scripts/minify.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const inputElement = document.getElementById('input');
+                const outputElement = document.getElementById('output');
+                synchronizeScroll(inputElement, outputElement);
+            });
+        </script>
     </body>
 
 </html>
