@@ -2,25 +2,18 @@
 <html lang="en">
 
     <head>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-
-            gtag('config', 'G-ZEFG04PXR7');
-        </script>
         <meta charset="UTF-8">
+
         <meta name="robots" content="index, follow">
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>JavaScript Minifier | Terser Online</title>
+        <title>Terser Playground</title>
         <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
         <link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-        <link rel='stylesheet' href='./style/minify.css'>
-        <link rel='stylesheet' href='./style/navbar.css'>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+        <link rel="stylesheet" href="./style/navbar.css">
+        <link rel="stylesheet" href="./style/minify.css">
     </head>
 
     <body>
@@ -50,43 +43,42 @@
                 navLinks.classList.toggle('show');
             });
         </script>
-        <div id="container">
-            <h1>Terser Minifier</h1>
-            <p>A JavaScript minifier powered by Terser. Terser is a JavaScript parser and minifier that provides a
-                complete
-                beautifier toolkit for ES6+.</p>
-            <p>Enter your JavaScript code in the input textarea below, choose some options, and click the “Minify”
-                button to see the output.</p>
-            <div class="main">
-                <textarea id="input" rows="10" cols="80"></textarea>
-                <textarea id="output" wrap="hard" rows="10" cols="80" onchange="updateSizeLabels()"></textarea>
-            </div>
-
-
-            <button id="minify">Minify</button>
-            <!-- Displaying options -->
-            <div id="options">
-                <label for="compress">Compress:</label>
-                <input type="checkbox" id="compress" checked>
-                <br>
-                <label for="mangle">Mangle:</label>
-                <input type="checkbox" id="mangle" checked>
-                <br>
-                <label for="beautify">Beautify:</label>
-                <input type="checkbox" id="beautify" checked>
-                <br>
-                <label for="quotes">Quote Style:</label>
-                <select id="quotes">
-                    <option value="0">Auto</option>
-                    <option value="1">Single</option>
-                    <option value="2">Double</option>
-                </select>
-            </div>
-
-            <span id="inputSizeLabel">Input Size: <div id="inputLabel">0</div> KB</span>
-            <span id="outputSizeLabel">Output Size: <div id="outputLabel">0</div> KB</span>
-
+        <h1>Terser Minifier</h1>
+        <p>A JavaScript minifier powered by Terser. Terser is a JavaScript parser and minifier that provides a
+            complete
+            beautifier toolkit for ES6+.</p>
+        <p>Enter your JavaScript code in the input textarea below, choose some options, and click the “Minify”
+            button to see the output.</p>
+        <div>
+            <textarea id="input" rows="10" cols="80"></textarea>
         </div>
+
+        <!-- Displaying options -->
+        <div id="options">
+            <label for="compress">Compress:</label>
+            <input type="checkbox" id="compress" checked>
+            <br>
+            <label for="mangle">Mangle:</label>
+            <input type="checkbox" id="mangle" checked>
+            <br>
+            <label for="beautify">Beautify:</label>
+            <input type="checkbox" id="beautify" checked>
+            <br>
+            <label for="quotes">Quote Style:</label>
+            <select id="quotes">
+                <option value="0">Auto</option>
+                <option value="1">Single</option>
+                <option value="2">Double</option>
+            </select>
+        </div>
+
+        <button id="minify">Minify</button>
+        <span id="inputSizeLabel">Input Size: <div id="inputLabel">0</div> KB</span>
+        <span id="outputSizeLabel">Output Size: <div id="outputLabel">0</div> KB</span>
+        <div>
+            <textarea id="output" wrap="hard" rows="10" cols="80" onchange="updateSizeLabels()"></textarea>
+        </div>
+
         <script type="module">
             import { minify } from "https://cdn.skypack.dev/terser@5.17.7";
             // Get the elements by their ids
