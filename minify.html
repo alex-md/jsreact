@@ -19,6 +19,8 @@
         <link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+
         <link rel='stylesheet' href='./style/minify.css'>
         <link rel='stylesheet' href='./style/navbar.css'>
     </head>
@@ -68,119 +70,17 @@
             <div id="options">
                 <label for="compress">Compress:</label>
                 <input type="checkbox" id="compress" checked>
-                <br>
                 <label for="mangle">Mangle:</label>
                 <input type="checkbox" id="mangle" checked>
-                <br>
                 <label for="beautify">Beautify:</label>
                 <input type="checkbox" id="beautify" checked>
-                <br>
-                <label for="quotes">Quote Style:</label>
-                <select id="quotes">
-                    <option value="0">Auto</option>
-                    <option value="1">Single</option>
-                    <option value="2">Double</option>
-                </select>
             </div>
 
             <span id="inputSizeLabel">Input Size: <div id="inputLabel">0</div> KB</span>
             <span id="outputSizeLabel">Output Size: <div id="outputLabel">0</div> KB</span>
 
         </div>
-        <script type="module">
-            import { minify } from "https://cdn.skypack.dev/terser@5.17.7";
-            // Get the elements by their ids
-            var minifyButton = document.getElementById("minify");
-            var inputSizeLabel = document.getElementById("inputSizeLabel");
-            var outputSizeLabel = document.getElementById("outputSizeLabel");
-            var inputLabel = document.getElementById("inputLabel");
-            var outputLabel = document.getElementById("outputLabel");
-            var inputArea = document.getElementById("input");
-            var outputArea = document.getElementById("output");
-
-            // Get the options by their ids
-            var compressOption = document.getElementById("compress");
-            var mangleOption = document.getElementById("mangle");
-            var beautifyOption = document.getElementById("beautify");
-            var quotesOption = document.getElementById("quotes");
-
-            // Define a function to update the size labels
-            function updateSizeLabels() {
-                // Get the text content of the input and output areas
-                var inputText = inputArea.value;
-                var outputText = outputArea.value;
-
-                // Calculate the size in bytes
-                var inputSize = new Blob([inputText]).size;
-                var outputSize = new Blob([outputText]).size;
-
-                // Convert the size to kilobytes and round to two decimal places
-                var inputKB = (inputSize / 1024).toFixed(2);
-                var outputKB = (outputSize / 1024).toFixed(2);
-
-                // Set the text content of the labels if the elements exist
-                if (inputLabel) {
-                    inputLabel.textContent = inputKB;
-                }
-                if (outputLabel) {
-                    outputLabel.textContent = outputKB;
-                }
-            }
-
-            // Define a function to minify the input code using Terser
-            function minifyCode() {
-                // Get the text content of the input area
-                var inputText = inputArea.value;
-
-                // Get the values of the options
-                var compress = compressOption.checked;
-                var mangle = mangleOption.checked;
-                var beautify = beautifyOption.checked;
-                var quotes = parseInt(quotesOption.value);
-
-                // Create an options object for Terser
-                var options = {
-                    compress: compress,
-                    mangle: mangle,
-                    format: {
-                        beautify: beautify,
-                        quote_style: quotes
-                    }
-                };
-
-                // Use an async function to minify the code using Terser and catch any errors
-                async function asyncMinify() {
-                    try {
-                        // Minify the code and get the result object
-                        var result = await minify(inputText, options);
-
-                        // Check if there is an error in the result
-                        if (result.error) {
-                            // Throw the error
-                            throw result.error;
-                        }
-
-                        // Set the text content of the output area to the minified code
-                        outputArea.value = result.code;
-
-                        // Update the size labels
-                        updateSizeLabels();
-                    } catch (error) {
-                        // Display an alert with the error message
-                        alert(error.message);
-                    }
-                }
-
-                // Call the async function
-                asyncMinify();
-            }
-
-            // Add an event listener to the minify button
-            minifyButton.addEventListener("click", minifyCode);
-
-            // Call the update function when the page loads
-            updateSizeLabels();
-        </script>
+        <script type="module" src="./scripts/minify.js"></script>
         <script src="./scripts/minify.js"></script>
 
 
