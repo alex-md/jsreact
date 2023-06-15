@@ -14,18 +14,18 @@
         <meta charset="UTF-8">
         <meta name="robots" content="index, follow">
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>JavaScript Minifier | Terser Online</title>
+        <title>JS Minify | Google Closure Compiler</title>
         <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
         <link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
 
         <link rel='stylesheet' href='./style/minify.css'>
         <link rel='stylesheet' href='./style/navbar.css'>
     </head>
 
     <body>
+
         <!-- Use the navbar class for the navigation bar -->
         <div class="navbar">
             <!-- Use the logo class for the logo image -->
@@ -52,38 +52,52 @@
                 navLinks.classList.toggle('show');
             });
         </script>
-        <div id="container">
-            <h1>Terser Minifier</h1>
-            <p>A JavaScript minifier powered by Terser. Terser is a JavaScript parser and minifier that provides a
-                complete
-                beautifier toolkit for ES6+.</p>
-            <p>Enter your JavaScript code in the input textarea below, choose some options, and click the “Minify”
-                button to see the output.</p>
-            <div class="main">
-                <textarea id="input" rows="10" cols="80"></textarea>
-                <textarea id="output" wrap="hard" rows="10" cols="80" onchange="updateSizeLabels()"></textarea>
+        <main class="p-4">
+            <div class="container mx-auto">
+                <h1 class="text-4xl font-bold">JavaScript Minifier</h1>
+                <p class="text-xl text-gray-600">With Google Closure Compiler</p>
+                <hr class="my-4 border-gray-300">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 inputs">
+                    <div>
+                        <h4 class="text-2xl font-semibold">Enter JavaScript Here</h4>
+                        <div class="input-group">
+                            <textarea id="input" class="form-control h-64 resize-none border rounded p-2">// ADD YOUR CODE HERE
+        function hello(name) {
+        
+        alert('Hello, ' + name);
+        }
+        hello('New user');</textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-semibold">Get your compressed code here</h4>
+                        <div class="input-group">
+                            <textarea id="output" class="form-control h-64 resize-none border rounded p-2"
+                                readonly></textarea>
+                        </div>
+                        <small id="stats" class="text-gray-500"></small>
+                    </div>
+                </div>
+                <hr class="my-4 border-gray-300">
+                <button id="go"
+                    class="btn btn-outline-primary btn-lg d-block w-full mt-4 py-2 px-4 border rounded text-lg font-bold text-blue-600 hover:bg-blue-100"
+                    onclick="blink()">Compile</button>
+
+
+                <div id="options" class="flex items-center">
+                    <h4 class="text-2xl font-semibold mr-2">Advanced Options...</h4>
+
+                </div>
             </div>
-
-
-            <button id="minify">Minify</button>
-            <!-- Displaying options -->
-            <div id="options">
-                <label for="compress">Compress:</label>
-                <input type="checkbox" id="compress" checked>
-                <label for="mangle">Mangle:</label>
-                <input type="checkbox" id="mangle" checked>
-                <label for="beautify">Beautify:</label>
-                <input type="checkbox" id="beautify" checked>
-            </div>
-
-            <span id="inputSizeLabel">Input Size: <div id="inputLabel">0</div> KB</span>
-            <span id="outputSizeLabel">Output Size: <div id="outputLabel">0</div> KB</span>
-
-        </div>
-        <script type="module" src="./scripts/minify.js"></script>
+        </main>
         <script src="./scripts/minify.js"></script>
-
-
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const inputElement = document.getElementById('input');
+                const outputElement = document.getElementById('output');
+                synchronizeScroll(inputElement, outputElement);
+            });
+        </script>
     </body>
 
 </html>

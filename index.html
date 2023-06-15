@@ -20,7 +20,6 @@
 		<link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
-
 		<link rel="stylesheet" href="./style/home.css">
 		<link rel='stylesheet' href='./style/navbar.css'> <!-- Link to the navbar css file -->
 
@@ -53,61 +52,40 @@
 				navLinks.classList.toggle('show');
 			});
 		</script>
-		<!-- End navigation -->
-
 		<main class="container py-8">
 			<section id="about">
-				<h1 class="h3 text-center font-weight-bold">JSreact: A code playground for quick prototyping</h1>
+				<h1 class="h3 text-center font-weight-bold">JSreact: A code playground for JavaScript enthusiasts.</h1>
 				<p class="lead text-center text-muted">Write, test and view your code in real time with JSreact. Whether
 					you're
-					a novice or a pro, JSreact lets you experiment with code and see your results live</p>
-				<script type="text/javascript"
-					src="https://cdn.jsdelivr.net/npm/monaco-editor/min/vs/loader.js"></script>
+					a novice or a pro, JSreact lets you experiment with code and see your results instantly.</p>
+				<section id="code-editor" class="p-0">
+				</section>
+			</section>
+		</main>
 
-				<div class="wrapper">
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				// Get all "navbar-burger" elements
+				const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
-					<div class="editor">
+				// Check if there are any navbar burgers
+				if (navbarBurgers.length > 0) {
+					// Add a click event on each of them
+					navbarBurgers.forEach((navbarBurger) => {
+						navbarBurger.addEventListener('click', () => {
+							// Get the target from the "data-target" attribute
+							const target = navbarBurger.dataset.target;
+							const targetElement = document.getElementById(target);
 
-						<div class="editor__code">
-							<div id="editorCode">
-
-							</div>
-
-						</div>
-						<div class="buttons">
-							<button class="button" id="editorCopyClipboard">Copy to clipboard</button>
-						</div><br>
-
-						<div class="editor__preview">
-							<iframe id="editorPreview" frameborder="none"></iframe>
-						</div>
-					</div>
-
-				</div>
-
-				<script>
-					document.addEventListener('DOMContentLoaded', () => {
-						// Get all "navbar-burger" elements
-						const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-						// Check if there are any navbar burgers
-						if (navbarBurgers.length > 0) {
-							// Add a click event on each of them
-							navbarBurgers.forEach((navbarBurger) => {
-								navbarBurger.addEventListener('click', () => {
-									// Get the target from the "data-target" attribute
-									const target = navbarBurger.dataset.target;
-									const targetElement = document.getElementById(target);
-
-									// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-									navbarBurger.classList.toggle('is-active');
-									targetElement.classList.toggle('is-active');
-								});
-							});
-						}
+							// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+							navbarBurger.classList.toggle('is-active');
+							targetElement.classList.toggle('is-active');
+						});
 					});
-				</script>
-				<script src="./scripts/home.js"></script>
+				}
+			});
+		</script>
+		<script src="./scripts/home.js"></script>
 	</body>
 
 </html>
