@@ -5,6 +5,10 @@ h1 {
     font-weight: 700
 }
 
+h1.text-4xl.font-bold {
+    margin: 0 auto;
+}
+
 .text-xl,
 .title {
     font-size: 1.5rem
@@ -100,6 +104,11 @@ div#options {
 }
 
 p.text-xl.text-gray-600 {
+    margin: 0 auto;
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
     color: #1a6edd;
     font-weight: 300
 }
@@ -124,8 +133,8 @@ div {
 
 .container.mx-auto {
     flex-wrap: wrap;
-    flex-direction: column;
-    align-content: center
+    margin: 0 auto;
+    place-content: center;
 }
 
 textarea#input,
@@ -150,7 +159,6 @@ button#go {
 
 main.p-4 {
     margin: 0 auto;
-    background: #f8f8f8
 }
 
 hr.my-4.border-gray-300 {
