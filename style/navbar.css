@@ -29,7 +29,8 @@
 }
 
 .nav-link:hover {
-    background-color: #061a40
+    background-color: #061a40;
+    color: #fafafa;
 }
 
 .hamburger {

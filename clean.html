@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-ZEFG04PXR7');
+        </script>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Clean Text</title>
+        <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
+        <link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
+        <link rel='stylesheet' href='./style/navbar.css'> <!-- Link to the navbar css file -->
+        <link rel='stylesheet' href='./style/clean.css'>
+    </head>
+
+    <body>
+        <!-- Use the navbar class for the navigation bar -->
+        <div class="navbar">
+            <!-- Use the logo class for the logo image -->
+            <img src="./images/logo.png" alt="logo" class="logo">
+            <!-- Use the hamburger class for the hamburger menu -->
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <!-- Use the nav-links class for the list of links -->
+            <ul class="nav-links" id="nav-links">
+                <!-- Use the nav-link class for each link -->
+                <li><a href="./index.html" class="nav-link">Code Editor</a></li>
+                <li><a href="./chat.html" class="nav-link">Talk to GPT</a></li>
+                <li><a href="./minify.html" class="nav-link">Minify Code</a></li>
+                <li><a href="./clean.html" class="nav-link">Clean Text</a></li>
+            </ul>
+        </div>
+        <script>
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+
+            hamburger.addEventListener('click', function () {
+                navLinks.classList.toggle('show');
+            });
+        </script>
+        <div class="container">
+            <section class="section">
+                <div class="columns">
+                    <div class="column">
+                        <div id="app">
+                            <h1 class="heading is-primary">Clean Text</h1>
+                            <form>
+                                <div class="field">
+                                    <label class="label">Input</label>
+                                    <div class="control">
+                                        <textarea id="input" class="textarea is-secondary"></textarea>
+                                    </div>
+                                </div>
+                                <div class="field"><br>
+                                    <div class="control">
+                                        <input type="button" class="button" onclick="ioText('clean');"
+                                            value="Remove Line Breaks"
+                                            title="trim, remove line breaks, remove double spaces">
+                                        <input type="button" class="button" onclick="ioText('remove_punctuation');"
+                                            value="Remove Punctuation">
+                                        <input type="button" class="button is-muted"
+                                            onclick="ioText('copy_to_clipboard');" value="Copy to Clipboard">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Output</label>
+                                    <div class="control">
+                                        <textarea id="output" class="textarea" readonly="true"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all "navbar-burger" elements
+            const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            // Check if there are any navbar burgers
+            if (navbarBurgers.length > 0) {
+                // Add a click event on each of them
+                navbarBurgers.forEach((navbarBurger) => {
+                    navbarBurger.addEventListener('click', () => {
+                        // Get the target from the "data-target" attribute
+                        const target = navbarBurger.dataset.target;
+                        const targetElement = document.getElementById(target);
+
+                        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                        navbarBurger.classList.toggle('is-active');
+                        targetElement.classList.toggle('is-active');
+                    });
+                });
+            }
+        });
+    </script>
+
+    <script src="./scripts/clean.js"></script>
+
+    </body>
+
+</html>
