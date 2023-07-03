@@ -20,63 +20,42 @@
 		<link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
+
 		<link rel="stylesheet" href="./style/chat.css">
-		<link rel='stylesheet' href='./style/navbar.css'> <!-- Link to the navbar css file -->
+		<script src="./scripts/navbar.js"></script>
 
 	</head>
 
 	<body>
-		<!-- Use the navbar class for the navigation bar -->
-		<div class="navbar">
-			<!-- Use the logo class for the logo image -->
-			<img src="./images/logo.png" alt="logo" class="logo">
-			<!-- Use the hamburger class for the hamburger menu -->
-			<div class="hamburger" id="hamburger">
-				<div></div>
-				<div></div>
-				<div></div>
-			</div>
-			<!-- Use the nav-links class for the list of links -->
-			<ul class="nav-links" id="nav-links">
-				<!-- Use the nav-link class for each link -->
-				<li><a href="./index.html" class="nav-link">Code Editor</a></li>
-				<li><a href="./chat.html" class="nav-link">Talk to GPT</a></li>
-				<li><a href="./minify.html" class="nav-link">Minify Code</a></li>
-				<li><a href="./clean.html" class="nav-link">Clean Text</a></li>
-
-			</ul>
-		</div>
 		<script>
-			const hamburger = document.getElementById('hamburger');
-			const navLinks = document.getElementById('nav-links');
+			// Call the createNavbar function and place it at the top of the page
+			createNavbar();
 
-			hamburger.addEventListener('click', function () {
-				navLinks.classList.toggle('show');
-			});
+			// Move the navbar element to the top of the page
+			const navbar = document.querySelector("nav");
+			document.body.insertBefore(navbar, document.body.firstChild);
 		</script>
-		<div class="container mx-auto py-8">
+		<div class="container mx-auto py-5">
 			<div class="row justify-content-center">
 				<div class="col-md-6 col-lg-8">
 					<div class="card">
 						<div class="card-body">
-							<h2 class="card-title text-center">Talk to GPT</h2>
-							<div class="form-group">
-								<label for="api-key-input"></label>
-								<input type="text" id="api-key-input" placeholder="Enter your OpenAI API key"
-									class="form-control">
-							</div>
-							<div class="form-group">
-								<div class="input-group">
-									<input type="text" id="input-text" placeholder="Enter your message here"
-										class="form-control">
+							<h2 class="card-title text-center mb-4">Talk to GPT</h2>
+							<form>
+								<div class="form-group">
+									<label for="api-key-input">Enter your OpenAI API key</label>
+									<input type="text" id="api-key-input" class="form-control" placeholder="API Key">
 								</div>
-							</div>
-							<div class="form-group">
-								<div class="text-center">
+								<div class="form-group">
+									<label for="input-text">Enter your message here</label>
+									<input type="text" id="input-text" class="form-control" placeholder="Message">
+								</div>
+								<div class="form-group">
 									<button id="submit-button" class="btn btn-primary btn-block">Get Prediction</button>
 								</div>
-							</div>
-							<div id="response" class="card"></div>
+							</form>
+							<div id="response" class="card mt-4"></div>
 						</div>
 					</div>
 				</div>

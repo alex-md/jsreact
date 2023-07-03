@@ -20,95 +20,62 @@
 		<link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
+		<!-- Material-UI CSS -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 		<link rel="stylesheet" href="./style/home.css">
-		<link rel='stylesheet' href='./style/navbar.css'> <!-- Link to the navbar css file -->
-
+		<script src="./scripts/navbar.js"></script>
 	</head>
 
 	<body>
-		<!-- Use the navbar class for the navigation bar -->
-		<div class="navbar">
-			<!-- Use the logo class for the logo image -->
-			<img src="./images/logo.png" alt="logo" class="logo">
-			<!-- Use the hamburger class for the hamburger menu -->
-			<div class="hamburger" id="hamburger">
-				<div></div>
-				<div></div>
-				<div></div>
-			</div>
-			<!-- Use the nav-links class for the list of links -->
-			<ul class="nav-links" id="nav-links">
-				<!-- Use the nav-link class for each link -->
-				<li><a href="./index.html" class="nav-link">Code Editor</a></li>
-				<li><a href="./chat.html" class="nav-link">Talk to GPT</a></li>
-				<li><a href="./minify.html" class="nav-link">Minify Code</a></li>
-				<li><a href="./clean.html" class="nav-link">Clean Text</a></li>
-
-			</ul>
-		</div>
 		<script>
-			const hamburger = document.getElementById('hamburger');
-			const navLinks = document.getElementById('nav-links');
+			// Call the createNavbar function and place it at the top of the page
+			createNavbar();
 
-			hamburger.addEventListener('click', function () {
-				navLinks.classList.toggle('show');
-			});
+			// Move the navbar element to the top of the page
+			const navbar = document.querySelector("nav");
+			document.body.insertBefore(navbar, document.body.firstChild);
 		</script>
-		<!-- End navigation -->
 
-		<main class="container py-8">
-			<section id="about">
-				<h1 class="h3 text-center font-weight-bold">JSreact: A code playground for quick prototyping</h1>
-				<p class="lead text-center text-muted">Write, test and view your code in real time with JSreact. Whether
-					you're
-					a novice or a pro, JSreact lets you experiment with code and see your results live</p>
-				<script type="text/javascript"
-					src="https://cdn.jsdelivr.net/npm/monaco-editor/min/vs/loader.js"></script>
-
-				<div class="wrapper">
-
-					<div class="editor">
-
-						<div class="editor__code">
-							<div id="editorCode">
-
-							</div>
-
-						</div>
-						<div class="buttons">
-							<button class="button" id="editorCopyClipboard">Copy to clipboard</button>
-						</div><br>
-
-						<div class="editor__preview">
-							<iframe id="editorPreview" frameborder="none"></iframe>
+		<div class="container">
+			<h1 class="mt-5 text-center">Developer Tools</h1>
+			<div class="row mt-5">
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Minify Code</h5>
+							<p class="card-text">Minify your JavaScript code using the Google Closure Compiler</p>
+							<a href="./minify.html" class="btn btn-primary">Minify</a>
 						</div>
 					</div>
-
 				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Talk to GPT</h5>
+							<p class="card-text">Talk to GPT-4 from OpenAI</p>
+							<a href="./chat.html" class="btn btn-primary">Chat</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Clean Text</h5>
+							<p class="card-text">Clean text by removing line breaks, removing punctuation, and more</p>
+							<a href="./clean.html" class="btn btn-primary">Clean</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Material-UI JavaScript -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+		<!-- Bootstrap JavaScript -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-				<script>
-					document.addEventListener('DOMContentLoaded', () => {
-						// Get all "navbar-burger" elements
-						const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-						// Check if there are any navbar burgers
-						if (navbarBurgers.length > 0) {
-							// Add a click event on each of them
-							navbarBurgers.forEach((navbarBurger) => {
-								navbarBurger.addEventListener('click', () => {
-									// Get the target from the "data-target" attribute
-									const target = navbarBurger.dataset.target;
-									const targetElement = document.getElementById(target);
-
-									// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-									navbarBurger.classList.toggle('is-active');
-									targetElement.classList.toggle('is-active');
-								});
-							});
-						}
-					});
-				</script>
-				<script src="./scripts/home.js"></script>
+		<script src="./scripts/home.js"></script>
 	</body>
 
 </html>

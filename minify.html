@@ -19,76 +19,56 @@
         <link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
 
         <link rel='stylesheet' href='./style/minify.css'>
-        <link rel='stylesheet' href='./style/navbar.css'>
+        <script src="./scripts/navbar.js"></script>
     </head>
 
     <body>
 
-        <!-- Use the navbar class for the navigation bar -->
-        <div class="navbar">
-            <!-- Use the logo class for the logo image -->
-            <img src="./images/logo.png" alt="logo" class="logo">
-            <!-- Use the hamburger class for the hamburger menu -->
-            <div class="hamburger" id="hamburger">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <!-- Use the nav-links class for the list of links -->
-            <ul class="nav-links" id="nav-links">
-                <!-- Use the nav-link class for each link -->
-                <li><a href="./index.html" class="nav-link">Code Editor</a></li>
-                <li><a href="./chat.html" class="nav-link">Talk to GPT</a></li>
-                <li><a href="./minify.html" class="nav-link">Minify Code</a></li>
-                <li><a href="./clean.html" class="nav-link">Clean Text</a></li>
-
-            </ul>
-        </div>
         <script>
-            const hamburger = document.getElementById('hamburger');
-            const navLinks = document.getElementById('nav-links');
+            // Call the createNavbar function and place it at the top of the page
+            createNavbar();
 
-            hamburger.addEventListener('click', function () {
-                navLinks.classList.toggle('show');
-            });
+            // Move the navbar element to the top of the page
+            const navbar = document.querySelector("nav");
+            document.body.insertBefore(navbar, document.body.firstChild);
         </script>
         <main class="p-4">
             <div class="container mx-auto">
-                <h1 class="text-4xl font-bold">JavaScript Minifier</h1>
-                <p class="text-xl text-gray-600">With Google Closure Compiler</p>
-                <hr class="my-4 border-gray-300">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 inputs">
-                    <div>
-                        <h4 class="text-2xl font-semibold">Enter JavaScript Here</h4>
+                <h1 class="text-center display-4 font-weight-bold">JavaScript Minifier</h1>
+                <p class="text-center lead">With Google Closure Compiler</p>
+                <hr class="my-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="text-center font-weight-bold">Enter JavaScript Here</h4>
                         <div class="input-group">
-                            <textarea id="input" class="form-control h-64 resize-none border rounded p-2">// ADD YOUR CODE HERE
-        function hello(name) {
-        
-        alert('Hello, ' + name);
-        }
-        hello('New user');</textarea>
+                            <textarea id="input" class="form-control h-64 resize-none border rounded p-2">
+function hello(name) {
+
+alert('Hello, ' + name);
+}
+hello('New user');
+    </textarea>
                         </div>
                     </div>
-                    <div>
-                        <h4 class="text-2xl font-semibold">Get your compressed code here</h4>
+                    <div class="col-md-6">
+                        <h4 class="text-center font-weight-bold">Get your compressed code here</h4>
                         <div class="input-group">
                             <textarea id="output" class="form-control h-64 resize-none border rounded p-2"
-                                readonly></textarea>
+                                placeholder="Your compressed code will appear here" readonly></textarea>
                         </div>
-                        <small id="stats" class="text-gray-500"></small>
+                        <small id="stats" class="text-muted"></small>
                     </div>
                 </div>
-                <hr class="my-4 border-gray-300">
+                <hr class="my-4">
                 <button id="go"
-                    class="btn btn-outline-primary btn-lg d-block w-full mt-4 py-2 px-4 border rounded text-lg font-bold text-blue-600 hover:bg-blue-100"
+                    class="btn btn-primary btn-lg d-block mx-auto w-100 py-2 px-4 rounded-pill font-weight-bold"
                     onclick="blink()">Compile</button>
-
-
-                <div id="options" class="flex items-center">
-                    <h4 class="text-2xl font-semibold mr-2">Advanced Options...</h4>
-
+                <div id="options" class="text-center mt-4">
+                    <h4 class="font-weight-bold">Advanced Options...</h4>
                 </div>
             </div>
         </main>

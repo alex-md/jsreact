@@ -185,13 +185,18 @@ function buildURL(domain, params) {
         domain += `${keys}=${encodeURIComponent(param)}&`;
     }
 }
+
 function blink() {
     DOM.go.classList.add('blink');
-    const blinkingInterval1 = setInterval(() => {
+    const blinkingInterval = setInterval(() => {
         DOM.go.classList.toggle('');
     }, 500);
+    setTimeout(() => {
+        clearInterval(blinkingInterval);
+    }, 5000);
     compile();
 }
+
 DOM.go.onclick = blink;
 initializeOptions();
 

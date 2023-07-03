@@ -18,6 +18,11 @@ body {
 	align-items: center
 }
 
+img {
+	max-width: 100%;
+	max-height: 60px
+}
+
 .card {
 	box-shadow: 0 0 6px #ccc
 }
