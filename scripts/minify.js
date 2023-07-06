@@ -111,15 +111,29 @@ function compile() {
     // Callback function to handle the response from the API
     let callback = function (data) {
         // Parse the JSON response
-        let parsed = JSON.parse(data);
+        let parsed;
+        try {
+            parsed = JSON.parse(data);
+        } catch (error) {
+            showError("Invalid response from the API.");
+            return;
+        }
+
         let keys = Object.keys(parsed);
+
+        // Check if there are any compilation errors
+        if (parsed.errors && parsed.errors.length > 0) {
+            showError("Compilation error: " + parsed.errors[0]['error'] + " on line " + parsed.errors[0]['lineno']);
+            return;
+        }
 
         // Iterate over the keys in the response object
         for (let i = 0; i < keys.length; i++) {
             switch (keys[i]) {
                 case 'compiledCode':
                     // Display the compiled code in the output element
-                    DOM.output.innerHTML = parsed.compiledCode.replace('// Input 0', '').trim();
+                    // Trim the leading text 'use strict' and any whitespace
+                    DOM.output.innerHTML = parsed.compiledCode.replace(/^\s*'use strict';\s*/, '').trim();
                     break;
                 case 'statistics':
                     // Display statistics about the compression
@@ -145,8 +159,12 @@ function compile() {
 
     // Set up the callback function for handling the response
     xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            callback.call(window, xhttp.responseText);
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                callback.call(window, xhttp.responseText);
+            } else {
+                showError("An error occurred during the request.");
+            }
         }
     };
 
@@ -159,6 +177,18 @@ function compile() {
     // Send the request
     xhttp.send();
 }
+
+function showError(errorMessage) {
+    DOM.output.innerHTML = errorMessage;
+    DOM.output.style.color = '#b22b27'; // Set error text color to red
+    DOM.go.disabled = false;
+    DOM.go.innerHTML = 'Compile!';
+    clearInterval(blinkingInterval);
+    DOM.go.classList.remove('blink');
+    DOM.go.classList.add('btn-danger');
+}
+
+
 // This function takes a domain and a params object and returns a URL string with the parameters appended to the domain.
 function buildURL(domain, params) {
     // If the domain doesn't already have a query string, add one.
