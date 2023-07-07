@@ -48,7 +48,7 @@ button#submit-button {
 }
 
 div#response {
-	height: 10vh;
+	height: fit-content;
 	padding: 1em;
 	border: thin solid #ddd;
 	background: #f1f1f1
