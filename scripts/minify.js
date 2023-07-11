@@ -91,6 +91,7 @@ function createOptions(options, wrapper, domOptions) {
 function compile() {
     // Disable the "Compile" button and display "Compiling..." text
     DOM.go.disabled = true;
+
     DOM.go.innerHTML = "Compiling...";
 
     // Build the URL for the Closure Compiler API
@@ -105,7 +106,7 @@ function compile() {
             'statistics'
         ],
         formatting: DOM.options.formatting.value,
-        language_out: 'ECMASCRIPT_2015'
+        language_out: 'ECMASCRIPT_2020'
     });
 
     // Callback function to handle the response from the API
@@ -134,6 +135,7 @@ function compile() {
                     // Display the compiled code in the output element
                     // Trim the leading text 'use strict' and any whitespace
                     DOM.output.innerHTML = parsed.compiledCode.replace(/^\s*'use strict';\s*/, '').trim();
+                    DOM.output.style.color = '#000'; // Set text color to black
                     break;
                 case 'statistics':
                     // Display statistics about the compression
