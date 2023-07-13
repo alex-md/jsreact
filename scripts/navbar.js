@@ -79,7 +79,11 @@
 
         const ul = document.createElement('ul');
         ul.classList.add('navbar-nav', 'ml-auto');
-
+        ul.style.display = 'flex';
+        ul.style.flexDirection = 'row';
+        ul.style.paddingLeft = '0';
+        ul.style.marginBottom = '0';
+        ul.style.listStyle = 'none';
         for (const item of navItems) {
             const li = document.createElement('li');
             li.classList.add('nav-item', 'ml-auto');

@@ -40,8 +40,7 @@
 			createNavbar();
 
 			// Move the navbar element to the top of the page
-			const navbar = document.querySelector("nav");
-			document.body.insertBefore(navbar, document.body.firstChild);
+			document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
 		</script>
 		<div class="container mx-auto py-5">
 			<div class="row justify-content-center">

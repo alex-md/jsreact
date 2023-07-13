@@ -4,7 +4,7 @@ body {
     margin: 0 auto;
     padding-bottom: 3em;
     font-family: Inter, sans-serif;
-    min-height: 90vh;
+    /* min-height: 90vh; */
     display: grid;
     align-content: space-evenly;
     background: #f6f6f6
@@ -23,6 +23,7 @@ p.text-center.lead {
     margin: 0 auto;
     min-width: 80vw;
     display: flex;
+    min-height: 100vh;
     flex-direction: column
 }
 
