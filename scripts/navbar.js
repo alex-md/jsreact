@@ -17,6 +17,11 @@
             text: 'Clean Text',
             span: false,
         },
+        {
+            href: './diff.html',
+            text: 'Diff Checker',
+            span: false,
+        },
     ];
 
     // Import the inter font from google fonts

@@ -1,0 +1,76 @@
+@import url(https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600&display=swap);
+
+body {
+    margin: 0 auto;
+    padding-bottom: 3em;
+    font-family: Inter, sans-serif;
+    min-height: 90vh;
+    display: grid;
+    align-content: space-evenly;
+    background: #f6f6f6
+}
+
+h4.text-center.font-weight-bold {
+    font-size: x-large;
+    color: #6f7275;
+}
+
+p.text-center.lead {
+    color: #757575
+}
+
+#container {
+    margin: 0 auto;
+    min-width: 80vw;
+    display: flex;
+    flex-direction: column
+}
+
+.card {
+    border-radius: 5px;
+    padding: 1vw;
+    background-color: #fafafa;
+    box-shadow: 0 .25vw .5vw rgba(0, 0, 0, .1);
+}
+
+.card-title {
+    font-weight: 700;
+    margin-bottom: 1vw;
+    color: #333;
+}
+
+#errorContainer,
+.alert {
+    visibility: hidden
+}
+
+.text-center {
+    margin: .5em auto;
+}
+
+.btn {
+    padding: 1em 2em;
+    font-weight: 600;
+    border-radius: .5em;
+    background: #70b1bf;
+    outline: auto;
+    transition: background-color .3s
+}
+
+.row {
+    margin: 0 auto;
+    max-width: 90vw;
+    width: 90vw;
+}
+
+.col {
+    flex: 1 1 50%;
+    max-width: 50%
+}
+
+@media screen and (max-width: 48em) {
+    .col {
+        flex: 1 1 100%;
+        max-width: 100%
+    }
+}

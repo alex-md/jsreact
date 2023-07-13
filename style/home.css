@@ -14,6 +14,11 @@ body {
 	font-family: Roboto, sans-serif
 }
 
+.row.mt-5 {
+	align-items: normal;
+}
+
+
 .container {
 	flex-direction: row;
 	justify-content: space-around;
@@ -29,6 +34,7 @@ h1 {
 
 
 .card {
+	margin: 0.2em;
 	background-color: #fff;
 	border-radius: 8px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
