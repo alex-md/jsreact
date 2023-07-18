@@ -40,6 +40,18 @@ p.text-center.lead {
     color: #333;
 }
 
+button#findDiffBtn {
+    margin: 1em;
+}
+
+div#diffResponseArea {
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin: 0 auto;
+    width: auto;
+    max-width: 90vw;
+}
+
 #errorContainer,
 .alert {
     visibility: hidden

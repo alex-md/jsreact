@@ -1,6 +1,4 @@
-// Wrap the code in an IIFE to avoid polluting the global namespace
 (function () {
-    // Define the nav items as a constant outside of the function
     const navItems = [
         {
             href: './minify.html',
@@ -24,91 +22,75 @@
         },
     ];
 
-    // Import the inter font from google fonts
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css?family=Inter&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-
-    // Define a function to create the navbar
-    function createNavbar() {
-        const nav = document.createElement('nav');
-        nav.classList.add('navbar-expand-lg', 'navbar-light', 'bg-light');
+    let link = document.createElement("link");
+    function createNavbar () {
+        let nav = document.createElement("nav");
+        nav.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "shadow-sm");
         nav.style.fontFamily = "'Inter', Helvetica, Arial, sans-serif";
-        nav.style.fontSize = '1.1rem';
-        nav.style.display = 'flex';
+        nav.style.fontSize = "1.1rem";
 
-        const topContainer = document.createElement('div');
-        topContainer.classList.add('topContainer');
-        topContainer.style.borderBottom = 'thin solid rgb(204, 204, 204)';
-        topContainer.style.margin = '0 auto';
-        topContainer.style.padding = '0 2em';
-        topContainer.style.boxShadow = 'rgba(0, 0, 0, 0.1) 0px 0px 5px';
-        topContainer.style.backgroundColor = 'rgb(234, 234, 234)';
-        topContainer.style.width = '100%';
-        topContainer.style.display = 'flex';
+        let container = document.createElement("div");
+        container.classList.add("container-fluid");
 
-        const logoLink = document.createElement('a');
-        logoLink.classList.add('navbar-brand');
-        logoLink.href = './index.html';
+        let logoLink = document.createElement("a");
+        logoLink.classList.add("navbar-brand");
+        logoLink.href = "./index.html";
 
-        const logo = document.createElement('img');
-        logo.src = './images/logo.png';
-        logo.alt = 'Logo';
-        logo.style.maxWidth = 'auto';
-        logo.style.maxHeight = '2.8em';
-        logo.style.margin = '0 auto';
+        let logo = document.createElement("img");
+        logo.src = "./images/logo.png";
+        logo.alt = "Logo";
+        logo.style.maxWidth = "auto";
+        logo.style.maxHeight = "2.8em";
+        logo.style.margin = "0 auto";
         logoLink.appendChild(logo);
 
-        const toggler = document.createElement('button');
-        toggler.classList.add('navbar-toggler', 'ml-auto');
-        toggler.type = 'button';
-        toggler.dataset.toggle = 'collapse';
-        toggler.dataset.target = '#navbarSupportedContent';
-        toggler.setAttribute('aria-controls', 'navbarSupportedContent');
-        toggler.setAttribute('aria-expanded', 'false');
-        toggler.setAttribute('aria-label', 'Toggle navigation');
+        let toggler = document.createElement("button");
+        toggler.classList.add("navbar-toggler");
+        toggler.type = "button";
+        toggler.dataset.bsToggle = "collapse";
+        toggler.dataset.bsTarget = "#navbarSupportedContent";
+        toggler.setAttribute("aria-controls", "navbarSupportedContent");
+        toggler.setAttribute("aria-expanded", "false");
+        toggler.setAttribute("aria-label", "Toggle navigation");
 
-        const span = document.createElement('span');
-        span.classList.add('navbar-toggler-icon', 'ml-auto');
+        let span = document.createElement("span");
+        span.classList.add("navbar-toggler-icon");
         toggler.appendChild(span);
 
-        const collapse = document.createElement('div');
-        collapse.id = 'navbarSupportedContent';
-        collapse.classList.add('collapse', 'navbar-collapse', 'ml-auto');
+        let collapse = document.createElement("div");
+        collapse.id = "navbarSupportedContent";
+        collapse.classList.add("collapse", "navbar-collapse");
 
-        const ul = document.createElement('ul');
-        ul.classList.add('navbar-nav', 'ml-auto');
-        ul.style.display = 'flex';
-        ul.style.flexDirection = 'row';
-        ul.style.paddingLeft = '0';
-        ul.style.marginBottom = '0';
-        ul.style.listStyle = 'none';
-        for (const item of navItems) {
-            const li = document.createElement('li');
-            li.classList.add('nav-item', 'ml-auto');
+        let ul = document.createElement("ul");
+        ul.classList.add("navbar-nav", "ms-auto");
 
-            const a = document.createElement('a');
-            a.classList.add('nav-link', 'ml-auto');
+        for (let item of navItems) {
+            let li = document.createElement("li");
+            li.classList.add("nav-item");
+
+            let a = document.createElement("a");
+            a.classList.add("nav-link");
             a.href = item.href;
             a.textContent = item.text;
-
             if (item.span) {
-                const span = document.createElement('span');
-                span.classList.add('sr-only', 'ml-auto');
+                let span = document.createElement("span");
+                span.classList.add("visually-hidden");
                 span.textContent = item.spanText;
                 a.appendChild(span);
             }
-
             li.appendChild(a);
             ul.appendChild(li);
         }
 
+        link.href = "https://fonts.googleapis.com/css?family=Inter&display=swap";
+        link.rel = "stylesheet";
+        document.head.appendChild(link);
+
         collapse.appendChild(ul);
-        topContainer.appendChild(logoLink);
-        topContainer.appendChild(toggler);
-        topContainer.appendChild(collapse);
-        nav.appendChild(topContainer);
+        container.appendChild(logoLink);
+        container.appendChild(toggler);
+        container.appendChild(collapse);
+        nav.appendChild(container);
         document.body.appendChild(nav);
 
         const navLinks = document.querySelectorAll('.nav-link');
@@ -136,6 +118,5 @@
     style.textContent = '.navbar-toggler-icon { transition: none; }';
     document.head.appendChild(style);
 
-    // Export the createNavbar function to be used elsewhere
     window.createNavbar = createNavbar;
 })();
