@@ -26,7 +26,7 @@
     function createNavbar () {
         let nav = document.createElement("nav");
         nav.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "shadow-sm");
-        nav.style.fontFamily = "'Inter', Helvetica, Arial, sans-serif";
+        nav.style.fontFamily = "'Nunito', Helvetica, Arial, sans-serif";
         nav.style.fontSize = "1.1rem";
 
         let container = document.createElement("div");
@@ -82,7 +82,7 @@
             ul.appendChild(li);
         }
 
-        link.href = "https://fonts.googleapis.com/css?family=Inter&display=swap";
+        link.href = "https://fonts.googleapis.com/css?family=Nunito&display=swap";
         link.rel = "stylesheet";
         document.head.appendChild(link);
 

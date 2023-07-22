@@ -27,8 +27,6 @@
         <meta name="theme-color" content="#ffffff">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
         <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css'>
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
-
         <link rel='stylesheet' href='./style/minify.css'>
         <script src="./scripts/navbar.js"></script>
     </head>
@@ -46,7 +44,6 @@
             <div class="container mx-auto">
                 <h1 class="text-center display-4 font-weight-bold">JavaScript Minifier</h1>
                 <p class="text-center lead">With Google Closure Compiler</p>
-                <hr class="my-4">
                 <div class="row">
                     <div class="col-md-6">
                         <h4 class="text-center font-weight-bold">Enter JavaScript Here</h4>
@@ -69,7 +66,6 @@ hello('New user');
                         <small id="stats" class="text-muted"></small>
                     </div>
                 </div>
-                <hr class="my-4">
                 <button id="go"
                     class="btn btn-primary btn-lg d-block mx-auto w-100 py-2 px-4 rounded-pill font-weight-bold"
                     onclick="blink()">Compile</button>
@@ -79,13 +75,6 @@ hello('New user');
             </div>
         </main>
         <script src="./scripts/minify.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const inputElement = document.getElementById('input');
-                const outputElement = document.getElementById('output');
-                synchronizeScroll(inputElement, outputElement);
-            });
-        </script>
     </body>
 
 </html>

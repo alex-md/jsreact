@@ -41,44 +41,35 @@
             document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
         </script>
         <div class="container">
-            <section class="section">
-                <div class="columns">
-                    <div class="column">
-                        <div id="app">
-                            <h1 class="heading is-primary">Clean Text</h1>
-                            <form>
-                                <div class="field">
-                                    <label class="label">Input</label>
-                                    <div class="control">
-                                        <textarea id="input" class="textarea is-secondary"></textarea>
-                                    </div>
-                                </div>
-                                <div class="field"><br>
-                                    <div class="control">
-                                        <input type="button" class="button" onclick="ioText('clean');"
-                                            value="Remove Line Breaks"
-                                            title="trim, remove line breaks, remove double spaces">
-                                        <input type="button" class="button" onclick="ioText('remove_punctuation');"
-                                            value="Remove Punctuation">
-                                        <input type="button" class="button is-muted"
-                                            onclick="ioText('copy_to_clipboard');" value="Copy to Clipboard">
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <label class="label">Output</label>
-                                    <div class="control">
-                                        <textarea id="output" class="textarea" readonly="true"></textarea>
-                                    </div>
-                                </div>
-                            </form>
+            <section class="my-5">
+                <h1 class="heading p-3">Clean Text</h1>
+                <form class="card-group flex-column">
+                    <div class="mb-3">
+                        <label class="label">Input</label>
+                        <div class="form-group">
+                            <textarea id="input" class="textarea btn-secondary"></textarea>
                         </div>
                     </div>
+                    <div class="mb-3"><br>
+                    </div>
+                    <div class="mb-4">
+                        <label class="label">Output</label>
+                        <div class="form-group">
+                            <textarea id="output" class="textarea" readonly="true"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="container-fluid flex-wrap text-end">
+                    <input type="btn" class="btn btn-outline-primary m-2 p-2" onclick="ioText('clean');"
+                        value="Remove Line Breaks" title="trim, remove line breaks, remove double spaces">
+                    <input type="btn" class="btn btn-outline-success m-2 p-2" onclick="ioText('remove_punctuation');"
+                        value="Remove Punctuation">
+                    <input type="btn" class="btn btn-outline-secondary m-2 p-2" onclick="ioText('copy_to_clipboard');"
+                        value="Copy to Clipboard">
                 </div>
             </section>
         </div>
-
         <script src="./scripts/clean.js"></script>
-
     </body>
 
 </html>

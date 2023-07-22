@@ -13,7 +13,7 @@ let DOM = {
  * Initializes the options object with the compilation level and formatting options.
  * Calls createOptions to create the user interface for the options.
  */
-function initializeOptions() {
+function initializeOptions () {
     let options = {
         compilation_level: {
             names: [
@@ -52,7 +52,7 @@ function initializeOptions() {
  * @param {HTMLElement} wrapper - The HTML element that will contain the options.
  * @param {Object} domOptions - The object that will contain the DOM elements for the options.
  */
-function createOptions(options, wrapper, domOptions) {
+function createOptions (options, wrapper, domOptions) {
     let row;
     let keys = Object.keys(options);
     for (let i = 0; i < keys.length; i++) {
@@ -88,7 +88,7 @@ function createOptions(options, wrapper, domOptions) {
         row.appendChild(col);
     }
 }
-function compile() {
+function compile () {
     // Disable the "Compile" button and display "Compiling..." text
     DOM.go.disabled = true;
 
@@ -180,7 +180,7 @@ function compile() {
     xhttp.send();
 }
 
-function showError(errorMessage) {
+function showError (errorMessage) {
     DOM.output.innerHTML = errorMessage;
     DOM.output.style.color = '#b22b27'; // Set error text color to red
     DOM.go.disabled = false;
@@ -192,7 +192,7 @@ function showError(errorMessage) {
 
 
 // This function takes a domain and a params object and returns a URL string with the parameters appended to the domain.
-function buildURL(domain, params) {
+function buildURL (domain, params) {
     // If the domain doesn't already have a query string, add one.
     if (!domain.includes('?')) {
         domain += '?';
@@ -213,12 +213,12 @@ function buildURL(domain, params) {
     // Remove the trailing '&' character and return the URL string.
     return domain.slice(0, -1);
     // This function adds a single parameter to the domain string.
-    function addParameter(param) {
+    function addParameter (param) {
         domain += `${keys}=${encodeURIComponent(param)}&`;
     }
 }
 
-function blink() {
+function blink () {
     DOM.go.classList.add('blink');
     const blinkingInterval = setInterval(() => {
         DOM.go.classList.toggle('');
@@ -236,8 +236,8 @@ initializeOptions();
 // This function synchronizes the scrolling of two elements, an input element and an output element.
 // It calculates the ratio of the input element's scroll position to its total scrollable height, and applies that ratio to the output element's total scrollable height to determine the output element's scroll position.
 // It then sets the output element's scroll position to the calculated value.
-function synchronizeScroll(inputElement, outputElement) {
-    function handleScroll() {
+function synchronizeScroll (inputElement, outputElement) {
+    function handleScroll () {
         const { scrollTop, scrollHeight, clientHeight } = this;
         const outputScrollHeight = outputElement.scrollHeight;
         const outputClientHeight = outputElement.clientHeight;
