@@ -43,41 +43,71 @@
             document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
         </script>
 
-        <div id="container">
-            <h2 class="text-center display-4 font-weight-bold">Online Diff Viewer</h2>
-            <small class="text-center lead">Quickly find the difference between two texts.</small>
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-title">Original Text</div>
-                        <textarea class="form-control" id="originalTextArea"
-                            placeholder="Enter the original text here...">This is the original text.</textarea>
+        <body>
+            <div class="container my-5">
+
+                <h2 class="display-4 text-center mb-2">Online Diff Viewer</h2>
+
+                <p class="text-center lead">Quickly find the difference between two texts.</p>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                Original Text
+                            </div>
+                            <div class="card-body">
+                                <textarea class="form-control" id="originalTextArea"
+                                    placeholder="Enter the original text here...">This is the original text.</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                Modified Text
+                            </div>
+                            <div class="card-body">
+                                <textarea class="form-control" id="modifiedTextArea"
+                                    placeholder="Enter the modified text here...">This is also the same text but modified.</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-center">
+                    <button id="findDiffBtn" class="btn btn-outline-primary shadow-sm">Find Difference</button>
+                </div>
+
+                <div id="diffResponseArea" class="card mt-5" style="display:none">
+                    <div class="card-header">
+                        Difference
+                    </div>
+                    <div class="card-body">
+                        <pre id="diffResponseContainer"></pre>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="card-title">Modified Text</div>
-                        <textarea class="form-control" id="modifiedTextArea"
-                            placeholder="Enter the modified text here...">This is also the same text but modified.</textarea>
-                    </div>
-                </div>
+
             </div>
-            <div class="text-center">
-                <button id="findDiffBtn" type="button" class="btn btn-primary">Find Difference</button>
-            </div>
-            <div id="diffResponseArea" class="card" style="display:none">
-                <div class="card-title">Difference</div>
-                <pre id="diffResponseContainer"></pre>
-            </div>
-        </div>
-        <div id="errorContainer" class="alert alert-danger" style="display:none">
-        </div>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js'></script>
-        <script
-            src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/display/placeholder.min.js'></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js'></script>
-        <script src="./scripts/diff.js"></script>
-    </body>
+
+            <div id="errorContainer" class="alert alert-danger" style="display:none"></div>
+
+            <!-- Scripts -->
+
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js'></script>
+
+            <script
+                src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/display/placeholder.min.js'></script>
+
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js'></script>
+
+            <script src="./scripts/diff.js"></script>
+
+        </body>
 
 </html>

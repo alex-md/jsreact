@@ -48,13 +48,13 @@ findDiffBtn.addEventListener('click', () => {
     showDiff(sanitisedDiffText);
 });
 
-function showError(message) {
+function showError (message) {
     diffResponseArea.style.display = 'none';
     errorContainer.textContent = message;
     errorContainer.style.display = 'block';
 }
 
-function showDiff(diffText) {
+function showDiff (diffText) {
     errorContainer.style.display = 'none';
     diffResponseContainer.innerHTML = diffText;
     diffResponseArea.style.display = 'flex';
