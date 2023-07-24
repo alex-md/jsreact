@@ -11,25 +11,19 @@
 
             gtag('config', 'G-ZEFG04PXR7');
         </script>
-        <meta charset="UTF-8" />
-        <meta name="robots" content="index, follow">
-        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>Clean Text</title>
-        <link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-        <link rel="manifest" href="./images/site.webmanifest">
-        <link rel="mask-icon" href="./images/safari-pinned-tab.svg" color="#5bbad5">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-        <meta name="apple-mobile-web-app-title" content="Jsreact">
-        <meta name="application-name" content="Jsreact">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
+        <title>Text Cleaner Tool</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <meta name="description" content="Online text cleaning tool to remove formatting, punctuation, and whitespace.">
+        <link rel="icon" href="./images/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css'>
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
-        <link rel='stylesheet' href='./style/clean.css'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./style/clean.css">
         <script src="./scripts/navbar.js"></script>
+        <script src="./scripts/clean.js" defer></script>
+        <meta name="theme-color" content="#ffffff">
     </head>
 
     <body>
@@ -42,30 +36,34 @@
         </script>
         <div class="container">
             <section class="my-5">
-                <h1 class="heading p-3">Clean Text</h1>
-                <form class="card-group flex-column">
-                    <div class="mb-3">
-                        <label class="label">Input</label>
-                        <div class="form-group">
-                            <textarea id="input" class="textarea btn-secondary"></textarea>
+                <h1 class="display-4 text-center mb-3">Clean Text</h1>
+                <div class="card-body p-5 shadow">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="input" class="form-label">Input</label>
+                                    <textarea id="input" class="form-control" rows="5"></textarea>
+                                </div>
+                                <div class="mb-3"><br></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="output" class="form-label">Output</label>
+                                    <textarea id="output" class="form-control" rows="5" readonly="true"></textarea>
+                                </div>
+                            </div>
                         </div>
+                    </form>
+                    <div class="container-fluid d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary m-2" onclick="ioText('clean');"
+                            title="trim, remove line breaks, remove double spaces">Remove Line Breaks</button>
+                        <button type="button" class="btn btn-success m-2" onclick="ioText('remove_punctuation');">Remove
+                            Punctuation</button>
+                        <button type="button" class="btn btn-secondary m-2" onclick="ioText('copy_to_clipboard');">Copy
+                            to
+                            Clipboard</button>
                     </div>
-                    <div class="mb-3"><br>
-                    </div>
-                    <div class="mb-4">
-                        <label class="label">Output</label>
-                        <div class="form-group">
-                            <textarea id="output" class="textarea" readonly="true"></textarea>
-                        </div>
-                    </div>
-                </form>
-                <div class="container-fluid flex-wrap text-end">
-                    <input type="btn" class="btn btn-outline-primary m-2 p-2" onclick="ioText('clean');"
-                        value="Remove Line Breaks" title="trim, remove line breaks, remove double spaces">
-                    <input type="btn" class="btn btn-outline-success m-2 p-2" onclick="ioText('remove_punctuation');"
-                        value="Remove Punctuation">
-                    <input type="btn" class="btn btn-outline-secondary m-2 p-2" onclick="ioText('copy_to_clipboard');"
-                        value="Copy to Clipboard">
                 </div>
             </section>
         </div>

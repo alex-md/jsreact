@@ -11,27 +11,20 @@
 
             gtag('config', 'G-ZEFG04PXR7');
         </script>
-        <meta charset="UTF-8" />
-        <meta name="robots" content="index, follow">
-        <meta charset="UTF-8">
+        <title>Text Diff Tool</title>
+
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Diff Viewer</title>
-        <link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-        <link rel="manifest" href="./images/site.webmanifest">
-        <link rel="mask-icon" href="./images/safari-pinned-tab.svg" color="#5bbad5">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-        <meta name="apple-mobile-web-app-title" content="Jsreact">
-        <meta name="application-name" content="Jsreact">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css'>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+        <meta name="description" content="Compare two text snippets and highlight the differences online.">
+        <link rel="icon" href="./images/favicon.ico">
         <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css'>
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="./style/diff.css">
         <script src="./scripts/navbar.js"></script>
+        <script src="./scripts/diff.js" defer></script>
+        <meta name="theme-color" content="#ffffff">
     </head>
 
     <body>
@@ -54,7 +47,7 @@
 
                     <div class="col-md-6">
                         <div class="card mb-3">
-                            <div class="card-header">
+                            <div class="card-header bg-primary text-white">
                                 Original Text
                             </div>
                             <div class="card-body">
@@ -66,7 +59,7 @@
 
                     <div class="col-md-6">
                         <div class="card mb-3">
-                            <div class="card-header">
+                            <div class="card-header bg-primary text-white">
                                 Modified Text
                             </div>
                             <div class="card-body">
@@ -93,7 +86,7 @@
 
             </div>
 
-            <div id="errorContainer" class="alert alert-danger" style="display:none"></div>
+            <div id="errorContainer" class="alert alert-danger d-none"></div>
 
             <!-- Scripts -->
 
