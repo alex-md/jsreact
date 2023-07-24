@@ -25,7 +25,7 @@
     let link = document.createElement("link");
     function createNavbar () {
         let nav = document.createElement("nav");
-        nav.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "shadow-sm");
+        nav.classList.add("navbar", "navbar-expand-lg", "bg-light", "navbar-light", "shadow");
         nav.style.fontFamily = "'Nunito', Helvetica, Arial, sans-serif";
         nav.style.fontSize = "1.1rem";
 
