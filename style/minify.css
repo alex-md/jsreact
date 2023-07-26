@@ -1,57 +1,45 @@
 .title,
 h1 {
-    font-weight: bold;
-    font-size: 2.5rem;
-}
-
-h4.text-center.font-weight-bold {
-    color: #6c757d;
+    font-weight: 700;
+    font-size: 2.5rem
 }
 
 body {
-    background-color: #fafafa;
-    height: 100vh;
+    height: 100vh
 }
 
 button#go {
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.75rem;
-    max-width: 40vw;
+    max-width: 40vw
 }
 
+#stats,
 p.text-center.lead {
-    color: #6c757d;
+    color: #6c757d
 }
 
 .container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-around
 }
 
-#options,
 div#options {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
     flex-direction: row;
+    display: grid
 }
 
-#input,
-#output,
 textarea {
-    padding: 1rem;
-    border-radius: .25rem;
     height: 30vh;
     width: 100%;
-}
-
-#stats {
-    color: #6c757d;
-}
-
-div#options {
-    display: grid;
+    resize: none;
+    border-radius: .25rem;
+    padding: .5rem;
+    margin: .5rem
 }
 
 .container.mx-auto {
@@ -59,19 +47,11 @@ div#options {
     margin-right: auto;
     display: flex;
     flex-direction: column;
-    width: 100%;
-}
-
-textarea {
-    width: 100%;
-    resize: none;
-    border-radius: .25rem;
-    padding: .5rem;
-    margin: .5rem;
+    width: 100%
 }
 
 @media (max-width:798px) {
     .container {
-        padding: .5rem;
+        padding: .5rem
     }
 }

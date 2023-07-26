@@ -1,85 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 
-	<head>
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag () { dataLayer.push(arguments); }
-			gtag('js', new Date());
+<head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag () { dataLayer.push(arguments); }
+		gtag('js', new Date());
 
-			gtag('config', 'G-ZEFG04PXR7');
-		</script>
-		<title>JSreact - Web Developer Tools</title>
+		gtag('config', 'G-ZEFG04PXR7');
+	</script>
+	<title>JSreact - Web Developer Tools</title>
 
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description"
-			content="Collection of web developer tools for minifying code, cleaning text, comparing diffs, and more.">
-		<meta name="robots" content="index, follow">
-		<link rel=" icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-		<link rel="shortcut icon" href="./images/favicon.ico">
-		<meta name="theme-color" content="#ffffff">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css'>
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-		<link rel="stylesheet" href="./style/home.css">
-		<script src="./scripts/navbar.js"></script>
-	</head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description"
+		content="Collection of web developer tools for minifying code, cleaning text, comparing diffs, and more.">
+	<meta name="robots" content="index, follow">
+	<link rel=" icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+	<link rel="shortcut icon" href="./images/favicon.ico">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css'>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+	<link rel="stylesheet" href="./style/home.css">
+	<script src="./scripts/navbar.js"></script>
+</head>
 
-	<body>
-		<script>
-			// Call the createNavbar function and place it at the top of the page
-			createNavbar();
+<body>
+	<script>
+		// Call the createNavbar function and place it at the top of the page
+		createNavbar();
 
-			// Move the navbar element to the top of the page
-			document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
-		</script>
+		// Move the navbar element to the top of the page
+		document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
+	</script>
 
-		<div class="container">
-			<h1 class="mt-5 text-center">Developer Tools</h1>
-			<div class="row mt-5">
-				<div class="col-md-4">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">Minify Code</h5>
-							<p class="card-text">Minify your JavaScript code using the Google Closure Compiler</p>
-							<a href="./minify.html" class="btn btn-primary">Minify</a>
-						</div>
+	<div class="container">
+		<h1 class="mt-5 text-center">Developer Tools<br>
+			<p class="text-center lead">Collection of web developer tools for minifying code, cleaning text, comparing
+				diffs, and more.</p>
+		</h1>
+
+		<div class="row mt-5">
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Minify Code</h5>
+						<p class="card-text">Minify your JavaScript code using the Google Closure Compiler</p>
+						<a href="./minify.html" class="btn btn-primary">Minify</a>
 					</div>
 				</div>
-				<div class="col-md-4">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">Clean Text</h5>
-							<p class="card-text">Clean text by removing line breaks, removing punctuation, and more</p>
-							<a href="./clean.html" class="btn btn-primary">Clean</a>
-						</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Clean Text</h5>
+						<p class="card-text">Clean text by removing line breaks, removing punctuation, and more</p>
+						<a href="./clean.html" class="btn btn-primary">Clean</a>
 					</div>
 				</div>
-				<div class="col-md-4">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">Diff Checker</h5>
-							<p class="card-text">Compare two pieces of text, and highlight the differences between them
-							</p>
-							<a href="./diff.html" class="btn btn-primary">Compare</a>
-						</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Diff Checker</h5>
+						<p class="card-text">Compare two pieces of text, and highlight the differences between them
+						</p>
+						<a href="./diff.html" class="btn btn-primary">Compare</a>
 					</div>
 				</div>
-				<div class="col-md-4">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">Talk to GPT</h5>
-							<p class="card-text">Talk to GPT-4 from OpenAI</p>
-							<a href="./chat.html" class="btn btn-primary">Chat</a>
-						</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Talk to GPT</h5>
+						<p class="card-text">Talk to GPT-4 from OpenAI</p>
+						<a href="./chat.html" class="btn btn-primary">Chat</a>
 					</div>
 				</div>
 			</div>
 		</div>
-	</body>
+	</div>
+</body>
 
 </html>

@@ -1,26 +1,15 @@
-@import url(https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&display=swap);
 
 .div,
 .form-group {
 	flex-direction: column
 }
 
-.title,
-h1 {
-	font-weight: 700
-}
-
 body {
-	font-family: Inter, sans-serif;
+	font-family: Nunito, sans-serif;
 	font-size: clamp(1rem, 2vw, 1.2rem);
 	color: #333;
-	background-color: #f9f9f9;
 	height: 100vh
-}
-
-h2.card-title.text-center.mb-4 {
-	font-size: x-large;
-	font-family: Inter
 }
 
 label {
@@ -30,7 +19,7 @@ label {
 }
 
 button#submit-button {
-	border: transparent;
+	border: transparent
 }
 
 .form-group {
@@ -43,7 +32,7 @@ button#submit-button {
 	display: grid;
 	justify-items: space-evenly;
 	padding: 1rem;
-	grid-gap: 4rem;
+	grid-gap: 4rem
 }
 
 div#response {
@@ -60,17 +49,7 @@ div#response {
 }
 
 .card {
-	box-shadow: 0 0 6px #ccc;
-}
-
-.col-md-6.col-lg-8 {
-	min-width: 50vw
-}
-
-.container.mx-auto.py-8 {
-	margin: 0 auto;
-	padding: 5em;
-	max-width: min-content
+	box-shadow: 0 0 6px #ccc
 }
 
 .form-group {
@@ -84,19 +63,14 @@ div#response {
 	height: 50vh
 }
 
-
-.title {
-	font-size: 1.5rem;
-	margin-bottom: 1rem
-}
-
-
-h1 {
-	font-size: 2.5rem
-}
-
 .input-group {
 	position: relative
+}
+
+h1 {
+	font-weight: 700;
+	font-family: Helvetica, sans-serif;
+
 }
 
 @media (max-width:768px) {
