@@ -1,0 +1,66 @@
+$title-font-weight: 700;
+$title-font-size: 2.5rem;
+$button-font-weight: 700;
+$button-font-size: 1.75rem;
+$button-max-width: 40vw;
+$text-color: #6c757d;
+$textarea-height: 30vh;
+$container-padding: .5rem;
+
+.title,
+h1 {
+    font-weight: $title-font-weight;
+    font-size: $title-font-size;
+}
+
+body {
+    height: 100vh;
+}
+
+button#go {
+    font-weight: $button-font-weight;
+    font-size: $button-font-size;
+    max-width: $button-max-width;
+}
+
+#stats,
+p.text-center.lead {
+    color: $text-color;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+div#options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    flex-direction: row;
+    display: grid;
+}
+
+textarea {
+    height: $textarea-height;
+    width: 100%;
+    resize: none;
+    border-radius: .25rem;
+    padding: .5rem;
+    margin: .5rem;
+}
+
+.container.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+@media (max-width: 798px) {
+    .container {
+        padding: $container-padding;
+    }
+}
