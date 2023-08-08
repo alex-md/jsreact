@@ -4,7 +4,8 @@
   "description": "Developer utilities and tools",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sass": "node-sass -w style -o style"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/alex-md/jsreact/issues"
   },
-  "homepage": "https://github.com/alex-md/jsreact#readme"
+  "homepage": "https://github.com/alex-md/jsreact#readme",
+  "dependencies": {
+    "node-sass": "^9.0.0"
+  }
 }

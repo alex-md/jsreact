@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700&display=swap');
+
+$color-primary: #212529;
+$color-secondary: #3a3a3a;
+
+$container-max-width: 80vw;
+$container-max-width-mobile: 90vw;
+$container-max-width-small: 95vw;
+
+.container,
+section.section {
+    display: flex;
+    align-content: stretch;
+}
+
+body,
+h1 {
+    color: $color-primary;
+}
+
+#input,
+#output {
+    color: $color-secondary;
+    resize: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+section.section {
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.control {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.container {
+    max-width: $container-max-width;
+    margin: 0 auto;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.label {
+    color: $color-secondary;
+}
+
+@media only screen and (max-width: 768px) {
+    .container {
+        max-width: $container-max-width-mobile;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .container {
+        max-width: $container-max-width-small;
+    }
+
+    h1.heading {
+        font-size: 1.5rem;
+    }
+}

@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700&display=swap');
+
+$color-primary: #0d6efd;
+$color-primary-hover: #025ce2;
+$color-text: #212529;
+$color-text-secondary: #6c757d;
+$color-background: #f8f9fa;
+$color-card-background: #fff;
+$color-card-shadow: rgba(0, 0, 0, .15);
+
+$font-family: 'Nunito', sans-serif;
+$font-size-base: 1rem;
+$font-size-heading: 2.5rem;
+$font-weight-heading: 700;
+
+@mixin card-hover {
+  &:hover {
+    box-shadow: 0 1rem 2rem $color-card-shadow;
+  }
+}
+
+body,
+h1 {
+  color: $color-text;
+}
+
+h1,
+p {
+  margin-bottom: 1rem;
+}
+
+body {
+  font-size: $font-size-base;
+  background-color: $color-background;
+}
+
+.row.mt-5 {
+  align-items: normal;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+}
+
+h1 {
+  font-size: $font-size-heading;
+  font-weight: $font-weight-heading;
+  text-align: center;
+  font-family: $font-family;
+}
+
+.card {
+  margin: 0.5rem;
+  background-color: $color-card-background;
+  border-radius: .25rem;
+  box-shadow: 0 0.5rem 1rem $color-card-shadow;
+  transition: box-shadow .3s ease-in-out;
+  @include card-hover;
+}
+
+.card-title {
+  color: $color-text;
+  font-weight: 600;
+}
+
+.card-text {
+  color: $color-text-secondary;
+}
+
+.btn-primary {
+  background-color: $color-primary;
+  border-color: $color-primary;
+  transition: background-color .3s ease-in-out;
+  &:hover {
+    background-color: $color-primary-hover;
+    border-color: $color-primary-hover;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 1.5rem;
+  }
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
