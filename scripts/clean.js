@@ -1,4 +1,4 @@
-function ioText(action) {
+function ioText (action) {
     var input = document.getElementById('input');
     var output = document.getElementById('output');
 
@@ -15,17 +15,17 @@ function ioText(action) {
     }
 }
 
-function cleanText(text) {
+function cleanText (text) {
     // Trim whitespace, remove line breaks, add space in front of text on new line
     return text.trim().replace(/\n/g, ' ').replace(/(\S)\n(\S)/g, '$1 $2').replace(/\s+/g, ' ');
 }
 
-function removePunctuation(text) {
+function removePunctuation (text) {
     // Remove punctuation using regular expression
     return text.replace(/[^\w\s]|_/g, '').replace(/\s+/g, ' ');
 }
 
-function copyToClipboard(text) {
+function copyToClipboard (text) {
     // Create a temporary textarea to copy the text to the clipboard
     var tempTextarea = document.createElement('textarea');
     tempTextarea.value = text;
