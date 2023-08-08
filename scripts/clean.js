@@ -34,3 +34,31 @@ function copyToClipboard (text) {
     document.execCommand('copy');
     document.body.removeChild(tempTextarea);
 }
+
+
+// Add this to your JavaScript file
+const copyBtn = document.getElementById('copy-btn');
+const popupCard = document.getElementById('popup-card');
+
+copyBtn.addEventListener('click', () => {
+    copyBtn.classList.add('copy-animation');
+    setTimeout(() => {
+        copyBtn.classList.remove('copy-animation');
+    }, 500);
+
+    // Show the popup card for 1 second
+    popupCard.classList.add('show');
+    setTimeout(() => {
+        popupCard.classList.remove('show');
+    }, 1000);
+
+    // Copy the text to the clipboard
+    const output = document.getElementById('output');
+    output.select();
+    document.execCommand('copy');
+});
+
+// Position the popup card above the copy button
+const copyBtnRect = copyBtn.getBoundingClientRect();
+popupCard.style.bottom = `${window.innerHeight - copyBtnRect.top + 10}px`;
+popupCard.style.left = `${copyBtnRect.left}px`;

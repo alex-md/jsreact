@@ -62,8 +62,13 @@
                         title="trim, remove line breaks, remove double spaces">Remove Line Breaks</button>
                     <button type="button" class="btn btn-success m-2" onclick="ioText('remove_punctuation')">Remove
                         Punctuation</button>
-                    <button type="button" class="btn btn-secondary m-2" onclick="ioText('copy_to_clipboard')">Copy to
+                    <button type="button" class="btn btn-secondary m-2" onclick="ioText('copy_to_clipboard')"
+                        id="copy-btn">Copy to
                         Clipboard</button>
+
+                    <div class="popup-card" id="popup-card">
+                        Copied!
+                    </div>
                 </div>
             </div>
         </section>

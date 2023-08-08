@@ -65,3 +65,38 @@ section.section {
         font-size: 1.5rem
     }
 }
+
+/* Add this to your CSS file */
+.popup-card {
+    position: absolute;
+    bottom: calc(100% + 1rem);
+    background-color: #e2e4e2;
+    border: 1px solid #c5c7c5;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    display: none;
+}
+
+.popup-card.show {
+    display: block;
+    animation-name: popup-animation;
+    animation-duration: 1s;
+}
+
+@keyframes popup-animation {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+}
