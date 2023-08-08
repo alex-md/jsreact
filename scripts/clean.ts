@@ -1,6 +1,6 @@
-function ioText (action) {
-    var input = document.getElementById('input');
-    var output = document.getElementById('output');
+function ioText(action: string): void {
+    const input = document.getElementById('input') as HTMLInputElement;
+    const output = document.getElementById('output') as HTMLInputElement;
 
     switch (action) {
         case 'clean':
@@ -15,19 +15,19 @@ function ioText (action) {
     }
 }
 
-function cleanText (text) {
+function cleanText(text: string): string {
     // Trim whitespace, remove line breaks, add space in front of text on new line
     return text.trim().replace(/\n/g, ' ').replace(/(\S)\n(\S)/g, '$1 $2').replace(/\s+/g, ' ');
 }
 
-function removePunctuation (text) {
+function removePunctuation(text: string): string {
     // Remove punctuation using regular expression
     return text.replace(/[^\w\s]|_/g, '').replace(/\s+/g, ' ');
 }
 
-function copyToClipboard (text) {
+function copyToClipboard(text: string): void {
     // Create a temporary textarea to copy the text to the clipboard
-    var tempTextarea = document.createElement('textarea');
+    const tempTextarea = document.createElement('textarea');
     tempTextarea.value = text;
     document.body.appendChild(tempTextarea);
     tempTextarea.select();
@@ -35,10 +35,9 @@ function copyToClipboard (text) {
     document.body.removeChild(tempTextarea);
 }
 
-
 // Add this to your JavaScript file
-const copyBtn = document.getElementById('copy-btn');
-const popupCard = document.getElementById('popup-card');
+const copyBtn = document.getElementById('copy-btn') as HTMLButtonElement;
+const popupCard = document.getElementById('popup-card') as HTMLDivElement;
 
 copyBtn.addEventListener('click', () => {
     copyBtn.classList.add('copy-animation');
@@ -53,7 +52,7 @@ copyBtn.addEventListener('click', () => {
     }, 1000);
 
     // Copy the text to the clipboard
-    const output = document.getElementById('output');
+    const output = document.getElementById('output') as HTMLInputElement;
     output.select();
     document.execCommand('copy');
 });

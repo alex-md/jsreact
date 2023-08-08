@@ -1,19 +1,19 @@
-function createToolCard (title, description, link, buttonText) {
-  const card = document.createElement('div');
+function createToolCard(title: string, description: string, link: string, buttonText: string): HTMLDivElement {
+  const card: HTMLDivElement = document.createElement('div');
   card.className = 'col-md-6 col-lg-4 mb-4';
 
-  const cardBody = document.createElement('div');
+  const cardBody: HTMLDivElement = document.createElement('div');
   cardBody.className = 'card card-body mx-auto h-100 d-flex flex-column';
 
-  const cardTitle = document.createElement('h5');
+  const cardTitle: HTMLHeadingElement = document.createElement('h5');
   cardTitle.className = 'card-title';
   cardTitle.textContent = title;
 
-  const cardText = document.createElement('p');
+  const cardText: HTMLParagraphElement = document.createElement('p');
   cardText.className = 'card-text';
   cardText.textContent = description;
 
-  const cardButton = document.createElement('a');
+  const cardButton: HTMLAnchorElement = document.createElement('a');
   cardButton.className = 'btn btn-primary w-50 align-self-center';
   cardButton.href = link;
   cardButton.textContent = `${buttonText}`;
@@ -27,29 +27,29 @@ function createToolCard (title, description, link, buttonText) {
   return card;
 }
 
-function createToolList (title, description, tools) {
-  const container = document.createElement('div');
+function createToolList(title: string, description: string, tools: { title: string, description: string, link: string, buttonText: string }[]): HTMLDivElement {
+  const container: HTMLDivElement = document.createElement('div');
   container.className = 'container';
 
-  const heading = document.createElement('h1');
+  const heading: HTMLHeadingElement = document.createElement('h1');
   heading.className = 'mt-5 text-center';
   heading.textContent = title;
 
-  const subheading = document.createElement('p');
+  const subheading: HTMLParagraphElement = document.createElement('p');
   subheading.className = 'text-center lead';
   subheading.textContent = description;
 
   heading.appendChild(subheading);
   container.appendChild(heading);
 
-  const row = document.createElement('div');
+  const row: HTMLDivElement = document.createElement('div');
   row.className = 'row mt-5';
 
-  const fragment = document.createDocumentFragment();
+  const fragment: DocumentFragment = document.createDocumentFragment();
 
   for (const tool of tools) {
-    const card = createToolCard(tool.title, tool.description, tool.link, tool.buttonText);
-    card.querySelector('.card').classList.add('shadow', 'rounded');
+    const card: HTMLDivElement = createToolCard(tool.title, tool.description, tool.link, tool.buttonText);
+    card.querySelector('.card')!.classList.add('shadow', 'rounded');
     fragment.appendChild(card);
   }
 
@@ -59,7 +59,7 @@ function createToolList (title, description, tools) {
   return container;
 }
 
-const tools = [
+const tools: { title: string, description: string, link: string, buttonText: string }[] = [
   {
     title: 'Minify Code',
     description: 'Minify your JavaScript code using the Google Closure Compiler',
@@ -86,6 +86,6 @@ const tools = [
   }
 ];
 
-const toolList = createToolList('Developer Tools', 'Collection of web developer tools for minifying code, cleaning text, comparing diffs, and more.', tools);
+const toolList: HTMLDivElement = createToolList('Developer Tools', 'Collection of web developer tools for minifying code, cleaning text, comparing diffs, and more.', tools);
 
 document.body.appendChild(toolList);

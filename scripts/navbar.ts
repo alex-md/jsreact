@@ -1,5 +1,5 @@
 (function () {
-    const navItems = [
+    const navItems: { href: string, text: string, span: boolean, spanText?: string }[] = [
         {
             href: './minify.html',
             text: 'Minify',
@@ -23,7 +23,7 @@
     ];
 
     let link = document.createElement("link");
-    function createNavbar () {
+    function createNavbar(): void {
         let nav = document.createElement("nav");
         nav.classList.add("navbar", "navbar-expand-lg", "bg-light", "navbar-light", "shadow");
         nav.style.fontFamily = "'Nunito', Helvetica, Arial, sans-serif";

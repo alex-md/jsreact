@@ -1,11 +1,21 @@
 // Define an object that contains references to various DOM elements
-let DOM = {
-    go: document.getElementById("go"), // The "Compile" button
-    input: document.getElementById("input"), // The input code textarea
-    output: document.getElementById("output"), // The output code textarea
-    stats: document.getElementById("stats"), // The statistics textarea
-    log: document.getElementById("log"), // The log textarea
-    optionsWrapper: document.getElementById("options"), // The wrapper for the options
+let DOM: {
+    go: HTMLElement,
+    input: HTMLTextAreaElement,
+    output: HTMLTextAreaElement,
+    stats: HTMLTextAreaElement,
+    log: HTMLTextAreaElement,
+    optionsWrapper: HTMLElement,
+    options: {
+        [key: string]: HTMLSelectElement
+    }
+} = {
+    go: document.getElementById("go")!, // The "Compile" button
+    input: document.getElementById("input") as HTMLTextAreaElement, // The input code textarea
+    output: document.getElementById("output") as HTMLTextAreaElement, // The output code textarea
+    stats: document.getElementById("stats") as HTMLTextAreaElement, // The statistics textarea
+    log: document.getElementById("log") as HTMLTextAreaElement, // The log textarea
+    optionsWrapper: document.getElementById("options")!, // The wrapper for the options
     options: {} // An object that will contain the DOM elements for the options
 };
 
@@ -13,8 +23,15 @@ let DOM = {
  * Initializes the options object with the compilation level and formatting options.
  * Calls createOptions to create the user interface for the options.
  */
-function initializeOptions () {
-    let options = {
+function initializeOptions(): void {
+    let options: {
+        [key: string]: {
+            names: string[],
+            values: string[],
+            default: string,
+            label: string
+        }
+    } = {
         compilation_level: {
             names: [
                 "Whitespace",
@@ -52,9 +69,18 @@ function initializeOptions () {
  * @param {HTMLElement} wrapper - The HTML element that will contain the options.
  * @param {Object} domOptions - The object that will contain the DOM elements for the options.
  */
-function createOptions (options, wrapper, domOptions) {
-    let row;
-    let keys = Object.keys(options);
+function createOptions(options: {
+    [key: string]: {
+        names: string[],
+        values: string[],
+        default: string,
+        label: string
+    }
+}, wrapper: HTMLElement, domOptions: {
+    [key: string]: HTMLSelectElement
+}): void {
+    let row: HTMLDivElement;
+    let keys: string[] = Object.keys(options);
     for (let i = 0; i < keys.length; i++) {
         if (i % 2 === 0) {
             row = document.createElement("div");
@@ -88,7 +114,8 @@ function createOptions (options, wrapper, domOptions) {
         row.appendChild(col);
     }
 }
-function compile () {
+
+function compile(): void {
     // Disable the "Compile" button and display "Compiling..." text
     DOM.go.disabled = true;
 
@@ -110,9 +137,11 @@ function compile () {
     });
 
     // Callback function to handle the response from the API
-    let callback = function (data) {
+    let callback = function (data: string): void {
         // Parse the JSON response
-        let parsed;
+        let parsed: {
+            [key: string]: any
+        };
         try {
             parsed = JSON.parse(data);
         } catch (error) {
@@ -120,7 +149,7 @@ function compile () {
             return;
         }
 
-        let keys = Object.keys(parsed);
+        let keys: string[] = Object.keys(parsed);
 
         // Check if there are any compilation errors
         if (parsed.errors && parsed.errors.length > 0) {
@@ -160,7 +189,7 @@ function compile () {
     let xhttp = new XMLHttpRequest();
 
     // Set up the callback function for handling the response
-    xhttp.onreadystatechange = function () {
+    xhttp.onreadystatechange = function (): void {
         if (this.readyState === 4) {
             if (this.status === 200) {
                 callback.call(window, xhttp.responseText);
@@ -180,7 +209,7 @@ function compile () {
     xhttp.send();
 }
 
-function showError (errorMessage) {
+function showError(errorMessage: string): void {
     DOM.output.innerHTML = errorMessage;
     DOM.output.style.color = '#b22b27'; // Set error text color to red
     DOM.go.disabled = false;
@@ -192,13 +221,15 @@ function showError (errorMessage) {
 
 
 // This function takes a domain and a params object and returns a URL string with the parameters appended to the domain.
-function buildURL (domain, params) {
+function buildURL(domain: string, params: {
+    [key: string]: any
+}): string {
     // If the domain doesn't already have a query string, add one.
     if (!domain.includes('?')) {
         domain += '?';
     }
     // Loop through the keys of the params object.
-    let keys = Object.keys(params);
+    let keys: string[] = Object.keys(params);
     for (keys of keys) {
         // If the value of the key is an array, loop through the array and add each value as a separate parameter.
         if (Array.isArray(params[keys])) {
@@ -213,12 +244,12 @@ function buildURL (domain, params) {
     // Remove the trailing '&' character and return the URL string.
     return domain.slice(0, -1);
     // This function adds a single parameter to the domain string.
-    function addParameter (param) {
+    function addParameter(param: any): void {
         domain += `${keys}=${encodeURIComponent(param)}&`;
     }
 }
 
-function blink () {
+function blink(): void {
     DOM.go.classList.add('blink');
     const blinkingInterval = setInterval(() => {
         DOM.go.classList.toggle('');
@@ -236,16 +267,9 @@ initializeOptions();
 // This function synchronizes the scrolling of two elements, an input element and an output element.
 // It calculates the ratio of the input element's scroll position to its total scrollable height, and applies that ratio to the output element's total scrollable height to determine the output element's scroll position.
 // It then sets the output element's scroll position to the calculated value.
-function synchronizeScroll (inputElement, outputElement) {
-    function handleScroll () {
-        const { scrollTop, scrollHeight, clientHeight } = this;
+function synchronizeScroll(inputElement: HTMLElement, outputElement: HTMLElement): void {
+    function handleScroll(): void {
+        const { scrollTop, scrollHeight, clientHeight } = this as HTMLTextAreaElement;
         const outputScrollHeight = outputElement.scrollHeight;
         const outputClientHeight = outputElement.clientHeight;
-        const ratio = scrollTop / (scrollHeight - clientHeight);
-        const outputScrollTop = Math.round((outputScrollHeight - outputClientHeight) * ratio);
-        outputElement.scrollTop = outputScrollTop;
-    }
-    // Add event listeners to both elements to call the handleScroll function whenever they are scrolled.
-    inputElement.addEventListener('scroll', handleScroll);
-    outputElement.addEventListener('scroll', handleScroll);
-}
+        const ratio = scrollTop / (scrollHeight - clientHeight
