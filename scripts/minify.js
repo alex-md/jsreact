@@ -106,7 +106,7 @@ function compile () {
             'statistics'
         ],
         formatting: DOM.options.formatting.value,
-        language_out: 'ECMASCRIPT_2020'
+        language_out: 'ECMASCRIPT_2015'
     });
 
     // Callback function to handle the response from the API
@@ -231,21 +231,3 @@ function blink () {
 
 DOM.go.onclick = blink;
 initializeOptions();
-
-
-// This function synchronizes the scrolling of two elements, an input element and an output element.
-// It calculates the ratio of the input element's scroll position to its total scrollable height, and applies that ratio to the output element's total scrollable height to determine the output element's scroll position.
-// It then sets the output element's scroll position to the calculated value.
-function synchronizeScroll (inputElement, outputElement) {
-    function handleScroll () {
-        const { scrollTop, scrollHeight, clientHeight } = this;
-        const outputScrollHeight = outputElement.scrollHeight;
-        const outputClientHeight = outputElement.clientHeight;
-        const ratio = scrollTop / (scrollHeight - clientHeight);
-        const outputScrollTop = Math.round((outputScrollHeight - outputClientHeight) * ratio);
-        outputElement.scrollTop = outputScrollTop;
-    }
-    // Add event listeners to both elements to call the handleScroll function whenever they are scrolled.
-    inputElement.addEventListener('scroll', handleScroll);
-    outputElement.addEventListener('scroll', handleScroll);
-}
