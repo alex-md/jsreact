@@ -1,4 +1,3 @@
-.title,
 h1 {
     font-weight: 700;
     font-size: 2.5rem
@@ -19,12 +18,6 @@ p.text-center.lead {
     color: #6c757d
 }
 
-.container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around
-}
-
 div#options {
     display: flex;
     flex-wrap: wrap;
@@ -40,18 +33,4 @@ textarea {
     border-radius: .25rem;
     padding: .5rem;
     margin: .5rem
-}
-
-.container.mx-auto {
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    flex-direction: column;
-    width: 100%
-}
-
-@media (max-width:798px) {
-    .container {
-        padding: .5rem
-    }
 }
