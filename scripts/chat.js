@@ -16,7 +16,7 @@ submitButton.addEventListener("click", handleSubmit);
 // Add event listener to input text element
 inputText.addEventListener("keydown", handleKeyDown);
 
-async function handleSubmit(event) {
+async function handleSubmit (event) {
 	event.preventDefault(); // Prevent default form submission behavior
 
 	// Get input text
@@ -48,26 +48,29 @@ async function handleSubmit(event) {
 		// Display response
 		promptHistory.push(aiResponse);
 		responseDiv.innerHTML = promptHistory
-			.map((prompt) => `<p>${prompt}</p>`)
-			.join("<br>"); // Add line break between prompts
+			.map((prompt) => `<p class="chat-message">${prompt}</p>`)
+			.join("");
 		inputText.value = "";
 	} catch (error) {
 		console.error(error);
 	}
 }
 
-function handleKeyDown(event) {
+function handleKeyDown (event) {
 	if (event.key === "Enter") {
 		event.preventDefault();
 		submitButton.click();
 	}
 }
 
-async function getAIResponse(prompt, apiKey) {
+async function getAIResponse (prompt, apiKey) {
 	// Set request data
 	const requestData = {
-		model: "text-davinci-003",
-		prompt: `${promptHistory.join("\n")}\nHuman: ${prompt}\nAI:`,
+		model: "gpt-3.5-turbo",
+		messages: [
+			...promptHistory.map(content => ({ role: 'user', content })),
+			{ role: 'user', content: prompt }
+		],
 		temperature: 0.7,
 		max_tokens: 160,
 		top_p: 1,
@@ -86,9 +89,9 @@ async function getAIResponse(prompt, apiKey) {
 	};
 
 	// Make API request
-	const response = await fetch("https://api.openai.com/v1/completions", options);
+	const response = await fetch("https://api.openai.com/v1/chat/completions", options);
 	const data = await response.json();
 
 	// Return AI response
-	return data.choices[0].text;
+	return data.choices[0].message.content;
 }

@@ -24,7 +24,7 @@
 	<meta name="theme-color" content="#ffffff">
 </head>
 
-<body>
+<body class="text-gray-900">
 	<script>
 		// Call the createNavbar function and place it at the top of the page
 		createNavbar();
@@ -32,13 +32,13 @@
 		// Move the navbar element to the top of the page
 		document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
 	</script>
-	<div class="container">
+	<div class="container flex flex-col flex-wrap justify-between">
 		<div class="row justify-content-center">
 			<div class="col-md-12 col-lg-10">
 				<div class="card my-5">
-					<h1 class="card-header text-center">Talk to GPT</h1>
+					<h1 class="card-header text-center text-gray-900">Talk to GPT</h1>
 					<div class="card-body">
-						<form>
+						<form class="flex flex-col items-stretch flex-wrap">
 							<div class="mb-3">
 								<label for="api-key-input" class="form-label">Enter your OpenAI API key</label>
 								<input type="text" id="api-key-input" class="form-control" placeholder="API Key">

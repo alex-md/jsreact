@@ -1,104 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag () { dataLayer.push(arguments); }
-            gtag('js', new Date());
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag () { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-            gtag('config', 'G-ZEFG04PXR7');
-        </script>
-        <title>Text Diff Tool</title>
+        gtag('config', 'G-ZEFG04PXR7');
+    </script>
+    <title>Text Diff Tool</title>
 
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <meta name="description" content="Compare two text snippets and highlight the differences online.">
-        <link rel="icon" href="./images/favicon.ico">
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css'>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="./style/diff.css">
-        <script src="./scripts/navbar.js"></script>
-        <script src="./scripts/diff.js" defer></script>
-        <meta name="theme-color" content="#ffffff">
-    </head>
+    <meta name="description" content="Compare two text snippets and highlight the differences online.">
+    <link rel="icon" href="./images/favicon.ico">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style/diff.css">
+    <script src="./scripts/navbar.js"></script>
+    <script src="./scripts/diff.js" defer></script>
+    <meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+    <script>
+        // Call the createNavbar function and place it at the top of the page
+        createNavbar();
+
+        // Move the navbar element to the top of the page
+        document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
+    </script>
 
     <body>
-        <script>
-            // Call the createNavbar function and place it at the top of the page
-            createNavbar();
+        <div class="container my-5">
+            <h1 class="text-center display-4 fw-bold">Online Diff Viewer</h1>
+            <p class="text-center lead">Quickly find the difference between two texts.</p>
 
-            // Move the navbar element to the top of the page
-            document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
-        </script>
+            <div class="row">
 
-        <body>
-            <div class="container my-5">
-                <h1 class="text-center display-4 fw-bold">Online Diff Viewer</h1>
-                <p class="text-center lead">Quickly find the difference between two texts.</p>
-
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <div class="card mb-3">
-                            <div class="card-header bg-primary text-white">
-                                Original Text
-                            </div>
-                            <div class="card-body">
-                                <textarea class="form-control" id="originalTextArea"
-                                    placeholder="Enter the original text here...">This is the original text.</textarea>
-                            </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header bg-gray-100 bg-primary text-white">
+                            Original Text
+                        </div>
+                        <div class="card-body">
+                            <textarea class="form-control" id="originalTextArea"
+                                placeholder="Enter the original text here...">This is the original text.</textarea>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6">
-                        <div class="card mb-3">
-                            <div class="card-header bg-primary text-white">
-                                Modified Text
-                            </div>
-                            <div class="card-body">
-                                <textarea class="form-control" id="modifiedTextArea"
-                                    placeholder="Enter the modified text here...">This is also the same text but modified.</textarea>
-                            </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header bg-gray-100 bg-primary text-white">
+                            Modified Text
                         </div>
-                    </div>
-
-                </div>
-
-                <div class="text-center">
-                    <button id="findDiffBtn" class="btn btn-outline-primary shadow-sm">Find Difference</button>
-                </div>
-
-                <div id="diffResponseArea" class="card mt-5" style="display:none">
-                    <div class="card-header">
-                        Difference
-                    </div>
-                    <div class="card-body">
-                        <pre id="diffResponseContainer"></pre>
+                        <div class="card-body">
+                            <textarea class="form-control" id="modifiedTextArea"
+                                placeholder="Enter the modified text here...">This is also the same text but modified.</textarea>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
-            <div id="errorContainer" class="alert alert-danger d-none"></div>
+            <div class="text-center">
+                <button id="findDiffBtn" class="btn btn-outline-primary shadow-sm">Find Difference</button>
+            </div>
 
-            <!-- Scripts -->
+            <div id="diffResponseArea" class="card mt-5" style="display:none">
+                <div class="card-header bg-gray-100 bg-gray-100">
+                    Difference
+                </div>
+                <div class="card-body">
+                    <pre id="diffResponseContainer"></pre>
+                </div>
+            </div>
 
-            <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+        </div>
 
-            <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js'></script>
+        <div id="errorContainer" class="alert alert-danger d-none"></div>
 
-            <script
-                src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/display/placeholder.min.js'></script>
+        <!-- Scripts -->
 
-            <script src='https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
 
-            <script src="./scripts/diff.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js'></script>
 
-        </body>
+        <script
+            src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/display/placeholder.min.js'></script>
+
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js'></script>
+
+        <script src="./scripts/diff.js"></script>
+
+    </body>
 
 </html>
