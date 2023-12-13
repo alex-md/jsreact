@@ -83,6 +83,12 @@ const tools = [
     description: 'Talk to GPT-4 from OpenAI',
     link: './chat.html',
     buttonText: 'Chat'
+  },
+  {
+    title: 'Expression Finder',
+    description: 'Finds an expression given a result and a set of numbers',
+    link: './expression.html',
+    buttonText: 'Solve'
   }
 ];
 

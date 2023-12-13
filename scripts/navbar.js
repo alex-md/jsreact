@@ -20,6 +20,11 @@
             text: 'Diff Checker',
             span: false,
         },
+        {
+            href: './expression.html',
+            text: 'Expression Finder',
+            span: false,
+        }
     ];
 
     let link = document.createElement("link");

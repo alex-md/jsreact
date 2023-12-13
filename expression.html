@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag () { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZEFG04PXR7');
+    </script>
+    <title>Expression Finder</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Find a valid expression from any set of numbers!">
+    <link rel="icon" href="./images/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style/expression.css">
+    <script src="./scripts/navbar.js"></script>
+    <script src="./scripts/expression.js" defer></script>
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+    <script>
+        // Call the createNavbar function and place it at the top of the page
+        createNavbar();
+
+        // Move the navbar element to the top of the page
+        document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
+    </script>
+        <h1 class="text-center mt-4 display-4 fw-bold">Expression Finder</h1>
+        <div class="container text-center small">
+            <p class="text-muted" id="calculator-description">Enter a series of numbers and a target number into our calculator to quickly find a valid expression using basic arithmetic operations and parentheses.</p>
+        </div>
+        <div class="d-flex align-items-center justify-content-center col-lg-8 m-4 mx-auto">
+            <div class="container-fluid w-50 p-3 rounded bg-white shadow-sm" id="main-card">
+            <form id="expression-form">
+                <div class="mb-3">
+                    <label for="numbers-input" class="form-label">Enter numbers (comma-separated):</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="numbers-input" required>
+                        <button id="random-numbers-button" class="btn btn-secondary">Generate <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shuffle" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.624 9.624 0 0 0 7.556 8a9.624 9.624 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.595 10.595 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.624 9.624 0 0 0 6.444 8a9.624 9.624 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5"/>
+                            <path d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z"/>
+                          </svg></button>
+                    </div>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="target-input" class="form-label">Enter target number:</label>
+                    <input type="number" class="form-control" id="target-input" required>
+                </div>
+    
+                <button type="submit" id="submit-button" class="btn btn-primary w-100 mt-3">Find Expression</button>
+            </form>
+
+            
+            <p id="solution-output" class="text-center my-5 p-2 rounded" style="width: auto; height: auto;"></p>
+            
+            <div class="text-end">
+                <a href="#" class="text-decoration-underline" data-bs-toggle="collapse" data-bs-target="#advancedSettings" aria-expanded="false" aria-controls="advancedSettings">
+                    Advanced settings
+                </a>
+
+                <div id="advancedSettings">
+                    <div class="card card-body">
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="num-integers-input" class="form-label small">Generated values</label>
+                                <input type="number" class="form-control form-control-sm" id="num-integers-input" placeholder="6">
+                            </div>
+
+                            <div class="col-lg-6 mb-3">
+                                <label for="max-number-input" class="form-label small">Value upper limit</label>
+                                <input type="number" class="form-control form-control-sm" id="max-number-input" placeholder="40">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
