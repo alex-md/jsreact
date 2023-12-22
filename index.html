@@ -38,7 +38,15 @@
 	</script>
 
 	<!-- Main content -->
-	<script type="module" src="./scripts/tools.js">
+	<script type="module">
+		import { tools } from './scripts/tools.js';
+
+		tools.forEach(tool => {
+			const link = document.createElement('link');
+			link.rel = 'alternate';
+			link.href = `./${tool}.html`;
+			document.body.appendChild(link);
+		});
 	</script>
 
 	<footer class="fixed-bottom">
@@ -50,8 +58,6 @@
 			</div>
 		</div>
 	</footer>
-
-
 </body>
 
 </html>

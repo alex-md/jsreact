@@ -58,39 +58,38 @@ function createToolList (title, description, tools) {
 
   return container;
 }
+export const tools = [{
+  title: 'Minify Code',
+  description: 'Minify your JavaScript code using the Google Closure Compiler',
+  link: './minify.html',
+  buttonText: 'Minify'
+},
+{
+  title: 'Clean Text',
+  description: 'Clean text by removing line breaks, removing punctuation, and more',
+  link: './clean.html',
+  buttonText: 'Clean'
+},
+{
+  title: 'Diff Checker',
+  description: 'Compare two pieces of text, and highlight the differences between them',
+  link: './diff.html',
+  buttonText: 'Compare'
+},
+{
+  title: 'Talk to GPT',
+  description: 'Talk to GPT-4 from OpenAI',
+  link: './chat.html',
+  buttonText: 'Chat'
+},
+{
+  title: 'Expression Finder',
+  description: 'Finds an expression given a result and a set of numbers',
+  link: './expression.html',
+  buttonText: 'Solve'
+}]; 
 
-const tools = [
-  {
-    title: 'Minify Code',
-    description: 'Minify your JavaScript code using the Google Closure Compiler',
-    link: './minify.html',
-    buttonText: 'Minify'
-  },
-  {
-    title: 'Clean Text',
-    description: 'Clean text by removing line breaks, removing punctuation, and more',
-    link: './clean.html',
-    buttonText: 'Clean'
-  },
-  {
-    title: 'Diff Checker',
-    description: 'Compare two pieces of text, and highlight the differences between them',
-    link: './diff.html',
-    buttonText: 'Compare'
-  },
-  {
-    title: 'Talk to GPT',
-    description: 'Talk to GPT-4 from OpenAI',
-    link: './chat.html',
-    buttonText: 'Chat'
-  },
-  {
-    title: 'Expression Finder',
-    description: 'Finds an expression given a result and a set of numbers',
-    link: './expression.html',
-    buttonText: 'Solve'
-  }
-];
+
 
 const toolList = createToolList('Developer Tools', 'Collection of web developer tools for minifying code, cleaning text, comparing diffs, and more.', tools);
 
