@@ -18,11 +18,30 @@
 
     <meta name="description" content="Online text cleaning tool to remove formatting, punctuation, and whitespace.">
     <link rel="icon" href="./images/favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./style/clean.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
     <script src="./scripts/navbar.js"></script>
     <meta name="theme-color" content="#ffffff">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700&display=swap');
+
+        body,
+        h1 {
+            color: #212529;
+        }
+
+        #input,
+        #output {
+            color: #3a3a3a;
+            resize: none
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            flex-wrap: wrap
+        }
+    </style>
 </head>
 
 <body>
@@ -39,24 +58,24 @@
         <section class="my-5">
             <div class="card-body p-5 shadow">
                 <form>
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="m-3 shadow-sm">
-                                <label for="input" class="input-group-text">Input</label>
-                                <textarea id="input" class="form-control" rows="5"></textarea>
+                            <div class="form-floating shadow-sm">
+                                <textarea id="input" class="form-control shadow-sm" rows="10"
+                                    style="height: 300px; resize: none; word-wrap: break-word;"></textarea>
+                                <label for="input">Input</label>
                             </div>
-                            <div class="mb-3"><br></div>
                         </div>
                         <div class="col-md-6">
-                            <div class="m-3 shadow-sm">
-                                <label for="output" class="input-group-text">Output</label>
-                                <textarea id="output" class="form-control bg-body-tertiary" rows="5"
-                                    readonly></textarea>
+                            <div class="form-floating shadow-sm">
+                                <textarea id="output" class="form-control bg-body shadow-sm" rows="10"
+                                    style="height: 300px; resize: none; word-wrap: break-word;" readonly></textarea>
+                                <label for="output">Output</label>
                             </div>
                         </div>
                     </div>
                 </form>
-                <div class="container-fluid d-flex justify-content-end flex-wrap">
+                <div class="d-flex justify-content-end flex-wrap">
                     <button type="button" class="btn btn-primary m-2" onclick="ioText('clean')"
                         title="trim, remove line breaks, remove double spaces">Remove Line Breaks</button>
                     <button type="button" class="btn btn-success m-2" onclick="ioText('remove_punctuation')">Remove
@@ -65,11 +84,17 @@
                         id="copy-btn">Copy to
                         Clipboard</button>
 
-                    <div class="popup-card" id="popup-card">
-                        Copied!
+                    <div class="toast align-items-center text-white bg-primary border-0" role="alert"
+                        aria-live="assertive" aria-atomic="true" id="popup-card">
+                        <div class="d-inline-flex">
+                            <div class="toast-body">
+                                Copied!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"></button>
+                        </div>
                     </div>
                 </div>
-            </div>
         </section>
     </div>
     <script src="./scripts/clean.js"></script>

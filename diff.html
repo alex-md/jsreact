@@ -16,15 +16,49 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Compare two text snippets and highlight the differences online.">
+    <meta name="description"
+        content="Online Diff Viewer - Find the difference between two texts in seconds.
+
+    Compare and contrast any two texts with Online Diff Viewer, a free and easy-to-use tool that highlights the changes and similarities between them. Whether you need to check for plagiarism, revisions, or modifications, Online Diff Viewer can help you find the exact differences in a matter of seconds. Just paste your original and modified texts and click “Find Difference” to see the results. Online Diff Viewer is the best way to compare texts online. Try it now and see for yourself!">
     <link rel="icon" href="./images/favicon.ico">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./style/diff.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
     <script src="./scripts/navbar.js"></script>
     <script src="./scripts/diff.js" defer></script>
     <meta name="theme-color" content="#ffffff">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .scroll-down-text {
+            color: #6c757d;
+            font-size: 0.8em;
+            text-align: center;
+            margin-top: 10px;
+            opacity: 0;
+            animation: fade-in-scroll-text 2s ease-in-out forwards;
+        }
+
+        @keyframes fade-in-scroll-text {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -37,15 +71,15 @@
     </script>
 
     <body>
-        <div class="container my-5">
-            <h1 class="text-center display-4 fw-bold">Online Diff Viewer</h1>
-            <p class="text-center lead">Quickly find the difference between two texts.</p>
+        <main class="container py-5">
+            <h1 class="text-center display-5 fw-bold">Online Diff Viewer</h1>
+            <p class="text-center lead text-muted">Quickly find the difference between two texts.</p>
 
-            <div class="row">
+            <div class="row g-4">
 
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header bg-gray-100 bg-primary text-white">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-muted">
                             Original Text
                         </div>
                         <div class="card-body">
@@ -55,9 +89,9 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header bg-gray-100 bg-primary text-white">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header text-muted">
                             Modified Text
                         </div>
                         <div class="card-body">
@@ -69,22 +103,21 @@
 
             </div>
 
-            <div class="text-center">
-                <button id="findDiffBtn" class="btn btn-outline-primary shadow-sm">Find Difference</button>
+            <div class="d-grid gap-2 col-6 mx-auto p-3">
+                <button id="findDiffBtn" class="btn btn-primary">View Diff</button>
             </div>
 
-            <div id="diffResponseArea" class="card mt-5" style="display:none">
-                <div class="card-header bg-gray-100 bg-gray-100">
-                    Difference
+            <div id="diffResponseArea" class="card mt-5 d-none">
+                <div class="card-header bg-light">
+                    Diff Viewer
                 </div>
                 <div class="card-body">
                     <pre id="diffResponseContainer"></pre>
                 </div>
             </div>
 
-        </div>
-
-        <div id="errorContainer" class="alert alert-danger d-none"></div>
+            <div id="errorContainer" class="alert alert-danger d-none"></div>
+        </main>
 
         <!-- Scripts -->
 
