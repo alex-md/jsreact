@@ -15,7 +15,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
 	<meta name="theme-color" content="#ffffff">
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700&display=swap');
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700&family=Manrope:wght@300;400;700&display=swap');
 
 		body {
 			color: #212529;
@@ -35,7 +35,7 @@
 </head>
 
 <body>
-	<script src="./scripts/navbar.js"></script>
+	<script src="./components/navbar.js"></script>
 	<script defer>
 		// Call the createNavbar function and place it at the top of the page
 		createNavbar();
@@ -44,16 +44,88 @@
 		document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
 	</script>
 
-	<!-- Main content -->
-	<script type="module" defer>
-		import { tools } from './scripts/tools.js';
 
-		tools.forEach(tool => {
-			const link = document.createElement('link');
-			link.rel = 'alternate';
-			link.href = `./${tool}.html`;
-			document.body.appendChild(link);
-		});
+
+	<!-- Main content -->
+	<script>
+		function createToolCard (title, description, link, buttonText) {
+			const card = document.createElement('div');
+			card.className = 'col-md-6 col-lg-4 mb-4';
+			const cardBody = document.createElement('div');
+			cardBody.className = 'card card-body mx-auto h-100 d-flex flex-column';
+			const cardTitle = document.createElement('h5');
+			cardTitle.className = 'card-title';
+			cardTitle.textContent = title;
+			const cardText = document.createElement('p');
+			cardText.className = 'card-text';
+			cardText.textContent = description;
+			const cardButton = document.createElement('a');
+			cardButton.className = 'btn btn-primary w-50 align-self-center';
+			cardButton.href = link;
+			cardButton.textContent = `${buttonText}`;
+			cardBody.appendChild(cardTitle);
+			cardBody.appendChild(cardText);
+			cardBody.appendChild(cardButton);
+			card.appendChild(cardBody);
+			return card;
+		}
+		function createToolList (title, description, tools) {
+			const container = document.createElement('div');
+			container.className = 'container';
+			const heading = document.createElement('h1');
+			heading.className = 'mt-5 text-center';
+			heading.textContent = title;
+			const subheading = document.createElement('p');
+			subheading.className = 'text-center lead';
+			subheading.textContent = description;
+			heading.appendChild(subheading);
+			container.appendChild(heading);
+			const row = document.createElement('div');
+			row.className = 'row mt-5';
+			const fragment = document.createDocumentFragment();
+			for (const tool of tools) {
+				const card = createToolCard(tool.title, tool.description, tool.link, tool.buttonText);
+				card.querySelector('.card').classList.add('shadow', 'rounded');
+				fragment.appendChild(card);
+			}
+			row.appendChild(fragment);
+			container.appendChild(row);
+			return container;
+		}
+		const tools = [
+			{
+				title: 'Minify Code',
+				description: 'Minify your JavaScript code using the Google Closure Compiler',
+				link: './minify.html',
+				buttonText: 'Minify'
+			},
+			{
+				title: 'Clean Text',
+				description: 'Clean text by removing line breaks, removing punctuation, and more',
+				link: './clean.html',
+				buttonText: 'Clean'
+			},
+			{
+				title: 'Diff Checker',
+				description: 'Compare two pieces of text, and highlight the differences between them',
+				link: './diff.html',
+				buttonText: 'Compare'
+			},
+			{
+				title: 'Talk to GPT',
+				description: 'Talk to GPT-4 from OpenAI',
+				link: './chat.html',
+				buttonText: 'Chat'
+			},
+			{
+				title: 'Expression Finder',
+				description: 'Finds an expression given a result and a set of numbers',
+				link: './expression.html',
+				buttonText: 'Solve'
+			}
+		];
+		const toolList = createToolList('Developer Tools', 'Collection of web developer tools for minifying code, cleaning text, comparing diffs, and more.', tools);
+		document.body.appendChild(toolList);
 	</script>
 
 	<footer class="fixed-bottom">
