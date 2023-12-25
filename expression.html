@@ -26,72 +26,9 @@
     <script src="./components/navbar.js"></script>
     <script src="./scripts/expression.js" defer></script>
     <meta name="theme-color" content="#ffffff">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        #main-card {
-            border: 1px solid #e3e6f0;
-        }
-
-        h1 {
-            font-weight: 700;
-            font-size: 2.5rem
-        }
-
-        .form-label {
-            color: #5a5c69;
-        }
-
-        .input-group {
-            position: relative;
-        }
-
-        #random-numbers-button {
-            position: absolute;
-            top: 0;
-            right: 0;
-            border-top-right-radius: .25rem;
-            border-bottom-right-radius: .25rem;
-        }
-
-        #submit-button {
-            background-color: #4e73df;
-            border-color: #4e73df;
-            color: #fff;
-        }
-
-        #submit-button:hover {
-            background-color: #2e59d9;
-            border-color: #2653d4;
-        }
-
-        #solution-output {
-            background-color: #f8f9fa;
-            border: 1px solid #e3e6f0;
-            color: #5a5c69;
-        }
-
-        a {
-            color: #1cc88a;
-        }
-
-        a:hover {
-            color: #17a673;
-        }
-
-        .card {
-            border: 1px solid #e3e6f0;
-        }
-
-        .form-control-sm {
-            border-radius: .2rem;
-        }
-    </style>
 </head>
 
-<body>
+<body class="bg-light">
     <script>
         // Call the createNavbar function and place it at the top of the page
         createNavbar();
@@ -100,12 +37,18 @@
         document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
     </script>
     <h1 class="text-center mt-4 display-4 fw-bold">Expression Finder</h1>
-    <div class="container text-center small">
-        <p class="text-muted" id="calculator-description">Enter a series of numbers and a target number into our
-            calculator to quickly find a valid expression using basic arithmetic operations and parentheses.</p>
+    <div class="container-fluid mx-auto text-center">
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse"
+            data-bs-target="#calculator-description" aria-expanded="false" aria-controls="calculator-description">
+            What is this?
+        </button>
+        <div class="collapse" id="calculator-description">
+            <p class="text-secondary">Enter a series of numbers and a target number, and our calculator will find a
+                valid expression using parentheses and basic arithmetic operations.</p>
+        </div>
     </div>
     <div class="d-flex align-items-center justify-content-center col-lg-8 m-4 mx-auto">
-        <div class="container-fluid w-50 p-3 rounded bg-white shadow-sm" id="main-card">
+        <div class="container-fluid d-grid w-50 p-4 rounded shadow" id="main-card">
             <form id="expression-form">
                 <div class="mb-3">
                     <label for="numbers-input" class="form-label">Enter numbers (comma-separated):</label>
@@ -131,7 +74,8 @@
             </form>
 
 
-            <p id="solution-output" class="text-center my-5 p-2 rounded" style="width: auto; height: auto;"></p>
+            <p id="solution-output" class="text-center my-3 p-2 rounded text-dark mx-auto w-auto h-auto">
+            </p>
 
             <div class="advancedSettings">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"

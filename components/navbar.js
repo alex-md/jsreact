@@ -30,7 +30,7 @@
     let link = document.createElement("link");
     function createNavbar () {
         let nav = document.createElement("nav");
-        nav.classList.add("navbar", "navbar-expand-lg", "bg-light", "navbar-light", "shadow");
+        nav.classList.add("navbar", "navbar-expand-lg", "bg-light", "shadow");
         nav.style.fontFamily = "'Manrope', Helvetica, Arial, sans-serif";
         nav.style.fontSize = "1.1rem";
 
@@ -71,7 +71,7 @@
 
         for (let item of navItems) {
             let li = document.createElement("li");
-            li.classList.add("nav-item");
+            li.classList.add("nav-item", "text-end");
 
             let a = document.createElement("a");
             a.classList.add("nav-link");

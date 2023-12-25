@@ -31,6 +31,13 @@
 			margin: 0;
 			padding: 0;
 		}
+
+		.card-title-custom {
+			font-size: 1.5rem;
+			/* Adjust size as needed */
+			font-weight: bold;
+			text-decoration: underline;
+		}
 	</style>
 </head>
 
@@ -54,7 +61,7 @@
 			const cardBody = document.createElement('div');
 			cardBody.className = 'card card-body mx-auto h-100 d-flex flex-column';
 			const cardTitle = document.createElement('h5');
-			cardTitle.className = 'card-title';
+			cardTitle.className = 'card-title card-title-custom';
 			cardTitle.textContent = title;
 			const cardText = document.createElement('p');
 			cardText.className = 'card-text';
@@ -131,8 +138,8 @@
 	<footer class="fixed-bottom">
 		<div class="row justify-content-end m-2">
 			<div class="col-auto">
-				<button type="button" class="btn btn-outline-secondary rounded-pill">
-					<a class="text-dark" href="./policy.html">Privacy Policy</a>
+				<button type="button" class="btn btn-outline-dark">
+					<a class="text-muted text-decoration-none" href=" ./policy.html">Privacy Policy</a>
 				</button>
 			</div>
 		</div>
