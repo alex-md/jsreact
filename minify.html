@@ -74,14 +74,47 @@
                         <div class="card-header">
                             <h4 class="text-center fw-bold">Enter JavaScript Here</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body shadow-sm">
                             <div class="input-group">
-                                <textarea id="input" class="form-control h-100 resize-none border-0 rounded-3 p-2"
-                                    rows="10" style="white-space: pre-wrap;">
-                        function hello(name) {
-                            alert('Hello, ' + name);
-                        }
-                        hello('New user');
+                                <textarea id="input" class="form-control h-100 w-100 resize-none border-0 p-1" rows="10"
+                                    style="white-space: pre-wrap;">
+function weightedRandom(items, weights) {
+    if (items.length !== weights.length) {
+      throw new Error('Items and weights must be of the same size');
+    }
+  
+    if (!items.length) {
+      throw new Error('Items must not be empty');
+    }
+  
+    // Preparing the cumulative weights array.
+    // For example:
+    // - weights = [1, 4, 3]
+    // - cumulativeWeights = [1, 5, 8]
+    const cumulativeWeights = [];
+    for (let i = 0; i < weights.length; i += 1) {
+      cumulativeWeights[i] = weights[i] + (cumulativeWeights[i - 1] || 0);
+    }
+  
+    // Getting the random number in a range of [0...sum(weights)]
+    // For example:
+    // - weights = [1, 4, 3]
+    // - maxCumulativeWeight = 8
+    // - range for the random number is [0...8]
+    const maxCumulativeWeight = cumulativeWeights[cumulativeWeights.length - 1];
+    const randomNumber = maxCumulativeWeight * Math.random();
+  
+    // Picking the random item based on its weight.
+    // The items with higher weight will be picked more often.
+    for (let itemIndex = 0; itemIndex < items.length; itemIndex += 1) {
+      if (cumulativeWeights[itemIndex] >= randomNumber) {
+        return {
+          item: items[itemIndex],
+          index: itemIndex,
+        };
+      }
+    }
+  }
                                 </textarea>
                             </div>
                         </div>
@@ -92,9 +125,9 @@
                         <div class="card-header">
                             <h4 class="text-center fw-bold"> Compressed code</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body shadow-sm">
                             <div class="input-group">
-                                <textarea id="output" class="form-control h-100 resize-none border-0 rounded-3 p-2"
+                                <textarea id="output" class="form-control h-100 w-100 resize-none border-0 p-1"
                                     rows="10" placeholder="Your compressed code will appear here" readonly
                                     style="white-space: pre-wrap;"></textarea>
                             </div>
@@ -102,12 +135,11 @@
                     </div>
                 </div>
             </div>
-            <small id="stats" class="text-muted text-end mt-1"></small>
+            <small id="stats" class="text-success text-end mt-2"></small>
 
             <div id="options" class="text-center mt-4 d-flex flex-column justify-content-center align-items-center">
                 <div class="d-grid gap-2">
-                    <button id="go" class="btn btn-outline-primary rounded-pill fw-bold"
-                        onclick="blink()">Minify!</button>
+                    <button id="go" class="btn btn-outline-primary fw-semibold" onclick="blink()">Minify!</button>
                 </div>
                 <h4 class="fw-bold">Advanced Options...</h4>
             </div>
