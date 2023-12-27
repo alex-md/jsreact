@@ -34,7 +34,6 @@
 
 		.card-title-custom {
 			font-size: 1.5rem;
-			/* Adjust size as needed */
 			font-weight: bold;
 			text-decoration: underline;
 		}
@@ -42,17 +41,6 @@
 </head>
 
 <body>
-	<script src="./components/navbar.js"></script>
-	<script defer>
-		// Call the createNavbar function and place it at the top of the page
-		createNavbar();
-
-		// Move the navbar element to the top of the page
-		document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
-	</script>
-
-
-
 	<!-- Main content -->
 	<script>
 		function createToolCard (title, description, link, buttonText) {
@@ -144,6 +132,7 @@
 			</div>
 		</div>
 	</footer>
+	<script src="./components/navbar.js"></script>
 </body>
 
 </html>

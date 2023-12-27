@@ -25,40 +25,18 @@ function removePunctuation (text) {
     return text.replace(/[^\w\s]|_/g, '').replace(/\s+/g, ' ');
 }
 
-function copyToClipboard (text) {
-    // Create a temporary textarea to copy the text to the clipboard
-    var tempTextarea = document.createElement('textarea');
-    tempTextarea.value = text;
-    document.body.appendChild(tempTextarea);
-    tempTextarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(tempTextarea);
-}
+const toastTrigger = document.getElementById('liveToastBtn')
+const toastLiveExample = document.getElementById('liveToast')
 
+document.getElementById('liveToastBtn').addEventListener('click', function () {
+    var output = document.getElementById('output');
 
-// Add this to your JavaScript file
-const copyBtn = document.getElementById('copy-btn');
-const popupCard = document.getElementById('popup-card');
-
-copyBtn.addEventListener('click', () => {
-    copyBtn.classList.add('copy-animation');
-    setTimeout(() => {
-        copyBtn.classList.remove('copy-animation');
-    }, 500);
-
-    // Show the popup card for 1 second
-    popupCard.classList.add('show');
-    setTimeout(() => {
-        popupCard.classList.remove('show');
-    }, 1000);
-
-    // Copy the text to the clipboard
-    const output = document.getElementById('output');
-    output.select();
-    document.execCommand('copy');
+    navigator.clipboard.writeText(output.value).then(function () {
+        // Show the toast notification
+        var toastEl = document.getElementById('liveToast');
+        var toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }, function (err) {
+        console.error('Could not copy text: ', err);
+    });
 });
-
-// Position the popup card above the copy button
-const copyBtnRect = copyBtn.getBoundingClientRect();
-popupCard.style.bottom = `${window.innerHeight - copyBtnRect.top + 10}px`;
-popupCard.style.left = `${copyBtnRect.left}px`;

@@ -125,3 +125,11 @@
 
     window.createNavbar = createNavbar;
 })();
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Call the createNavbar function and place it at the top of the page
+    createNavbar();
+
+    // Move the navbar element to the top of the page
+    document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
+});
