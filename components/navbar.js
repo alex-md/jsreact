@@ -132,4 +132,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Move the navbar element to the top of the page
     document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
+
 });
+
+/*
+
+*/

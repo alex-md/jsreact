@@ -21,14 +21,16 @@
 
     Compare and contrast any two texts with Online Diff Viewer, a free and easy-to-use tool that highlights the changes and similarities between them. Whether you need to check for plagiarism, revisions, or modifications, Online Diff Viewer can help you find the exact differences in a matter of seconds. Just paste your original and modified texts and click “Find Difference” to see the results. Online Diff Viewer is the best way to compare texts online. Try it now and see for yourself!">
     <link rel="icon" href="./images/favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+    <link rel=" stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js'></script>
     <meta name="theme-color" content="#ffffff">
     <style>
-        body {
-            font-family: 'Manrope', Arial, sans-serif;
+        body,
+        h1 {
+            color: #212529;
         }
 
         .CodeMirror-gutter.CodeMirror-linenumbers {
@@ -69,55 +71,58 @@
     </style>
 </head>
 
-<body>
-    <main class="container py-5">
-        <h1 class="text-center display-5 fw-bold">Online Diff Viewer</h1>
+<body class="bg-light">
+    <div class="container-fluid container-lg">
+        <h1 class="text-center display-4 fw-bold mt-4">Online Diff Viewer</h1>
         <p class="text-center lead text-muted">Quickly find the difference between two texts.</p>
+        <main class="container py-5">
 
-        <div class="row g-4">
+            <div class="row g-4">
 
-            <div class="col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header text-muted">
-                        Original Text
+                <div class="col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-muted">
+                            Original Text
+                        </div>
+                        <textarea class="p-4 mx-auto overflow-hidden form-control-plaintext" id="originalTextArea"
+                            placeholder="Enter the original text here...">Paste your orignal text here.</textarea>
                     </div>
-                    <textarea class="p-4 mx-auto overflow-hidden form-control-plaintext" id="originalTextArea"
-                        placeholder="Enter the original text here...">Paste your orignal text here.</textarea>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header text-muted">
+                            Modified Text
+                        </div>
+                        <textarea class="p-4 mx-auto overflow-hidden form-control-plaintext" id="modifiedTextArea"
+                            placeholder="Enter the modified text here...">Paste your modified text here.</textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-grid gap-2 col-6 mx-auto p-3">
+                <button id="findDiffBtn" class="btn btn-primary">View Diff</button>
+            </div>
+
+            <div id="diffResponseArea" class="card mt-5 d-none">
+                <div class="card-header bg-light">
+                    Diff Viewer
+                </div>
+                <div class="card-body">
+                    <pre id="diffResponseContainer"></pre>
                 </div>
             </div>
 
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header text-muted">
-                        Modified Text
-                    </div>
-                    <textarea class="p-4 mx-auto overflow-hidden form-control-plaintext" id="modifiedTextArea"
-                        placeholder="Enter the modified text here...">Paste your modified text here.</textarea>
-                </div>
-            </div>
+            <div id="errorContainer" class="alert alert-danger d-none"></div>
+        </main>
 
-        </div>
+        <!-- Scripts -->
+        <script src="./scripts/diff.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+        <script src="./components/navbar.js"></script>
+        <script src="./components/footer.js"></script>
 
-        <div class="d-grid gap-2 col-6 mx-auto p-3">
-            <button id="findDiffBtn" class="btn btn-primary">View Diff</button>
-        </div>
-
-        <div id="diffResponseArea" class="card mt-5 d-none">
-            <div class="card-header bg-light">
-                Diff Viewer
-            </div>
-            <div class="card-body">
-                <pre id="diffResponseContainer"></pre>
-            </div>
-        </div>
-
-        <div id="errorContainer" class="alert alert-danger d-none"></div>
-    </main>
-
-    <!-- Scripts -->
-    <script src="./scripts/diff.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-    <script src="./components/navbar.js"></script>
 </body>
 
 </html>
