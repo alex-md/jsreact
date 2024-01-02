@@ -21,8 +21,8 @@
             span: false,
         },
         {
-            href: './expression.html',
-            text: 'Expression Finder',
+            href: './tts.html',
+            text: 'OpenAI TTS Demo',
             span: false,
         }
     ];

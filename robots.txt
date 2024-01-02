@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /index.html
+Allow: /tts.html
 Allow: /chat.html
 Allow: /policy.html
 Allow: /diff.html
