@@ -1,9 +1,4 @@
 User-agent: *
-Allow: /index.html
-Allow: /tts.html
-Allow: /chat.html
-Allow: /policy.html
-Allow: /diff.html
-Allow: /expression.html
-Allow: /minify.html
-Allow: /clean.html
+Disallow: 
+Disallow: /cgi-bin/
+Sitemap: https://jsreact.com/sitemap.xml
