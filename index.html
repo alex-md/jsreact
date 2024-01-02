@@ -25,111 +25,126 @@
 		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 	<meta name="theme-color" content="#ffffff">
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700&family=Manrope:wght@300;400;700&display=swap');
+		@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@100;300;400;700display=swap');
 
 		body {
-			font-size: 1rem;
-			background-color: #f8f9fa;
-			color: #212529
+			font-family: 'Manrope', Arial, Helvetica, sans-serif;
 		}
 
-		.card-title {
-			font-size: 1.3rem;
+		h5 {
+			font-size: 1.4rem;
 			font-weight: 700;
 			text-decoration: none;
 			padding-bottom: 1%;
+		}
+
+		.container {
+			padding: 1.25rem;
+		}
+
+		h1,
+		p {
+			text-align: center;
+		}
+
+		p {
+			font-size: 1.1rem;
+			font-weight: 400;
 		}
 	</style>
 </head>
 
 <body class="bg-light">
 	<!-- Main content -->
-	<script>
-		function createToolCard (title, description, link, buttonText) {
-			const card = document.createElement('div');
-			card.className = 'col-md-6 col-lg-4 mb-4';
-			const cardBody = document.createElement('div');
-			cardBody.className = 'card card-body mx-auto h-100 d-flex flex-column';
-			const cardTitle = document.createElement('h5');
-			cardTitle.className = 'card-title card-title-custom';
-			cardTitle.textContent = title;
-			const cardText = document.createElement('p');
-			cardText.className = 'card-text text-muted';
-			cardText.textContent = description;
-			const cardButton = document.createElement('a');
-			cardButton.className = 'btn btn-primary w-50 align-self-center';
-			cardButton.href = link;
-			cardButton.textContent = `${buttonText}`;
-			cardBody.appendChild(cardTitle);
-			cardBody.appendChild(cardText);
-			cardBody.appendChild(cardButton);
-			card.appendChild(cardBody);
-			return card;
-		}
-		function createToolList (title, description, tools) {
-			const container = document.createElement('div');
-			container.className = 'container';
-			const heading = document.createElement('h1');
-			heading.className = 'mt-5 text-center';
-			heading.textContent = title;
-			const subheading = document.createElement('p');
-			subheading.className = 'text-center lead';
-			subheading.textContent = description;
-			heading.appendChild(subheading);
-			container.appendChild(heading);
-			const row = document.createElement('div');
-			row.className = 'row mt-5';
-			const fragment = document.createDocumentFragment();
-			for (const tool of tools) {
-				const card = createToolCard(tool.title, tool.description, tool.link, tool.buttonText);
-				card.querySelector('.card').classList.add('shadow', 'rounded');
-				fragment.appendChild(card);
-			}
-			row.appendChild(fragment);
-			container.appendChild(row);
-			return container;
-		}
-		const tools = [
-			{
-				title: 'Minify Code',
-				description: 'Minify your JavaScript code using the Google Closure Compiler',
-				link: './minify.html',
-				buttonText: 'Minify'
-			},
-			{
-				title: 'Clean Text',
-				description: 'Clean text by removing line breaks, removing punctuation, and more',
-				link: './clean.html',
-				buttonText: 'Clean'
-			},
-			{
-				title: 'Diff Checker',
-				description: 'Compare two pieces of text, and highlight the differences between them',
-				link: './diff.html',
-				buttonText: 'Compare'
-			},
-			{
-				title: 'Talk to GPT',
-				description: 'Talk to GPT-4 from OpenAI',
-				link: './chat.html',
-				buttonText: 'Chat'
-			},
-			{
-				title: 'Expression Finder',
-				description: 'Finds an expression given a result and a set of numbers',
-				link: './expression.html',
-				buttonText: 'Solve'
-			},
-			{
-				title: 'OpenAI TTS and Whisper UI',
-				description: 'Free OpenAI Text to Speech and Whisper UI',
-				link: './tts.html',
-				buttonText: 'Demo'
-			}
-		];
-		const toolList = createToolList('Developer Tools', 'Developer Tools Collection: Minify Code, Clean Text, Diff Viewer, and More ', tools);
-		document.body.appendChild(toolList);
-	</script>
+	<main class="container">
+		<div class="my-4">
+			<h1 class="fw-bold">Developer Utilities</h1>
+			<p class="text-body-secondary">Developer Tools Collection: Minify Code, Clean Text, Diff Viewer, OpenAI TTS,
+				and More</p>
+		</div>
+		<div class="row row-cols-2 row-cols-md-3 g-4 mt-5">
+			<!-- Tool Card: Minify Code -->
+			<div class="col">
+				<div class="card shadow">
+					<div class="card-body">
+						<h5 class="card-title text-center">Minify Code</h5>
+						<p class="text-muted text-body-secondary">Minify your JavaScript code using the Google Closure
+							Compiler
+						</p>
+					</div>
+					<div class="card-footer text-center">
+						<a href="./minify.html" class="btn btn-dark">Minify</a>
+					</div>
+				</div>
+			</div>
+			<!-- Tool Card: Clean Text -->
+			<div class="col">
+				<div class="card shadow">
+					<div class="card-body">
+						<h5 class="card-title text-center">Clean Text</h5>
+						<p class="text-muted text-body-secondary">Clean text by removing line breaks, removing
+							punctuation, and
+							more</p>
+					</div>
+					<div class="card-footer text-center">
+						<a href="./clean.html" class="btn btn-dark">Clean</a>
+					</div>
+				</div>
+			</div>
+			<!-- Tool Card: OpenAI TTS and Whisper UI -->
+			<div class="col">
+				<div class="card shadow">
+					<div class="card-body">
+						<h5 class="card-title text-center">OpenAI TTS and Whisper UI</h5>
+						<p class="text-muted text-body-secondary">Free OpenAI Text to Speech and Whisper UI</p>
+					</div>
+					<div class="card-footer text-center">
+						<a href="./tts.html" class="btn btn-dark">Demo</a>
+					</div>
+				</div>
+			</div>
+			<!-- Tool Card: Diff Checker -->
+			<div class="col">
+				<div class="card shadow">
+					<div class="card-body">
+						<h5 class="card-title text-center">Diff Checker</h5>
+						<p class="text-muted text-body-secondary">Compare two pieces of text, and highlight the
+							differences
+							between them</p>
+					</div>
+					<div class="card-footer text-center">
+						<a href="./diff.html" class="btn btn-dark">Compare</a>
+					</div>
+				</div>
+			</div>
+			<!-- Tool Card: Talk to GPT -->
+			<div class="col">
+				<div class="card shadow">
+					<div class="card-body">
+						<h5 class="card-title text-center">Talk to GPT</h5>
+						<p class="text-muted text-body-secondary">Talk to GPT-4 from OpenAI</p>
+					</div>
+					<div class="card-footer text-center">
+						<a href="./chat.html" class="btn btn-dark">Chat</a>
+					</div>
+				</div>
+			</div>
+			<!-- Tool Card: Expression Finder -->
+			<div class="col">
+				<div class="card shadow">
+					<div class="card-body">
+						<h5 class="card-title text-center">Expression Finder</h5>
+						<p class="text-muted text-body-secondary">Finds an expression given a result and a set of
+							numbers</p>
+					</div>
+					<div class="card-footer text-center">
+						<a href="./expression.html" class="btn btn-dark">Solve</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
 
 	<script src="./components/navbar.js"></script>
 	<script src="./components/footer.js"></script>
