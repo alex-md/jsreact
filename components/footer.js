@@ -1,19 +1,25 @@
 // Create footer element
 var footer = document.createElement('footer');
-footer.className = 'fixed-bottom';
+footer.style.padding = '1rem';
+footer.style.position = 'relative';
+footer.style.bottom = '0';
+footer.style.width = '100%';
 
 // Create div for row
 var rowDiv = document.createElement('div');
-rowDiv.className = 'row justify-content-end m-2';
+rowDiv.style.display = 'flex';
+rowDiv.style.justifyContent = 'flex-end';
+rowDiv.style.margin = '0.5rem';
 
 // Create div for column
 var colDiv = document.createElement('div');
-colDiv.className = 'col-auto';
+colDiv.style.flex = '0 0 auto';
 
 // Create button
-var button = document.createElement('button');
-button.type = 'button';
-button.className = 'card card-subtitle bg-transparent text-muted border-0';
+var button = document.createElement('div');
+button.style.backgroundColor = 'transparent';
+button.style.color = '#6c757d';
+button.style.border = '0';
 button.id = 'viewCountButton'; // Add an id to the button for later reference
 
 // Create anchor
@@ -52,7 +58,5 @@ function formatWithCommas (number) {
 fetchViewCount().then(viewCount => {
     // Update the button text with the formatted view count
     let viewCountButton = document.getElementById('viewCountButton');
-    let svgHTML = '<img src="./images/stats.svg" alt="stats icon" height="14" width="14" style="display: flex; 	align-self: end">';
-    viewCountButton.insertAdjacentHTML('afterbegin', svgHTML);
-    viewCountButton.insertAdjacentText('beforeend', `  ${formatWithCommas(viewCount)}`);
+    viewCountButton.insertAdjacentText('beforeend', ` Views: ${formatWithCommas(viewCount)}`);
 });

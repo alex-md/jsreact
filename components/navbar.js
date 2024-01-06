@@ -31,7 +31,7 @@
     function createNavbar () {
         let nav = document.createElement("nav");
         nav.classList.add("navbar", "navbar-expand-lg", "bg-light", "shadow");
-        nav.style.fontFamily = "'Manrope', Helvetica, Arial, sans-serif";
+        nav.style.fontFamily = "'Open+Sans', Helvetica, Arial, sans-serif";
         nav.style.fontSize = "1.1rem";
 
         let container = document.createElement("div");
@@ -42,7 +42,7 @@
         logoLink.href = "./index.html";
 
         let logo = document.createElement("img");
-        logo.src = "./images/logo.png";
+        logo.src = "./images/logo_backup.png";
         logo.alt = "Logo";
         logo.style.maxWidth = "auto";
         logo.style.maxHeight = "2.8em";
@@ -87,7 +87,7 @@
             ul.appendChild(li);
         }
 
-        link.href = "https://fonts.googleapis.com/css?family=Manrope&display=swap";
+        link.href = "https://fonts.googleapis.com/css?family=Open+Sans&display=swap";
         link.rel = "stylesheet";
         document.head.appendChild(link);
 
@@ -134,7 +134,3 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
 
 });
-
-/*
-
-*/
