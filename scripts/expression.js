@@ -1,98 +1,128 @@
+function p (e) {
+    function k (h) {
+        return e.next(h);
+    }
+    function l (h) {
+        return e.throw(h);
+    }
+    return new Promise(function (h, m) {
+        function n (a) {
+            a.done ? h(a.value) : Promise.resolve(a.value).then(k, l).then(n, m);
+        }
+        n(e.next());
+    });
+}
 document.addEventListener("DOMContentLoaded", function () {
-    function insertParentheses (tokens, start = 0, end = tokens.length) {
-        if (end - start == 1) return [tokens[start]];
-        let result = [];
-        for (let index = start + 1; index < end; index += 2) {
-            let left = insertParentheses(tokens, start, index), right = insertParentheses(tokens, index + 1, end);
-            left.forEach((start) => {
-                right.forEach((end) => {
-                    result.push(`(${start}${tokens[index]}${end})`);
+    function e (a, b = 0, c = a.length) {
+        if (1 == c - b) {
+            return [a[b]];
+        }
+        let d = [];
+        for (let f = b + 1; f < c; f += 2) {
+            let g = e(a, b, f), q = e(a, f + 1, c);
+            g.forEach(r => {
+                q.forEach(t => {
+                    d.push(`(${r}${a[f]}${t})`);
                 });
             });
         }
-        return result;
+        return d;
     }
-    function calculateAndCompare (expression, target) {
+    function k (a, b) {
         try {
-            return eval(expression) === target;
-        } catch (e) {
-            if (e instanceof SyntaxError || e instanceof ReferenceError || e instanceof EvalError) return false;
-            throw e;
+            return eval(a) === b;
+        } catch (c) {
+            if (c instanceof SyntaxError || c instanceof ReferenceError || c instanceof EvalError) {
+                return !1;
+            }
+            throw c;
         }
     }
-    function findExpression (tokens, target) {
-        let operators = [
-            "+",
-            "-",
-            "*",
-            "/"
-        ];
-        // Check if the checkbox is checked
-        if (document.getElementById("exponents-checkbox").checked) {
-            operators.push("**");
-        }
-        for (let expression of generateAllExpressions(tokens, operators)) if (calculateAndCompare(expression, target)) return expression;
-        return "No solution found";
-    }
-    function* generateAllExpressions (tokens, operators) {
-        if (1 === tokens.length) {
-            yield tokens[0].toString();
-            return;
-        }
-        for (let permutation of permutations(tokens)) for (let combination of product(operators, tokens.length - 1)) {
-            let expression = [];
-            for (let index = 0; index < permutation.length; index++) index > 0 && expression.push(combination[index - 1]), expression.push(permutation[index].toString());
-            for (let parenthesized of insertParentheses(expression)) yield parenthesized;
+    function* l (a, b) {
+        if (1 === a.length) {
+            yield a[0].toString();
+        } else {
+            for (let c of h(a)) {
+                for (let d of m(b, a.length - 1)) {
+                    let f = [];
+                    for (let g = 0; g < c.length; g++) {
+                        0 < g && f.push(d[g - 1]), f.push(c[g].toString());
+                    }
+                    for (let g of e(f)) {
+                        yield g;
+                    }
+                }
+            }
         }
     }
-    function* permutations (tokens) {
-        if (0 === tokens.length) {
+    function* h (a) {
+        if (0 === a.length) {
             yield [];
-            return;
+        } else {
+            for (let b = 0; b < a.length; b++) {
+                for (let c of h(a.slice(0, b).concat(a.slice(b + 1)))) {
+                    yield [a[b], ...c];
+                }
+            }
         }
-        for (let index = 0; index < tokens.length; index++) for (let permutation of permutations(tokens.slice(0, index).concat(tokens.slice(index + 1)))) yield [
-            tokens[index],
-            ...permutation
-        ];
     }
-    function* product (tokens, length) {
-        if (0 === length) {
+    function* m (a, b) {
+        if (0 === b) {
             yield [];
-            return;
+        } else {
+            for (let c of a) {
+                for (let d of m(a, b - 1)) {
+                    yield [c, ...d];
+                }
+            }
         }
-        for (let token of tokens) for (let combination of product(tokens, length - 1)) yield [
-            token,
-            ...combination
-        ];
     }
-    function findExpressionAsync (tokens, target) {
-        return new Promise((resolve) => {
+    function n (a, b) {
+        return new Promise(c => {
             setTimeout(() => {
-                resolve(findExpression(tokens, target));
+                a: {
+                    var d = ["+", "-", "*", "/"];
+                    document.getElementById("exponents-checkbox").checked && d.push("**");
+                    for (let f of l(a, d)) {
+                        if (k(f, b)) {
+                            d = f;
+                            break a;
+                        }
+                    }
+                    d = "No solution found";
+                }
+                c(d);
             }, 800);
         });
     }
-    document.getElementById("random-numbers-button").addEventListener("click", function (event) {
-        event.preventDefault();
-        let numIntegers = document.getElementById("num-integers-input").value || 6, maxNumber = document.getElementById("max-number-input").value || 60, randomNumbers = Array.from({
-            length: numIntegers
-        }, () => Math.floor(Math.random() * maxNumber) + 1);
-        document.getElementById("numbers-input").value = randomNumbers.join(",");
-    }), document.getElementById("submit-button").addEventListener("click", async function (event) {
-        event.preventDefault();
-        let submitButton = document.getElementById("submit-button");
-        submitButton.innerHTML = "Calculating...";
-        let numbersInput = document.getElementById("numbers-input").value, targetInput = document.getElementById("target-input").value, numbers = numbersInput.split(",").map(Number), target = Number(targetInput), solution = await findExpressionAsync(numbers, target);
-        document.getElementById("solution-output").innerHTML = solution, submitButton.innerHTML = "Find expression";
+    document.getElementById("random-numbers-button").addEventListener("click", function (a) {
+        a.preventDefault();
+        a = document.getElementById("num-integers-input").value || 6;
+        let b = document.getElementById("max-number-input").value || 60;
+        a = Array.from({ length: a }, () => Math.floor(Math.random() * b) + 1);
+        document.getElementById("numbers-input").value = a.join(",");
     });
-}), document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector(".text-end");
-    let advancedSettings = document.querySelector("#advancedSettings");
+    document.getElementById("submit-button").addEventListener("click", function (a) {
+        return p(function* () {
+            a.preventDefault();
+            let b = document.getElementById("submit-button");
+            b.innerHTML = "Calculating...";
+            var c = document.getElementById("numbers-input").value, d = document.getElementById("target-input").value;
+            c = c.split(",").map(Number);
+            d = yield n(c, Number(d));
+            document.getElementById("solution-output").innerHTML = d;
+            b.innerHTML = "Find expression";
+        }());
+    });
+});
+document.addEventListener("DOMContentLoaded", function () {
+    let e = document.querySelector("#advancedSettings");
     document.querySelector(".text-end a").addEventListener("click", function () {
-        "none" === advancedSettings.style.display ? advancedSettings.style.display = "block" : advancedSettings.style.display = "none";
-    }), advancedSettings.querySelectorAll('input[type="number"]').forEach(function (input) {
-        input.addEventListener("click", function (event) {
-            event.stopPropagation();
+        "none" === e.style.display ? e.style.display = "block" : e.style.display = "none";
+    });
+    e.querySelectorAll('input[type="number"]').forEach(function (k) {
+        k.addEventListener("click", function (l) {
+            l.stopPropagation();
         });
     });
 });
