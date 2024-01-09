@@ -30,7 +30,7 @@
     let link = document.createElement("link");
     function createNavbar () {
         let nav = document.createElement("nav");
-        nav.classList.add("navbar", "navbar-expand-lg", "bg-light", "shadow");
+        nav.classList.add("bg-white", "border", "border-top-0", "fw-lighter", "navbar", "navbar-expand-lg", "shadow-sm");
         nav.style.fontFamily = "'Open+Sans', Helvetica, Arial, sans-serif";
         nav.style.fontSize = "1.1rem";
 
@@ -43,10 +43,10 @@
 
         let logo = document.createElement("img");
         logo.src = "./images/logo_backup.png";
-        logo.alt = "Logo";
+        logo.alt = "Jsreact Logo";
         logo.style.maxWidth = "auto";
         logo.style.maxHeight = "2.8em";
-        logo.style.margin = "0 auto";
+        logo.style.margin = "0 1em";
         logoLink.appendChild(logo);
 
         let toggler = document.createElement("button");
@@ -71,8 +71,7 @@
 
         for (let item of navItems) {
             let li = document.createElement("li");
-            li.classList.add("nav-item", "text-end");
-
+            li.classList.add("mx-1", "text-end");
             let a = document.createElement("a");
             a.classList.add("nav-link");
             a.href = item.href;
