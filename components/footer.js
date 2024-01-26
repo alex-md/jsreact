@@ -33,6 +33,7 @@ footer.appendChild(rowDiv);
 
 // Append footer to body (or any other parent element)
 document.body.appendChild(footer);
+
 // Function to fetch the view count from the Cloudflare Worker
 async function fetchViewCount() {
     try {
@@ -61,9 +62,6 @@ function updateViewCount() {
         viewCountButton.textContent = `Views: ${formatWithCommas(viewCount)}`;
     });
 }
-
-// Set an interval to update the view count every 10 seconds
-setInterval(updateViewCount, 10000);
 
 // Update the view count immediately when the page loads
 updateViewCount();
