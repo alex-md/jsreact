@@ -33,9 +33,8 @@ footer.appendChild(rowDiv);
 
 // Append footer to body (or any other parent element)
 document.body.appendChild(footer);
-
 // Function to fetch the view count from the Cloudflare Worker
-async function fetchViewCount () {
+async function fetchViewCount() {
     try {
         const response = await fetch('https://views.vs.workers.dev');
         if (!response.ok) {
@@ -50,13 +49,21 @@ async function fetchViewCount () {
 }
 
 // Function to format a number with commas as thousands separators
-function formatWithCommas (number) {
+function formatWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Fetch the view count immediately when the page loads
-fetchViewCount().then(viewCount => {
-    // Update the button text with the formatted view count
-    let viewCountButton = document.getElementById('viewCountButton');
-    viewCountButton.insertAdjacentText('beforeend', ` Views: ${formatWithCommas(viewCount)}`);
-});
+// Function to update view count on the page
+function updateViewCount() {
+    fetchViewCount().then(viewCount => {
+        let viewCountButton = document.getElementById('viewCountButton');
+        // Clear the current text and update with new view count
+        viewCountButton.textContent = `Views: ${formatWithCommas(viewCount)}`;
+    });
+}
+
+// Set an interval to update the view count every 10 seconds
+setInterval(updateViewCount, 10000);
+
+// Update the view count immediately when the page loads
+updateViewCount();
