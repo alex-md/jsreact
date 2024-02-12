@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:wght@100;300;400;700display=swap');
+
+body,
+h1 {
+    color: #212529;
+}
+
+#input,
+#output {
+    color: #3a3a3a;
+    resize: none
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: wrap
+}

@@ -6,7 +6,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag () { dataLayer.push(arguments); }
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         gtag('config', 'G-ZEFG04PXR7');
@@ -21,56 +21,22 @@
     <link rel=" stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <meta name="theme-color" content="#ffffff">
-    <style>
-        h1 {
-            font-weight: 700;
-            font-size: 2.5rem
-        }
-
-        body {
-            height: 100vh
-        }
-
-        button#go {
-            font-weight: 700;
-            font-size: 1.75rem;
-            max-width: 40vw
-        }
-
-        #stats,
-        p.text-center.lead {
-            color: #6c757d
-        }
-
-        div#options {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-evenly;
-            flex-direction: row;
-            display: grid
-        }
-
-        textarea {
-            height: 30vh;
-            width: 100%;
-            resize: none;
-            border-radius: .25rem;
-            padding: .5rem;
-            margin: .5rem
-        }
-    </style>
+    <!-- Styles moved to a separate CSS file -->
+    <link rel="stylesheet" href="./styles/minify.css">
 </head>
 
 <body class="bg-light">
+    <header>
+        <h1 class="text-center mt-4 display-4 fw-bold">JavaScript Minifier</h1>
+        <p class="text-center lead">With Google Closure Compiler</p>
+    </header>
     <main class="card-group pb-5">
-        <div class="container-fluid w-75">
-            <h1 class="text-center mt-4 display-4 fw-bold">JavaScript Minifier</h1>
-            <p class="text-center lead">With Google Closure Compiler</p>
-            <div class="row g-4">
+        <section class="container-fluid w-75">
+            <article class="row g-4">
                 <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-header">
-                            <h4 class="text-center fw-bold">Enter JavaScript Here</h4>
+                            <h2 class="text-center fw-bold">Enter JavaScript Here</h2>
                         </div>
                         <div class="card-body shadow-sm">
                             <div class="input-group">
@@ -80,8 +46,6 @@ function hello(name) {
     alert('Hello, ' + name);
     }
     hello('New user');
-                                      
-                                      
                                 </textarea>
                             </div>
                         </div>
@@ -90,7 +54,7 @@ function hello(name) {
                 <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-header">
-                            <h4 class="text-center fw-bold"> Compressed code</h4>
+                            <h2 class="text-center fw-bold"> Compressed code</h2>
                         </div>
                         <div class="card-body shadow-sm">
                             <div class="input-group">
@@ -101,15 +65,17 @@ function hello(name) {
                         </div>
                     </div>
                 </div>
-            </div>
-            <small id="stats" class="d-grid text-success text-end mt-2"></small>
-
-            <div id="options" class="text-center mt-4 d-flex flex-column justify-content-center align-items-center">
+            </article>
+            <footer>
+                <small id="stats" class="d-grid text-success text-end mt-2"></small>
+            </footer>
+            <aside id="options" class="text-center mt-4 d-flex flex-column justify-content-center align-items-center">
                 <div class="d-grid gap-2">
                     <button id="go" class="btn btn-outline-primary fw-semibold" onclick="blink()">Minify!</button>
                 </div>
-                <h4 class="fw-bold">Advanced Options...</h4>
-            </div>
+                <h2 class="fw-bold">Advanced Options...</h2>
+            </aside>
+        </section>
     </main>
     <script src="./components/navbar.js"></script>
     <script src="./components/footer.js"></script>

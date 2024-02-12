@@ -1,20 +1,29 @@
-# JSreact.com
+# JSreact.com - Your Online JavaScript Tools
 
-## Description
-
-This project includes a set of tools for various tasks. Each tool has its own HTML and JavaScript file.
+Welcome to JSreact.com, a collection of online tools for various tasks, each with its own dedicated HTML and JavaScript file. Our tools are designed to be user-friendly and efficient, helping you to streamline your workflow.
 
 ## Tools
 
-This project includes the following tools:
+- **[Chat Tool](chat.html)**: Chat with the latest GPT model using your OpenAI key. Ideal for testing and experimenting with AI models.
 
-- **Chat Tool ([chat.html](chat.html))**: This tool allows users to chat with the latest GPT model using there OpenAI key.
+- **[Clean Tool](clean.html)**: Clean your text by removing line-breaks and punctuation. Perfect for preparing text for natural language processing tasks or simply cleaning up messy text.
 
-- **Clean Tool ([clean.html](clean.html))**: This tool helps users to clean text by removing line-breaks and removing punctuation.
+- **[Diff Tool](diff.html)**: Compare two pieces of code or text and see the differences highlighted. Great for code reviews and spotting changes.
 
-- **Diff Tool ([diff.html](diff.html))**: This tool allows users to compare two pieces of code or text and highlights the differences. It's useful for code reviews and spotting changes.
+- **[Expression Tool](expression.html)**: Evaluate mathematical and logical expressions. Supports basic arithmetic operations, logical operations, and functions. A handy tool for quick calculations or logic checks.
 
-- **Expression Tool ([expression.html](expression.html))**: This tool helps users to evaluate mathematical and logical expressions. It supports basic arithmetic operations, logical operations, and functions.
+- **[Minify Tool](minify.html)**: Reduce the size of your code with the Google Closure Compiler. Essential for optimizing your JavaScript for production.
 
-- **Minify Tool ([minify.html](minify.html))**: This tool helps users to reduce the size of their code with the help of the Google Closure Compiler.
+- **[OpenAI TTS Tool](tts.html)**: Convert text to speech using OpenAI's text-to-speech (TTS) model. Ideal for generating voiceovers or testing the TTS model.
 
+## Usage
+
+To use any of these tools, simply navigate to the corresponding HTML file. Each tool has a user-friendly interface and clear instructions, so you can get started right away.
+
+## Contributing
+
+We welcome contributions! If you have a suggestion for a new tool or an improvement to an existing one, please feel free to open an issue or pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

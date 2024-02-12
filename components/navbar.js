@@ -42,7 +42,7 @@
         logoLink.href = "./index.html";
 
         let logo = document.createElement("img");
-        logo.src = "./images/logo_backup.png";
+        logo.src = "./images/logo.png";
         logo.alt = "Jsreact Logo";
         logo.style.maxWidth = "auto";
         logo.style.maxHeight = "2.8em";

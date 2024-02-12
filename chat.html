@@ -6,7 +6,7 @@
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
-		function gtag () { dataLayer.push(arguments); }
+		function gtag() { dataLayer.push(arguments); }
 		gtag('js', new Date());
 
 		gtag('config', 'G-ZEFG04PXR7');
@@ -20,67 +20,17 @@
 	<link rel="shortcut icon" href="./images/favicon.ico">
 	<link rel=" stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
 		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
+	<link rel="stylesheet" href="./styles/chat.css">
 	<meta name="theme-color" content="#ffffff">
-	<style>
-		@import url('https://fonts.googleapis.com/css?family=Open+Sans:wght@100;300;400;700display=swap');
-
-		body {
-			font-family: Open+Sans, sans-serif;
-			font-size: clamp(1rem, 2vw, 1.2rem);
-			color: #333;
-			height: 100vh
-		}
-
-		label {
-			color: #151f23ba
-		}
-
-		button#submit-button {
-			border: none
-		}
-
-		.card-body {
-			padding: 1rem
-		}
-
-		div#response {
-			height: fit-content;
-			background: #fff;
-			margin-bottom: 10px
-		}
-
-		.container {
-			padding: 1em
-		}
-
-		h1 {
-			font-weight: 700;
-			font-family: Helvetica, sans-serif
-		}
-
-		.chat-message {
-			border-bottom: 1px solid #000;
-			padding-bottom: 10px;
-			margin-bottom: 10px;
-			background-color: #0b93f6;
-			color: #fff;
-			border-radius: 18px;
-			padding: 1em
-		}
-
-		@media (max-width:768px) {
-			.container {
-				padding: .5em
-			}
-		}
-	</style>
 </head>
 
 <body class="bg-light">
-	<div class="container d-flex flex-column flex-wrap justify-content-between">
-		<div class="col justify-content-center">
-			<div class="mx-auto px-5 col-sm-12 col-md-10 col-lg-6">
+	<header>
+		<script src="./components/navbar.js"></script>
+	</header>
+	<main class="container d-flex flex-column flex-wrap justify-content-between">
+		<section class="col justify-content-center">
+			<article class="mx-auto px-5 col-sm-12 col-md-10 col-lg-6">
 				<div class="card shadow-sm my-5">
 					<h1 class="card-header text-center text-dark">Talk to GPT</h1>
 					<div class="card-body">
@@ -100,12 +50,14 @@
 						<div id="response" class="card-footer shadow-sm py-5 flex-column-reverse d-flex"></div>
 					</div>
 				</div>
-			</div>
-		</div>
-		<script src="./components/navbar.js"></script>
+			</article>
+		</section>
+	</main>
+	<footer>
 		<script src="./components/footer.js"></script>
-		<script src="./scripts/chat.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.5/axios.min.js"></script>
+	</footer>
+	<script src="./scripts/chat.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.5/axios.min.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,40 @@
+body,
+h1 {
+    color: #212529;
+}
+
+.CodeMirror-gutter.CodeMirror-linenumbers {
+    display: none;
+}
+
+.CodeMirror-linenumber.CodeMirror-gutter-elt {
+    display: none;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.scroll-down-text {
+    color: #6c757d;
+    font-size: 0.8em;
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0;
+    animation: fade-in-scroll-text 2s ease-in-out forwards;
+}
+
+@keyframes fade-in-scroll-text {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
