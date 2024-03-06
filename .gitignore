@@ -4,8 +4,6 @@ node_modules/
 # Ignore Parcel's cache
 .cache/
 
-# Ignore the dist directory
-dist/
 
 # Ignore logs
 *.log
