@@ -20,3 +20,6 @@ npm-debug.log*
 # Ignore OS generated files
 .DS_Store
 Thumbs.db
+
+.parcel-cache/
+.parcelrc

@@ -1,2 +1,0 @@
-document.getElementById("liveToastBtn"),document.getElementById("liveToast"),document.getElementById("liveToastBtn").addEventListener("click",function(){var t=document.getElementById("output");navigator.clipboard.writeText(t.value).then(function(){var t=document.getElementById("liveToast");new bootstrap.Toast(t).show()},function(t){console.error("Could not copy text: ",t)})});
-//# sourceMappingURL=clean.5694b244.js.map

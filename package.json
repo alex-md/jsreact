@@ -3,13 +3,25 @@
   "version": "1.0.0",
   "description": "Welcome to JSreact.com, a collection of online tools for various tasks, each with its own dedicated HTML and JavaScript file. Our tools are designed to be user-friendly and efficient, helping you to streamline your workflow.",
   "devDependencies": {
+    "@parcel/bundler-default": "^2.12.0",
+    "@parcel/namer-default": "^2.12.0",
+    "@parcel/optimizer-cssnano": "^2.12.0",
+    "@parcel/optimizer-swc": "^2.12.0",
+    "@parcel/optimizer-terser": "^2.12.0",
+    "@parcel/packager-js": "^2.12.0",
+    "@parcel/resolver-glob": "^2.12.0",
+    "@parcel/runtime-browser-hmr": "^2.12.0",
+    "@parcel/runtime-js": "^2.12.0",
     "parcel": "^2.12.0"
   },
   "scripts": {
     "start": "parcel",
-    "build": "parcel build src/index.html src/images/logo.png --public-url ./"
+    "build": "parcel build 'src/*.html' 'src/images/*.png' --public-url ./"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@parcel/config-default": "^2.12.0"
+  }
 }
