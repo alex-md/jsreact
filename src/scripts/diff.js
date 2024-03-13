@@ -48,26 +48,26 @@ findDiffBtn.addEventListener('click', () => {
     showDiff(sanitisedDiffText);
 });
 
-function showError (message) {
+function showError(message) {
     diffResponseArea.classList.add('d-none');
     errorContainer.textContent = message;
     errorContainer.classList.remove('d-none');
 }
 
-function showDiff (diffText) {
+function showDiff(diffText) {
     errorContainer.classList.add('d-none');
     diffResponseContainer.innerHTML = diffText;
     diffResponseArea.classList.remove('d-none');
 }
 
-document.getElementById('findDiffBtn').addEventListener('click', function() {
+document.getElementById('findDiffBtn').addEventListener('click', function () {
     var existingText = document.querySelector('.scroll-down-text');
     if (existingText) {
         existingText.remove();
     }
     var scrollText = document.createElement('p');
     scrollText.textContent = 'Scroll down to view diff';
-    scrollText.className = 'scroll-down-text';
-     // place above button
+    scrollText.className = 'text-center scroll-down-text';
+    // place above button
     document.querySelector('.d-grid').insertBefore(scrollText, document.getElementById('findDiffBtn'));
 });

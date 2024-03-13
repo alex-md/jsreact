@@ -3,27 +3,27 @@
         {
             href: './tts.html',
             text: 'OpenAI TTS Demo',
-            span: false,
+            span: true,
         },
         {
             href: './minify.html',
             text: 'Minify',
-            span: false,
+            span: true,
         },
         {
             href: './chat.html',
             text: 'Talk to GPT',
-            span: false,
+            span: true,
         },
         {
             href: './clean.html',
             text: 'Clean Text',
-            span: false,
+            span: true,
         },
         {
             href: './diff.html',
             text: 'Diff Checker',
-            span: false,
+            span: true,
         }
     ];
 

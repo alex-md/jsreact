@@ -29,52 +29,48 @@
     </head>
 
     <body class="bg-light">
-        <header class="container-fluid container-lg">
-            <h1 class="text-center display-4 fw-bold mt-4">Online Diff Viewer</h1>
+        <header class="container-fluid container-lg py-3">
+            <h1 class="text-center display-4 fw-bold">Online Diff Viewer</h1>
             <p class="text-center lead text-muted">Quickly find the difference between two texts.</p>
         </header>
         <main class="container py-5">
-
-            <section class="row g-4">
-
-                <article class="col-lg-6">
-                    <div class="card shadow-sm">
-                        <header class="card-header text-muted">
-                            Original Text
-                        </header>
-                        <textarea class="p-4 mx-auto overflow-hidden form-control-plaintext" id="originalTextArea"
-                            placeholder="Enter the original text here...">Paste your orignal text here.</textarea>
-                    </div>
-                </article>
-
-                <article class="col-lg-6">
+            <div class="row g-4">
+                <div class="col-lg-6">
                     <div class="card">
-                        <header class="card-header text-muted">
-                            Modified Text
-                        </header>
-                        <textarea class="p-4 mx-auto overflow-hidden form-control-plaintext" id="modifiedTextArea"
-                            placeholder="Enter the modified text here...">Paste your modified text here.</textarea>
+                        <div class="card-header">
+                            Original Text
+                        </div>
+                        <div class="card-body">
+                            <textarea class="form-control" id="originalTextArea"
+                                placeholder="Enter the original text here..."></textarea>
+                        </div>
                     </div>
-                </article>
-
-            </section>
-
-            <div class="d-grid gap-2 col-6 mx-auto p-3">
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Modified Text
+                        </div>
+                        <div class="card-body">
+                            <textarea class="form-control" id="modifiedTextArea"
+                                placeholder="Enter the modified text here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2 col-6 mx-auto py-3">
                 <button id="findDiffBtn" class="btn btn-primary">View Diff</button>
             </div>
-
-            <section id="diffResponseArea" class="card mt-5 d-none">
-                <header class="card-header bg-light">
+            <div class="card mt-5" id="diffResponseArea">
+                <div class="card-header">
                     Diff Viewer
-                </header>
+                </div>
                 <div class="card-body">
                     <pre id="diffResponseContainer"></pre>
                 </div>
-            </section>
-
-            <div id="errorContainer" class="alert alert-danger d-none"></div>
+            </div>
+            <div id="errorContainer" class="alert alert-danger mt-3 d-none"></div>
         </main>
-
         <!-- Scripts -->
         <script type="module" src="./scripts/diff.js"></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>

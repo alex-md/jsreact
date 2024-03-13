@@ -30,13 +30,14 @@
     </head>
 
     <body class="bg-light">
-        <header>
+        <header class="mb-4">
             <h1 class="text-center display-4 fw-bold mt-4">Clean Text</h1>
             <p class="text-center lead text-muted">Quickly remove line breaks and punctuation from text</p>
         </header>
         <main class="container-fluid container-lg">
-            <section class="d-flex">
+            <section class="d-flex justify-content-center">
                 <article class="card mx-auto w-100 p-5 shadow">
+                    </div>
                     <form>
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -56,13 +57,13 @@
                         </div>
                     </form>
                     <div class="d-flex justify-content-end flex-wrap">
-                        <button type="button" class="btn btn-primary m-2" onclick="ioText('clean')"
+                        <button type="button" class="btn btn-outline-primary m-2" onclick="ioText('clean')"
                             title="trim, remove line breaks, remove double spaces">Remove Line Breaks</button>
-                        <button type="button" class="btn btn-success m-2" onclick="ioText('remove_punctuation')">Remove
+                        <button type="button" class="btn btn-outline-success m-2"
+                            onclick="ioText('remove_punctuation')">Remove
                             Punctuation</button>
-                        <button type="button" class="btn bg-tertiary border-dark-subtle m-2" id="liveToastBtn">Copy to
+                        <button type="button" class="btn btn-outline-dark m-2" id="liveToastBtn">Copy to
                             Clipboard</button>
-
                     </div>
                     <div class="toast-container position-fixed bottom-0 end-0 p-3 mx-auto">
                         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -71,6 +72,7 @@
                             </div>
                         </div>
                     </div>
+                </article>
             </section>
         </main>
         <footer>

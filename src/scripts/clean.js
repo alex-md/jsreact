@@ -16,10 +16,9 @@ const ioText = (action) => {
     }
 };
 
-const cleanText = (text) => text.trim().replace(/\n/g, ' ').replace(/(\S)\n(\S)/g, '$1 $2').replace(/\s+/g, ' ');
+const cleanText = (text) => text.trim().replace(/(\S)\n(\S)/g, '$1 $2').replace(/\s+/g, ' ');
 
-const removePunctuation = (text) => text.replace(/[^\w\s]|_/g, '').replace(/\s+/g, ' ');
-
+const removePunctuation = (text) => text.replace(/[^\w\s\n]|_/g, '').replace(/\s+/g, ' ');
 toastTrigger.addEventListener('click', () => {
     navigator.clipboard.writeText(output.value).then(() => {
         // Show the toast notification
