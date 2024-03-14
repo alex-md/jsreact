@@ -44,7 +44,6 @@ findDiffBtn.addEventListener('click', () => {
     // Remove the paragraph characters from the HTML
     const sanitisedDiffText = diffText.replace(returnPattern, '');
 
-    // Show the differences
     showDiff(sanitisedDiffText);
 });
 
