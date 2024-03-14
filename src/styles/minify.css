@@ -34,3 +34,7 @@ textarea {
     padding: .5rem;
     margin: .5rem
 }
+
+.small-border {
+    border-width: 3px !important;
+}

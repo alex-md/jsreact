@@ -15,8 +15,9 @@
     "parcel": "^2.12.0"
   },
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build 'src/*.html' 'src/images/*.png' --public-url ./"
+    "start": "parcel 'src/*.html' 'src/images/*.png' --public-url ./",
+    "build": "parcel build 'src/*.html' 'src/images/*.png' --public-url ./ --no-source-maps",
+    "clean": "rm -rf .parcel-cache dist"
   },
   "keywords": [],
   "author": "",

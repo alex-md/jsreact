@@ -3,45 +3,34 @@
         {
             href: './tts.html',
             text: 'OpenAI TTS Demo',
-            span: true,
         },
         {
             href: './minify.html',
             text: 'Minify',
-            span: true,
         },
         {
             href: './chat.html',
             text: 'Talk to GPT',
-            span: true,
         },
         {
             href: './clean.html',
             text: 'Clean Text',
-            span: true,
         },
         {
             href: './diff.html',
             text: 'Diff Checker',
-            span: true,
         }
     ];
 
-    let link = document.createElement("link");
     function createNavbar() {
-        let nav = document.createElement("nav");
-        nav.classList.add("bg-white", "border", "border-top-0", "fw-lighter", "navbar", "navbar-expand-lg", "shadow-sm");
-        nav.style.fontFamily = "'Open+Sans', Helvetica, Arial, sans-serif";
-        nav.style.fontSize = "1.1rem";
+        const navigation = document.createElement("navigation");
+        navigation.classList.add("card-header", "navbar", "navbar-expand-lg", "navbar-light");
 
-        let container = document.createElement("div");
-        container.classList.add("container-fluid");
-
-        let logoLink = document.createElement("a");
+        const logoLink = document.createElement("a");
         logoLink.classList.add("navbar-brand");
         logoLink.href = "./index.html";
 
-        let logo = document.createElement("img");
+        const logo = document.createElement("img");
         logo.src = "./images/logo.png";
         logo.alt = "Jsreact Logo";
         logo.style.maxWidth = "auto";
@@ -49,78 +38,58 @@
         logo.style.margin = "0 1em";
         logoLink.appendChild(logo);
 
-        let toggler = document.createElement("button");
-        toggler.classList.add("navbar-toggler");
+        const toggler = document.createElement("button");
+        toggler.classList.add("navbar-toggler", "m-3");
         toggler.type = "button";
         toggler.dataset.bsToggle = "collapse";
-        toggler.dataset.bsTarget = "#navbarSupportedContent";
-        toggler.setAttribute("aria-controls", "navbarSupportedContent");
+        toggler.dataset.bsTarget = "#navbarNavDropdown";
+        toggler.setAttribute("aria-controls", "navbarNavDropdown");
         toggler.setAttribute("aria-expanded", "false");
         toggler.setAttribute("aria-label", "Toggle navigation");
 
-        let span = document.createElement("span");
+        const span = document.createElement("span");
         span.classList.add("navbar-toggler-icon");
         toggler.appendChild(span);
 
-        let collapse = document.createElement("div");
-        collapse.id = "navbarSupportedContent";
+        const collapse = document.createElement("div");
         collapse.classList.add("collapse", "navbar-collapse");
+        collapse.id = "navbarNavDropdown";
 
-        let ul = document.createElement("ul");
-        ul.classList.add("navbar-nav", "ms-auto");
+        const ul = document.createElement("ul");
+        ul.classList.add("navbar-nav", "ms-auto"); // Add 'ms-auto' to move the navbar links to the right
 
-        for (let item of navItems) {
-            let li = document.createElement("li");
-            li.classList.add("mx-1", "text-end");
-            let a = document.createElement("a");
-            a.classList.add("nav-link");
+        for (const item of navItems) {
+            const li = document.createElement("li");
+            li.classList.add("nav-item");
+
+            const a = document.createElement("a");
+            a.classList.add("nav-link", "text-end", "pe-3");
             a.href = item.href;
             a.textContent = item.text;
-            if (item.span) {
-                let span = document.createElement("span");
-                span.classList.add("visually-hidden");
-                span.textContent = item.spanText;
-                a.appendChild(span);
-            }
+
+            // Add hover effect
+            a.addEventListener('mouseover', function () {
+                this.style.backgroundColor = "#f8f9fa";
+            });
+            a.addEventListener('mouseout', function () {
+                this.style.backgroundColor = "";
+            });
+
             li.appendChild(a);
             ul.appendChild(li);
         }
 
-        link.href = "https://fonts.googleapis.com/css?family=Open+Sans&display=swap";
-        link.rel = "stylesheet";
-        document.head.appendChild(link);
-
         collapse.appendChild(ul);
-        container.appendChild(logoLink);
-        container.appendChild(toggler);
-        container.appendChild(collapse);
-        nav.appendChild(container);
-        document.body.appendChild(nav);
+        navigation.appendChild(logoLink);
+        navigation.appendChild(toggler);
+        navigation.appendChild(collapse);
+        document.body.appendChild(navigation);
 
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach((link) => {
-            link.addEventListener('mouseenter', () => {
-                link.style.transform = 'translateY(-2px)';
-                link.style.transition = 'transform 0.2s ease';
-            });
-
-            link.addEventListener('mouseleave', () => {
-                link.style.transform = 'translateY(0)';
-                link.style.transition = 'transform 0.2s ease';
-            });
-        });
-
-        const navbarToggler = document.querySelector('.navbar-toggler');
-        const navbarCollapse = document.querySelector('.navbar-collapse');
-
-        navbarToggler.addEventListener('click', () => {
-            navbarCollapse.classList.toggle('show');
+        // Add event listener to toggler
+        toggler.addEventListener('click', function () {
+            collapse.classList.toggle('show');
         });
     }
-
-    const style = document.createElement('style');
-    style.textContent = '.navbar-toggler-icon { transition: none; }';
-    document.head.appendChild(style);
 
     window.createNavbar = createNavbar;
 })();
@@ -130,6 +99,5 @@ document.addEventListener("DOMContentLoaded", function () {
     createNavbar();
 
     // Move the navbar element to the top of the page
-    document.body.insertAdjacentElement('afterbegin', document.querySelector("nav"));
-
+    document.body.insertAdjacentElement('afterbegin', document.querySelector("navigation"));
 });

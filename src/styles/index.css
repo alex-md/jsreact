@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:wght@100;300;400;700&display=swap');
+
+.container {
+    margin: auto;
+    overflow: auto;
+    padding: 0 20px
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+    transition: .3s;
+    background: #fff;
+    margin-bottom: 20px
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2)
+}
+
+.card-body {
+    padding: 20px
+}
+
+.btn {
+    border: none;
+    color: #fff;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: .4s;
+    cursor: pointer
+}
+
+h1,
+h2 {
+    color: #333
+}

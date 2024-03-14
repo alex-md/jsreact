@@ -1,30 +1,38 @@
-'use strict';
+// Get the elements from the document
+var input = document.getElementById('input');
+var output = document.getElementById('output');
+var toastTrigger = document.getElementById('liveToastBtn');
+var toastLiveExample = document.getElementById('liveToast');
+var cleanBtn = document.getElementById('cleanBtn');
+var removePunctuationBtn = document.getElementById('removePunctuationBtn');
 
-const input = document.getElementById('input');
-const output = document.getElementById('output');
-const toastTrigger = document.getElementById('liveToastBtn');
-const toastLiveExample = document.getElementById('liveToast');
+// Function to clean the text
+function cleanText() {
+    var text = input.value;
+    var cleanedText = text.trim();
+    cleanedText = cleanedText.replace(/(\S)\n(\S)/g, '$1 $2');
+    cleanedText = cleanedText.replace(/\s+/g, ' ');
+    output.value = cleanedText;
+}
 
-const ioText = (action) => {
-    switch (action) {
-        case 'clean':
-            return output.value = cleanText(input.value);
-        case 'remove_punctuation':
-            return output.value = removePunctuation(input.value);
-        case 'copy_to_clipboard':
-            return copyToClipboard(output.value);
-    }
-};
+// Function to remove punctuation from the text
+function removePunctuation() {
+    var text = input.value;
+    var noPunctuationText = text.replace(/[^\w\s\n]|_/g, '');
+    noPunctuationText = noPunctuationText.replace(/\s+/g, ' ');
+    output.value = noPunctuationText;
+}
 
-const cleanText = (text) => text.trim().replace(/(\S)\n(\S)/g, '$1 $2').replace(/\s+/g, ' ');
+// Add event listeners to the buttons
+cleanBtn.addEventListener('click', cleanText);
+removePunctuationBtn.addEventListener('click', removePunctuation);
 
-const removePunctuation = (text) => text.replace(/[^\w\s\n]|_/g, '').replace(/\s+/g, ' ');
-toastTrigger.addEventListener('click', () => {
-    navigator.clipboard.writeText(output.value).then(() => {
+toastTrigger.addEventListener('click', function () {
+    navigator.clipboard.writeText(output.value).then(function () {
         // Show the toast notification
-        const toast = new bootstrap.Toast(toastLiveExample);
+        var toast = new bootstrap.Toast(toastLiveExample);
         toast.show();
-    }).catch((err) => {
+    }).catch(function (err) {
         console.error('Could not copy text: ', err);
     });
 });
