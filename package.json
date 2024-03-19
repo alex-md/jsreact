@@ -4,7 +4,7 @@
   "description": "Welcome to JSreact.com, a collection of online tools for various tasks, each with its own dedicated HTML and JavaScript file. Our tools are designed to be user-friendly and efficient, helping you to streamline your workflow.",
   "main": "index.js",
   "scripts": {
-    "build": "parcel build ./src/index.js"
+    "build": "parcel build ./src/index.js --out-dir ./src/dist"
   },
   "keywords": [],
   "author": "",
