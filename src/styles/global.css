@@ -1,0 +1,275 @@
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    color: #333;
+    height: 100vh
+}
+
+p {
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+label {
+    color: #151f23ba
+}
+
+button#submit-button {
+    border: none
+}
+
+.card-body {
+    padding: 1rem
+}
+
+div#response {
+    height: fit-content;
+    background: #fff;
+    margin-bottom: 10px
+}
+
+.container {
+    padding: 1em
+}
+
+h1 {
+    font-weight: 700;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+.chat-message {
+    border-bottom: 1px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    background-color: #0b93f6;
+    color: #fff;
+    border-radius: 18px;
+    padding: 1em
+}
+
+@media (max-width:768px) {
+    .container {
+        padding: .5em
+    }
+}
+
+body,
+h1 {
+    color: #212529
+}
+
+#input,
+#output {
+    color: #3a3a3a;
+    resize: none
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: wrap
+}
+
+body,
+h1 {
+    color: #212529
+}
+
+.CodeMirror-gutter.CodeMirror-linenumbers {
+    display: none
+}
+
+.CodeMirror-linenumber.CodeMirror-gutter-elt {
+    display: none
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd
+}
+
+.scroll-down-text {
+    color: #6c757d;
+    font-size: .8em;
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0;
+    animation: fade-in-scroll-text 2s ease-in-out forwards
+}
+
+@keyframes fade-in-scroll-text {
+    0% {
+        opacity: 0
+    }
+
+    50% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0
+    }
+}
+
+.container {
+    margin: auto;
+    overflow: auto;
+    padding: 0 20px
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+    transition: .3s;
+    background: #fafafa;
+    margin-bottom: 20px
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2)
+}
+
+h1,
+h2 {
+    color: #333
+}
+
+h1 {
+    font-weight: 700;
+    font-size: 2.5rem
+}
+
+body {
+    height: 100vh
+}
+
+button#go {
+    font-weight: 700;
+    font-size: 1.75rem;
+    max-width: 40vw
+}
+
+#stats,
+p.text-center.lead {
+    color: #6c757d
+}
+
+div#options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    flex-direction: row;
+    display: grid
+}
+
+textarea {
+    height: 30vh;
+    width: 100%;
+    resize: none;
+    border-radius: .25rem;
+    padding: .5rem;
+    margin: .5rem
+}
+
+.small-border {
+    border-width: 3px !important
+}
+
+.container {
+    margin: 0 auto;
+    overflow: auto;
+    padding: 0 20px
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+    transition: .3s;
+    background: #fff;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2)
+}
+
+.card-body {
+    padding: 20px
+}
+
+.btn {
+    padding: 15px 32px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: .4s;
+    cursor: pointer
+}
+
+.btn-primary {
+    background-color: #000cad;
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    transition-duration: .4s;
+    cursor: pointer
+}
+
+.btn-primary:hover {
+    background-color: #1d33ff;
+    color: #fff;
+    box-shadow: 0 12px 20px 0 rgba(0, 0, 0, .24)
+}
+
+.btn-warning {
+    background-color: #f0ad4e;
+    border: none;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition-duration: .4s;
+    cursor: pointer
+}
+
+.btn-warning:hover {
+    background-color: #f0ad4e;
+    color: #fff;
+    box-shadow: 0 12px 20px 0 rgba(0, 0, 0, .24)
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    border: none;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition-duration: .4s;
+    cursor: pointer
+}
+
+.btn-danger:hover {
+    background-color: #d9534f;
+    color: #fff;
+    box-shadow: 0 12px 20px 0 rgba(0, 0, 0, .24)
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px
+}
+
+.form-check-input {
+    margin-right: 10px
+}
+
+.form-check-label {
+    color: #333
+}
+
+h1,
+h2 {
+    color: #333
+}

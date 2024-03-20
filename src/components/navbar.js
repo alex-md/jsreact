@@ -24,7 +24,7 @@
 
     function createNavbar() {
         const navigation = document.createElement("navigation");
-        navigation.classList.add("card-header", "navbar", "navbar-expand-lg", "navbar-light");
+        navigation.classList.add("card-header", "navbar", "navbar-expand-lg", "navbar-light", "shadow-sm", "bg-light");
 
         const logoLink = document.createElement("a");
         logoLink.classList.add("navbar-brand");

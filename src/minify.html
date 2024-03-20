@@ -20,7 +20,7 @@
         <link rel="shortcut icon" href="./images/favicon.ico">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css">
         <meta name="theme-color" content="#ffffff">
-        <link rel="stylesheet" href="./styles/minify.css">
+        <link rel="stylesheet" href="./styles/global.css">
 
     </head>
 
@@ -71,10 +71,33 @@ function hello(name) {
                 <aside id="options"
                     class="text-center mt-4 d-flex flex-column justify-content-center align-items-center">
                     <div class="d-grid gap-2">
-                        <button id="go" class="btn btn-outline-dark fw-semibold" onclick="blink()">Minify!</button>
+                        <button id="go" class="btn btn-outline-dark fw-semibold mx-auto">Minify!</button>
                     </div><br />
                     <h2 class="fw-bold">Advanced Options...</h2>
                 </aside>
+                <div id="options">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <label for="compilation_level" class="input-group-text">Compilation Level</label>
+                                <select id="compilation_level" class="form-control">
+                                    <option value="WHITESPACE_ONLY">Whitespace</option>
+                                    <option selected="true" value="SIMPLE_OPTIMIZATIONS">Simple</option>
+                                    <option value="ADVANCED_OPTIMIZATIONS">Advanced</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <label for="formatting" class="input-group-text">Formatting</label>
+                                <select id="formatting" class="form-control">
+                                    <option value="pretty_print">Pretty print</option>
+                                    <option value="print_input_delimiter">Print input delimiter</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
         <script src="./components/navbar.js"></script>
