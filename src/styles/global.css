@@ -1,156 +1,125 @@
 body {
-    font-family: 'Helvetica Neue', sans-serif;
-    color: #333;
-    height: 100vh
+    font-family: 'Roboto', sans-serif;
+    color: #424242;
+    height: 100vh;
+    margin: 0 auto;
+    background: #f5f5f5;
 }
 
-p {
-    font-family: 'Helvetica Neue', sans-serif;
+.container {
+    padding: 0 10vw;
+
+}
+
+p,
+h1,
+h2 {
+    font-family: 'Roboto', sans-serif;
 }
 
 label {
-    color: #151f23ba
+    color: #272727
 }
 
 button#submit-button {
-    border: none
+    border: none;
+    background-color: #3f51b5;
+    color: #fff;
 }
 
 .card-body {
-    padding: 1rem
+    padding: 1.5rem;
 }
 
 div#response {
     height: fit-content;
     background: #fff;
-    margin-bottom: 10px
-}
-
-.container {
-    padding: 1em
+    margin-bottom: 15px;
 }
 
 h1 {
-    font-weight: 700;
-    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
 }
 
 .chat-message {
     border-bottom: 1px solid #000;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    background-color: #0b93f6;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    background-color: #3f51b5;
     color: #fff;
-    border-radius: 18px;
-    padding: 1em
+    border-radius: 25px;
+    padding: 1.5em;
 }
 
 @media (max-width:768px) {
     .container {
-        padding: .5em
+        padding: 1em;
     }
 }
 
 body,
 h1 {
-    color: #212529
+    color: #424242;
 }
 
 #input,
 #output {
-    color: #3a3a3a;
-    resize: none
+    color: #424242;
+    resize: none;
 }
 
 form {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    flex-wrap: wrap
-}
-
-body,
-h1 {
-    color: #212529
+    flex-wrap: wrap;
 }
 
 .CodeMirror-gutter.CodeMirror-linenumbers {
-    display: none
+    display: none;
 }
 
 .CodeMirror-linenumber.CodeMirror-gutter-elt {
-    display: none
+    display: none;
 }
 
 .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ddd
+    background-color: #eaeaea;
 }
 
 .scroll-down-text {
-    color: #6c757d;
-    font-size: .8em;
+    color: #9e9e9e;
+    font-size: .9em;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 15px;
     opacity: 0;
-    animation: fade-in-scroll-text 2s ease-in-out forwards
+    animation: fade-in-scroll-text 2s ease-in-out forwards;
 }
 
 @keyframes fade-in-scroll-text {
     0% {
-        opacity: 0
+        opacity: 0;
     }
 
     50% {
-        opacity: 1
+        opacity: 1;
     }
 
     100% {
-        opacity: 0
+        opacity: 0;
     }
 }
 
-.container {
-    margin: auto;
-    overflow: auto;
-    padding: 0 20px
-}
-
 .card {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+    border-radius: 15px;
     transition: .3s;
-    background: #fafafa;
-    margin-bottom: 20px
-}
-
-.card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2)
-}
-
-h1,
-h2 {
-    color: #333
-}
-
-h1 {
-    font-weight: 700;
-    font-size: 2.5rem
-}
-
-body {
-    height: 100vh
-}
-
-button#go {
-    font-weight: 700;
-    font-size: 1.75rem;
-    max-width: 40vw
+    margin-bottom: 25px;
 }
 
 #stats,
 p.text-center.lead {
-    color: #6c757d
+    color: #2b2b2b;
 }
 
 div#options {
@@ -158,118 +127,107 @@ div#options {
     flex-wrap: wrap;
     justify-content: space-evenly;
     flex-direction: row;
-    display: grid
+    display: grid;
 }
 
 textarea {
-    height: 30vh;
+    height: 35vh;
     width: 100%;
     resize: none;
-    border-radius: .25rem;
-    padding: .5rem;
-    margin: .5rem
+    border-radius: .3rem;
+    padding: .75rem;
+    margin: .75rem;
 }
 
 .small-border {
-    border-width: 3px !important
-}
-
-.container {
-    margin: 0 auto;
-    overflow: auto;
-    padding: 0 20px
-}
-
-.card {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
-    transition: .3s;
-    background: #fff;
-    margin-bottom: 20px;
-}
-
-.card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2)
+    border-width: 4px !important;
 }
 
 .card-body {
-    padding: 20px
+    padding: 25px;
+}
+
+button#go {
+    background-color: #3f51b5;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .3s;
+    font-size: x-large;
+    padding: 15px 25px;
 }
 
 .btn {
-    padding: 15px 32px;
+    padding: 0.9em 1.1em;
     text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
+    font-size: 12px;
+    margin: 3px 2px;
     transition-duration: .4s;
-    cursor: pointer
+    cursor: pointer;
+    display: inline-block;
 }
 
 .btn-primary {
-    background-color: #000cad;
+    background-color: #3f51b5;
     color: #fff;
     text-decoration: none;
     display: inline-block;
     transition-duration: .4s;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .btn-primary:hover {
-    background-color: #1d33ff;
+    background-color: #536dfe;
     color: #fff;
-    box-shadow: 0 12px 20px 0 rgba(0, 0, 0, .24)
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, .24);
 }
 
 .btn-warning {
-    background-color: #f0ad4e;
+    background-color: #ff9800;
     border: none;
     color: #fff;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     transition-duration: .4s;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .btn-warning:hover {
-    background-color: #f0ad4e;
+    background-color: #feac31;
     color: #fff;
-    box-shadow: 0 12px 20px 0 rgba(0, 0, 0, .24)
+    box-shadow: 0 15px 25px 0 rgba(0, 0, 0, .24);
 }
 
 .btn-danger {
-    background-color: #d9534f;
+    background-color: #f44336;
     border: none;
     color: #fff;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     transition-duration: .4s;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .btn-danger:hover {
-    background-color: #d9534f;
+    background-color: #f95a4f;
     color: #fff;
-    box-shadow: 0 12px 20px 0 rgba(0, 0, 0, .24)
+    box-shadow: 0 15px 25px 0 rgba(0, 0, 0, .24);
 }
 
 .form-control {
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding: 10px
+    border-radius: 7px;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
 }
 
 .form-check-input {
-    margin-right: 10px
+    margin-right: 15px;
 }
 
 .form-check-label {
-    color: #333
-}
-
-h1,
-h2 {
-    color: #333
+    color: #424242;
 }
