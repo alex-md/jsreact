@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 body {
     font-family: 'Roboto', sans-serif;
     color: #424242;
@@ -27,9 +29,6 @@ button#submit-button {
     color: #fff;
 }
 
-.card-body {
-    padding: 1.5rem;
-}
 
 div#response {
     height: fit-content;
@@ -114,7 +113,6 @@ form {
 .card {
     border-radius: 15px;
     transition: .3s;
-    margin-bottom: 25px;
 }
 
 #stats,
@@ -143,9 +141,6 @@ textarea {
     border-width: 4px !important;
 }
 
-.card-body {
-    padding: 25px;
-}
 
 button#go {
     background-color: #3f51b5;

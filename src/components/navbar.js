@@ -24,7 +24,7 @@
 
     function createNavbar() {
         const navigation = document.createElement("navigation");
-        navigation.classList.add("card-header", "navbar", "navbar-expand-lg", "navbar-light", "shadow-sm", "bg-light");
+        navigation.classList.add("card-header", "navbar", "navbar-expand-lg", "shadow-sm", "bg-light");
 
         const logoLink = document.createElement("a");
         logoLink.classList.add("navbar-brand");
@@ -102,3 +102,65 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.insertAdjacentElement('afterbegin', document.querySelector("navigation"));
 });
 
+
+
+// Create footer element
+var footer = document.createElement('footer');
+footer.style.padding = '1rem';
+footer.style.position = 'relative';
+footer.style.bottom = '0';
+footer.style.width = '100%';
+
+// Create div for row
+var rowDiv = document.createElement('div');
+rowDiv.style.display = 'flex';
+rowDiv.style.justifyContent = 'flex-end';
+rowDiv.style.margin = '0.5rem';
+
+// Create div for column
+var colDiv = document.createElement('div');
+colDiv.style.flex = '0 0 auto';
+
+// Create button
+var button = document.createElement('div');
+button.style.backgroundColor = 'transparent';
+button.style.color = '#6c757d';
+button.style.border = '0';
+button.id = 'viewCountButton'; // Add an id to the button for later reference
+
+// Create anchor
+var anchor = document.createElement('div');
+
+button.appendChild(anchor);
+colDiv.appendChild(button);
+rowDiv.appendChild(colDiv);
+footer.appendChild(rowDiv);
+
+document.body.appendChild(footer);
+
+async function fetchViewCount() {
+    try {
+        const response = await fetch('https://views.vs.workers.dev');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.text();
+        return data;
+    } catch (error) {
+        console.error('Error fetching view count:', error);
+        return 'Unavailable';
+    }
+}
+
+function formatWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function updateViewCount() {
+    fetchViewCount().then(viewCount => {
+        const viewCountButton = document.getElementById('viewCountButton');
+        viewCountButton.textContent = `Views: ${formatWithCommas(viewCount)}`;
+    });
+}
+
+updateViewCount();
