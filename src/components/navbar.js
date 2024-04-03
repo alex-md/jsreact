@@ -9,8 +9,8 @@
             text: 'Minify',
         },
         {
-            href: './chat.html',
-            text: 'Talk to GPT',
+            href: './generator.html',
+            text: 'AI Name Generator',
         },
         {
             href: './clean.html',
