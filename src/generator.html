@@ -56,12 +56,7 @@
             }
 
             .input-form>.submit {
-                background: #333;
-                color: #fff;
                 border: 0;
-                padding: 0 8px;
-                height: 32px;
-                width: 64px;
                 border-radius: 3px;
                 margin-left: 16px;
                 font-weight: bold;
@@ -71,6 +66,19 @@
                 letter-spacing: 0.02em;
                 cursor: pointer;
             }
+
+            /* Make the button slim and small
+            .copyButton {
+                border: 0;
+                border-radius: 3px;
+                text-align: center;
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
+                cursor: pointer;
+                padding: 4px 8px;
+                margin-left: 8px;
+            } */
 
             .results-list {
                 max-width: 960px;
@@ -158,6 +166,10 @@
                 transform: scale(1) translate3d(0, 0, 0);
             }
 
+            #copyButton:hover {
+                transition: transform 0.3s ease-in-out;
+            }
+
             @media (min-width: 768px) {
 
                 .result-item:hover>span,
@@ -193,13 +205,36 @@
             <h1 class="text-center display-4 fw-bold mt-4">AI Name Generator</h1>
             <p class="text-center lead text-muted">Generate a name for your startup or domain</p>
         </header>
-        <main class="container-fluid container-lg">
-            <form id='form' class='input-form'>
-                <label>Let's name your startup using the words:</label>
-                <input type='text' class='input text-muted' id='input' placeholder='some words' value='planet disco'>
-                <button class='submit'>Go</button>
+        <main class="container-fluid w-responsive">
+            <form id='form' class='row g-3'>
+                <div class="col-12">
+                    <label for="input" class="form-label">Let's name your startup using the words:</label>
+                    <input type='text' class='form-control text-muted' id='input' placeholder='Tortoise Bun'
+                        value="Tortoise Bun">
+                </div>
+                <div class="col-12 col-md-6">
+                    <button id='submit' class="btn btn-dark">Go</button>
+                </div>
+                <div id="optionsCard" class="col-12 col-md-6">
+                    <div class="align-items-center d-flex text-nowrap mx-4">
+                        <h5 class="card-title mx-1 small text-muted d-inline-flex">Copy Options</h5>
+                        <div class="form-check mx-2">
+                            <input class="form-check-input" type="radio" name="copyOption" id="copyWithTLD"
+                                value="withTLD" checked>
+                            <label class="form-check-label small text-muted" for="copyWithTLD">Copy with TLD</label>
+                        </div>
+                        <div class="form-check mx-2">
+                            <input class="form-check-input" type="radio" name="copyOption" id="copyWithoutTLD"
+                                value="withoutTLD">
+                            <label class="form-check-label small text-muted" for="copyWithoutTLD">Copy without
+                                TLD</label>
+                        </div>
+                        <button id='copyButton' class='btn btn-dark d-none mx-4 w-responsive'>Copy names</button>
+                    </div>
+                </div>
             </form>
-            <div id='results' class='results-list'>
+            <div id='results' class='m-2 p-5 row'>
+                <!-- Results will be inserted here -->
             </div>
         </main>
         <footer>
