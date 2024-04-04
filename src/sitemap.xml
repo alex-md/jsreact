@@ -1,49 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-  <loc>https://jsreact.com/</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>1.00</priority>
+<loc>https://jsreact.com/</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
 </url>
 <url>
-  <loc>https://jsreact.com/minify</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://jsreact.com/chat.html</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
 </url>
 <url>
-  <loc>https://jsreact.com/generator</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://jsreact.com/clean.html</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
 </url>
 <url>
-  <loc>https://jsreact.com/clean</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://jsreact.com/diff.html</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
 </url>
 <url>
-  <loc>https://jsreact.com/tts</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://jsreact.com/expression.html</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
 </url>
 <url>
-  <loc>https://jsreact.com/diff</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://jsreact.com/generator.html</loc>
+<lastmod>2024-04-04T00:20:36-07:00</lastmod>
 </url>
 <url>
-  <loc>https://jsreact.com/chat</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://jsreact.com/minify.html</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
 </url>
 <url>
-  <loc>https://jsreact.com/expression</loc>
-  <lastmod>2024-04-03T05:32:22+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://jsreact.com/policy.html</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
 </url>
-
+<url>
+<loc>https://jsreact.com/tts.html</loc>
+<lastmod>2024-04-03T12:41:18-07:00</lastmod>
+</url>
 </urlset>
