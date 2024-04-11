@@ -1,90 +1,91 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap);
+
+button#go,
+button#submit-button {
+    border: none
+}
+
+body,
+h1,
+h2,
+p {
+    font-family: Roboto, sans-serif
+}
+
+.chat-message,
+button#submit-button {
+    background-color: #3f51b5;
+    color: #fff
+}
 
 body {
-    font-family: 'Roboto', sans-serif;
-    color: #424242;
     height: 100vh;
     margin: 0 auto;
-    background: #f5f5f5;
+    background: #f5f5f5
 }
 
 .container {
-    padding: 0 10vw;
-
-}
-
-p,
-h1,
-h2 {
-    font-family: 'Roboto', sans-serif;
+    padding: 0 10vw
 }
 
 label {
     color: #272727
 }
 
-button#submit-button {
-    border: none;
-    background-color: #3f51b5;
-    color: #fff;
-}
-
-
 div#response {
     height: fit-content;
     background: #fff;
-    margin-bottom: 15px;
+    margin-bottom: 15px
 }
 
 h1 {
-    font-weight: 500;
-    font-family: 'Roboto', sans-serif;
+    font-weight: 500
 }
 
 .chat-message {
     border-bottom: 1px solid #000;
-    padding-bottom: 15px;
     margin-bottom: 15px;
-    background-color: #3f51b5;
-    color: #fff;
     border-radius: 25px;
-    padding: 1.5em;
+    padding: 1.5em
 }
 
 @media (max-width:768px) {
     .container {
-        padding: 1em;
+        padding: 1em
     }
 }
 
+.form-check-label,
 body,
 h1 {
-    color: #424242;
+    color: #424242
 }
 
 #input,
 #output {
     color: #424242;
-    resize: none;
+    resize: none
 }
 
 form {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    flex-wrap: wrap;
+    flex-wrap: wrap
 }
 
-.CodeMirror-gutter.CodeMirror-linenumbers {
-    display: none;
-}
-
+.CodeMirror-gutter.CodeMirror-linenumbers,
 .CodeMirror-linenumber.CodeMirror-gutter-elt {
-    display: none;
+    display: none
 }
 
 .card-header {
-    background-color: #eaeaea;
+    background-color: #eaeaea
+}
+
+.btn-primary,
+button#go {
+    background-color: #3f51b5
 }
 
 .scroll-down-text {
@@ -93,31 +94,29 @@ form {
     text-align: center;
     margin-top: 15px;
     opacity: 0;
-    animation: fade-in-scroll-text 2s ease-in-out forwards;
+    animation: 2s ease-in-out forwards fade-in-scroll-text
 }
 
 @keyframes fade-in-scroll-text {
-    0% {
-        opacity: 0;
+
+    0%,
+    100% {
+        opacity: 0
     }
 
     50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
+        opacity: 1
     }
 }
 
 .card {
     border-radius: 15px;
-    transition: .3s;
+    transition: .3s
 }
 
 #stats,
 p.text-center.lead {
-    color: #2b2b2b;
+    color: #2b2b2b
 }
 
 div#options {
@@ -125,7 +124,7 @@ div#options {
     flex-wrap: wrap;
     justify-content: space-evenly;
     flex-direction: row;
-    display: grid;
+    display: grid
 }
 
 textarea {
@@ -134,95 +133,86 @@ textarea {
     resize: none;
     border-radius: .3rem;
     padding: .75rem;
-    margin: .75rem;
+    margin: .75rem
 }
 
 .small-border {
-    border-width: 4px !important;
+    border-width: 4px !important
 }
 
-
 button#go {
-    background-color: #3f51b5;
     color: #fff;
-    border: none;
-    padding: 10px 20px;
+    padding: 15px 25px;
     border-radius: 5px;
     cursor: pointer;
     transition: .3s;
-    font-size: x-large;
-    padding: 15px 25px;
+    font-size: x-large
+}
+
+.btn-danger,
+.btn-warning {
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition-duration: .4s;
+    cursor: pointer
 }
 
 .btn {
-    padding: 0.9em 1.1em;
+    padding: .9em 1.1em;
     text-decoration: none;
     font-size: 12px;
     margin: 3px 2px;
     transition-duration: .4s;
     cursor: pointer;
-    display: inline-block;
+    display: inline-block
 }
 
 .btn-primary {
-    background-color: #3f51b5;
     color: #fff;
     text-decoration: none;
     display: inline-block;
     transition-duration: .4s;
-    cursor: pointer;
+    cursor: pointer
 }
 
 .btn-primary:hover {
     background-color: #536dfe;
     color: #fff;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, .24);
+    box-shadow: 0 0 8px rgba(0, 0, 0, .24)
+}
+
+.btn-danger:hover,
+.btn-warning:hover {
+    color: #fff;
+    box-shadow: 0 15px 25px 0 rgba(0, 0, 0, .24)
 }
 
 .btn-warning {
     background-color: #ff9800;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    transition-duration: .4s;
-    cursor: pointer;
+    color: #fff
 }
 
 .btn-warning:hover {
-    background-color: #feac31;
-    color: #fff;
-    box-shadow: 0 15px 25px 0 rgba(0, 0, 0, .24);
+    background-color: #feac31
 }
 
 .btn-danger {
     background-color: #f44336;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    transition-duration: .4s;
-    cursor: pointer;
+    color: #fff
 }
 
 .btn-danger:hover {
-    background-color: #f95a4f;
-    color: #fff;
-    box-shadow: 0 15px 25px 0 rgba(0, 0, 0, .24);
+    background-color: #f95a4f
 }
 
 .form-control {
     border-radius: 7px;
     border: 1px solid #e0e0e0;
-    padding: 15px;
+    padding: 15px
 }
 
 .form-check-input {
-    margin-right: 15px;
-}
-
-.form-check-label {
-    color: #424242;
+    margin-right: 15px
 }

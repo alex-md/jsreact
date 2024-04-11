@@ -14,6 +14,7 @@ function isValidOpenAIKey(key) {
     return regexPattern.test(key);
 }
 
+
 function showToast() {
     // Create the toast container
     var toastContainer = document.createElement('div');
@@ -30,7 +31,7 @@ function showToast() {
 
     // Create the toast header
     var toastHeader = document.createElement('div');
-    toastHeader.classList.add('toast-header', 'bg-warning');
+    toastHeader.classList.add('toast-header', 'bg-warning', 'text-light');
 
     var strong = document.createElement('strong');
     strong.classList.add('mr-auto');
