@@ -11,18 +11,22 @@
 
             gtag('config', 'G-ZEFG04PXR7');
         </script>
-        <title>Text Cleaner Tool</title>
+        <title>Text Cleaner Tool - Remove Formatting, Punctuation, and Whitespace</title>
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <meta name="description" content="Online text cleaning tool to remove formatting, punctuation, and whitespace.">
+        <meta name="description"
+            content="Online text cleaning tool to remove formatting, punctuation, and whitespace. Includes a Find and Replace feature.">
+        <meta name="keywords" content="text, cleaning, tool, formatting, punctuation, whitespace, find, replace">
+        <link rel="canonical" href="https://jsreact.com/clean" />
         <link rel=" icon" type="image/png" href="./images/icon.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
         <link rel="shortcut icon" href="./images/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-        <link rel="stylesheet" href="./styles/global.css">
+        <!-- <link rel="stylesheet" href="./styles/global.css"> -->
         <meta name="theme-color" content="#ffffff">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="/src/styles/global.css">
     </head>
 
     <body class="bg-light-subtle">
@@ -33,17 +37,16 @@
         <main class="container-fluid container-lg">
             <section class="d-flex justify-content-center">
                 <article class="card mx-auto w-100 p-5 shadow">
-                    </div>
                     <form>
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <div class="form-floating shadow-sm">
                                     <textarea id="input" class="form-control shadow-sm" rows="10"
                                         style="height: 300px; resize: none; word-wrap: break-word;"></textarea>
                                     <label for="input">Input</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <div class="form-floating shadow-sm">
                                     <textarea id="output" class="bg-body-secondary form-control shadow-sm" rows="10"
                                         style="height: 300px; resize: none; word-wrap: break-word;" readonly></textarea>
@@ -52,19 +55,47 @@
                             </div>
                         </div>
                     </form>
-                    <div class="d-flex justify-content-end flex-wrap">
-                        <button type="button" class="btn btn-outline-primary m-2" id="cleanBtn"
-                            title="trim, remove line breaks, remove double spaces">Remove Line Breaks</button>
-                        <button type="button" class="btn btn-outline-success m-2" id="removePunctuationBtn">Remove
-                            Punctuation</button>
-                        <button type="button" class="btn btn-outline-dark m-2" id="liveToastBtn">Copy to
-                            Clipboard</button>
+
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <button type="button" class="btn btn-success m-1 w-100" id="cleanBtn"
+                                style="font-weight: 400;" title="trim, remove line breaks, remove double spaces"
+                                aria-label="Remove Line Breaks">Remove Line Breaks</button>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <button type="button" class="btn btn-outline-success m-1 w-100" id="removePunctuationBtn"
+                                style="font-weight: 400;" aria-label="Remove Punctuation">Remove Punctuation</button>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <button type="button" class="btn btn-outline-dark m-1 w-100" id="liveToastBtn"
+                                style="font-weight: 400;" aria-label="Copy to Clipboard">Copy to Clipboard</button>
+                        </div>
                     </div>
-                    <div class="toast-container position-fixed bottom-0 end-0 p-3 mx-auto">
-                        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="position-fixed bottom-0 end-0 p-3 mx-auto" aria-live="polite">
+                        <div id="liveToast" class="toast" role="alert" aria-atomic="true">
                             <div class="toast-body">
                                 Copied to clipboard!
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-control bg-secondary-subtle m-4">
+                        <div class="card-body d-flex justify-content-end flex-column">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating shadow-sm">
+                                        <input type="text" id="findInput" class="form-control shadow-sm">
+                                        <label for="findInput">Find</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating shadow-sm">
+                                        <input type="text" id="replaceInput" class="form-control shadow-sm">
+                                        <label for="replaceInput">Replace</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary fw-bold m-4" id="replaceBtn"
+                                style="font-weight: 300;" aria-label="Find and Replace">Find and Replace</button>
                         </div>
                     </div>
                 </article>
@@ -72,9 +103,10 @@
         </main>
         <footer>
         </footer>
+
         <script src="./components/navbar.js"></script>
         <script src="./scripts/clean.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     </body>
 
 </html>

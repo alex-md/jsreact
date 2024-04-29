@@ -39,7 +39,7 @@
         logoLink.appendChild(logo);
 
         const toggler = document.createElement("button");
-        toggler.classList.add("navbar-toggler", "m-3");
+        toggler.classList.add("navbar-toggler");
         toggler.type = "button";
         toggler.dataset.bsToggle = "collapse";
         toggler.dataset.bsTarget = "#navbarNavDropdown";
@@ -86,9 +86,9 @@
         document.body.appendChild(navigation);
 
         // Add event listener to toggler
-        toggler.addEventListener('click', function () {
-            collapse.classList.toggle('show');
-        });
+        // toggler.addEventListener('click', function () {
+        //     collapse.classList.toggle('show');
+        // });
     }
 
     window.createNavbar = createNavbar;

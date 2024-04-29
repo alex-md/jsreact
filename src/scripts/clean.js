@@ -23,6 +23,15 @@ function removePunctuation() {
     output.value = noPunctuationText;
 }
 
+document.getElementById('replaceBtn').addEventListener('click', function () {
+    var find = document.getElementById('findInput').value;
+    var replace = document.getElementById('replaceInput').value;
+    var input = document.getElementById('input');
+    var text = input.value;
+    var newText = text.split(find).join(replace);
+    output.value = newText;
+});
+
 // Add event listeners to the buttons
 cleanBtn.addEventListener('click', cleanText);
 removePunctuationBtn.addEventListener('click', removePunctuation);
