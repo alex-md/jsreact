@@ -1,100 +1,67 @@
-let DOM = {
-    go: document.getElementById("go"),
-    input: document.getElementById("input"),
-    output: document.getElementById("output"),
-    stats: document.getElementById("stats"),
-    log: document.getElementById("log"),
-    options: {
-        compilation_level: document.getElementById("compilation_level"),
-        formatting: document.getElementById("formatting")
-    }
-};
+// Define updateSizeLabels in the global scope
+function updateSizeLabels() {
+    const inputElement = document.getElementById('input');
+    const outputElement = document.getElementById('output');
+    const inputSizeLabel = document.getElementById('inputSizeLabel');
+    const outputSizeLabel = document.getElementById('outputSizeLabel');
+    const inputSize = new TextEncoder().encode(inputElement.value).byteLength;
+    const outputSize = new TextEncoder().encode(outputElement.textContent).byteLength;
+    inputSizeLabel.textContent = `Size: ${(inputSize / 1024).toFixed(2)} KB`;
+    outputSizeLabel.textContent = `Size: ${(outputSize / 1024).toFixed(2)} KB`;
+}
 
-async function compile() {
-    DOM.go.disabled = true;
-    DOM.go.innerHTML = "Compiling... <span class='spinner-border spinner-border-sm small-border my-auto mx-auto' role='status' aria-hidden='true'></span>";
+async function minifyCode() {
+    const { minify } = await import("https://cdn.skypack.dev/terser@5.17.7");
 
-    let url = buildURL('https://closure-compiler.appspot.com/compile', {
-        js_code: DOM.input.value,
-        compilation_level: DOM.options.compilation_level.value,
-        output_format: 'json',
-        output_info: ['compiled_code', 'warnings', 'errors', 'statistics'],
-        formatting: DOM.options.formatting.value,
-        language_out: 'ECMASCRIPT_2020'
-    });
+    const inputElement = document.getElementById("input");
+    const outputElement = document.getElementById("output");
+    const compressOption = document.getElementById("compress").checked;
+    const mangleOption = document.getElementById("mangle").checked;
+    const beautifyOption = document.getElementById("beautify").checked;
 
-    try {
-        let response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            credentials: 'omit'
-        });
-
-        if (!response.ok) {
-            throw new Error("An error occurred during the request.");
+    const options = {
+        compress: compressOption,
+        mangle: mangleOption,
+        format: {
+            beautify: beautifyOption,
         }
+    };
 
-        let data = await response.text();
-        handleResponse(data);
-    } catch (error) {
-        showError(error.message);
-    } finally {
-        DOM.go.innerHTML = 'Compile!';
-        DOM.go.disabled = false;
-    }
-}
-
-function handleResponse(data) {
-    let parsed;
     try {
-        parsed = JSON.parse(data);
-    } catch (error) {
-        showError("Invalid response from the API.");
-        return;
-    }
-    if (parsed.errors && parsed.errors.length > 0) {
-        showError("Compilation error: " + parsed.errors[0].error + " on line " + parsed.errors[0].lineno);
-        return;
-    }
-    if (parsed.compiledCode) {
-        DOM.output.innerHTML = parsed.compiledCode.replace(/^\s*'use strict';\s*/, '').trim();
-        DOM.output.style.color = '#000';
-    }
-    if (parsed.statistics) {
-        let s = parsed.statistics;
-        DOM.stats.innerHTML = `Compressed ${s.originalSize} bytes down to ${s.compressedSize} bytes (${Math.round((s.originalSize - s.compressedSize) / s.originalSize * 100)}%)`;
-    }
-    DOM.go.innerHTML = 'Compile!';
-    DOM.go.disabled = false;
-}
-
-function showError(errorMessage) {
-    DOM.output.innerHTML = errorMessage;
-    DOM.output.style.color = '#b22b27';
-    DOM.go.innerHTML = 'Compile!';
-    DOM.go.disabled = false;
-}
-
-function buildURL(domain, params) {
-    if (!domain.includes('?')) {
-        domain += '?';
-    }
-
-    for (let key in params) {
-        if (Array.isArray(params[key])) {
-            params[key].forEach(param => addParameter(key, param));
+        const { code, error } = await minify(inputElement.value, options);
+        if (error) {
+            outputElement.value = error.message;
         } else {
-            addParameter(key, params[key]);
+            outputElement.value = code;
         }
+        updateSizeLabels();
+    } catch (error) {
+        outputElement.value = error.message;
     }
-
-    function addParameter(key, param) {
-        domain += `${encodeURIComponent(key)}=${encodeURIComponent(param)}&`; // Encode key and value separately
-    }
-
-    return domain.slice(0, -1);
 }
 
-DOM.go.addEventListener('click', compile);
+function synchronizeScroll(inputElement, outputElement) {
+    const handleScroll = (event) => {
+        const { scrollTop, scrollHeight, clientHeight } = event.target;
+        const outputScrollHeight = outputElement.scrollHeight;
+        const outputClientHeight = outputElement.clientHeight;
+        const ratio = scrollTop / (scrollHeight - clientHeight);
+        const outputScrollTop = Math.round((outputScrollHeight - outputClientHeight) * ratio);
+        outputElement.scrollTop = outputScrollTop;
+        updateSizeLabels();
+    };
+
+    inputElement.addEventListener("scroll", handleScroll);
+    outputElement.addEventListener("scroll", handleScroll);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const inputElement = document.getElementById("input");
+    const outputElement = document.getElementById("output");
+    const minifyButton = document.getElementById("minify");
+
+    minifyButton.addEventListener("click", minifyCode);
+    synchronizeScroll(inputElement, outputElement);
+    inputElement.addEventListener("input", updateSizeLabels);
+    outputElement.addEventListener("input", updateSizeLabels);
+});

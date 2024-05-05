@@ -2,108 +2,87 @@
 <html lang="en">
 
     <head>
-        <!-- Google tag (gtag.js) -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description"
+            content="Try out Terser, a JavaScript parser, mangler/compressor, and beautifier toolkit for ES6+ with Terser Playground.">
+        <meta name="keywords" content="Terser, JavaScript, ES6+, parser, compressor, beautifier, playground">
+        <title>Terser Playground | JavaScript Parser, Compressor & Beautifier</title>
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
+        <link rel="canonical" href="https://jsreact.com/">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag() { dataLayer.push(arguments); }
             gtag('js', new Date());
-
             gtag('config', 'G-ZEFG04PXR7');
         </script>
-        <title>JS Minify | Google Closure Compiler</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Minify JavaScript code using the Google Closure Compiler online for free.">
-        <link rel=" icon" type="image/png" href="./images/icon.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-        <meta name="theme-color" content="#ffffff">
-        <link rel="stylesheet" href="./styles/global.css">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
     </head>
 
-    <body class="bg-light-subtle">
-        <header>
-            <h1 class="text-center mt-4 display-4 fw-bold">JavaScript Minifier</h1>
-            <p class="text-center lead">With Google Closure Compiler</p>
+    <body class="bg-light">
+
+        <header class="mb-4">
+            <h1 class="text-center display-4 fw-bold mt-4">Terser Playground</h1>
+            <p class="text-center lead text-muted">A JavaScript parser, mangler/compressor, and beautifier toolkit for
+                ES6+</p>
         </header>
-        <main class="card-group pb-5">
-            <section class="container-fluid w-75">
-                <article class="row g-4">
-                    <div class="col-md-6">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <h2 class="text-center fw-bold">Enter JavaScript</h2>
-                            </div>
-                            <div class="card-body shadow-sm">
-                                <div class="input-group">
-                                    <textarea id="input" class="form-control h-100 w-100 resize-none border-0 p-1"
-                                        rows="10" style="white-space: pre-wrap;">
-function hello(name) {
-    alert('Hello, ' + name);
-    }
-    hello('New user');
-                                </textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <h2 class="text-center fw-bold"> Compressed code</h2>
-                            </div>
-                            <div class="card-body shadow-sm">
-                                <div class="input-group">
-                                    <textarea id="output" class="form-control h-100 w-100 resize-none border-0 p-1"
-                                        rows="10" placeholder="Your compressed code will appear here" readonly
-                                        style="white-space: pre-wrap;"></textarea>
-                                </div>
+        <main class="container">
+            <section class="mb-4">
+                <p class="text-center lead text-muted">Enter your JavaScript code below, choose some options, and click
+                    the “Minify” button to see the output.</p>
+            </section>
+        </main>
+        <section class="row">
+            <div class="col-lg-6 mb-4">
+                <label for="input">Input JavaScript Code:</label>
+                <textarea id="input" class="form-control" rows="10"></textarea>
+                <span id="inputSizeLabel"></span>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <label for="output">Output:</label>
+                <textarea id="output" class="form-control" readonly="" rows="10"></textarea>
+                <span id="outputSizeLabel"></span>
+            </div>
+        </section>
+        <section class="mb-4">
+            <div class="card bg-light">
+                <div class="bg-primary-subtle p-3">
+                    <h5 class="card-title">Options</h5>
+                    <div class="row g-3">
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="compress" checked>
+                                <label class="form-check-label" for="compress">Compress</label>
                             </div>
                         </div>
-                    </div>
-                </article>
-                <footer>
-                    <small id="stats" class="d-grid text-success text-end mt-2"></small>
-                </footer>
-                <aside id="options"
-                    class="text-center mt-4 d-flex flex-column justify-content-center align-items-center">
-                    <div class="d-grid gap-2">
-                        <button id="go" class="btn btn-outline-dark fw-semibold mx-auto">Minify!</button>
-                    </div><br />
-                    <h2 class="fw-bold">Advanced Options...</h2>
-                </aside>
-                <div id="options">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <label for="compilation_level" class="input-group-text">Compilation Level</label>
-                                <select id="compilation_level" class="form-control">
-                                    <option value="WHITESPACE_ONLY">Whitespace</option>
-                                    <option selected="true" value="SIMPLE_OPTIMIZATIONS">Simple</option>
-                                    <option value="ADVANCED_OPTIMIZATIONS">Advanced</option>
-                                </select>
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="mangle" checked>
+                                <label class="form-check-label" for="mangle">Mangle</label>
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <label for="formatting" class="input-group-text">Formatting</label>
-                                <select id="formatting" class="form-control">
-                                    <option value="pretty_print">Pretty print</option>
-                                    <option value="print_input_delimiter">Print input delimiter</option>
-                                </select>
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="beautify" checked>
+                                <label class="form-check-label" for="beautify">Beautify</label>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
+        <section class="mb-4 d-flex justify-content-center">
+            <button id="minify" class="btn btn-primary">Minify</button>
+        </section>
         </main>
         <script src="./components/navbar.js"></script>
-        <script src="./scripts/minify.js"></script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.umd.min.js"></script>
+        <script src="./components/navbar.js"></script>
+        <script type="module" src="scripts/minify.js"></script>
     </body>
 
 </html>
