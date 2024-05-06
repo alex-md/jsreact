@@ -56,7 +56,7 @@
         collapse.id = "navbarNavDropdown";
 
         const ul = document.createElement("ul");
-        ul.classList.add("navbar-nav", "ms-auto"); // Add 'ms-auto' to move the navbar links to the right
+        ul.classList.add("navbar-nav", "ms-auto", "gap-4"); // Add 'ms-auto' to move the navbar links to the right
 
         for (const item of navItems) {
             const li = document.createElement("li");
@@ -127,7 +127,7 @@ button.style.backgroundColor = 'transparent';
 button.style.color = '#6c757d';
 button.style.border = '0';
 button.id = 'viewCountButton'; // Add an id to the button for later reference
-
+button.classList.add('lead', 'my-5', 'fs-6', 'text-decoration-none', 'text-muted');
 // Create anchor
 var anchor = document.createElement('div');
 
@@ -156,7 +156,7 @@ function formatWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const viewsIcon = `<svg width="64px" height="64px" viewBox="-11.04 -11.04 46.08 46.08" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000" transform="matrix(1, 0, 0, 1, 0, 0)rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 18.5V4H4V20H20V18.5H5.5Z" fill="#1F2328"></path> <path d="M10.5 17V8.00131H12V17H10.5Z" fill="#1F2328"></path> <path d="M7 17V12H8.5V17H7Z" fill="#1F2328"></path> <path d="M17.5 17V10H19V17H17.5Z" fill="#1F2328"></path> <path d="M14 17V5H15.5V17H14Z" fill="#1F2328"></path> </g></svg>`;
+const viewsIcon = `<svg width="44px" height="44px" viewBox="-11.04 -11.04 46.08 46.08" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000" transform="matrix(1, 0, 0, 1, 0, 0)rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 18.5V4H4V20H20V18.5H5.5Z" fill="#1F2328"></path> <path d="M10.5 17V8.00131H12V17H10.5Z" fill="#1F2328"></path> <path d="M7 17V12H8.5V17H7Z" fill="#1F2328"></path> <path d="M17.5 17V10H19V17H17.5Z" fill="#1F2328"></path> <path d="M14 17V5H15.5V17H14Z" fill="#1F2328"></path> </g></svg>`;
 
 function updateViewCount() {
     fetchViewCount().then(viewCount => {

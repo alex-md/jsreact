@@ -5,6 +5,7 @@ p {
     margin: auto;
     font-family: sans-serif;
     color: #2d3748;
+    font-size: large;
 }
 
 body {
@@ -127,3 +128,4 @@ button#go {
 .form-check-input {
     margin-right: 1rem;
 }
+

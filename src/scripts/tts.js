@@ -24,17 +24,17 @@ function showToast() {
     // Create the toast
     var toast = document.createElement('div');
     toast.id = 'apiKeyToast';
-    toast.classList.add('toast');
+    toast.classList.add('toast' , 'bg-light', 'text-light', 'fs-4', 'w-100');
     toast.setAttribute('role', 'alert');
     toast.setAttribute('aria-live', 'assertive');
     toast.setAttribute('aria-atomic', 'true');
 
     // Create the toast header
     var toastHeader = document.createElement('div');
-    toastHeader.classList.add('toast-header', 'bg-warning', 'text-light');
+    toastHeader.classList.add('toast-header', 'bg-danger', 'text-light');
 
     var strong = document.createElement('strong');
-    strong.classList.add('mr-auto');
+    strong.classList.add('mr-auto', );
     strong.textContent = 'Missing API Key';
 
     var button = document.createElement('button');
