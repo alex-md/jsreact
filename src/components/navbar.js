@@ -19,6 +19,10 @@
         {
             href: './diff.html',
             text: 'Diff Checker',
+        },
+        {
+            href: './keyword.html',
+            text: 'Keyword Density Analyzer',
         }
     ];
 

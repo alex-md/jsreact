@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-ZEFG04PXR7');
+        </script>
+        <title>AI Name Generator</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content=" A keyword analyzer and density checker tool.">
+        <meta name=" robots" content="index, follow">
+        <link rel="canonical" href="https://jsreact.com/keyword.html" />
+        <meta property="og:title" content="AI Name Generator">
+        <meta property="og:description" content="Startup and domain name generator using AI.">
+        <meta property="og:image" content="https://jsreact.com/images/logo.png">
+        <meta property="og:url" content="https://jsreact.com/images/logo.png">
+        <link rel=" icon" type="image/png" href="./images/icon.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
+        <link rel="shortcut icon" href="./images/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
+        <!-- <link rel="stylesheet" href="./styles/global.css"> -->
+        <meta name="theme-color" content="#ffffff">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body class="bg-light">
+        <header>
+            <!-- Your header here -->
+        </header>
+        <nav>
+            <!-- Your navigation here -->
+        </nav>
+        <main class="container py-5">
+            <section>
+                <div class="row">
+                    <div class="col-12">
+                        <article class="card shadow">
+                            <div class="card-body">
+                                <textarea id="textArea" class="form-control" style="height: 40vw;"></textarea>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-9">
+                        <input type="text" id="keywordInput" class="form-control" placeholder="Enter keyword here...">
+                    </div>
+                    <div class="col-lg-3 mt-3 mt-lg-0">
+                        <button class="btn btn-primary w-100" onclick="analyze()">Analyze</button>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <article class="card shadow">
+                            <div class="card-body">
+                                <canvas id="keywordChart"></canvas>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            <aside class="row mt-3">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Word</th>
+                                        <th scope="col">Frequency</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="frequencyTableBody">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+        <footer>
+            <!-- Your footer here -->
+        </footer>
+        <script src="./components/navbar.js"></script>
+        <script src="./scripts/keyword.js"></script>
+    </body>
+
+</html>
