@@ -8,6 +8,21 @@ p {
     font-size: large;
 }
 
+.new-pill {
+    background-color: #25b860;
+    /* Green background */
+    color: white;
+    /* White text */
+    border-radius: 50px;
+    /* Pill shape */
+    padding: 5px 10px;
+    /* Padding inside the pill */
+    font-weight: bold;
+    /* Bold font */
+    font-family: 'Arial', sans-serif;
+    /* Modern font */
+}
+
 body {
     height: 100vh;
     margin: auto;
@@ -128,4 +143,3 @@ button#go {
 .form-check-input {
     margin-right: 1rem;
 }
-

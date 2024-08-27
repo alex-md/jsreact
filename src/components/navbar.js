@@ -42,7 +42,7 @@
         logo.style.margin = "0 1em";
         logoLink.appendChild(logo);
 
-        const toggler = document.createElement("button");
+        const toggler = document.createElement("navButton");
         toggler.classList.add("navbar-toggler");
         toggler.type = "button";
         toggler.dataset.bsToggle = "collapse";
@@ -51,7 +51,7 @@
         toggler.setAttribute("aria-expanded", "false");
         toggler.setAttribute("aria-label", "Toggle navigation");
 
-        const span = document.createElement("span");
+        const span = document.createElement("navSpan");
         span.classList.add("navbar-toggler-icon");
         toggler.appendChild(span);
 
@@ -116,7 +116,7 @@ footer.style.bottom = '0';
 footer.style.width = '100%';
 
 // Create div for row
-var rowDiv = document.createElement('div');
+var rowDiv = document.createElement('navDiv');
 rowDiv.style.display = 'flex';
 rowDiv.style.justifyContent = 'flex-end';
 rowDiv.style.margin = '0.5rem';
@@ -126,14 +126,14 @@ var colDiv = document.createElement('div');
 colDiv.style.flex = '0 0 auto';
 
 // Create button
-var button = document.createElement('div');
+var button = document.createElement('navButton');
 button.style.backgroundColor = 'transparent';
 button.style.color = '#6c757d';
 button.style.border = '0';
 button.id = 'viewCountButton'; // Add an id to the button for later reference
-button.classList.add('lead', 'my-5', 'fs-6', 'text-decoration-none', 'text-muted');
+button.classList.add('my-5', 'text-decoration-none', 'text-muted');
 // Create anchor
-var anchor = document.createElement('div');
+var anchor = document.createElement('navDiv');
 
 button.appendChild(anchor);
 colDiv.appendChild(button);

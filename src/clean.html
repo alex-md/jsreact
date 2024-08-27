@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
 
-        gtag('config', 'G-ZEFG04PXR7');
-    </script>
-    <title>Online Text Cleaner - Remove Formatting, Punctuation, and Whitespace | JSReact</title>
+            gtag('config', 'G-ZEFG04PXR7');
+        </script>
+        <title>Online Text Cleaner - Remove Formatting, Punctuation, and Whitespace | JSReact</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-          content="This free online text cleaner can be used to remove unwanted formatting, punctuation, and whitespace from your text. Includes a Find and Replace feature.">
-    <meta name="keywords" content="text, cleaning, tool, formatting, punctuation, whitespace, find, replace">
-    <link rel="canonical" href="https://jsreact.com/clean" />
-    <link rel=" icon" type="image/png" href="./images/icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
-    <link rel="shortcut icon" href="./images/favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-    <link rel="stylesheet" href="./styles/global.css">
-    <meta name="theme-color" content="#ffffff">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/src/styles/global.css">
-</head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description"
+            content="This free online text cleaner can be used to remove unwanted formatting, punctuation, and whitespace from your text. Includes a Find and Replace feature.">
+        <meta name="keywords" content="text, cleaning, tool, formatting, punctuation, whitespace, find, replace">
+        <link rel="canonical" href="https://jsreact.com/clean" />
+        <link rel=" icon" type="image/png" href="./images/icon.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
+        <link rel="shortcut icon" href="./images/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
+        <link rel="stylesheet" href="./styles/global.css">
+        <meta name="theme-color" content="#ffffff">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="/src/styles/global.css">
+    </head>
 
-<body class="bg-light-subtle">
-<header class="mb-4">
-    <h1 class="display-4 fw-bold mt-4 text-center text-primary">Online Text Cleaner</h1>
-    <p class="text-center lead text-muted">This free online text cleaner can be used to remove unwanted formatting, punctuation, and whitespace from your text.<br> Includes a Find and Replace feature.</p>
-</header>
+    <body class="bg-light-subtle">
+        <header class="mb-4">
+            <h1 class="fw-bold mt-4 text-center display-4 text-muted">Online Text Cleaner</h1>
+            <p class="text-center lead text-muted">This free online text cleaner can be used to remove formatting
+                online, remove punctuation, and remove and clean whitespace from your text.<br>
+            <p class="text-center"> <!-- Center the paragraph containing the pill -->
+                <span class="new-pill">New!</span> Includes a Find and Replace feature.
+            </p>
+            </p>
+        </header>
         <main class="container-fluid container-lg">
             <section class="d-flex justify-content-center">
                 <article class="card mx-auto w-100 p-5 shadow">
@@ -58,17 +63,23 @@
 
                     <div class="row bg-tertiary">
                         <div class="col-12 col-md-4">
-                            <button type="button" class="shadow-sm btn btn-outline-primary fs-6 fw-bold m-1 rounded-2 text-bg-primary w-100 fw-bold" id="cleanBtn"
-                                style="font-weight: 400;" title="trim, remove line breaks, remove double spaces"
+                            <button type="button"
+                                class="shadow-sm btn btn-outline-primary fs-6 fw-bold m-1 rounded-2 text-bg-primary w-100 fw-bold"
+                                id="cleanBtn" style="font-weight: 400;"
+                                title="trim, remove line breaks, remove double spaces"
                                 aria-label="Remove Line Breaks">Remove Line Breaks</button>
                         </div>
                         <div class="col-12 col-md-4">
-                            <button type="button" class="shadow-sm btn btn-outline-primary fs-6 fw-bold m-1 rounded-2 text-bg-primary w-100 fw-bold" id="removePunctuationBtn"
-                                style="font-weight: 400;" aria-label="Remove Punctuation">Remove Punctuation</button>
+                            <button type="button"
+                                class="shadow-sm btn btn-outline-primary fs-6 fw-bold m-1 rounded-2 text-bg-primary w-100 fw-bold"
+                                id="removePunctuationBtn" style="font-weight: 400;"
+                                aria-label="Remove Punctuation">Remove Punctuation</button>
                         </div>
                         <div class="col-12 col-md-4">
-                            <button type="button" class="shadow-sm btn btn btn-outline-success fs-6 fw-bold m-1 text-decoration-underline w-100" id="liveToastBtn"
-                                style="font-weight: 400;" aria-label="Copy to Clipboard">Copy to Clipboard</button>
+                            <button type="button"
+                                class="shadow-sm btn btn btn-outline-success fs-6 fw-bold m-1 text-decoration-underline w-100"
+                                id="liveToastBtn" style="font-weight: 400;" aria-label="Copy to Clipboard">Copy to
+                                Clipboard</button>
                         </div>
                     </div>
                     <div class="position-fixed bottom-0 end-0 p-3 mx-auto" aria-live="polite">
@@ -94,8 +105,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="align-self-end btn btn-outline-primary m-2 shadow-sm" id="replaceBtn"
-                                style="font-weight: 300;" aria-label="Find and Replace">Find and Replace</button>
+                            <button type="button" class="align-self-end btn btn-outline-primary m-2 shadow-sm"
+                                id="replaceBtn" style="font-weight: 300;" aria-label="Find and Replace">Find and
+                                Replace</button>
                         </div>
                     </div>
                 </article>
