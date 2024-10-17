@@ -1,148 +1,228 @@
-let myChart;
+// document.addEventListener('DOMContentLoaded', () => {
+//     const textArea = document.getElementById('textArea');
+//     const fileUpload = document.getElementById('file-upload');
+//     const keywordsContainer = document.getElementById('keywordsContainer');
+//     const addKeywordButton = document.getElementById('addKeyword');
+//     const keywordStats = document.getElementById('keywordStats');
+//     const keywordStatsContent = document.getElementById('keywordStatsContent');
+//     const overallCluster = document.getElementById('overallCluster');
+//     const overallClusterContent = document.getElementById('overallClusterContent');
 
-function analyze() {
-    const textArea = document.getElementById('textArea');
-    const keywordInput = document.getElementById('keywordInput');
-    const keywordChart = document.getElementById('keywordChart').getContext('2d');
+//     const keywords = [''];
 
-    const frequencyTableBody = document.getElementById('frequencyTableBody');
-    frequencyTableBody.innerHTML = '';
+//     const handleTextChange = () => {
+//         analyzeKeywords();
+//     };
 
-    const text = textArea.value;
-    const keyword = keywordInput.value;
+//     const handleFileUpload = (e) => {
+//         const file = e.target.files[0];
+//         if (file) {
+//             const reader = new FileReader();
+//             reader.onload = (e) => {
+//                 textArea.value = e.target.result;
+//                 analyzeKeywords();
+//             };
+//             reader.readAsText(file);
+//         }
+//     };
 
-    const wordList = text.split(' ').map(word => word.toLowerCase());
+//     const handleKeywordChange = (index, value) => {
+//         keywords[index] = value;
+//         analyzeKeywords();
+//     };
 
-    const wordFrequency = wordList.reduce((acc, word) => {
-        acc[word] = (acc[word] || 0) + 1;
-        return acc;
-    }, {});
+//     const addKeyword = () => {
+//         keywords.push('');
+//         renderKeywords();
+//     };
 
-    const sortedWords = Object.keys(wordFrequency).sort((a, b) => wordFrequency[b] - wordFrequency[a]);
+//     const removeKeyword = (index) => {
+//         keywords.splice(index, 1);
+//         if (keywords.length === 0) {
+//             keywords.push('');
+//         }
+//         renderKeywords();
+//         analyzeKeywords();
+//     };
 
-    // Limit the words to the top 10
-    const topTenWords = sortedWords.slice(0, 10);
+//     const renderKeywords = () => {
+//         keywordsContainer.innerHTML = '';
+//         keywords.forEach((keyword, index) => {
+//             const keywordInputGroup = document.createElement('div');
+//             keywordInputGroup.className = 'input-group mt-2';
+//             keywordInputGroup.innerHTML = `
+//                 <input type="text" class="form-control keyword-input" placeholder="Enter keyword" value="${keyword}">
+//                 <button class="btn btn-danger remove-keyword">Remove</button>
+//             `;
+//             keywordsContainer.appendChild(keywordInputGroup);
 
-    for (const word of topTenWords) {
-        const row = document.createElement('tr');
-        const wordCell = document.createElement('td');
-        const frequencyCell = document.createElement('td');
+//             const keywordInput = keywordInputGroup.querySelector('.keyword-input');
+//             const removeKeywordButton = keywordInputGroup.querySelector('.remove-keyword');
 
-        wordCell.textContent = word;
-        frequencyCell.textContent = wordFrequency[word];
+//             keywordInput.addEventListener('input', (e) => handleKeywordChange(index, e.target.value));
+//             removeKeywordButton.addEventListener('click', () => removeKeyword(index));
+//         });
+//     };
 
-        row.appendChild(wordCell);
-        row.appendChild(frequencyCell);
-        frequencyTableBody.appendChild(row);
-    }
+//     const substringMatch = (word, target) => {
+//         return word.toLowerCase().includes(target.toLowerCase());
+//     };
 
-    const freqList = wordList.map(word => word === keyword ? 1 : 0);
+//     const analyzeKeywords = () => {
+//         const text = textArea.value;
+//         if (!text || keywords.every(k => !k.trim())) {
+//             keywordStats.classList.add('d-none');
+//             overallCluster.classList.add('d-none');
+//             return;
+//         }
 
-    const windowSize = 10;
-    const densityList = [];
-    for (let i = 0; i < wordList.length - windowSize + 1; i++) {
-        let sum = 0;
-        for (let j = 0; j < windowSize; j++) {
-            sum += freqList[i + j];
-        }
-        densityList.push(sum / windowSize);
-    }
+//         const words = text.match(/\b\w+\b/g) || [];
+//         const totalWords = words.length;
 
-    if (myChart) {
-        myChart.destroy();
-    }
+//         const analyzeResults = keywords.filter(k => k.trim()).map(keyword => {
+//             const targetCount = words.filter(word => substringMatch(word, keyword)).length;
+//             const density = totalWords > 0 ? (targetCount / totalWords) * 100 : 0;
 
-    myChart = new Chart(keywordChart, {
-        type: 'line',
-        data: {
-            labels: Array.from({ length: densityList.length }, (_, i) => i + 1),
-            datasets: [{
-                label: 'Keyword Density',
-                data: densityList,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            onClick: (event, elements) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    highlightKeyword(index * windowSize, (index + 1) * windowSize);
-                }
-            },
-            tooltips: {
-                callbacks: {
-                    label: function (tooltipItem, data) {
-                        const index = tooltipItem.index;
-                        const density = densityList[index];
-                        return `Density: ${density}`;
-                    }
-                }
-            }
-        }
-    });
+//             // Find highest density cluster for individual keyword
+//             const minWindowSize = Math.max(70, Math.floor(totalWords * 0.05));
+//             const maxWindowSize = Math.floor(totalWords * 0.2);
+//             const step = Math.max(1, Math.floor(totalWords * 0.01));
 
-    createElement();
-    applyHighlights();
+//             let maxDensity = 0;
+//             let maxDensityStart = 0;
+//             let maxDensityEnd = 0;
 
-} function createElement() {
-    const keywordInput = document.getElementById('keywordInput');
-    const keyword = keywordInput.value;
+//             for (let windowSize = minWindowSize; windowSize <= maxWindowSize; windowSize += step) {
+//                 for (let i = 0; i <= totalWords - windowSize; i += step) {
+//                     const windowWords = words.slice(i, i + windowSize);
+//                     const count = windowWords.filter(word => substringMatch(word, keyword)).length;
+//                     const density = (count / windowSize) * 100;
 
-    // Create or select an HTML element to display the count
-    let countDisplay = document.getElementById('countDisplay');
-    if (!countDisplay) {
-        countDisplay = document.createElement('p');
-        countDisplay.id = 'countDisplay';
-        countDisplay.className = 'p-mx-auto p-4 text-primary w-50'; // Bootstrap class for colored text
-        document.body.appendChild(countDisplay);
-    }
+//                     if (density > maxDensity) {
+//                         maxDensity = density;
+//                         maxDensityStart = i;
+//                         maxDensityEnd = i + windowSize;
+//                     }
+//                 }
+//             }
 
-    let highlightedDiv = document.getElementById('highlightedDiv');
-    if (!highlightedDiv) {
-        highlightedDiv = document.createElement('div');
-        highlightedDiv.id = 'highlightedDiv';
-        highlightedDiv.className = 'p-5 w-50 mx-auto shadow my-4'; // Removed 'card' class
-        highlightedDiv.style.whiteSpace = 'pre-wrap'; // Preserve whitespace characters
-        document.body.insertBefore(highlightedDiv, countDisplay.nextSibling);
-    } else {
-        highlightedDiv.innerHTML = ''; // Clear the previous content
-    }
+//             const highestDensityCluster = {
+//                 start: maxDensityStart,
+//                 end: maxDensityEnd,
+//                 context: words.slice(maxDensityStart, maxDensityEnd).join(' '),
+//                 size: maxDensityEnd - maxDensityStart,
+//                 density: maxDensity.toFixed(2)
+//             };
 
-    return { countDisplay, highlightedDiv, keyword };
-}
+//             return {
+//                 keyword,
+//                 targetCount,
+//                 density: density.toFixed(2),
+//                 highestDensityCluster
+//             };
+//         });
 
-function applyHighlights() {
-    const { countDisplay, highlightedDiv, keyword } = createElement();
-    const textArea = document.getElementById('textArea');
+//         renderKeywordStats(analyzeResults);
 
-    // Create a regular expression from the keyword
-    const keywordRegex = new RegExp(`(${keyword})`, 'gi');
+//         const overallClusterResult = findOverallHighestDensityCluster(words, totalWords, keywords);
+//         renderOverallCluster(overallClusterResult);
+//     };
 
-    // Initialize a counter for the keyword
-    let keywordCount = 0;
-    // Split the text by the keyword and create a text node or a highlighted mark for each piece
-    textArea.value.split(keywordRegex).forEach(function (piece) {
-        const span = document.createElement('span');
-        span.className = 'd-inline'; // Ensure the span is displayed inline
-        if (piece.toLowerCase() === keyword.toLowerCase()) {
-            const mark = document.createElement('mark');
-            mark.className = 'bg-warning fs-large fw-bold text-body'; // Bootstrap class for warning text color
-            mark.textContent = piece;
-            span.appendChild(mark);
-            keywordCount++;
-        } else {
-            span.appendChild(document.createTextNode(piece));
-        }
-        highlightedDiv.appendChild(span);
-    });
+//     const renderKeywordStats = (analyzeResults) => {
+//         keywordStatsContent.innerHTML = '';
+//         analyzeResults.forEach(stats => {
+//             const statsElement = document.createElement('div');
+//             statsElement.className = 'mb-4';
+//             statsElement.innerHTML = `
+//                 <h3 class="font-semibold">Keyword: "${stats.keyword}"</h3>
+//                 <ul class="space-y-2 ml-4">
+//                     <li>Occurrences: ${stats.targetCount}</li>
+//                     <li>Overall Density: ${stats.density}%</li>
+//                     <li>Highest Density Cluster:</li>
+//                     <ul class="ml-4">
+//                         <li>Position: ${stats.highestDensityCluster.start} - ${stats.highestDensityCluster.end}</li>
+//                         <li>Cluster Size: ${stats.highestDensityCluster.size} words</li>
+//                         <li>Cluster Density: ${stats.highestDensityCluster.density}%</li>
+//                         <li>Context: <span class="text-sm">...${stats.highestDensityCluster.context}...</span></li>
+//                     </ul>
+//                 </ul>
+//             `;
+//             keywordStatsContent.appendChild(statsElement);
+//         });
+//         keywordStats.classList.remove('d-none');
+//     };
 
-    // Display the count
-    countDisplay.textContent = `"${keyword}" appears ${keywordCount} times.`;
-}
+//     const findOverallHighestDensityCluster = (words, totalWords, keywords) => {
+//         const minWindowSize = Math.max(70, Math.floor(totalWords * 0.05));
+//         const maxWindowSize = Math.floor(totalWords * 0.2);
+//         const step = Math.max(1, Math.floor(totalWords * 0.01));
+
+//         let maxIntersectionScore = 0;
+//         let maxDensityStart = 0;
+//         let maxDensityEnd = 0;
+//         const activeKeywords = keywords.filter(k => k.trim());
+
+//         for (let windowSize = minWindowSize; windowSize <= maxWindowSize; windowSize += step) {
+//             for (let i = 0; i <= totalWords - windowSize; i += step) {
+//                 const windowWords = words.slice(i, i + windowSize);
+
+//                 // Calculate how many words match each keyword
+//                 const keywordMatches = activeKeywords.map(keyword => {
+//                     const matches = windowWords.filter(word => substringMatch(word, keyword));
+//                     return matches.length > 0 ? matches.length : 0;
+//                 });
+
+//                 // Only consider windows where all keywords appear at least once
+//                 if (keywordMatches.every(count => count > 0)) {
+//                     // Calculate intersection score as the product of normalized densities
+//                     const intersectionScore = keywordMatches.reduce((score, count) => {
+//                         const density = (count / windowSize);
+//                         return score * density;
+//                     }, 1) * 100 * activeKeywords.length; // Multiply by keywords length to normalize scores
+
+//                     if (intersectionScore > maxIntersectionScore) {
+//                         maxIntersectionScore = intersectionScore;
+//                         maxDensityStart = i;
+//                         maxDensityEnd = i + windowSize;
+//                     }
+//                 }
+//             }
+//         }
+
+//         // If no intersection was found, return null
+//         if (maxIntersectionScore === 0) {
+//             return null;
+//         }
+
+//         return {
+//             start: maxDensityStart,
+//             end: maxDensityEnd,
+//             context: words.slice(maxDensityStart, maxDensityEnd).join(' '),
+//             size: maxDensityEnd - maxDensityStart,
+//             density: maxIntersectionScore.toFixed(2)
+//         };
+//     };
+
+//     const renderOverallCluster = (overallClusterResult) => {
+//         if (!overallClusterResult) {
+//             overallCluster.classList.add('d-none');
+//             return;
+//         }
+
+//         overallClusterContent.innerHTML = `
+//             <ul class="space-y-2">
+//                 <li>Position: ${overallClusterResult.start} - ${overallClusterResult.end}</li>
+//                 <li>Cluster Size: ${overallClusterResult.size} words</li>
+//                 <li>Intersection Density Score: ${overallClusterResult.density}%</li>
+//                 <li>Context: <span class="text-sm">...${overallClusterResult.context}...</span></li>
+//             </ul>
+//         `;
+//         overallCluster.classList.remove('d-none');
+//     };
+
+//     textArea.addEventListener('input', handleTextChange);
+//     fileUpload.addEventListener('change', handleFileUpload);
+//     addKeywordButton.addEventListener('click', addKeyword);
+
+//     renderKeywords();
+// });
