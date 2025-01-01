@@ -1,104 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 
     <head>
-        <!-- Google tag (gtag.js) -->
+        <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <script src="./scripts/common.js"></script>
+        <script>initializeCommon();</script>
+
+        <!-- Dark mode initialization -->
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-
-            gtag('config', 'G-ZEFG04PXR7');
+            // Set dark mode as default
+            if (!('theme' in localStorage)) {
+                localStorage.theme = 'dark';
+            }
         </script>
+
+        <!-- Page-specific meta -->
         <title>Expression Finder</title>
-
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel=" icon" type="image/png" href="./images/icon.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-        <meta name="description"
-            content="Use our Expression Finder tool to quickly generate and find a valid expression using basic arithmetic operations and parentheses. You can also enter a target number and let our tool find an expression that equals to it. Try it now and explore the advanced settings for more options.">
-        <link rel="icon" href="./images/favicon.ico">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-        <link rel="stylesheet" href="./styles/global.css">
-        <meta name="theme-color" content="#ffffff">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <meta name="description" content="Find expressions using arithmetic operations and parentheses to reach a target number.">
+        
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://toolbot.ai/expression.html">
 
+        <!-- Favicons -->
+        <link rel="icon" type="image/png" href="./images/favicon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+        <link rel="shortcut icon" href="./images/favicon.ico">
+
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#0ea5e9',
+                            secondary: '#27272a',
+                        }
+                    }
+                }
+            }
+        </script>
+
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+        <!-- Custom styles -->
+        <link href="./styles/global.css" rel="stylesheet">
+
+        <!-- Theme color -->
+        <meta name="theme-color" content="#09090b">
     </head>
 
-    <body class="bg-light">
-        <header class="py-5 bg-white mb-4">
-            <div class="container">
-                <h1 class="fw-bold mt-4 text-center display-4 text-muted">Expression Finder</h1>
-                <p class="text-center lead text-muted">Find expressions using arithmetic operations and parentheses</p>
+    <body class="bg-gray-50 dark:bg-gray-900">
+        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
+            <div class="container mx-auto px-4 max-w-7xl">
+                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
+                    Expression Finder
+                </h1>
+                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
+                    Find expressions using arithmetic operations and parentheses
+                </p>
             </div>
         </header>
-        <div class="container-fluid mx-auto text-center">
-            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse"
-                data-bs-target="#calculator-description" aria-expanded="false" aria-controls="calculator-description">
-                What is this?
-            </button>
-            <div class="collapse" id="calculator-description">
-                <p class="text-secondary">Enter a series of numbers and a target number, and our calculator will find a
-                    valid expression using parentheses and basic arithmetic operations.</p>
-            </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-center col-lg-8 m-4 mx-auto">
-            <div class="container-fluid d-grid w-50 p-4 rounded shadow" id="main-card">
-                <form id="expression-form">
-                    <div class="mb-3">
-                        <label for="numbers-input" class="form-label">Enter numbers (comma-separated):</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="numbers-input" required>
-                            <button id="random-numbers-button" class="btn btn-secondary">Generate <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-shuffle" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                        d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.624 9.624 0 0 0 7.556 8a9.624 9.624 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.595 10.595 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.624 9.624 0 0 0 6.444 8a9.624 9.624 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5" />
-                                    <path
-                                        d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z" />
-                                </svg></button>
-                        </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="target-input" class="form-label">Enter target number:</label>
-                        <input type="number" class="form-control" id="target-input" required>
-                    </div>
-
-                    <button type="submit" id="submit-button" class="btn btn-primary w-100 mt-3">Find Expression</button>
-                </form>
-
-
-                <p id="solution-output" class="text-center my-3 p-2 rounded text-dark mx-auto w-auto h-auto">
-                </p>
-
-                <div class="advancedSettings">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Advanced Settings
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <!-- Info Section -->
+                <div class="text-center">
+                    <button id="info-toggle"
+                        class="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        What is this?
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <form class="px-4 py-3">
-                            <div class="mb-3">
-                                <label for="num-integers-input" class="form-label">Generated values</label>
-                                <input type="number" class="form-control" id="num-integers-input" placeholder="6">
+                    <div id="calculator-description" class="hidden mt-4 bg-white dark:bg-gray-800 rounded-xl p-6 text-gray-600 dark:text-gray-300">
+                        Enter a series of numbers and a target number, and our calculator will find a
+                        valid expression using parentheses and basic arithmetic operations.
+                    </div>
+                </div>
+
+                <!-- Main Calculator Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="p-6 space-y-6">
+                        <form id="expression-form" class="space-y-6">
+                            <div>
+                                <label for="numbers-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Enter numbers (comma-separated):
+                                </label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="numbers-input" required
+                                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
+                                    <button id="random-numbers-button" type="button"
+                                        class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                        <i class="fas fa-random mr-2"></i>Generate
+                                    </button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="max-number-input" class="form-label">Value upper limit</label>
-                                <input type="number" class="form-control" id="max-number-input" placeholder="60">
+
+                            <div>
+                                <label for="target-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Enter target number:
+                                </label>
+                                <input type="number" id="target-input" required
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
                             </div>
-                            <input type="checkbox" id="exponents-checkbox"> Include Exponents
+
+                            <button type="submit" id="submit-button"
+                                class="w-full px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                                Find Expression
+                            </button>
                         </form>
+
+                        <div id="solution-output" class="hidden p-4 bg-gray-50 dark:bg-gray-900 rounded-lg text-center text-gray-900 dark:text-white"></div>
+
+                        <!-- Advanced Settings -->
+                        <div class="relative">
+                            <button id="advanced-settings-toggle"
+                                class="w-full px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                Advanced Settings
+                            </button>
+                            <div id="advanced-settings" class="hidden mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg space-y-4">
+                                <div>
+                                    <label for="num-integers-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Generated values
+                                    </label>
+                                    <input type="number" id="num-integers-input" placeholder="6"
+                                        class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
+                                </div>
+                                <div>
+                                    <label for="max-number-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Value upper limit
+                                    </label>
+                                    <input type="number" id="max-number-input" placeholder="60"
+                                        class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="exponents-checkbox"
+                                        class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="exponents-checkbox" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                        Include Exponents
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        </div>
+        </main>
+
         <script src="./components/navbar.js"></script>
-        <script src="./scripts/expression.js" defer></script>
+        <script src="./scripts/expression.js"></script>
     </body>
 
 </html>

@@ -1,84 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 
     <head>
-        <!-- Google tag (gtag.js) -->
+        <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <script src="./scripts/common.js"></script>
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-
-            gtag('config', 'G-ZEFG04PXR7');
+            initializeCommon();
         </script>
+        
         <title>Text Diff Tool</title>
-
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description"
-            content="Use Online Diff Viewer to quickly compare two texts. This free tool highlights changes and similarities, ideal for checking plagiarism, revisions, or modifications. Paste your original and modified texts, click “Find Difference” to see results.">
-        <link rel=" icon" type="image/png" href="./images/icon.png">
+        <meta name="description" content="Use Online Diff Viewer to quickly compare two texts. This free tool highlights changes and similarities, ideal for checking plagiarism, revisions, or modifications. Paste your original and modified texts, click "Find Difference" to see results.">
+        
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://jsreact.com/diff.html">
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="./images/icon.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
         <link rel="shortcut icon" href="./images/favicon.ico">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
-        <link rel="stylesheet" href="./styles/global.css">
-        <meta name="theme-color" content="#ffffff">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#0ea5e9',
+                            secondary: '#27272a',
+                        }
+                    }
+                }
+            }
+        </script>
 
+        <!-- Dark mode initialization -->
+        <script>
+            // Set dark mode as default
+            if (!('theme' in localStorage)) {
+                localStorage.theme = 'dark'
+            }
+        </script>
+        
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+        
+        <!-- CodeMirror CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/theme/monokai.min.css">
+        
+        <!-- Custom Styles -->
+        <link rel="stylesheet" href="./styles/global.css">
+        <style>
+            #diffResponseContainer span {
+                border-radius: 0.25rem;
+                padding: 0.125rem 0.25rem;
+            }
+            .dark #diffResponseContainer span[style*="background:rgba(74, 222, 128, 0.1)"] {
+                color: #4ade80;
+            }
+            .dark #diffResponseContainer span[style*="background:rgba(248, 113, 113, 0.1)"] {
+                color: #f87171;
+            }
+        </style>
+        
+        <!-- Theme Color -->
+        <meta name="theme-color" content="#09090b">
     </head>
 
-    <body class="bg-light">
-        <header class="py-5 bg-white mb-4">
-            <div class="container">
-                <h1 class="fw-bold mt-4 text-center display-4 text-muted">Online Diff Viewer</h1>
-                <p class="text-center lead text-muted">Quickly find the difference between two texts.</p>
+    <body class="bg-gray-50 dark:bg-gray-900">
+        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
+            <div class="container mx-auto px-4 max-w-7xl">
+                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
+                    Online Diff Viewer
+                </h1>
+                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
+                    Quickly find the difference between two texts
+                </p>
             </div>
         </header>
-        <main class="container py-5">
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header">
-                            Original Text
-                        </div>
-                        <div class="card-body">
-                            <textarea class="form-control" id="originalTextArea"
-                                placeholder="Enter the original text here..."></textarea>
-                        </div>
+
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Original Text</h2>
+                    </div>
+                    <div class="p-6">
+                        <textarea id="originalTextArea" 
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono min-h-[200px]"
+                            placeholder="Enter the original text here..."></textarea>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header">
-                            Modified Text
-                        </div>
-                        <div class="card-body">
-                            <textarea class="form-control" id="modifiedTextArea"
-                                placeholder="Enter the modified text here..."></textarea>
-                        </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Modified Text</h2>
+                    </div>
+                    <div class="p-6">
+                        <textarea id="modifiedTextArea" 
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono min-h-[200px]"
+                            placeholder="Enter the modified text here..."></textarea>
                     </div>
                 </div>
             </div>
-            <div class="d-grid gap-2 col-6 mx-auto py-3">
-                <button id="findDiffBtn" class="btn btn-primary">View Diff</button>
+
+            <div class="flex justify-center mb-6">
+                <button id="findDiffBtn" 
+                    class="px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                    View Diff
+                </button>
             </div>
-            <div class="card mt-5" id="diffResponseArea">
-                <div class="card-header">
-                    Diff Viewer
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Diff Viewer</h2>
                 </div>
-                <div class="card-body">
-                    <pre id="diffResponseContainer"></pre>
+                <div class="p-6">
+                    <pre id="diffResponseContainer" class="font-mono text-sm text-gray-900 dark:text-white overflow-x-auto"></pre>
                 </div>
             </div>
-            <div id="errorContainer" class="alert alert-danger mt-3 d-none"></div>
+
+            <div id="errorContainer" class="hidden mt-6 p-4 bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-200 rounded-lg"></div>
         </main>
+
         <!-- Scripts -->
         <script src="./components/navbar.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js'></script>
         <script src="./scripts/diff.js"></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     </body>
 
 </html>

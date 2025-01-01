@@ -1,104 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 
-  <head>
-    <!-- Google tag (gtag.js) -->
+<head>
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-
-      gtag('config', 'G-ZEFG04PXR7');
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-ZEFG04PXR7');
     </script>
+    <script src="./scripts/common.js"></script>
+
+    <!-- Dark mode initialization -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+
+    <!-- Page-specific meta -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel=" icon" type="image/png" href="./images/icon.png">
+    <title>Privacy Policy</title>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.example.com/policy.html">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="./images/icon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
     <link rel="shortcut icon" href="./images/favicon.ico">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Privacy Policy</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-  </head>
 
-  <body class="bg-light-subtle">
-    <div class="container my-5">
-      <h1 class="fw-bold mt-4 text-center display-4 text-muted">Privacy Policy</h1>
-      <div class="row row-cols-1 row-cols-md-2 g-4 mt-5">
-        <div class="col">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title">Collection of Personal Information</h2>
-              <p class="card-text">We may collect and store personal information such as your name and email address
-                when
-                you register for an
-                account on our website or subscribe to our newsletter. We may also collect information about your use of
-                our
-                website, such as your IP address and browser information.</p>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom styles -->
+    <link href="css/styles.css" rel="stylesheet">
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#09090b">
+</head>
+
+<body class="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="font-bold text-4xl text-zinc-900 dark:text-zinc-50 text-center mb-8">Privacy Policy</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="col">
+                <div class="card bg-white dark:bg-gray-800 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">Collection of Personal Information</h2>
+                        <p class="card-text">We may collect and store personal information such as your name and email address
+                            when
+                            you register for an
+                            account on our website or subscribe to our newsletter. We may also collect information about your use of
+                            our
+                            website, such as your IP address and browser information.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title">Use of Personal Information</h2>
-              <p class="card-text">We may use your personal information to provide you with the products and services
-                you
-                have requested, to
-                communicate with you about our products and services, and to improve our website and services. We may
-                also
-                use
-                your personal information to personalize and improve your experience on our website.</p>
+            <div class="col">
+                <div class="card bg-white dark:bg-gray-800 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">Use of Personal Information</h2>
+                        <p class="card-text">We may use your personal information to provide you with the products and services
+                            you
+                            have requested, to
+                            communicate with you about our products and services, and to improve our website and services. We may
+                            also
+                            use
+                            your personal information to personalize and improve your experience on our website.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title">Sharing of Personal Information</h2>
-              <p class="card-text">We may share your personal information with third-party service providers who perform
-                services on our behalf,
-                such as hosting and email delivery. We do not share your personal information with third parties for
-                their
-                marketing purposes.</p>
+            <div class="col">
+                <div class="card bg-white dark:bg-gray-800 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">Sharing of Personal Information</h2>
+                        <p class="card-text">We may share your personal information with third-party service providers who perform
+                            services on our behalf,
+                            such as hosting and email delivery. We do not share your personal information with third parties for
+                            their
+                            marketing purposes.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title">Security of Personal Information</h2>
-              <p class="card-text">We take reasonable measures to protect your personal information from unauthorized
-                access, use, or disclosure.
-                However, no method of transmission over the internet or electronic storage is 100% secure, and we cannot
-                guarantee
-                absolute security.</p>
+            <div class="col">
+                <div class="card bg-white dark:bg-gray-800 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">Security of Personal Information</h2>
+                        <p class="card-text">We take reasonable measures to protect your personal information from unauthorized
+                            access, use, or disclosure.
+                            However, no method of transmission over the internet or electronic storage is 100% secure, and we cannot
+                            guarantee
+                            absolute security.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title">Changes to Privacy Policy</h2>
-              <p class="card-text">We may update this privacy policy from time to time. If we make material changes to
-                this policy, we will notify
-                you by email or by posting a notice on our website.</p>
+            <div class="col">
+                <div class="card bg-white dark:bg-gray-800 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">Changes to Privacy Policy</h2>
+                        <p class="card-text">We may update this privacy policy from time to time. If we make material changes to
+                            this policy, we will notify
+                            you by email or by posting a notice on our website.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title">Contact Us</h2>
-              <p class="card-text">If you have any questions or concerns about our privacy policy, please contact us at
-                <a href="mailto:admin@jsreact.com">admin@jsreact.com</a>.
-              </p>
+            <div class="col">
+                <div class="card bg-white dark:bg-gray-800 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">Contact Us</h2>
+                        <p class="card-text">If you have any questions or concerns about our privacy policy, please contact us at
+                            <a href="mailto:admin@jsreact.com">admin@jsreact.com</a>.
+                        </p>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
     <script src="./components/navbar.js"></script>
-  </body>
+</body>
 
 </html>

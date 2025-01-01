@@ -1,15 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 
     <head>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <!-- Google Analytics -->
+        <script src="./scripts/common.js"></script>
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-
-            gtag('config', 'G-ZEFG04PXR7');
+            initializeCommon();
         </script>
         <title>Online Text Cleaner - Remove Formatting, Punctuation, and Whitespace | JSReact</title>
 
@@ -19,105 +15,167 @@
             content="This free online text cleaner can be used to remove unwanted formatting, punctuation, and whitespace from your text. Includes a Find and Replace feature.">
         <meta name="keywords" content="text, cleaning, tool, formatting, punctuation, whitespace, find, replace">
         <link rel="canonical" href="https://jsreact.com/clean" />
-        <link rel=" icon" type="image/png" href="./images/icon.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
+        <link rel="icon" type="image/png" href="./images/favicon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
         <link rel="shortcut icon" href="./images/favicon.ico">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
+        
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#0ea5e9',
+                            secondary: '#27272a',
+                        }
+                    }
+                }
+            }
+        </script>
+
+        <!-- Dark mode initialization -->
+        <script>
+            // Set dark mode as default
+            if (!('theme' in localStorage)) {
+                localStorage.theme = 'dark';
+            }
+        </script>
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        
+        <!-- Custom Styles -->
         <link rel="stylesheet" href="./styles/global.css">
-        <meta name="theme-color" content="#ffffff">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <link rel="stylesheet" href="/src/styles/global.css">
+        <style>
+            #liveToast {
+                visibility: hidden;
+            }
+            #liveToast.hidden {
+                visibility: hidden;
+                opacity: 0;
+                transform: translateY(1rem);
+            }
+            #liveToast:not(.hidden) {
+                visibility: visible;
+                opacity: 1;
+                transform: translateY(0);
+            }
+        </style>
+        
+        <meta name="theme-color" content="#09090b">
     </head>
 
-    <body class="bg-light">
-        <header class="py-5 bg-white mb-4">
-            <div class="container">
-                <h1 class="fw-bold mt-4 text-center display-4 text-muted">Online Text Cleaner</h1>
-                <p class="text-center lead text-muted">This free online text cleaner can be used to remove formatting
-                    online, remove punctuation, and remove and clean whitespace from your text.</p>
-                <p class="text-center"><span class="new-pill">New!</span> Includes a Find and Replace feature.</p>
+    <body class="bg-gray-50 dark:bg-gray-900">
+        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
+            <div class="container mx-auto px-4 max-w-7xl">
+                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
+                    Text Cleaner
+                </h1>
+                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
+                    Clean and format your text with powerful tools
+                </p>
             </div>
         </header>
-        <main class="container-fluid container-lg">
-            <section class="d-flex justify-content-center">
-                <article class="card mx-auto w-100 p-5 shadow">
-                    <form>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating shadow-sm">
-                                    <textarea id="input" class="form-control shadow-sm" rows="10"
-                                        style="height: 300px; resize: none; word-wrap: break-word;"></textarea>
-                                    <label for="input">Input</label>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating shadow-sm">
-                                    <textarea id="output" class="bg-body-secondary form-control shadow-sm" rows="10"
-                                        style="height: 300px; resize: none; word-wrap: break-word;" readonly></textarea>
-                                    <label for="output">Output</label>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
 
-                    <div class="row bg-tertiary">
-                        <div class="col-12 col-md-4">
-                            <button type="button"
-                                class="shadow-sm btn btn-outline-primary fs-6 fw-bold m-1 rounded-2 text-bg-primary w-100 fw-bold"
-                                id="cleanBtn" style="font-weight: 400;"
-                                title="trim, remove line breaks, remove double spaces"
-                                aria-label="Remove Line Breaks">Remove Line Breaks</button>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <button type="button"
-                                class="shadow-sm btn btn-outline-primary fs-6 fw-bold m-1 rounded-2 text-bg-primary w-100 fw-bold"
-                                id="removePunctuationBtn" style="font-weight: 400;"
-                                aria-label="Remove Punctuation">Remove Punctuation</button>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <button type="button"
-                                class="shadow-sm btn btn btn-outline-success fs-6 fw-bold m-1 text-decoration-underline w-100"
-                                id="liveToastBtn" style="font-weight: 400;" aria-label="Copy to Clipboard">Copy to
-                                Clipboard</button>
-                        </div>
-                    </div>
-                    <div class="position-fixed bottom-0 end-0 p-3 mx-auto" aria-live="polite">
-                        <div id="liveToast" class="toast" role="alert" aria-atomic="true">
-                            <div class="toast-body">
-                                Copied to clipboard!
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="space-y-6">
+                <!-- Text Input/Output Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Input -->
+                            <div>
+                                <label for="input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Input Text
+                                </label>
+                                <textarea id="input" 
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow min-h-[300px] text-gray-900 dark:text-white"
+                                    placeholder="Enter your text here"></textarea>
+                            </div>
+                            
+                            <!-- Output -->
+                            <div>
+                                <label for="output" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Output Text
+                                </label>
+                                <textarea id="output" 
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow min-h-[300px] text-gray-900 dark:text-white"
+                                    placeholder="Cleaned text will appear here" readonly></textarea>
                             </div>
                         </div>
                     </div>
-                    <div class="form-control bg-secondary-subtle m-4">
-                        <div class="card-body container-fluid d-flex flex-column mx-auto w-auto w-responsive">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-floating shadow-sm">
-                                        <input type="text" id="findInput" class="form-control shadow-sm">
-                                        <label for="findInput">Find</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating shadow-sm">
-                                        <input type="text" id="replaceInput" class="form-control shadow-sm">
-                                        <label for="replaceInput">Replace</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="align-self-end btn btn-outline-primary m-2 shadow-sm"
-                                id="replaceBtn" style="font-weight: 300;" aria-label="Find and Replace">Find and
-                                Replace</button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button type="button" id="cleanBtn"
+                                class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                                title="Trim, remove line breaks, remove double spaces">
+                                Remove Line Breaks
+                            </button>
+                            <button type="button" id="removePunctuationBtn"
+                                class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                                Remove Punctuation
+                            </button>
+                            <button type="button" id="liveToastBtn"
+                                class="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                Copy to Clipboard
+                            </button>
                         </div>
                     </div>
-                </article>
-            </section>
+                </div>
+
+                <!-- Find and Replace Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Find and Replace</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                            <div class="md:col-span-5">
+                                <label for="findInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Find
+                                </label>
+                                <input type="text" id="findInput" 
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"
+                                    placeholder="Text to find">
+                            </div>
+                            <div class="md:col-span-5">
+                                <label for="replaceInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Replace
+                                </label>
+                                <input type="text" id="replaceInput" 
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"
+                                    placeholder="Replace with">
+                            </div>
+                            <div class="md:col-span-2 flex items-end">
+                                <button type="button" id="replaceBtn"
+                                    class="w-full px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                                    Replace All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast Notification -->
+            <div class="fixed bottom-4 right-4 z-50">
+                <div id="liveToast" 
+                    class="hidden bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out opacity-0 translate-y-2 pointer-events-none">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-400"></i>
+                        <span>Copied to clipboard!</span>
+                    </div>
+                </div>
+            </div>
         </main>
-        <footer>
-        </footer>
 
         <script src="./components/navbar.js"></script>
         <script src="./scripts/clean.js"></script>
-
     </body>
 
 </html>

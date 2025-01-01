@@ -1,242 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
     <head>
-        <!-- Google tag (gtag.js) -->
+        <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <script src="./scripts/common.js"></script>
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-            gtag('config', 'G-ZEFG04PXR7');
+            initializeCommon();
         </script>
+
+        <!-- Dark mode initialization -->
+        <script>
+            // Set light mode as default
+            if (!('theme' in localStorage)) {
+                localStorage.theme = 'light';
+            }
+        </script>
+
+        <!-- Page-specific meta -->
         <title>AI Name Generator</title>
+        <meta name="description" content="Generate a name for your startup or domain using AI.">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Generate a name for your startup or domain using AI.">
+        
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://jsreact.com/generator.html">
+
+        <!-- Favicons -->
         <link rel="icon" type="image/png" href="./images/icon.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
         <link rel="shortcut icon" href="./images/favicon.ico">
-        <meta name="theme-color" content="#ffffff">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="./styles/global.css">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <style>
-            body,
-            input {
-                font-family: Roboto, sans-serif;
-                color: #303040
-            }
 
-            .input-form {
-                text-align: center;
-                border-bottom: solid 1px #ddd;
-                padding: 16px;
-                background: #fff;
-                box-shadow: 0 2px 3px rgba(0, 0, 0, .1)
-            }
-
-            .input-form>label {
-                display: inline;
-                font-weight: 700
-            }
-
-            .input-form>.input {
-                border: 0;
-                border-bottom: solid 1px #ccc;
-                padding: 8px 0;
-                width: 128px
-            }
-
-            .input-form>.input:focus {
-                border-bottom-color: #333
-            }
-
-            .input-form>.submit {
-                border: 0;
-                border-radius: 3px;
-                margin-left: 16px;
-                font-weight: 700;
-                text-align: center;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: .02em;
-                cursor: pointer
-            }
-
-            .results-list {
-                max-width: 960px;
-                padding: 16px;
-                margin: 64px auto 16px auto;
-                display: flex;
-                flex-wrap: wrap
-            }
-
-            .result-item {
-                display: block;
-                flex: 0 0 50%;
-                flex-wrap: wrap;
-                font-size: 18px;
-                color: #333;
-                text-decoration: none
-            }
-
-            @media (min-width:768px) {
-                .result-item {
-                    flex: 0 0 33%
-                }
-
-                .result-item:nth-child(3n+1) {
-                    transform: translate3d(0, -48px, 0)
-                }
-
-                .result-item:nth-child(3n+3) {
-                    transform: translate3d(0, 48px, 0)
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#0ea5e9',
+                            secondary: '#27272a',
+                        }
+                    }
                 }
             }
+        </script>
 
-            .result-item>span {
-                display: block;
-                background: #fff;
-                height: 160px;
-                line-height: 160px;
-                margin: 8px;
-                box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
-                text-align: center;
-                animation: pop-in .3s ease-out
-            }
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-            @media (min-width:768px) {
-                .result-item>span {
-                    margin: 16px
-                }
-            }
+        <!-- Custom styles -->
+        <link href="./styles/global.css" rel="stylesheet">
 
-            .result-item>span {
-                font-size: 1.2em;
-                text-transform: uppercase;
-                letter-spacing: .2em;
-                font-size: 1.1em
-            }
-
-            .result-item:hover>span {
-                transform: scale(0) translate3d(0, 0, 0);
-                transition: transform 150ms ease
-            }
-
-            .result-item:nth-child(3n+2)>span {
-                text-transform: none;
-                font-weight: 200;
-                letter-spacing: 0;
-                font-size: 1.9em
-            }
-
-            .result-item:nth-child(7n+3)>span {
-                text-transform: none;
-                font-weight: 700;
-                letter-spacing: -.05em;
-                font-size: 1.7em
-            }
-
-            .result-item:nth-child(5n+0)>span {
-                text-transform: uppercase;
-                font-weight: 900;
-                letter-spacing: .2em;
-                font-size: 1.1em
-            }
-
-            .result-item:hover>span {
-                transform: scale(1) translate3d(0, 0, 0)
-            }
-
-            #copyButton:hover {
-                transition: transform .3s ease-in-out
-            }
-
-            @media (min-width:768px) {
-
-                .result-item:hover>span,
-                .result-item:nth-child(9n+5)>span {
-                    background: #303030;
-                    color: #fff;
-                    transform: scale(1.05) translate3d(0, 0, 0)
-                }
-
-                .result-item:nth-child(9n+5)>span {
-                    transform: scale(1.1) translate3d(0, 0, 0)
-                }
-            }
-
-            .results-list>hr {
-                flex: 1 1 100%;
-                background: #888;
-                height: 1px;
-                margin: 16px 32px
-            }
-
-            @keyframes pop-in {
-                0% {
-                    opacity: 0;
-                    transform: scale(.8)
-                }
-            }
-        </style>
+        <!-- Theme color -->
+        <meta name="theme-color" content="#09090b">
     </head>
 
-    <body class="bg-light">
-        <header class="py-5 bg-white mb-4">
-            <div class="container">
-                <h1 class="fw-bold mt-4 text-center display-4 text-muted">AI Name Generator</h1>
-                <p class="text-center lead text-muted">Generate a name for your startup or domain</p>
+    <body class="bg-gray-50 dark:bg-gray-900">
+        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
+            <div class="container mx-auto px-4 max-w-7xl">
+                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
+                    AI Name Generator
+                </h1>
+                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
+                    Generate a name for your startup or domain
+                </p>
             </div>
         </header>
 
-        <main class="container pb-5">
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body p-4">
-                            <form id='form'>
-                                <div class="mb-3">
-                                    <label for="input" class="form-label">Let's name your startup using the
-                                        words:</label>
-                                    <input type='text' class='form-control shadow-sm' id='input'
-                                        placeholder='Tortoise Bun' value="Tortoise Bun">
-                                </div>
-                                <div class="d-flex gap-3 align-items-center">
-                                    <button id='submit' class="btn btn-primary">Generate Names</button>
-                                    <div id="optionsCard" class="d-none">
-                                        <div class="d-flex gap-3 align-items-center">
-                                            <span class="text-muted">Copy Options:</span>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="copyOption"
-                                                    id="copyWithTLD" value="withTLD" checked>
-                                                <label class="form-check-label" for="copyWithTLD">With TLD</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <button id='copyButton' class='btn btn-secondary d-none'>Copy
-                                                    Names</button>
-                                            </div>
-                                        </div>
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="space-y-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="p-6">
+                        <form id='form' class="space-y-6">
+                            <div>
+                                <label for="input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Let's name your startup using the words:
+                                </label>
+                                <input type='text' id='input'
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                                    placeholder='Tortoise Bun' value="Tortoise Bun">
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4">
+                                <button id='submit' type="submit"
+                                    class="px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                                    Generate Names
+                                </button>
+                                <div id="optionsCard" class="hidden">
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-gray-600 dark:text-gray-400">Copy Options:</span>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="copyOption" id="copyWithTLD" value="withTLD" checked
+                                                class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary dark:bg-gray-700 dark:border-gray-600">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">With TLD</span>
+                                        </label>
+                                        <button id='copyButton'
+                                            class="hidden px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                            Copy Names
+                                        </button>
                                     </div>
-                            </form>
-                        </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div id='results' class='results-list'></div>
-                </div>
+
+                <div id='results' class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
             </div>
         </main>
-        <footer>
-        </footer>
+
         <script src="./components/navbar.js"></script>
         <script src="./scripts/generator.js"></script>
         <script src="https://unpkg.com/@rstacruz/startup-name-generator@latest/dist/startup-name-generator.js"></script>
-        <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.umd.min.js"></script>
     </body>
 
 </html>

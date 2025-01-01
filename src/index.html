@@ -1,15 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 
 	<head>
-		<!-- Google tag (gtag.js) -->
+		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+		<script src="./scripts/common.js"></script>
 		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() { dataLayer.push(arguments); }
-			gtag('js', new Date());
-
-			gtag('config', 'G-ZEFG04PXR7');
+			initializeCommon();
 		</script>
 		<title>JSreact - Web Developer Tools</title>
 
@@ -18,150 +15,144 @@
 		<meta name="description"
 			content="Collection of web developer tools for minifying code, TTS UI with Whisper, cleaning text, comparing diffs, and more!">
 		<meta name="robots" content="index, follow">
-		<link rel=" icon" type="image/png" href="./images/icon.png">
+		<link rel="canonical" href="https://jsreact.com/" />
+		<link rel="icon" type="image/png" href="./images/icon.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
 		<link rel="shortcut icon" href="./images/favicon.ico">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
-		<meta name="theme-color" content="#ffffff">
-		<link href="./styles/global.css" rel="stylesheet">
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+		
+		<!-- Tailwind CSS -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script>
+			tailwind.config = {
+				darkMode: 'class',
+				theme: {
+					extend: {
+						colors: {
+							primary: '#0ea5e9',
+							secondary: '#27272a',
+						}
+					}
+				}
+			}
+		</script>
 
+		<!-- Dark mode initialization -->
+		<script>
+			// Set dark mode as default
+			if (!('theme' in localStorage)) {
+				localStorage.theme = 'dark';
+			}
+		</script>
+		
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+		
+		<!-- Custom Styles -->
+		<link rel="stylesheet" href="./styles/global.css">
+		
+		<meta name="theme-color" content="#09090b">
 	</head>
 
-	<body class="bg-light">
-		<header class="py-5 bg-white mb-4">
-			<div class="container">
-				<h1 class="fw-bold mt-4 text-center display-4">
-					<span class="fst-italic text-primary">JSreact</span> - Free Online Developer Utilities
+	<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
+		<header class="relative py-24 bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 overflow-hidden">
+			<div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]"></div>
+			<div class="container relative mx-auto px-4 max-w-7xl">
+				<h1 class="text-4xl md:text-6xl font-bold text-center text-white mb-6">
+					<span class="text-primary italic">JSreact</span>
+					<span class="block mt-2 text-2xl md:text-3xl font-normal text-gray-300">Free Online Developer Utilities</span>
 				</h1>
-				<p class="text-center lead mt-3">Developer Tools Collection: Minify Code, Clean Text, AI Name Generator,
-					OpenAI TTS, Diff Checker, Talk to GPT, and Expression Finder</p>
+				<p class="mt-6 text-lg text-gray-300 text-center max-w-2xl mx-auto leading-relaxed">
+					A comprehensive collection of developer tools for code minification, text cleaning, AI-powered generation, 
+					diff checking, expression evaluation, and keyword analysis.
+				</p>
 			</div>
 		</header>
-		<main class="container py-5">
-			<section class="b fw-medium g-4 row row-cols-1 row-cols-lg-3 row-cols-md-2 text-center">
-				<!-- Tool Card: Minify Code -->
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">Minify Code</h5>
-							<p class="card-text text-muted">Minify your JavaScript code using the Google Closure
-								Compiler
-							</p>
+
+		<main class="flex-grow container mx-auto px-4 py-16 max-w-7xl -mt-8">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+							<i class="fas fa-code text-primary text-xl"></i>
 						</div>
-						<div class="card-footer text-center">
-							<a href="./minify.html" class="btn btn-secondary shadow-sm w-50">Minify</a>
-						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Name Generator</h3>
 					</div>
-				</article>
-
-				<!-- Tool Card: Clean Text -->
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">Clean Text</h5>
-							<p class="card-text text-muted">Clean text by removing line breaks, removing punctuation,
-								and
-								more</p>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Generate creative names for your projects, startups, or domains using AI</p>
+					<a href="./generator.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+						Try Generator
+					</a>
+				</div>
+				
+				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+							<i class="fas fa-broom text-green-600 dark:text-green-500 text-xl"></i>
 						</div>
-						<div class="card-footer text-center">
-							<a href="./clean.html" class="btn btn-secondary shadow-sm w-50">Clean</a>
-						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Text Cleaner</h3>
 					</div>
-				</article>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Clean and format text by removing line breaks, extra spaces, and unwanted characters</p>
+					<a href="./clean.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+						Try Cleaner
+					</a>
+				</div>
 
-				<!-- Tool Card: AI Name Generator -->
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">AI Name Generator</h5>
-							<p class="card-text text-muted">Generate a name for your startup or domain name using AI</p>
+				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+							<i class="fas fa-compress-alt text-purple-600 dark:text-purple-500 text-xl"></i>
 						</div>
-						<div class="card-footer text-center">
-							<a href="./generator.html" class="btn btn-secondary shadow-sm w-50">Generate</a>
-						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Code Minifier</h3>
 					</div>
-				</article>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compress JavaScript code using Google Closure Compiler for optimal performance</p>
+					<a href="./minify.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+						Try Minifier
+					</a>
+				</div>
 
-				<!-- Tool Card: OpenAI TTS and Whisper UI -->
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">OpenAI TTS and Whisper UI</h5>
-							<p class="card-text text-muted">Free OpenAI Text to Speech and Whisper UI</p>
+				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+							<i class="fas fa-exchange-alt text-red-600 dark:text-red-500 text-xl"></i>
 						</div>
-						<div class="card-footer text-center">
-							<a href="./tts.html" class="btn btn-secondary shadow-sm w-50">Demo</a>
-						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Diff Checker</h3>
 					</div>
-				</article>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compare two pieces of text and highlight the differences between them</p>
+					<a href="./diff.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+						Try Diff Checker
+					</a>
+				</div>
 
-				<!-- Tool Card: Diff Checker -->
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">Diff Checker</h5>
-							<p class="card-text text-muted">Compare two pieces of text, and highlight the
-								differences
-								between them</p>
+				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+							<i class="fas fa-calculator text-yellow-600 dark:text-yellow-500 text-xl"></i>
 						</div>
-						<div class="card-footer text-center">
-							<a href="./diff.html" class="btn btn-secondary shadow-sm w-50">Compare</a>
-						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Expression Finder</h3>
 					</div>
-				</article>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Find mathematical expressions that equal a target number using given numbers</p>
+					<a href="./expression.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+						Try Expression Finder
+					</a>
+				</div>
 
-				<!-- Tool Card: Talk to GPT -->
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">Talk to GPT</h5>
-							<p class="card-text text-muted">Talk to GPT-4 from OpenAI</p>
+				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
+							<i class="fas fa-key text-teal-600 dark:text-teal-500 text-xl"></i>
 						</div>
-						<div class="card-footer text-center">
-							<a href="./chat.html" class="btn btn-secondary shadow-sm w-50">Chat</a>
-						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Keyword Analyzer</h3>
 					</div>
-				</article>
-
-				<!-- Tool Card: Expression Finder -->
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">Expression Finder</h5>
-							<p class="card-text text-muted">Finds an expression given a result and a set of numbers
-							</p>
-						</div>
-						<div class="card-footer text-center">
-							<a href="./expression.html" class="btn btn-secondary shadow-sm w-50">Solve</a>
-						</div>
-					</div>
-
-				</article>
-
-				<article class="col">
-					<div class="card h-100">
-						<div class="card-body">
-							<h5 class="card-title text-center">Keyword Density Analyzer</h5>
-							<p class="card-text text-muted">Tool to analyze the keyword density of any text</p>
-						</div>
-						<div class="card-footer text-center">
-							<a href="./keyword.html" class="btn btn-secondary shadow-sm w-50">Analyze</a>
-						</div>
-					</div>
-				</article>
-
-			</section>
-
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Analyze keyword density and extract important terms from any text</p>
+					<a href="./keyword.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+						Try Analyzer
+					</a>
+				</div>
+			</div>
 		</main>
 
 		<footer></footer>
 		<script src="./components/navbar.js"></script>
-		<script src="./scripts/validation.js"></script>
-		<script src="./scripts/errorHandler.js"></script>
+		<script src="./scripts/common.js"></script>
 	</body>
 
 </html>

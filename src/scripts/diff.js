@@ -13,13 +13,41 @@ const returnPattern = new RegExp('&para;', 'g');
 
 // Create CodeMirror editors for the text areas
 const originalTextAreaEditor = CodeMirror.fromTextArea(originalTextArea, {
-    value: originalTextArea.value,
     lineNumbers: true,
+    theme: 'default',
+    mode: 'text/plain',
+    viewportMargin: Infinity,
+    lineWrapping: true,
+    height: 'auto'
 });
+
 const modifiedTextAreaEditor = CodeMirror.fromTextArea(modifiedTextArea, {
-    value: modifiedTextArea.value,
     lineNumbers: true,
+    theme: 'default',
+    mode: 'text/plain',
+    viewportMargin: Infinity,
+    lineWrapping: true,
+    height: 'auto'
 });
+
+// Set initial size for editors
+originalTextAreaEditor.setSize('100%', '200px');
+modifiedTextAreaEditor.setSize('100%', '200px');
+
+// Add dark mode support for CodeMirror
+function updateCodeMirrorTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const theme = isDark ? 'dark' : 'default';
+    originalTextAreaEditor.setOption('theme', theme);
+    modifiedTextAreaEditor.setOption('theme', theme);
+}
+
+// Initial theme setup
+updateCodeMirrorTheme();
+
+// Watch for theme changes
+const observer = new MutationObserver(updateCodeMirrorTheme);
+observer.observe(document.documentElement, { attributes: true });
 
 // Add a click event listener to the "Find Diff" button
 findDiffBtn.addEventListener('click', () => {
@@ -41,8 +69,11 @@ findDiffBtn.addEventListener('click', () => {
     // Convert the differences to HTML
     const diffText = diffParser.diff_prettyHtml(diff);
 
-    // Remove the paragraph characters from the HTML
-    const sanitisedDiffText = diffText.replace(returnPattern, '');
+    // Remove the paragraph characters from the HTML and add custom styling
+    const sanitisedDiffText = diffText
+        .replace(returnPattern, '')
+        .replace(/background:#e6ffe6/g, 'background:rgba(74, 222, 128, 0.1)')  // lighter green
+        .replace(/background:#ffe6e6/g, 'background:rgba(248, 113, 113, 0.1)'); // lighter red
 
     showDiff(sanitisedDiffText);
 });
