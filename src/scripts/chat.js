@@ -16,60 +16,50 @@ submitButton.addEventListener("click", handleSubmit);
 // Add event listener to input text element
 inputText.addEventListener("keydown", handleKeyDown);
 
-async function handleSubmit (event) {
-	event.preventDefault(); // Prevent default form submission behavior
+async function handleSubmit(event) {
+	event.preventDefault();
 
-	// Get input text
-	const prompt = inputText.value.trim();
-
-	// Get API key
+	const prompt = sanitizeInput(inputText.value.trim());
 	const apiKey = apiKeyInput.value.trim();
 
-	// Validate API key
-	if (!apiKey) {
-		responseDiv.textContent = "Please enter an API key";
-		return;
-	}
-	if (!apiKeyPattern.test(apiKey)) {
-		responseDiv.textContent = "Invalid API key";
+	if (!validateApiKey(apiKey)) {
+		responseDiv.textContent = "Invalid API key format";
 		return;
 	}
 
-	// Clear any previous error messages
-	responseDiv.textContent = "";
+	if (!validateTextLength(prompt)) {
+		responseDiv.textContent = "Message exceeds maximum length";
+		return;
+	}
 
-	// Show loading message
 	responseDiv.textContent = "Loading...";
 
 	try {
-		// Make API request
 		const aiResponse = await getAIResponse(prompt, apiKey);
-
-		// Display response
-		promptHistory.push(aiResponse);
+		promptHistory.push(sanitizeInput(aiResponse));
 		responseDiv.innerHTML = promptHistory
 			.map((prompt) => `<p class="chat-message">${prompt}</p>`)
 			.join("");
 		inputText.value = "";
 	} catch (error) {
 		console.error(error);
+		responseDiv.textContent = handleApiError(error);
 	}
 }
 
-function handleKeyDown (event) {
+function handleKeyDown(event) {
 	if (event.key === "Enter") {
 		event.preventDefault();
 		submitButton.click();
 	}
 }
 
-async function getAIResponse (prompt, apiKey) {
-	// Set request data
+async function getAIResponse(prompt, apiKey) {
 	const requestData = {
 		model: "gpt-3.5-turbo",
 		messages: [
-			...promptHistory.map(content => ({ role: 'user', content })),
-			{ role: 'user', content: prompt }
+			...promptHistory.map(content => ({ role: 'user', content: sanitizeInput(content) })),
+			{ role: 'user', content: sanitizeInput(prompt) }
 		],
 		temperature: 0.7,
 		max_tokens: 160,
@@ -78,20 +68,16 @@ async function getAIResponse (prompt, apiKey) {
 		presence_penalty: 0
 	};
 
-	// Set fetch options
-	const options = {
+	const response = await fetch("https://api.openai.com/v1/chat/completions", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${apiKey}`
 		},
 		body: JSON.stringify(requestData)
-	};
+	});
 
-	// Make API request
-	const response = await fetch("https://api.openai.com/v1/chat/completions", options);
+	if (!response.ok) throw response;
 	const data = await response.json();
-
-	// Return AI response
 	return data.choices[0].message.content;
 }

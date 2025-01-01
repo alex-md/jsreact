@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+        <link rel="stylesheet" href="./styles/global.css">
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag() { dataLayer.push(arguments); }
@@ -25,63 +25,76 @@
     </head>
 
     <body class="bg-light">
-
-        <header class="mb-4">
-            <h1 class="fw-bold mt-4 text-center display-4 text-muted">Terser Playground</h1>
-            <p class="text-center lead text-muted">A JavaScript parser, mangler/compressor, and beautifier toolkit for
-                ES6+</p>
+        <header class="py-5 bg-white mb-4">
+            <div class="container">
+                <h1 class="fw-bold mt-4 text-center display-4 text-muted">Terser Playground</h1>
+                <p class="text-center lead text-muted">A JavaScript parser, mangler/compressor, and beautifier toolkit
+                    for ES6+</p>
+            </div>
         </header>
-        <main class="container">
-            <section class="mb-4">
-                <p class="text-center lead text-muted">Enter your JavaScript code below, choose some options, and click
-                    the “Minify” button to see the output.</p>
-            </section>
-        </main>
-        <section class="col-10 d-flex fs-4 mx-auto row">
-            <div class="col-lg-6 mb-4">
-                <textarea id="input" class="form-control" rows="10" placeholder="Input JavaScript Code:"></textarea>
-                <span id="inputSizeLabel"></span>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <textarea id="output" class="bg-body-secondary form-control" readonly="" rows="10"
-                    placeholder="Output:"></textarea>
-                <span id="outputSizeLabel"></span>
-            </div>
-        </section>
-        <section class="col-6 mb-4 mx-auto">
-            <div class="card bg-light">
-                <div class="bg-light-subtle bg-primary-subtle p-3 rounded-3">
-                    <h5 class="card-title">Options</h5>
-                    <div class="fs-5 g-3">
-                        <div class="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="compress" checked>
-                                <label class="form-check-label" for="compress">Compress</label>
+
+        <main class="container pb-5">
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="mb-4">
+                        <p class="text-center lead text-muted">Enter your JavaScript code below, choose some options,
+                            and click the "Minify" button to see the output.</p>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-body p-4">
+                                    <h5 class="card-title mb-3">Input JavaScript</h5>
+                                    <textarea id="input" class="form-control shadow-sm" rows="10"
+                                        placeholder="Input JavaScript Code:"></textarea>
+                                    <span id="inputSizeLabel" class="text-muted mt-2 d-block"></span>
+                                </div>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="mangle" checked>
-                                <label class="form-check-label" for="mangle">Mangle</label>
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-body p-4">
+                                    <h5 class="card-title mb-3">Output</h5>
+                                    <textarea id="output" class="form-control shadow-sm" readonly rows="10"
+                                        placeholder="Output:"></textarea>
+                                    <span id="outputSizeLabel" class="text-muted mt-2 d-block"></span>
+                                </div>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="beautify" checked>
-                                <label class="form-check-label" for="beautify">Beautify</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3">Options</h5>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="compress" checked>
+                                    <label class="form-check-label" for="compress">Compress</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="mangle" checked>
+                                    <label class="form-check-label" for="mangle">Mangle</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="beautify" checked>
+                                    <label class="form-check-label" for="beautify">Beautify</label>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <button id="minify" class="btn btn-primary">Minify</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-        <section class="mb-4 d-flex justify-content-center">
-            <button id="minify" class="btn btn-primary">Minify</button>
-        </section>
         </main>
         <script src="./components/navbar.js"></script>
-        <script src="./components/navbar.js"></script>
-        <script type="module" src="scripts/minify.js"></script>
+        <script src="./scripts/minify.js"></script>
     </body>
 
 </html>

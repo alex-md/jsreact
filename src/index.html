@@ -25,20 +25,23 @@
 		<meta name="theme-color" content="#ffffff">
 		<link href="./styles/global.css" rel="stylesheet">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 	</head>
 
-	<body class="bg-light-subtle">
+	<body class="bg-light">
+		<header class="py-5 bg-white mb-4">
+			<div class="container">
+				<h1 class="fw-bold mt-4 text-center display-4">
+					<span class="fst-italic text-primary">JSreact</span> - Free Online Developer Utilities
+				</h1>
+				<p class="text-center lead mt-3">Developer Tools Collection: Minify Code, Clean Text, AI Name Generator,
+					OpenAI TTS, Diff Checker, Talk to GPT, and Expression Finder</p>
+			</div>
+		</header>
 		<main class="container py-5">
-			<header>
-				<section class="text-center mb-5">
-					<h1 class="text-center display-4 fw-bold mt-4"><span class="fst-italic text-primary">JSreact</span>
-						- Free Online Developer Utilities</h1>
-					<p class="text-muted lead">Developer Tools Collection: Minify Code, Clean Text, AI Name
-						Generator,
-						OpenAI TTS, Diff Checker, Talk to GPT, and Expression Finder</p>
-				</section>
-			</header>
 			<section class="b fw-medium g-4 row row-cols-1 row-cols-lg-3 row-cols-md-2 text-center">
 				<!-- Tool Card: Minify Code -->
 				<article class="col">
@@ -157,6 +160,8 @@
 
 		<footer></footer>
 		<script src="./components/navbar.js"></script>
+		<script src="./scripts/validation.js"></script>
+		<script src="./scripts/errorHandler.js"></script>
 	</body>
 
 </html>

@@ -1,28 +1,42 @@
-# JSreact.com - Your Online JavaScript Tools
+# JSreact - Web Developer Tools Collection
 
-Welcome to JSreact.com, a collection of online tools for various tasks, each with its own dedicated HTML and JavaScript file. Our tools are designed to be user-friendly and efficient, helping you to streamline your workflow.
+A suite of modern web development and content tools designed to streamline your workflow. Visit [JSreact.com](https://jsreact.com) to access all tools.
 
-## Tools
+## Available Tools
 
-- **[Chat Tool](chat.html)**: Chat with the latest GPT model using your OpenAI key. Ideal for testing and experimenting with AI models.
+### Content Analysis
+- **[Keyword Density Analyzer](keyword.html)** - Analyze keyword distribution and density in your content with visual heatmaps and statistics
+- **[Clean Text](clean.html)** - Remove formatting, line breaks, and unwanted characters from text
+- **[Diff Checker](diff.html)** - Compare texts or code snippets with highlighted differences
 
-- **[Clean Tool](clean.html)**: Clean your text by removing line-breaks and punctuation. Perfect for preparing text for natural language processing tasks or simply cleaning up messy text.
+### AI & Machine Learning
+- **[Talk to GPT](chat.html)** - Interactive chat interface for GPT-4 using your OpenAI API key
+- **[OpenAI TTS](tts.html)** - Text-to-speech conversion using OpenAI's latest voice models
+- **[AI Name Generator](generator.html)** - Generate creative startup and domain names using AI
 
-- **[Diff Tool](diff.html)**: Compare two pieces of code or text and see the differences highlighted. Great for code reviews and spotting changes.
+### Developer Tools
+- **[Minify Tool](minify.html)** - Compress JavaScript code using the Google Closure Compiler
+- **[Expression Finder](expression.html)** - Find mathematical expressions that evaluate to a target value
 
-- **[Expression Tool](expression.html)**: Evaluate mathematical and logical expressions. Supports basic arithmetic operations, logical operations, and functions. A handy tool for quick calculations or logic checks.
+## Features
+- 🚀 Modern, responsive interface
+- ⚡️ No server-side processing - all tools run in your browser
+- 🔒 Privacy-focused - your data stays local
+- 💻 Open source and free to use
 
-- **[Minify Tool](minify.html)**: Reduce the size of your code with the Google Closure Compiler. Essential for optimizing your JavaScript for production.
+## Getting Started
 
-- **[OpenAI TTS Tool](tts.html)**: Convert text to speech using OpenAI's text-to-speech (TTS) model. Ideal for generating voiceovers or testing the TTS model.
-
-## Usage
-
-To use any of these tools, simply navigate to the corresponding HTML file. Each tool has a user-friendly interface and clear instructions, so you can get started right away.
+1. Visit [JSreact.com](https://jsreact.com)
+2. Choose your desired tool from the homepage
+3. Follow the tool-specific instructions
+4. For AI-powered tools (Chat, TTS), you'll need an OpenAI API key
 
 ## Contributing
 
-We welcome contributions! If you have a suggestion for a new tool or an improvement to an existing one, please feel free to open an issue or pull request.
+Contributions are welcome! Please feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
 
 ## License
 

@@ -10,12 +10,23 @@ let ttsAudio = document.querySelector('#ttsAudio');
 textToSpeechButton.addEventListener('click', convertToSpeech);
 
 function isValidOpenAIKey(key) {
-    const regexPattern = /sk-[a-zA-Z0-9]{48}/;
+    const regexPattern = /^sk-proj-[A-Za-z0-9-_]{120,140}$/;
     return regexPattern.test(key);
 }
 
+function sanitizeInput(input) {
+    return input.replace(/<[^>]*>/g, '');
+}
 
-function showToast(message = 'Please enter a valid OpenAI API key.') {
+function validateApiKey(key) {
+    return /^sk-proj-[A-Za-z0-9-_]{120,140}$/;
+}
+
+function validateTextLength(text, maxLength = 50000) {
+    return text.length <= maxLength;
+}
+
+function showToast() {
     // Create the toast container
     var toastContainer = document.createElement('div');
     toastContainer.id = 'toastContainer';
@@ -48,7 +59,7 @@ function showToast(message = 'Please enter a valid OpenAI API key.') {
     // Create the toast body
     var toastBody = document.createElement('div');
     toastBody.classList.add('toast-body', 'text-body-secondary');
-    toastBody.textContent = message;
+    toastBody.textContent = 'Please enter a valid OpenAI API key.';
 
     // Append everything
     toast.appendChild(toastHeader);
@@ -64,17 +75,12 @@ function showToast(message = 'Please enter a valid OpenAI API key.') {
 
 
 function convertToSpeech() {
-    if (!validateApiKey(api_key)) {
-        showToast('Invalid API key format');
+    if (!api_key || !isValidOpenAIKey(api_key)) {
+        showToast();
         return;
     }
-
-    const text = sanitizeInput(document.getElementById('textToSpeechInput').value);
-    if (!validateTextLength(text)) {
-        showToast('Text exceeds maximum length');
-        return;
-    }
-
+    console.log('start convertToSpeedch()');
+    const text = document.getElementById('textToSpeechInput').value;
     const selectedVoice = document.querySelector('input[name="voice"]:checked').value;
     fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -87,20 +93,16 @@ function convertToSpeech() {
             input: text,
             voice: selectedVoice.toLowerCase()
         })
-    })
-        .then((response) => {
-            if (!response.ok) throw response;
-            return response.blob();
-        })
-        .then((blob) => {
-            const url = URL.createObjectURL(blob);
-            ttsAudio.src = url;
-            ttsAudio.play();
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            showToast(handleApiError(error));
-        });
+    }).then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.blob();
+    }).then((blob) => {
+        const url = URL.createObjectURL(blob);
+        ttsAudio.src = url;
+        ttsAudio.play();
+    }).catch((error) => console.error('Error:', error));
 }
 
 let mediaRecorder;
@@ -167,38 +169,36 @@ function stopRecording() {
 }
 
 function convertToText(recordedFile) {
-    const file = recordedFile || document.getElementById('speechToTextInput').files[0];
-
-    if (!validateApiKey(api_key)) {
-        showToast('Invalid API key format');
+    const fileInput = document.getElementById('speechToTextInput');
+    const file = recordedFile || fileInput.files[0];
+    const api_key = 'your_openai_api_key';
+    if (!api_key || !isValidOpenAIKey(api_key)) {
+        showToast();
         return;
     }
-
     const formData = new FormData();
     formData.append('file', file);
     formData.append('model', 'whisper-1');
-
     fetch('https://api.openai.com/v1/audio/transcriptions', {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${api_key}`
         },
         body: formData
-    })
-        .then((response) => {
-            if (!response.ok) throw response;
-            return response.json();
-        })
-        .then((data) => {
-            const text = sanitizeInput(data.text);
-            const transcribedTextElement = document.getElementById('transcribedText');
-            const textToSpeechInputElement = document.getElementById('textToSpeechInput');
-
-            if (transcribedTextElement) transcribedTextElement.innerText = text;
-            if (textToSpeechInputElement) textToSpeechInputElement.value = text;
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            showToast(handleApiError(error));
-        });
+    }).then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }).then((data) => {
+        const transcribedTextElement = document.getElementById('transcribedText');
+        if (transcribedTextElement) {
+            transcribedTextElement.innerText = data.text;
+        }
+        const textToSpeechInputElement = document.getElementById('textToSpeechInput');
+        if (textToSpeechInputElement) {
+            textToSpeechInputElement.value = data.text;
+        }
+        console.log(data);
+    }).catch((error) => console.error('Error:', error));
 }

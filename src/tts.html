@@ -31,11 +31,13 @@
 
     </head>
 
-    <body class="bg-light-subtle">
-        <header class="container text-center py-5">
-            <h1 class="fw-bold mt-4 text-center display-4 text-muted">OpenAI TTS and Whisper UI</h1>
-            <p class="lead text-muted">Convert text to speech and speech to text using OpenAI's API. Ideal for
-                developers and users who need high-quality voice conversion.</p>
+    <body class="bg-light">
+        <script src="./components/navbar.js"></script>
+        <header class="py-5 bg-white mb-4">
+            <div class="container">
+                <h1 class="fw-bold mt-4 text-center display-4 text-muted">Talk to GPT</h1>
+                <p class="text-center lead text-muted">Chat with GPT 4 using your OpenAI key</p>
+            </div>
         </header>
         <main class="container py-2">
             <section class="row justify-content-center">
@@ -128,7 +130,8 @@
             </section>
         </main>
         <script src="./components/navbar.js"></script>
-
+        <script src="./scripts/validation.js"></script>
+        <script src="./scripts/errorHandler.js"></script>
         <script src="./scripts/tts.js"></script>
     </body>
 

@@ -1,16 +1,16 @@
 (function () {
     const navItems = [
         {
-            href: './tts.html',
-            text: 'OpenAI TTS Demo',
-        },
-        {
             href: './minify.html',
             text: 'Minify',
         },
         {
             href: './generator.html',
             text: 'AI Name Generator',
+        },
+        {
+            href: './expression.html',
+            text: 'Solve',
         },
         {
             href: './clean.html',
@@ -29,6 +29,7 @@
     function createNavbar() {
         const navigation = document.createElement("navigation");
         navigation.classList.add("card-header", "navbar", "navbar-expand-lg", "shadow-sm", "bg-light");
+        navigation.style.zIndex = "999"; // Changed to be below notice banner
 
         const logoLink = document.createElement("a");
         logoLink.classList.add("navbar-brand");
@@ -61,6 +62,8 @@
 
         const ul = document.createElement("ul");
         ul.classList.add("navbar-nav", "ms-auto", "gap-4"); // Add 'ms-auto' to move the navbar links to the right
+        ul.style.display = "flex"; // Ensure flex display
+        ul.style.alignItems = "center";
 
         for (const item of navItems) {
             const li = document.createElement("li");
@@ -70,13 +73,18 @@
             a.classList.add("nav-link", "text-end", "pe-3");
             a.href = item.href;
             a.textContent = item.text;
+            a.style.color = "#2d3748"; // Set explicit text color
+            a.style.display = "block"; // Ensure link is visible
+            a.style.padding = "0.5rem 1rem";
 
             // Add hover effect
             a.addEventListener('mouseover', function () {
                 this.style.backgroundColor = "#f8f9fa";
+                this.style.color = "#1a202c";
             });
             a.addEventListener('mouseout', function () {
                 this.style.backgroundColor = "";
+                this.style.color = "#2d3748";
             });
 
             li.appendChild(a);
@@ -99,14 +107,19 @@
 })();
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Call the createNavbar function and place it at the top of the page
     createNavbar();
 
-    // Move the navbar element to the top of the page
-    document.body.insertAdjacentElement('afterbegin', document.querySelector("navigation"));
+    const navigation = document.querySelector('navigation');
+    document.body.insertAdjacentElement('afterbegin', navigation);
+
+    // Only show notice banner on chat.html or tts.html pages
+    if (window.location.pathname.includes('chat.html') || window.location.pathname.includes('tts.html')) {
+        const noticeBanner = document.createElement('div');
+        noticeBanner.className = 'notice-banner';
+        noticeBanner.innerHTML = '🚧 This feature is currently under development. Some functionality may be limited or unstable. 🚧';
+        navigation.insertAdjacentElement('afterend', noticeBanner);
+    }
 });
-
-
 
 // Create footer element
 var footer = document.createElement('footer');
