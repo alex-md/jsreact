@@ -68,7 +68,7 @@ module.exports = (env, argv) => {
         chunks: ['common', 'navbar', page],
         scriptLoading: 'defer',
         minify: isDevelopment ? false : {
-          collapseWhitespace: true,
+          collapseWhitespace: false,
           removeComments: true,
           removeRedundantAttributes: true,
           removeScriptTypeAttributes: true,
@@ -77,7 +77,9 @@ module.exports = (env, argv) => {
           minifyCSS: false,
           minifyJS: false,
           processConditionalComments: false,
-          keepClosingSlash: true
+          keepClosingSlash: true,
+          preserveLineBreaks: true,
+          conservativeCollapse: true
         }
       })),
       new MiniCssExtractPlugin({
