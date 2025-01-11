@@ -3,10 +3,10 @@
     "parser": {
       "syntax": "ecmascript",
       "jsx": false,
-      "dynamicImport": false,
+      "dynamicImport": true,
       "privateMethod": false,
       "functionBind": false,
-      "exportDefaultFrom": false,
+      "exportDefaultFrom": true,
       "exportNamespaceFrom": false,
       "decorators": false,
       "decoratorsBeforeExport": false,
@@ -21,10 +21,11 @@
   },
   "minify": true,
   "module": {
-    "type": "commonjs",
-    "strict": false,
+    "type": "es6",
+    "strict": true,
     "strictMode": true,
     "lazy": false,
     "noInterop": false
-  }
+  },
+  "sourceMaps": true
 } 

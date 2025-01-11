@@ -2,23 +2,23 @@
   "name": "jsreact",
   "version": "1.0.0",
   "description": "A collection of JavaScript utilities and tools for web development",
+  "type": "module",
   "scripts": {
     "clean": "rm -rf dist",
     "create-dirs": "mkdir -p dist/styles dist/images dist/scripts",
-    "build:js": "swc src -d dist",
+    "copy:html": "cp src/*.html dist/",
+    "copy:assets": "cp -r src/images src/robots.txt src/sitemap.xml src/_headers src/_redirects dist/",
+    "build:js": "swc src/scripts -d dist/scripts && swc src/components -d dist/components",
     "build:css": "postcss src/styles/*.css -d dist/styles",
-    "build:html": "cp src/*.html dist/",
-    "build:assets": "cp -r src/images src/robots.txt src/sitemap.xml src/_headers src/_redirects dist/",
-    "build": "npm run clean && npm run create-dirs && npm run build:js && npm run build:css && npm run build:html && npm run build:assets",
+    "build": "npm run clean && npm run create-dirs && npm run copy:html && npm run copy:assets && npm run build:js && npm run build:css",
     "dev:js": "swc src -d dist -w",
     "dev:css": "postcss src/styles/*.css -d dist/styles --watch",
     "dev:serve": "live-server dist --port=3000",
     "dev": "npm run clean && npm run create-dirs && (npm run dev:js & npm run dev:css & npm run dev:serve)",
-    "pages:build": "mkdir -p dist && npm install && npm run build && ls -la dist"
+    "pages:build": "npm install && npm run build"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "6.5.1",
-    "terser": "5.24.0"
+    "@fortawesome/fontawesome-free": "6.5.1"
   },
   "devDependencies": {
     "@swc/cli": "0.1.63",
