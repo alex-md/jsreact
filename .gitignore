@@ -1,20 +1,6 @@
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
 # Dependencies
 /node_modules
 /bower_components
-
-# Environment files
-.env
-.env.local
-.env.*.local
 
 # Build output
 /dist
@@ -40,3 +26,12 @@ debug.log
 
 # Optional eslint cache
 .eslintcache
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

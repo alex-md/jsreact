@@ -1,0 +1,5 @@
+# Redirect default Netlify subdomain to primary domain
+https://jsreact.pages.dev/* https://jsreact.com/:splat 301!
+
+# Handle client-side routing
+/* /index.html 200 
