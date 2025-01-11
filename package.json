@@ -14,7 +14,7 @@
     "dev:css": "postcss src/styles/*.css -d dist/styles --watch",
     "dev:serve": "live-server dist --port=3000",
     "dev": "npm run clean && npm run create-dirs && (npm run dev:js & npm run dev:css & npm run dev:serve)",
-    "pages:build": "npm run build"
+    "pages:build": "npm install && npm run build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.5.1",
