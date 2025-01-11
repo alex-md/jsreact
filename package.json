@@ -7,14 +7,14 @@
     "create-dirs": "mkdir -p dist/styles dist/images dist/scripts",
     "build:js": "swc src -d dist",
     "build:css": "postcss src/styles/*.css -d dist/styles",
-    "build:html": "mkdir -p dist && cp src/*.html dist/",
-    "build:assets": "mkdir -p dist && cp -r src/images src/robots.txt src/sitemap.xml src/_headers src/_redirects dist/",
-    "build": "npm-run-all clean create-dirs -p build:*",
+    "build:html": "cp src/*.html dist/",
+    "build:assets": "cp -r src/images src/robots.txt src/sitemap.xml src/_headers src/_redirects dist/",
+    "build": "npm run clean && npm run create-dirs && npm run build:js && npm run build:css && npm run build:html && npm run build:assets",
     "dev:js": "swc src -d dist -w",
     "dev:css": "postcss src/styles/*.css -d dist/styles --watch",
     "dev:serve": "live-server dist --port=3000",
-    "dev": "npm-run-all clean create-dirs -p dev:*",
-    "pages:build": "npm-run-all clean create-dirs build"
+    "dev": "npm run clean && npm run create-dirs && (npm run dev:js & npm run dev:css & npm run dev:serve)",
+    "pages:build": "npm run build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
