@@ -4,10 +4,6 @@
 	<head>
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-		<script src="./scripts/common.js"></script>
-		<script>
-			initializeCommon();
-		</script>
 		<title>JSreact - Web Developer Tools</title>
 
 		<meta charset="utf-8">
@@ -19,36 +15,6 @@
 		<link rel="icon" type="image/png" href="./images/icon.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
 		<link rel="shortcut icon" href="./images/favicon.ico">
-		
-		<!-- Tailwind CSS -->
-		<script src="https://cdn.tailwindcss.com"></script>
-		<script>
-			tailwind.config = {
-				darkMode: 'class',
-				theme: {
-					extend: {
-						colors: {
-							primary: '#0ea5e9',
-							secondary: '#27272a',
-						}
-					}
-				}
-			}
-		</script>
-
-		<!-- Dark mode initialization -->
-		<script>
-			// Set dark mode as default
-			if (!('theme' in localStorage)) {
-				localStorage.theme = 'dark';
-			}
-		</script>
-		
-		<!-- Font Awesome -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-		
-		<!-- Custom Styles -->
-		<link rel="stylesheet" href="./styles/global.css">
 		
 		<meta name="theme-color" content="#09090b">
 	</head>
@@ -151,8 +117,6 @@
 		</main>
 
 		<footer></footer>
-		<script src="./components/navbar.js"></script>
-		<script src="./scripts/common.js"></script>
 	</body>
 
 </html>

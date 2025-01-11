@@ -4,12 +4,6 @@
     <head>
         <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-        <script>
-            initializeCommon();
-        </script>
-        
-        <!-- Common JS -->
-        <script src="./scripts/common.js"></script>
 
         <!-- Basic Meta Tags -->
         <meta charset="utf-8">
@@ -27,37 +21,40 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
         <link rel="manifest" href="/favicon/site.webmanifest">
 
-        <!-- Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#0ea5e9',
-                            secondary: '#27272a',
-                        }
-                    }
-                }
+        <style>
+            input[type="checkbox"] {
+                appearance: none;
+                width: 1.25rem;
+                height: 1.25rem;
+                border: 2px solid #d1d5db;
+                border-radius: 0.25rem;
+                background-color: transparent;
+                cursor: pointer;
+                position: relative;
             }
-        </script>
 
-        <!-- Dark mode initialization -->
-        <script>
-            // Set dark mode as default
-            if (!('theme' in localStorage)) {
-                localStorage.theme = 'dark';
+            input[type="checkbox"]:checked {
+                background-color: #0ea5e9;
+                border-color: #0ea5e9;
             }
-        </script>
 
-        <!-- Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+            input[type="checkbox"]:checked::after {
+                content: '';
+                position: absolute;
+                left: 6px;
+                top: 2px;
+                width: 6px;
+                height: 10px;
+                border: solid white;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+            }
 
-        <!-- Custom Styles -->
-        <link href="./styles/global.css" rel="stylesheet">
+            input[type="checkbox"]:focus {
+                box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3);
+            }
+        </style>
 
-        <!-- Theme Color -->
         <meta name="theme-color" content="#09090b">
     </head>
 
@@ -85,7 +82,8 @@
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
                         <div class="p-6">
                             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Input JavaScript</h2>
-                            <textarea id="input" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono" 
+                            <textarea id="input" 
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono" 
                                 rows="12" 
                                 placeholder="Input JavaScript Code:"></textarea>
                             <span id="inputSizeLabel" class="mt-2 text-sm text-gray-500 dark:text-gray-400 block"></span>
@@ -95,7 +93,8 @@
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
                         <div class="p-6">
                             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Output</h2>
-                            <textarea id="output" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono" 
+                            <textarea id="output" 
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono" 
                                 rows="12" 
                                 readonly 
                                 placeholder="Output:"></textarea>
@@ -109,18 +108,15 @@
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Options</h2>
                         <div class="flex flex-wrap gap-6">
                             <label class="inline-flex items-center">
-                                <input type="checkbox" id="compress" checked
-                                    class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input type="checkbox" id="compress" checked>
                                 <span class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Compress</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="checkbox" id="mangle" checked
-                                    class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input type="checkbox" id="mangle" checked>
                                 <span class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Mangle</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="checkbox" id="beautify" checked
-                                    class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input type="checkbox" id="beautify" checked>
                                 <span class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Beautify</span>
                             </label>
                         </div>
@@ -134,9 +130,6 @@
                 </div>
             </div>
         </main>
-
-        <script src="./components/navbar.js"></script>
-        <script src="./scripts/minify.js"></script>
     </body>
 
 </html>

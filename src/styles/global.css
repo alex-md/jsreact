@@ -1,5 +1,5 @@
 /* Base Styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
 :root {
     /* Colors - Dark theme */
@@ -22,6 +22,184 @@
     --border: #27272a;
     --input: #27272a;
     --ring: #0ea5e9;
+    
+    /* Text Colors */
+    --text-light: #111827;
+    --text-dark: #ffffff;
+}
+
+/* Base Text Colors */
+body {
+    font-family: 'Outfit', sans-serif;
+    @apply text-gray-900 dark:text-white;
+}
+
+/* Input Elements - Global */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+.CodeMirror,
+[contenteditable="true"] {
+    color: var(--text-light) !important;
+    background-color: white;
+}
+
+/* Dark Mode Input Elements */
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="search"],
+.dark textarea,
+.dark .CodeMirror,
+.dark [contenteditable="true"] {
+    color: var(--text-dark) !important;
+    background-color: var(--card);
+}
+
+/* Placeholder Text */
+input::placeholder,
+textarea::placeholder {
+    @apply text-gray-500 dark:text-gray-400;
+}
+
+/* Form Elements */
+textarea, 
+input[type="text"], 
+input[type="number"], 
+input[type="email"], 
+input[type="password"], 
+input[type="search"] {
+    @apply w-full px-4 py-2 
+           border border-gray-200 dark:border-gray-700 
+           rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent 
+           outline-none transition-shadow;
+}
+
+/* Output Areas */
+#output,
+#diffResponseContainer,
+#solution-output,
+.output-area {
+    @apply text-gray-900 dark:text-white font-mono;
+}
+
+/* Code Blocks and Editors */
+pre, 
+code, 
+.editor-area {
+    @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded px-2 py-1;
+}
+
+/* CodeMirror Specific */
+.CodeMirror {
+    height: auto !important;
+}
+
+.dark .CodeMirror {
+    background-color: var(--card) !important;
+}
+
+.CodeMirror-selected {
+    @apply bg-blue-200/20 dark:bg-blue-500/20;
+}
+
+.CodeMirror-line {
+    @apply text-gray-900 dark:text-white;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--foreground);
+}
+
+h1 {
+    font-size: var(--h1-size);
+    letter-spacing: -0.025em;
+    margin-top: 2.5rem;
+}
+
+h2 {
+    font-size: var(--h2-size);
+    letter-spacing: -0.015em;
+    margin-top: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+}
+
+h3 {
+    font-size: var(--h3-size);
+    margin-top: 1.5rem;
+    color: var(--primary);
+}
+
+h4 {
+    font-size: var(--h4-size);
+    margin-top: 1.25rem;
+}
+
+/* Content Sections */
+section {
+    margin: 2.5rem 0;
+    padding: 1rem;
+}
+
+/* Content Blocks */
+.content-block {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: var(--card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+/* Lists */
+ul, ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+li {
+    margin: 0.5rem 0;
+}
+
+/* Paragraphs */
+p {
+    margin: 1rem 0;
+    line-height: 1.6;
+}
+
+/* Apply Outfit font to body */
+body {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Enhanced Icon Styles */
+.icon {
+    font-size: 1.5rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.icon:hover {
+    transform: scale(1.1);
+}
+
+/* Button animations */
+button, 
+.button {
+    transition: all 0.2s ease-in-out;
+}
+
+button:hover,
+.button:hover {
+    transform: translateY(-1px);
 }
 
 /* Custom Scrollbar */
@@ -58,24 +236,6 @@
 }
 #highlighted-text::-webkit-scrollbar {
     display: none;
-}
-
-/* Form Elements */
-textarea, input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="search"] {
-    @apply w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow;
-}
-
-textarea {
-    @apply font-mono min-h-[120px] resize-y;
-}
-
-/* Code Blocks */
-pre, code {
-    @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 rounded px-2 py-1;
-}
-
-pre {
-    @apply p-4 overflow-x-auto;
 }
 
 /* Loading Animation */

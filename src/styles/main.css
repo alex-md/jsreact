@@ -1,0 +1,31 @@
+@import '@fortawesome/fontawesome-free/css/all.css';
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import './global.css';
+
+/* Base styles */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Colors - Dark theme */
+    --background: #09090b;
+    --foreground: #fafafa;
+    --card: #18181b;
+    --card-foreground: #fafafa;
+    --popover: #18181b;
+    --popover-foreground: #fafafa;
+    --primary: #0ea5e9;
+    --primary-foreground: #f8fafc;
+    --secondary: #27272a;
+    --secondary-foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --accent: #27272a;
+    --accent-foreground: #fafafa;
+    --destructive: #ef4444;
+    --destructive-foreground: #fafafa;
+    --border: #27272a;
+    --input: #27272a;
+    --ring: #0ea5e9;
+} 

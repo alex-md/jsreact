@@ -6,11 +6,16 @@
 /**
  * Initializes Google Analytics tracking
  */
-function initializeGoogleAnalytics() {
+export function initializeGoogleAnalytics() {
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-ZEFG04PXR7');
+}
+
+// Initialize dark mode
+if (!('theme' in localStorage)) {
+    localStorage.theme = 'dark';
 }
 
 // API Key Management
@@ -19,7 +24,7 @@ let api_key;
 /**
  * Updates the API key based on input field value and validates it
  */
-function updateApiKey() {
+export function updateApiKey() {
     const apiKeyInput = document.getElementById('apiKeyInput');
     if (apiKeyInput) {
         isValidOpenAIKey(apiKeyInput.value) 
@@ -34,7 +39,7 @@ function updateApiKey() {
  * @param {string} key - The API key to validate
  * @returns {boolean} True if the key matches the expected format
  */
-function isValidOpenAIKey(key) {
+export function isValidOpenAIKey(key) {
     const regexPattern = /^sk-proj-[A-Za-z0-9-_]{120,140}$/;
     return regexPattern.test(key);
 }
@@ -44,7 +49,7 @@ function isValidOpenAIKey(key) {
  * @param {string} input - The input string to sanitize
  * @returns {string} Sanitized string with HTML tags removed
  */
-function sanitizeInput(input) {
+export function sanitizeInput(input) {
     return input.replace(/<[^>]*>/g, '');
 }
 

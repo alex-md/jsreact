@@ -1,0 +1,28 @@
+[build]
+command = "npm run pages:build"
+output_directory = "dist"
+base_directory = "/"
+
+[build.environment]
+NODE_VERSION = "18"
+NPM_VERSION = "9"
+
+[build.processing]
+skip_processing = false
+
+[build.processing.css]
+bundle = true
+minify = true
+
+[build.processing.js]
+bundle = true
+minify = true
+
+[build.processing.html]
+pretty_urls = true
+
+[build.processing.static_files]
+chunk_size = 20
+
+[build.edge_functions]
+enabled = false 
