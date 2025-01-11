@@ -33,7 +33,7 @@ module.exports = (env, argv) => {
       filename: 'scripts/[name].[contenthash].js',
       assetModuleFilename: 'assets/[name].[hash][ext]',
       clean: true,
-      publicPath: '/'
+      publicPath: isDevelopment ? '/' : './'
     },
     module: {
       rules: [
@@ -66,7 +66,8 @@ module.exports = (env, argv) => {
         template: `./src/${page}.html`,
         filename: `${page}.html`,
         chunks: ['common', 'navbar', page],
-        minify: !isDevelopment
+        minify: !isDevelopment,
+        scriptLoading: 'defer'
       })),
       new MiniCssExtractPlugin({
         filename: 'styles/[name].[contenthash].css'
