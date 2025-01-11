@@ -66,8 +66,19 @@ module.exports = (env, argv) => {
         template: `./src/${page}.html`,
         filename: `${page}.html`,
         chunks: ['common', 'navbar', page],
-        minify: !isDevelopment,
-        scriptLoading: 'defer'
+        scriptLoading: 'defer',
+        minify: isDevelopment ? false : {
+          collapseWhitespace: true,
+          removeComments: true,
+          removeRedundantAttributes: true,
+          removeScriptTypeAttributes: true,
+          removeStyleLinkTypeAttributes: true,
+          useShortDoctype: true,
+          minifyCSS: false,
+          minifyJS: false,
+          processConditionalComments: false,
+          keepClosingSlash: true
+        }
       })),
       new MiniCssExtractPlugin({
         filename: 'styles/[name].[contenthash].css'
