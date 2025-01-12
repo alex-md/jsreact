@@ -1,181 +1,386 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
-
+<html lang="en" class="light">
     <head>
-        <!-- Google Analytics -->
-        <script src="./scripts/common.js"></script>
-        <script>
-            initializeCommon();
-        </script>
-        <title>Online Text Cleaner - Remove Formatting, Punctuation, and Whitespace | JSReact</title>
-
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description"
-            content="This free online text cleaner can be used to remove unwanted formatting, punctuation, and whitespace from your text. Includes a Find and Replace feature.">
-        <meta name="keywords" content="text, cleaning, tool, formatting, punctuation, whitespace, find, replace">
-        <link rel="canonical" href="https://jsreact.com/clean" />
-        <link rel="icon" type="image/png" href="./images/favicon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-        
-        <!-- Tailwind CSS -->
+        <title>Text Cleaner</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#0ea5e9',
-                            secondary: '#27272a',
-                        }
-                    }
-                }
-            }
-        </script>
-
-        <!-- Dark mode initialization -->
-        <script>
-            // Set dark mode as default
-            if (!('theme' in localStorage)) {
-                localStorage.theme = 'dark';
-            }
-        </script>
-        
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        
-        <!-- Custom Styles -->
-        <link rel="stylesheet" href="./styles/global.css">
+        <link href="https://cdn.jsdelivr.net/npm/@shadcn/ui@0.0.1/dist/shadcn-ui.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <script src="components/navbar.js"></script>
+        <script src="components/header.js"></script>
+        <script src="components/footer.js"></script>
+        <script src="scripts/clean.js"></script>
         <style>
-            #liveToast {
-                visibility: hidden;
+            /* Override any dark mode styles */
+            :root {
+                color-scheme: light;
             }
-            #liveToast.hidden {
-                visibility: hidden;
-                opacity: 0;
-                transform: translateY(1rem);
+            .option-group {
+                background: linear-gradient(to right, #f8fafc, #ffffff);
+                border-left: 4px solid #3b82f6;
             }
-            #liveToast:not(.hidden) {
-                visibility: visible;
+            .checkbox-wrapper {
+                transition: all 0.2s ease;
+            }
+            .checkbox-wrapper:hover {
+                transform: translateX(4px);
+            }
+            /* Tooltip styles */
+            .tooltip {
+                position: relative;
+            }
+            .tooltip:hover .tooltip-text {
                 opacity: 1;
-                transform: translateY(0);
+                visibility: visible;
+                transform: translate(-50%, -0.25rem);
+            }
+            .tooltip-text {
+                position: absolute;
+                left: 50%;
+                bottom: calc(100% + 0.5rem);
+                transform: translate(-50%, 0.5rem);
+                padding: 0.5rem 1rem;
+                background: #1f2937;
+                color: white;
+                font-size: 0.875rem;
+                white-space: nowrap;
+                border-radius: 0.375rem;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.2s ease;
+                z-index: 50;
+                pointer-events: none;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .tooltip-text::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 100%;
+                transform: translateX(-50%);
+                border-width: 0.25rem;
+                border-style: solid;
+                border-color: #1f2937 transparent transparent transparent;
             }
         </style>
-        
-        <meta name="theme-color" content="#09090b">
     </head>
 
-    <body class="bg-gray-50 dark:bg-gray-900">
-        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
-            <div class="container mx-auto px-4 max-w-7xl">
-                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
-                    Text Cleaner
-                </h1>
-                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
-                    Clean and format your text with powerful tools
-                </p>
-            </div>
-        </header>
+    <body class="bg-gray-50 min-h-screen">
+        <div id="app">
+            <!-- Navbar and Header will be inserted here by JavaScript -->
+        </div>
 
-        <main class="container mx-auto px-4 py-12 max-w-7xl">
-            <div class="space-y-6">
+        <main class="container mx-auto px-4 py-8">
+            <div class="max-w-5xl mx-auto space-y-6">
                 <!-- Text Input/Output Section -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Input -->
-                            <div>
-                                <label for="input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Input Text
-                                </label>
-                                <textarea id="input" 
-                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow min-h-[300px] text-gray-900 dark:text-white"
-                                    placeholder="Enter your text here"></textarea>
-                            </div>
-                            
-                            <!-- Output -->
-                            <div>
-                                <label for="output" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Output Text
-                                </label>
-                                <textarea id="output" 
-                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow min-h-[300px] text-gray-900 dark:text-white"
-                                    placeholder="Cleaned text will appear here" readonly></textarea>
-                            </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Input Section -->
+                        <div>
+                            <label for="input-text" class="block text-sm font-medium text-gray-700 mb-2">
+                                Input Text
+                            </label>
+                            <textarea 
+                                id="input-text" 
+                                rows="12" 
+                                placeholder="Paste your text here..."
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow text-gray-900 font-mono resize-none"
+                            ></textarea>
                         </div>
+
+                        <!-- Output Section -->
+                        <div>
+                            <label for="output-text" class="block text-sm font-medium text-gray-700 mb-2">
+                                Output Text
+                            </label>
+                            <textarea 
+                                id="output-text" 
+                                rows="12" 
+                                readonly
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow text-gray-900 font-mono resize-none"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap gap-4">
+                        <button 
+                            id="clean-button"
+                            class="tooltip px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center gap-2"
+                        >
+                            <i class="fas fa-magic"></i>
+                            Clean Text
+                            <span class="tooltip-text">Apply selected cleaning options to the text</span>
+                        </button>
+                        <button 
+                            id="copy-button"
+                            class="tooltip px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+                        >
+                            <i class="fas fa-copy"></i>
+                            Copy Output
+                            <span class="tooltip-text">Copy cleaned text to clipboard</span>
+                        </button>
+                        <button 
+                            id="clear-button"
+                            class="tooltip px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+                        >
+                            <i class="fas fa-trash-alt"></i>
+                            Clear All
+                            <span class="tooltip-text">Clear all input and output text</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                <!-- Options Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="border-b border-gray-200 px-6 py-4">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-sliders-h text-blue-600"></i>
+                            Cleaning Options
+                        </h2>
+                    </div>
                     <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <button type="button" id="cleanBtn"
-                                class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
-                                title="Trim, remove line breaks, remove double spaces">
-                                Remove Line Breaks
-                            </button>
-                            <button type="button" id="removePunctuationBtn"
-                                class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                                Remove Punctuation
-                            </button>
-                            <button type="button" id="liveToastBtn"
-                                class="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                Copy to Clipboard
-                            </button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Basic Cleaning -->
+                            <div class="option-group p-4 rounded-lg space-y-4">
+                                <h3 class="font-medium text-gray-900 mb-3">Basic Cleaning</h3>
+                                <div class="space-y-3">
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="remove-extra-spaces" 
+                                            checked
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="remove-extra-spaces" class="ml-2 text-sm text-gray-700">
+                                            Remove Extra Spaces
+                                        </label>
+                                        <span class="tooltip-text">Removes multiple consecutive spaces, keeping only one space between words</span>
+                                    </div>
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="remove-empty-lines" 
+                                            checked
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="remove-empty-lines" class="ml-2 text-sm text-gray-700">
+                                            Remove Empty Lines
+                                        </label>
+                                        <span class="tooltip-text">Removes blank lines and lines containing only whitespace</span>
+                                    </div>
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="trim-lines" 
+                                            checked
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="trim-lines" class="ml-2 text-sm text-gray-700">
+                                            Trim Line Spaces
+                                        </label>
+                                        <span class="tooltip-text">Removes leading and trailing spaces from each line</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text Formatting -->
+                            <div class="option-group p-4 rounded-lg space-y-4">
+                                <h3 class="font-medium text-gray-900 mb-3">Text Formatting</h3>
+                                <div class="space-y-3">
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="normalize-quotes"
+                                            checked
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="normalize-quotes" class="ml-2 text-sm text-gray-700">
+                                            Convert Smart Quotes
+                                        </label>
+                                        <span class="tooltip-text">Converts curly quotes (""'') to straight quotes ("")</span>
+                                    </div>
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="normalize-whitespace"
+                                            checked
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="normalize-whitespace" class="ml-2 text-sm text-gray-700">
+                                            Normalize Whitespace
+                                        </label>
+                                        <span class="tooltip-text">Standardizes line endings and converts tabs to spaces</span>
+                                    </div>
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="normalize-dashes"
+                                            checked
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="normalize-dashes" class="ml-2 text-sm text-gray-700">
+                                            Convert Em/En Dashes
+                                        </label>
+                                        <span class="tooltip-text">Converts em dashes (—) and en dashes (–) to regular hyphens (-)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Options -->
+                            <div class="option-group p-4 rounded-lg space-y-4">
+                                <h3 class="font-medium text-gray-900 mb-3">Advanced Options</h3>
+                                <div class="space-y-3">
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="remove-punctuation"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="remove-punctuation" class="ml-2 text-sm text-gray-700">
+                                            Remove Punctuation
+                                        </label>
+                                        <span class="tooltip-text">Removes all punctuation marks from the text</span>
+                                    </div>
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="convert-newlines"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="convert-newlines" class="ml-2 text-sm text-gray-700">
+                                            Convert Newlines to Spaces
+                                        </label>
+                                        <span class="tooltip-text">Replaces all line breaks with spaces, creating a single line</span>
+                                    </div>
+                                    <div class="checkbox-wrapper tooltip flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="remove-numbers"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="remove-numbers" class="ml-2 text-sm text-gray-700">
+                                            Remove Numbers
+                                        </label>
+                                        <span class="tooltip-text">Removes all numeric digits from the text</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Find and Replace Section -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-                    <div class="p-6">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Find and Replace</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                            <div class="md:col-span-5">
-                                <label for="findInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="border-b border-gray-200 px-6 py-4">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-search-replace text-blue-600"></i>
+                            Find and Replace
+                        </h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="find-input" class="block text-sm font-medium text-gray-700 mb-2">
                                     Find
                                 </label>
-                                <input type="text" id="findInput" 
-                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"
-                                    placeholder="Text to find">
+                                <input 
+                                    type="text" 
+                                    id="find-input"
+                                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                    placeholder="Text to find..."
+                                >
                             </div>
-                            <div class="md:col-span-5">
-                                <label for="replaceInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <div>
+                                <label for="replace-input" class="block text-sm font-medium text-gray-700 mb-2">
                                     Replace
                                 </label>
-                                <input type="text" id="replaceInput" 
-                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"
-                                    placeholder="Replace with">
-                            </div>
-                            <div class="md:col-span-2 flex items-end">
-                                <button type="button" id="replaceBtn"
-                                    class="w-full px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                                    Replace All
-                                </button>
+                                <input 
+                                    type="text" 
+                                    id="replace-input"
+                                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                    placeholder="Replace with..."
+                                >
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Toast Notification -->
-            <div class="fixed bottom-4 right-4 z-50">
-                <div id="liveToast" 
-                    class="hidden bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out opacity-0 translate-y-2 pointer-events-none">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-check-circle text-green-400"></i>
-                        <span>Copied to clipboard!</span>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center tooltip">
+                                <input 
+                                    type="checkbox" 
+                                    id="case-sensitive"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                >
+                                <label for="case-sensitive" class="ml-2 text-sm text-gray-700">
+                                    Case Sensitive
+                                </label>
+                                <span class="tooltip-text">Match exact letter case when finding text</span>
+                            </div>
+                            <div class="flex items-center tooltip">
+                                <input 
+                                    type="checkbox" 
+                                    id="whole-words"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                >
+                                <label for="whole-words" class="ml-2 text-sm text-gray-700">
+                                    Match Whole Words
+                                </label>
+                                <span class="tooltip-text">Only match complete words, not parts of words</span>
+                            </div>
+                        </div>
+                        <button 
+                            id="replace-button"
+                            class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center gap-2"
+                        >
+                            <i class="fas fa-exchange-alt"></i>
+                            Replace All
+                        </button>
                     </div>
                 </div>
             </div>
         </main>
 
-        <script src="./components/navbar.js"></script>
-        <script src="./scripts/clean.js"></script>
-    </body>
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-4 right-4 transform translate-y-full opacity-0 transition-all duration-300">
+            <div class="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                <i class="fas fa-info-circle"></i>
+                <span id="toast-message">Text copied to clipboard!</span>
+            </div>
+        </div>
 
+        <script>
+            // Force light mode
+            document.documentElement.classList.remove('dark');
+            localStorage.theme = 'light';
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                // Create and insert navbar
+                const navbar = createNavbar();
+                // Remove dark mode toggle button
+                const darkModeBtn = navbar.querySelector('button[aria-label="Toggle dark mode"]');
+                if (darkModeBtn) {
+                    darkModeBtn.remove();
+                }
+                document.getElementById('app').appendChild(navbar);
+
+                // Create and insert header
+                const header = createHeader('Text Cleaner', 'Clean and format your text with powerful tools');
+                document.getElementById('app').appendChild(header);
+
+                // Override any attempts to switch to dark mode
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.attributeName === 'class') {
+                            document.documentElement.classList.remove('dark');
+                        }
+                    });
+                });
+                
+                observer.observe(document.documentElement, {
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+            });
+        </script>
+    </body>
 </html>

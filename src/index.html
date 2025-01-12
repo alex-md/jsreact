@@ -2,55 +2,13 @@
 <html lang="en" class="scroll-smooth dark">
 
 	<head>
-		<!-- Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-		<script src="./scripts/common.js"></script>
+		<script src="./components/head.js"></script>
 		<script>
-			initializeCommon();
+			createHead(
+				'JSreact - Web Developer Tools',
+				'Collection of web developer tools for minifying code, TTS UI with Whisper, cleaning text, comparing diffs, and more!'
+			);
 		</script>
-		<title>JSreact - Web Developer Tools</title>
-
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description"
-			content="Collection of web developer tools for minifying code, TTS UI with Whisper, cleaning text, comparing diffs, and more!">
-		<meta name="robots" content="index, follow">
-		<link rel="canonical" href="https://jsreact.com/" />
-		<link rel="icon" type="image/png" href="./images/icon.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
-		<link rel="shortcut icon" href="./images/favicon.ico">
-		
-		<!-- Tailwind CSS -->
-		<script src="https://cdn.tailwindcss.com"></script>
-		<script>
-			tailwind.config = {
-				darkMode: 'class',
-				theme: {
-					extend: {
-						colors: {
-							primary: '#0ea5e9',
-							secondary: '#27272a',
-						}
-					}
-				}
-			}
-		</script>
-
-		<!-- Dark mode initialization -->
-		<script>
-			// Set dark mode as default
-			if (!('theme' in localStorage)) {
-				localStorage.theme = 'dark';
-			}
-		</script>
-		
-		<!-- Font Awesome -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-		
-		<!-- Custom Styles -->
-		<link rel="stylesheet" href="./styles/global.css">
-		
-		<meta name="theme-color" content="#09090b">
 	</head>
 
 	<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
@@ -62,27 +20,42 @@
 					<span class="block mt-2 text-2xl md:text-3xl font-normal text-gray-300">Free Online Developer Utilities</span>
 				</h1>
 				<p class="mt-6 text-lg text-gray-300 text-center max-w-2xl mx-auto leading-relaxed">
-					A comprehensive collection of developer tools for code minification, text cleaning, AI-powered generation, 
-					diff checking, expression evaluation, and keyword analysis.
+					A collection of free tools for developers to help with everyday tasks. From code minification to text cleaning, we've got you covered.
 				</p>
 			</div>
 		</header>
 
-		<main class="flex-grow container mx-auto px-4 py-16 max-w-7xl -mt-8">
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+		<main class="container mx-auto px-4 py-12 max-w-7xl">
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<!-- Minifier Card -->
 				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-							<i class="fas fa-code text-primary text-xl"></i>
+							<i class="fas fa-compress-alt text-blue-600 dark:text-blue-500 text-xl"></i>
 						</div>
-						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Name Generator</h3>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Code Minifier</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Generate creative names for your projects, startups, or domains using AI</p>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Minify your JavaScript, CSS, and HTML code to reduce file size</p>
+					<a href="./minify.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+						Try Minifier
+					</a>
+				</div>
+
+				<!-- Generator Card -->
+				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+							<i class="fas fa-magic text-purple-600 dark:text-purple-500 text-xl"></i>
+						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">AI Name Generator</h3>
+					</div>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Generate creative and unique names for your projects using AI</p>
 					<a href="./generator.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Generator
 					</a>
 				</div>
-				
+
+				<!-- Text Cleaner Card -->
 				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
@@ -90,38 +63,27 @@
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Text Cleaner</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Clean and format text by removing line breaks, extra spaces, and unwanted characters</p>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Clean and format your text with powerful tools</p>
 					<a href="./clean.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Cleaner
 					</a>
 				</div>
 
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
-					<div class="flex items-center gap-3 mb-4">
-						<div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-							<i class="fas fa-compress-alt text-purple-600 dark:text-purple-500 text-xl"></i>
-						</div>
-						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Code Minifier</h3>
-					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compress JavaScript code using Google Closure Compiler for optimal performance</p>
-					<a href="./minify.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
-						Try Minifier
-					</a>
-				</div>
-
+				<!-- Diff Checker Card -->
 				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-							<i class="fas fa-exchange-alt text-red-600 dark:text-red-500 text-xl"></i>
+							<i class="fas fa-code-compare text-red-600 dark:text-red-500 text-xl"></i>
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Diff Checker</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compare two pieces of text and highlight the differences between them</p>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compare text differences between two versions</p>
 					<a href="./diff.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Diff Checker
 					</a>
 				</div>
 
+				<!-- Expression Finder Card -->
 				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
@@ -129,12 +91,13 @@
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Expression Finder</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Find mathematical expressions that equal a target number using given numbers</p>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Find expressions using arithmetic operations and parentheses</p>
 					<a href="./expression.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Expression Finder
 					</a>
 				</div>
 
+				<!-- Keyword Analyzer Card -->
 				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
@@ -150,9 +113,8 @@
 			</div>
 		</main>
 
-		<footer></footer>
 		<script src="./components/navbar.js"></script>
-		<script src="./scripts/common.js"></script>
+		<script src="./components/footer.js"></script>
 	</body>
 
 </html>

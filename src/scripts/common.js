@@ -3,16 +3,6 @@
  * @module common
  */
 
-/**
- * Initializes Google Analytics tracking
- */
-function initializeGoogleAnalytics() {
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-ZEFG04PXR7');
-}
-
 // API Key Management
 let api_key;
 
@@ -74,81 +64,22 @@ function handleApiError(error) {
     return 'Network error. Please check your connection.';
 }
 
-/**
- * Shows a toast notification
- * @param {string} [title='Missing API Key'] - Toast title
- * @param {string} [message='Please enter a valid OpenAI API key.'] - Toast message
- */
-function showToast(title = 'Missing API Key', message = 'Please enter a valid OpenAI API key.') {
-    // Create the toast container if it doesn't exist
-    let toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.id = 'toastContainer';
-        toastContainer.classList.add('position-fixed', 'bottom-0', 'start-0', 'p-3');
-        document.body.appendChild(toastContainer);
-    }
+// Add global error handling
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+    console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+    return false;
+};
 
-    // Create the toast
-    const toast = document.createElement('div');
-    toast.classList.add('toast', 'bg-light', 'text-light', 'fs-4', 'w-100');
-    toast.setAttribute('role', 'alert');
-    toast.setAttribute('aria-live', 'assertive');
-    toast.setAttribute('aria-atomic', 'true');
-
-    // Create header
-    const toastHeader = document.createElement('div');
-    toastHeader.classList.add('toast-header', 'bg-danger', 'text-light');
-    const strong = document.createElement('strong');
-    strong.classList.add('mr-auto');
-    strong.textContent = title;
-    toastHeader.appendChild(strong);
-
-    // Create body
-    const toastBody = document.createElement('div');
-    toastBody.classList.add('toast-body', 'text-body-secondary');
-    toastBody.textContent = message;
-
-    // Assemble toast
-    toast.appendChild(toastHeader);
-    toast.appendChild(toastBody);
-    toastContainer.appendChild(toast);
-
-    // Show toast
-    const toastEl = new bootstrap.Toast(toast);
-    toastEl.show();
-}
-
-/**
- * Initializes common functionality across the application
- * - Sets up Google Analytics
- * - Configures global error handling
- * - Initializes API key input listener
- */
-function initializeCommon() {
-    // Initialize Google Analytics
-    initializeGoogleAnalytics();
-    
-    // Add global error handling
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
-        console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
-        return false;
-    };
-
-    // Add API key input listener if exists
-    const apiKeyInput = document.getElementById('apiKeyInput');
-    if (apiKeyInput) {
-        apiKeyInput.addEventListener('input', updateApiKey);
-    }
+// Add API key input listener if exists
+const apiKeyInput = document.getElementById('apiKeyInput');
+if (apiKeyInput) {
+    apiKeyInput.addEventListener('input', updateApiKey);
 }
 
 // Export functions
-window.initializeGoogleAnalytics = initializeGoogleAnalytics;
-window.initializeCommon = initializeCommon;
 window.api_key = api_key;
 window.updateApiKey = updateApiKey;
 window.isValidOpenAIKey = isValidOpenAIKey;
 window.sanitizeInput = sanitizeInput;
 window.validateTextLength = validateTextLength;
-window.handleApiError = handleApiError;
-window.showToast = showToast; 
+window.handleApiError = handleApiError; 

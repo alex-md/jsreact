@@ -1,128 +1,210 @@
-function p (e) {
-    function k (h) {
-        return e.next(h);
+// Helper function to handle async generator functions
+function handleAsyncGenerator(generator) {
+    function next(value) {
+        return generator.next(value);
     }
-    function l (h) {
-        return e.throw(h);
+    function throwError(error) {
+        return generator.throw(error);
     }
-    return new Promise(function (h, m) {
-        function n (a) {
-            a.done ? h(a.value) : Promise.resolve(a.value).then(k, l).then(n, m);
+    return new Promise(function (resolve, reject) {
+        function step(result) {
+            result.done ? resolve(result.value) : Promise.resolve(result.value).then(next, throwError).then(step, reject);
         }
-        n(e.next());
+        step(generator.next());
     });
 }
+
 document.addEventListener("DOMContentLoaded", function () {
-    function e (a, b = 0, c = a.length) {
-        if (1 == c - b) {
-            return [a[b]];
+    // Info button functionality
+    const infoButton = document.getElementById("info-toggle");
+    const calculatorDescription = document.getElementById("calculator-description");
+    let descriptionTimeout;
+
+    infoButton.addEventListener("click", function() {
+        calculatorDescription.classList.remove("hidden");
+        // Use setTimeout to ensure the transition works
+        setTimeout(() => {
+            calculatorDescription.classList.remove("translate-y-full", "opacity-0");
+        }, 10);
+
+        // Auto-hide after 5 seconds
+        clearTimeout(descriptionTimeout);
+        descriptionTimeout = setTimeout(() => {
+            calculatorDescription.classList.add("translate-y-full", "opacity-0");
+            setTimeout(() => {
+                calculatorDescription.classList.add("hidden");
+            }, 300); // Match the transition duration
+        }, 5000);
+    });
+
+    /**
+     * Generates all possible expressions using parentheses and operators
+     * @param {string[]} tokens - Array of numbers and operators
+     * @param {number} start - Start index
+     * @param {number} end - End index
+     * @returns {string[]} Array of possible expressions
+     */
+    function generateExpressions(tokens, start = 0, end = tokens.length) {
+        if (1 === end - start) {
+            return [tokens[start]];
         }
-        let d = [];
-        for (let f = b + 1; f < c; f += 2) {
-            let g = e(a, b, f), q = e(a, f + 1, c);
-            g.forEach(r => {
-                q.forEach(t => {
-                    d.push(`(${r}${a[f]}${t})`);
+        let expressions = [];
+        for (let i = start + 1; i < end; i += 2) {
+            let leftExpressions = generateExpressions(tokens, start, i);
+            let rightExpressions = generateExpressions(tokens, i + 1, end);
+            leftExpressions.forEach(left => {
+                rightExpressions.forEach(right => {
+                    expressions.push(`(${left}${tokens[i]}${right})`);
                 });
             });
         }
-        return d;
+        return expressions;
     }
-    function k (a, b) {
+
+    /**
+     * Evaluates an expression and checks if it equals the target
+     * @param {string} expression - The arithmetic expression to evaluate
+     * @param {number} target - The target number
+     * @returns {boolean} Whether the expression equals the target
+     */
+    function evaluateExpression(expression, target) {
         try {
-            return eval(a) === b;
-        } catch (c) {
-            if (c instanceof SyntaxError || c instanceof ReferenceError || c instanceof EvalError) {
-                return !1;
+            return eval(expression) === target;
+        } catch (error) {
+            if (error instanceof SyntaxError || error instanceof ReferenceError || error instanceof EvalError) {
+                return false;
             }
-            throw c;
+            throw error;
         }
     }
-    function* l (a, b) {
-        if (1 === a.length) {
-            yield a[0].toString();
+
+    /**
+     * Generates all possible expressions using the input numbers and operators
+     * @param {number[]} numbers - Array of input numbers
+     * @param {string[]} operators - Array of operators
+     * @yields {string} A possible expression
+     */
+    function* generateAllExpressions(numbers, operators) {
+        if (1 === numbers.length) {
+            yield numbers[0].toString();
         } else {
-            for (let c of h(a)) {
-                for (let d of m(b, a.length - 1)) {
-                    let f = [];
-                    for (let g = 0; g < c.length; g++) {
-                        0 < g && f.push(d[g - 1]), f.push(c[g].toString());
+            for (let numberPermutation of generateNumberPermutations(numbers)) {
+                for (let operatorCombination of generateOperatorCombinations(operators, numbers.length - 1)) {
+                    let tokens = [];
+                    for (let i = 0; i < numberPermutation.length; i++) {
+                        if (i > 0) tokens.push(operatorCombination[i - 1]);
+                        tokens.push(numberPermutation[i].toString());
                     }
-                    for (let g of e(f)) {
-                        yield g;
+                    for (let expression of generateExpressions(tokens)) {
+                        yield expression;
                     }
                 }
             }
         }
     }
-    function* h (a) {
-        if (0 === a.length) {
+
+    /**
+     * Generates all possible permutations of numbers
+     * @param {number[]} numbers - Array of numbers
+     * @yields {number[]} A permutation of numbers
+     */
+    function* generateNumberPermutations(numbers) {
+        if (0 === numbers.length) {
             yield [];
         } else {
-            for (let b = 0; b < a.length; b++) {
-                for (let c of h(a.slice(0, b).concat(a.slice(b + 1)))) {
-                    yield [a[b], ...c];
+            for (let i = 0; i < numbers.length; i++) {
+                for (let permutation of generateNumberPermutations(numbers.slice(0, i).concat(numbers.slice(i + 1)))) {
+                    yield [numbers[i], ...permutation];
                 }
             }
         }
     }
-    function* m (a, b) {
-        if (0 === b) {
+
+    /**
+     * Generates all possible combinations of operators
+     * @param {string[]} operators - Array of operators
+     * @param {number} count - Number of operators needed
+     * @yields {string[]} A combination of operators
+     */
+    function* generateOperatorCombinations(operators, count) {
+        if (0 === count) {
             yield [];
         } else {
-            for (let c of a) {
-                for (let d of m(a, b - 1)) {
-                    yield [c, ...d];
+            for (let operator of operators) {
+                for (let combination of generateOperatorCombinations(operators, count - 1)) {
+                    yield [operator, ...combination];
                 }
             }
         }
     }
-    function n (a, b) {
-        return new Promise(c => {
+
+    /**
+     * Finds an expression that evaluates to the target number
+     * @param {number[]} numbers - Array of input numbers
+     * @param {number} target - Target number
+     * @returns {Promise<string>} The found expression or "No solution found"
+     */
+    function findExpression(numbers, target) {
+        return new Promise(resolve => {
             setTimeout(() => {
-                a: {
-                    var d = ["+", "-", "*", "/"];
-                    document.getElementById("exponents-checkbox").checked && d.push("**");
-                    for (let f of l(a, d)) {
-                        if (k(f, b)) {
-                            d = f;
-                            break a;
-                        }
-                    }
-                    d = "No solution found";
+                const operators = ["+", "-", "*", "/"];
+                if (document.getElementById("exponents-checkbox").checked) {
+                    operators.push("**");
                 }
-                c(d);
+                
+                for (let expression of generateAllExpressions(numbers, operators)) {
+                    if (evaluateExpression(expression, target)) {
+                        resolve(expression);
+                        return;
+                    }
+                }
+                resolve("No solution found");
             }, 800);
         });
     }
-    document.getElementById("random-numbers-button").addEventListener("click", function (a) {
-        a.preventDefault();
-        a = document.getElementById("num-integers-input").value || 6;
-        let b = document.getElementById("max-number-input").value || 60;
-        a = Array.from({ length: a }, () => Math.floor(Math.random() * b) + 1);
-        document.getElementById("numbers-input").value = a.join(",");
+
+    // Event handler for random numbers generation
+    document.getElementById("random-numbers-button").addEventListener("click", function (event) {
+        event.preventDefault();
+        const count = document.getElementById("num-integers-input").value || 6;
+        const maxValue = document.getElementById("max-number-input").value || 60;
+        const randomNumbers = Array.from({ length: count }, () => Math.floor(Math.random() * maxValue) + 1);
+        document.getElementById("numbers-input").value = randomNumbers.join(",");
     });
-    document.getElementById("submit-button").addEventListener("click", function (a) {
-        return p(function* () {
-            a.preventDefault();
-            let b = document.getElementById("submit-button");
-            b.innerHTML = "Calculating...";
-            var c = document.getElementById("numbers-input").value, d = document.getElementById("target-input").value;
-            c = c.split(",").map(Number);
-            d = yield n(c, Number(d));
-            document.getElementById("solution-output").innerHTML = d;
-            b.innerHTML = "Find expression";
+
+    // Event handler for form submission
+    document.getElementById("submit-button").addEventListener("click", function (event) {
+        return handleAsyncGenerator(function* () {
+            event.preventDefault();
+            const submitButton = document.getElementById("submit-button");
+            const solutionOutput = document.getElementById("solution-output");
+            
+            submitButton.innerHTML = "Calculating...";
+            solutionOutput.classList.remove("hidden"); // Show the solution element
+            
+            const numbers = document.getElementById("numbers-input").value.split(",").map(Number);
+            const target = Number(document.getElementById("target-input").value);
+            const result = yield findExpression(numbers, target);
+            
+            solutionOutput.innerHTML = result;
+            solutionOutput.classList.remove("hidden"); // Ensure it's visible
+            submitButton.innerHTML = "Find expression";
         }());
     });
 });
+
+// Event handlers for advanced settings
 document.addEventListener("DOMContentLoaded", function () {
-    let e = document.querySelector("#advancedSettings");
-    document.querySelector(".text-end a").addEventListener("click", function () {
-        "none" === e.style.display ? e.style.display = "block" : e.style.display = "none";
+    const advancedSettings = document.querySelector("#advanced-settings");
+    const advancedSettingsToggle = document.querySelector("#advanced-settings-toggle");
+    
+    advancedSettingsToggle.addEventListener("click", function () {
+        advancedSettings.style.display = advancedSettings.style.display === "none" ? "block" : "none";
     });
-    e.querySelectorAll('input[type="number"]').forEach(function (k) {
-        k.addEventListener("click", function (l) {
-            l.stopPropagation();
+
+    advancedSettings.querySelectorAll('input[type="number"]').forEach(function (input) {
+        input.addEventListener("click", function (event) {
+            event.stopPropagation();
         });
     });
 });

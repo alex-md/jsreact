@@ -1,127 +1,76 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth dark">
+    <head>
+        <script src="./components/head.js"></script>
+        <script>
+            createHead(
+                'Privacy Policy',
+                'JSreact Privacy Policy - How we handle and protect your data'
+            );
+        </script>
+    </head>
 
-<head>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-ZEFG04PXR7');
-    </script>
-    <script src="./scripts/common.js"></script>
+    <body class="bg-gray-50 dark:bg-gray-900">
+        <script src="./components/header.js"></script>
+        <script>
+            document.body.appendChild(
+                createHeader(
+                    'Privacy Policy',
+                    'How we handle and protect your data'
+                )
+            );
+        </script>
 
-    <!-- Dark mode initialization -->
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-    </script>
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="p-6 space-y-6">
+                        <section>
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Collection of Personal Information</h2>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                We may collect and store personal information such as your name and email address when you register for an account or use our services. This information is used to provide and improve our services, and to communicate with you about your account and our services.
+                            </p>
+                        </section>
 
-    <!-- Page-specific meta -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy</title>
+                        <section>
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Use of Information</h2>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                The information we collect is used to:
+                            </p>
+                            <ul class="list-disc list-inside mt-2 text-gray-600 dark:text-gray-300 space-y-2">
+                                <li>Provide and maintain our services</li>
+                                <li>Improve our services and develop new features</li>
+                                <li>Communicate with you about our services</li>
+                                <li>Protect against fraud and abuse</li>
+                            </ul>
+                        </section>
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.example.com/policy.html">
+                        <section>
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Data Security</h2>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                We take appropriate security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information. However, no method of transmission over the Internet or electronic storage is 100% secure.
+                            </p>
+                        </section>
 
-    <!-- Favicons -->
-    <link rel="icon" type="image/png" href="./images/icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
-    <link rel="shortcut icon" href="./images/favicon.ico">
+                        <section>
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Third-Party Services</h2>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                We may use third-party services to help us operate our services. These services may collect information sent by your browser as part of a web page request. Their use of this information is governed by their privacy policies.
+                            </p>
+                        </section>
 
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
-    <!-- Custom styles -->
-    <link href="css/styles.css" rel="stylesheet">
-
-    <!-- Theme color -->
-    <meta name="theme-color" content="#09090b">
-</head>
-
-<body class="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="font-bold text-4xl text-zinc-900 dark:text-zinc-50 text-center mb-8">Privacy Policy</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="col">
-                <div class="card bg-white dark:bg-gray-800 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title">Collection of Personal Information</h2>
-                        <p class="card-text">We may collect and store personal information such as your name and email address
-                            when
-                            you register for an
-                            account on our website or subscribe to our newsletter. We may also collect information about your use of
-                            our
-                            website, such as your IP address and browser information.</p>
+                        <section>
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Contact Information</h2>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                If you have any questions or concerns about our privacy policy, please contact us at <a href="mailto:admin@jsreact.com" class="text-primary hover:text-primary/90">admin@jsreact.com</a>.
+                            </p>
+                        </section>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card bg-white dark:bg-gray-800 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title">Use of Personal Information</h2>
-                        <p class="card-text">We may use your personal information to provide you with the products and services
-                            you
-                            have requested, to
-                            communicate with you about our products and services, and to improve our website and services. We may
-                            also
-                            use
-                            your personal information to personalize and improve your experience on our website.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card bg-white dark:bg-gray-800 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title">Sharing of Personal Information</h2>
-                        <p class="card-text">We may share your personal information with third-party service providers who perform
-                            services on our behalf,
-                            such as hosting and email delivery. We do not share your personal information with third parties for
-                            their
-                            marketing purposes.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card bg-white dark:bg-gray-800 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title">Security of Personal Information</h2>
-                        <p class="card-text">We take reasonable measures to protect your personal information from unauthorized
-                            access, use, or disclosure.
-                            However, no method of transmission over the internet or electronic storage is 100% secure, and we cannot
-                            guarantee
-                            absolute security.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card bg-white dark:bg-gray-800 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title">Changes to Privacy Policy</h2>
-                        <p class="card-text">We may update this privacy policy from time to time. If we make material changes to
-                            this policy, we will notify
-                            you by email or by posting a notice on our website.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card bg-white dark:bg-gray-800 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title">Contact Us</h2>
-                        <p class="card-text">If you have any questions or concerns about our privacy policy, please contact us at
-                            <a href="mailto:admin@jsreact.com">admin@jsreact.com</a>.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="./components/navbar.js"></script>
-</body>
+        </main>
 
+        <script src="./components/navbar.js"></script>
+        <script src="./components/footer.js"></script>
+    </body>
 </html>

@@ -1,72 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth dark">
-
     <head>
-        <!-- Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-        <script src="./scripts/common.js"></script>
-        <script>initializeCommon();</script>
-
-        <!-- Dark mode initialization -->
+        <script src="./components/head.js"></script>
         <script>
-            // Set dark mode as default
-            if (!('theme' in localStorage)) {
-                localStorage.theme = 'dark';
-            }
+            createHead(
+                'Expression Finder',
+                'Find expressions using arithmetic operations and parentheses to reach a target number.'
+            );
         </script>
-
-        <!-- Page-specific meta -->
-        <title>Expression Finder</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Find expressions using arithmetic operations and parentheses to reach a target number.">
-        
-        <!-- Canonical URL -->
-        <link rel="canonical" href="https://toolbot.ai/expression.html">
-
-        <!-- Favicons -->
-        <link rel="icon" type="image/png" href="./images/favicon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-
-        <!-- Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#0ea5e9',
-                            secondary: '#27272a',
-                        }
-                    }
-                }
-            }
-        </script>
-
-        <!-- Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
-        <!-- Custom styles -->
-        <link href="./styles/global.css" rel="stylesheet">
-
-        <!-- Theme color -->
-        <meta name="theme-color" content="#09090b">
     </head>
 
     <body class="bg-gray-50 dark:bg-gray-900">
-        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
-            <div class="container mx-auto px-4 max-w-7xl">
-                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
-                    Expression Finder
-                </h1>
-                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
-                    Find expressions using arithmetic operations and parentheses
-                </p>
-            </div>
-        </header>
+        <script src="./components/header.js"></script>
+        <script>
+            document.body.appendChild(
+                createHeader(
+                    'Expression Finder',
+                    'Find expressions using arithmetic operations and parentheses'
+                )
+            );
+        </script>
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="max-w-3xl mx-auto space-y-6">
@@ -76,9 +29,14 @@
                         class="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                         What is this?
                     </button>
-                    <div id="calculator-description" class="hidden mt-4 bg-white dark:bg-gray-800 rounded-xl p-6 text-gray-600 dark:text-gray-300">
-                        Enter a series of numbers and a target number, and our calculator will find a
-                        valid expression using parentheses and basic arithmetic operations.
+                    <div id="calculator-description" 
+                        class="hidden fixed bottom-4 right-4 max-w-sm bg-white dark:bg-gray-800 rounded-xl p-6 text-gray-600 dark:text-gray-300 shadow-lg border border-gray-200 dark:border-gray-700 transform transition-all duration-300 translate-y-full opacity-0 z-50">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Expression Finder</h3>
+                        <p class="mb-4">Enter a series of numbers and a target number, and our calculator will find a valid expression using parentheses and basic arithmetic operations to reach that target.</p>
+                        <p class="mb-2"><strong>Example:</strong></p>
+                        <p>Numbers: 1,2,3,4</p>
+                        <p>Target: 24</p>
+                        <p>Result: ((4*3)*2)/1 = 24</p>
                     </div>
                 </div>
 
@@ -92,7 +50,8 @@
                                 </label>
                                 <div class="flex gap-2">
                                     <input type="text" id="numbers-input" required
-                                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
+                                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"
+                                        placeholder="e.g., 1,2,3,4">
                                     <button id="random-numbers-button" type="button"
                                         class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                                         <i class="fas fa-random mr-2"></i>Generate
@@ -105,7 +64,8 @@
                                     Enter target number:
                                 </label>
                                 <input type="number" id="target-input" required
-                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"
+                                    placeholder="e.g., 24">
                             </div>
 
                             <button type="submit" id="submit-button"
@@ -128,14 +88,14 @@
                                         Generated values
                                     </label>
                                     <input type="number" id="num-integers-input" placeholder="6"
-                                        class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
+                                        class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white">
                                 </div>
                                 <div>
                                     <label for="max-number-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                         Value upper limit
                                     </label>
                                     <input type="number" id="max-number-input" placeholder="60"
-                                        class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow">
+                                        class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white">
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="exponents-checkbox"
@@ -152,7 +112,7 @@
         </main>
 
         <script src="./components/navbar.js"></script>
+        <script src="./components/footer.js"></script>
         <script src="./scripts/expression.js"></script>
     </body>
-
 </html>

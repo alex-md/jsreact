@@ -1,138 +1,206 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
-
+<html lang="en" class="light">
     <head>
-        <!-- Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-        <script src="./scripts/common.js"></script>
-        <script>
-            initializeCommon();
-        </script>
-        
-        <title>Text Diff Tool</title>
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Use Online Diff Viewer to quickly compare two texts. This free tool highlights changes and similarities, ideal for checking plagiarism, revisions, or modifications. Paste your original and modified texts, click "Find Difference" to see results.">
-        
-        <!-- Canonical URL -->
-        <link rel="canonical" href="https://jsreact.com/diff.html">
-        
-        <!-- Favicon -->
-        <link rel="icon" type="image/png" href="./images/icon.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-        
-        <!-- Tailwind CSS -->
+        <title>Diff Checker</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#0ea5e9',
-                            secondary: '#27272a',
-                        }
-                    }
-                }
-            }
-        </script>
-
-        <!-- Dark mode initialization -->
-        <script>
-            // Set dark mode as default
-            if (!('theme' in localStorage)) {
-                localStorage.theme = 'dark'
-            }
-        </script>
-        
-        <!-- Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-        
-        <!-- CodeMirror CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/theme/monokai.min.css">
-        
-        <!-- Custom Styles -->
-        <link rel="stylesheet" href="./styles/global.css">
+        <link href="https://cdn.jsdelivr.net/npm/@shadcn/ui@0.0.1/dist/shadcn-ui.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
+        <script src="components/navbar.js"></script>
+        <script src="components/header.js"></script>
+        <script src="components/footer.js"></script>
+        <script src="scripts/diff.js"></script>
         <style>
-            #diffResponseContainer span {
-                border-radius: 0.25rem;
+            /* Override any dark mode styles */
+            :root {
+                color-scheme: light;
+            }
+            .diff-add {
+                background-color: #dcfce7;
+                color: #166534;
+                text-decoration: none;
                 padding: 0.125rem 0.25rem;
+                margin: 0 0.125rem;
+                border-radius: 0.25rem;
             }
-            .dark #diffResponseContainer span[style*="background:rgba(74, 222, 128, 0.1)"] {
-                color: #4ade80;
+            .diff-remove {
+                background-color: #fee2e2;
+                color: #991b1b;
+                text-decoration: line-through;
+                padding: 0.125rem 0.25rem;
+                margin: 0 0.125rem;
+                border-radius: 0.25rem;
             }
-            .dark #diffResponseContainer span[style*="background:rgba(248, 113, 113, 0.1)"] {
-                color: #f87171;
+            .tooltip {
+                position: relative;
+            }
+            .tooltip:hover .tooltip-text {
+                opacity: 1;
+                visibility: visible;
+                transform: translate(-50%, -0.25rem);
+            }
+            .tooltip-text {
+                position: absolute;
+                left: 50%;
+                bottom: calc(100% + 0.5rem);
+                transform: translate(-50%, 0.5rem);
+                padding: 0.5rem 1rem;
+                background: #1f2937;
+                color: white;
+                font-size: 0.875rem;
+                white-space: nowrap;
+                border-radius: 0.375rem;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.2s ease;
+                z-index: 50;
+                pointer-events: none;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .tooltip-text::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 100%;
+                transform: translateX(-50%);
+                border-width: 0.25rem;
+                border-style: solid;
+                border-color: #1f2937 transparent transparent transparent;
             }
         </style>
-        
-        <!-- Theme Color -->
-        <meta name="theme-color" content="#09090b">
     </head>
 
-    <body class="bg-gray-50 dark:bg-gray-900">
-        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
-            <div class="container mx-auto px-4 max-w-7xl">
-                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
-                    Online Diff Viewer
-                </h1>
-                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
-                    Quickly find the difference between two texts
-                </p>
-            </div>
-        </header>
+    <body class="bg-gray-50 min-h-screen">
+        <div id="app">
+            <!-- Navbar and Header will be inserted here by JavaScript -->
+        </div>
 
-        <main class="container mx-auto px-4 py-12 max-w-7xl">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Original Text</h2>
+        <main class="container mx-auto px-4 py-8">
+            <div class="max-w-7xl mx-auto space-y-6">
+                <!-- Text Input Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Original Text -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="p-6 space-y-4">
+                            <label for="original-text" class="block text-sm font-medium text-gray-700">
+                                Original Text
+                            </label>
+                            <textarea 
+                                id="original-text" 
+                                rows="12" 
+                                placeholder="Enter original text..."
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow text-gray-900 font-mono resize-none"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Modified Text -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="p-6 space-y-4">
+                            <label for="modified-text" class="block text-sm font-medium text-gray-700">
+                                Modified Text
+                            </label>
+                            <textarea 
+                                id="modified-text" 
+                                rows="12" 
+                                placeholder="Enter modified text..."
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-shadow text-gray-900 font-mono resize-none"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-center gap-4">
+                    <button 
+                        id="compare-button"
+                        class="tooltip px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center gap-2"
+                    >
+                        <i class="fas fa-code-compare"></i>
+                        Compare Texts
+                        <span class="tooltip-text">Compare the two texts and show differences</span>
+                    </button>
+                    <button 
+                        id="clear-button"
+                        class="tooltip px-8 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+                    >
+                        <i class="fas fa-trash-alt"></i>
+                        Clear All
+                        <span class="tooltip-text">Clear both text areas</span>
+                    </button>
+                </div>
+
+                <!-- Diff Output -->
+                <div id="diff-container" class="bg-white rounded-xl shadow-sm border border-gray-100 hidden">
+                    <div class="border-b border-gray-200 px-6 py-4">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-list-ul text-blue-600"></i>
+                            Differences Found
+                        </h2>
                     </div>
                     <div class="p-6">
-                        <textarea id="originalTextArea" 
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono min-h-[200px]"
-                            placeholder="Enter the original text here..."></textarea>
+                        <div class="mb-4 flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 bg-green-100 rounded-full"></span>
+                                <span class="text-sm text-gray-600">Added text</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 bg-red-100 rounded-full"></span>
+                                <span class="text-sm text-gray-600">Removed text</span>
+                            </div>
+                        </div>
+                        <div id="diff-output" class="font-mono text-sm text-gray-900 whitespace-pre-wrap break-words"></div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Modified Text</h2>
-                    </div>
-                    <div class="p-6">
-                        <textarea id="modifiedTextArea" 
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow font-mono min-h-[200px]"
-                            placeholder="Enter the modified text here..."></textarea>
-                    </div>
-                </div>
+                <!-- Error Message -->
+                <div id="error-message" class="bg-red-50 text-red-700 p-4 rounded-lg hidden"></div>
             </div>
-
-            <div class="flex justify-center mb-6">
-                <button id="findDiffBtn" 
-                    class="px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                    View Diff
-                </button>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-                <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Diff Viewer</h2>
-                </div>
-                <div class="p-6">
-                    <pre id="diffResponseContainer" class="font-mono text-sm text-gray-900 dark:text-white overflow-x-auto"></pre>
-                </div>
-            </div>
-
-            <div id="errorContainer" class="hidden mt-6 p-4 bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-200 rounded-lg"></div>
         </main>
 
-        <!-- Scripts -->
-        <script src="./components/navbar.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js'></script>
-        <script src="./scripts/diff.js"></script>
-    </body>
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-4 right-4 transform translate-y-full opacity-0 transition-all duration-300">
+            <div class="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                <i class="fas fa-info-circle"></i>
+                <span id="toast-message"></span>
+            </div>
+        </div>
 
+        <script>
+            // Force light mode
+            document.documentElement.classList.remove('dark');
+            localStorage.theme = 'light';
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                // Create and insert navbar
+                const navbar = createNavbar();
+                // Remove dark mode toggle button
+                const darkModeBtn = navbar.querySelector('button[aria-label="Toggle dark mode"]');
+                if (darkModeBtn) {
+                    darkModeBtn.remove();
+                }
+                document.getElementById('app').appendChild(navbar);
+
+                // Create and insert header
+                const header = createHeader('Diff Checker', 'Compare text differences between two versions');
+                document.getElementById('app').appendChild(header);
+
+                // Override any attempts to switch to dark mode
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.attributeName === 'class') {
+                            document.documentElement.classList.remove('dark');
+                        }
+                    });
+                });
+                
+                observer.observe(document.documentElement, {
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+            });
+        </script>
+    </body>
 </html>

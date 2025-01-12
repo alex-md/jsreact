@@ -1,118 +1,79 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
+<html lang="en" class="scroll-smooth dark">
     <head>
-        <!-- Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
-        <script src="./scripts/common.js"></script>
+        <script src="./components/head.js"></script>
         <script>
-            initializeCommon();
+            createHead(
+                'AI Name Generator',
+                'Generate creative names for your projects using startup name generator'
+            );
         </script>
-
-        <!-- Dark mode initialization -->
-        <script>
-            // Set light mode as default
-            if (!('theme' in localStorage)) {
-                localStorage.theme = 'light';
-            }
-        </script>
-
-        <!-- Page-specific meta -->
-        <title>AI Name Generator</title>
-        <meta name="description" content="Generate a name for your startup or domain using AI.">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <!-- Canonical URL -->
-        <link rel="canonical" href="https://jsreact.com/generator.html">
-
-        <!-- Favicons -->
-        <link rel="icon" type="image/png" href="./images/icon.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/icon-16x16.png">
-        <link rel="shortcut icon" href="./images/favicon.ico">
-
-        <!-- Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#0ea5e9',
-                            secondary: '#27272a',
-                        }
-                    }
-                }
-            }
-        </script>
-
-        <!-- Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
-        <!-- Custom styles -->
-        <link href="./styles/global.css" rel="stylesheet">
-
-        <!-- Theme color -->
-        <meta name="theme-color" content="#09090b">
     </head>
 
     <body class="bg-gray-50 dark:bg-gray-900">
-        <header class="py-16 bg-white dark:bg-gray-800 shadow-sm">
-            <div class="container mx-auto px-4 max-w-7xl">
-                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white">
-                    AI Name Generator
-                </h1>
-                <p class="mt-4 text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
-                    Generate a name for your startup or domain
-                </p>
-            </div>
-        </header>
+        <script src="./components/header.js"></script>
+        <script>
+            document.body.appendChild(
+                createHeader(
+                    'AI Name Generator',
+                    'Generate creative names for your projects'
+                )
+            );
+        </script>
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="space-y-6">
+                <!-- Input Section -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-                    <div class="p-6">
-                        <form id='form' class="space-y-6">
-                            <div>
-                                <label for="input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Let's name your startup using the words:
-                                </label>
-                                <input type='text' id='input'
-                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
-                                    placeholder='Tortoise Bun' value="Tortoise Bun">
-                            </div>
-                            <div class="flex flex-wrap items-center gap-4">
-                                <button id='submit' type="submit"
-                                    class="px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                                    Generate Names
-                                </button>
-                                <div id="optionsCard" class="hidden">
-                                    <div class="flex items-center gap-4">
-                                        <span class="text-gray-600 dark:text-gray-400">Copy Options:</span>
-                                        <label class="inline-flex items-center">
-                                            <input type="radio" name="copyOption" id="copyWithTLD" value="withTLD" checked
-                                                class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary dark:bg-gray-700 dark:border-gray-600">
-                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">With TLD</span>
-                                        </label>
-                                        <button id='copyButton'
-                                            class="hidden px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                            Copy Names
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                    <div class="p-6 space-y-6">
+                        <div class="space-y-4">
+                            <label for="input-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Enter words to generate names from
+                            </label>
+                            <textarea id="input-text" rows="3" placeholder="Enter words or phrases..."
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"></textarea>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-4">
+                            <button id="generate-button"
+                                class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                                Generate Names
+                            </button>
+                            <button id="clear-button"
+                                class="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                Clear All
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div id='results' class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+                <!-- Results Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Generated Names</h2>
+                        <button id="copy-all-button" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium flex items-center gap-2">
+                            <i class="fas fa-copy text-xs"></i> Copy All
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Results will be dynamically added here -->
+                        </div>
+                        <div id="loading" class="hidden">
+                            <div class="flex items-center justify-center py-8">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
 
-        <script src="./components/navbar.js"></script>
-        <script src="./scripts/generator.js"></script>
         <script src="https://unpkg.com/@rstacruz/startup-name-generator@latest/dist/startup-name-generator.js"></script>
+        <script src="./components/navbar.js"></script>
+        <script src="./components/footer.js"></script>
+        <script src="./components/toast.js"></script>
+        <script src="./scripts/generator.js"></script>
     </body>
-
 </html>
