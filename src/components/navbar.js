@@ -35,10 +35,8 @@
             "right-0",
             "z-50",
             "bg-white",
-            "dark:bg-gray-800",
             "border-b",
-            "border-gray-200",
-            "dark:border-gray-700"
+            "border-gray-200"
         );
 
         const container = document.createElement("div");
@@ -63,9 +61,7 @@
             "gap-2",
             "font-semibold",
             "text-gray-900",
-            "dark:text-white",
             "hover:text-primary",
-            "dark:hover:text-primary",
             "transition-colors"
         );
         logoLink.href = "./index.html";
@@ -86,39 +82,6 @@
         const rightSection = document.createElement("div");
         rightSection.classList.add("flex", "items-center", "gap-4");
 
-        // Dark mode toggle
-        const darkModeButton = document.createElement("button");
-        darkModeButton.classList.add(
-            "p-2",
-            "rounded-lg",
-            "text-gray-500",
-            "dark:text-gray-400",
-            "hover:bg-gray-100",
-            "dark:hover:bg-gray-700",
-            "focus:outline-none",
-            "focus:ring-2",
-            "focus:ring-gray-200",
-            "dark:focus:ring-gray-700"
-        );
-        darkModeButton.setAttribute("aria-label", "Toggle dark mode");
-        
-        const sunIcon = '<svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>';
-        const moonIcon = '<svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>';
-        
-        darkModeButton.innerHTML = sunIcon + moonIcon;
-
-        darkModeButton.addEventListener("click", () => {
-            const html = document.documentElement;
-            html.classList.toggle("dark");
-            localStorage.theme = html.classList.contains("dark") ? "dark" : "light";
-            
-            // Update theme color meta tag
-            const metaThemeColor = document.querySelector("meta[name='theme-color']");
-            if (metaThemeColor) {
-                metaThemeColor.setAttribute("content", html.classList.contains("dark") ? "#09090b" : "#ffffff");
-            }
-        });
-
         const mobileMenuBtn = document.createElement("button");
         mobileMenuBtn.classList.add(
             "lg:hidden",
@@ -128,11 +91,8 @@
             "p-2",
             "rounded-md",
             "text-gray-500",
-            "dark:text-gray-400",
             "hover:text-gray-900",
-            "dark:hover:text-white",
             "hover:bg-gray-100",
-            "dark:hover:bg-gray-700",
             "focus:outline-none",
             "focus:ring-2",
             "focus:ring-inset",
@@ -163,11 +123,8 @@
                 "text-sm",
                 "font-medium",
                 "text-gray-500",
-                "dark:text-gray-400",
                 "hover:text-gray-900",
-                "dark:hover:text-white",
                 "hover:bg-gray-100",
-                "dark:hover:bg-gray-700",
                 "rounded-md",
                 "transition-colors"
             );
@@ -177,9 +134,7 @@
             if (window.location.pathname.includes(item.href)) {
                 link.classList.add(
                     "bg-gray-100",
-                    "dark:bg-gray-700",
-                    "text-gray-900",
-                    "dark:text-white"
+                    "text-gray-900"
                 );
             }
 
@@ -187,7 +142,6 @@
         });
 
         rightSection.appendChild(navContent);
-        rightSection.appendChild(darkModeButton);
         rightSection.appendChild(mobileMenuBtn);
 
         container.appendChild(leftSection);
@@ -206,10 +160,8 @@
             "pb-3",
             "space-y-1",
             "bg-white",
-            "dark:bg-gray-800",
             "border-b",
-            "border-gray-200",
-            "dark:border-gray-700"
+            "border-gray-200"
         );
 
         navItems.forEach(item => {
@@ -221,11 +173,8 @@
                 "text-base",
                 "font-medium",
                 "text-gray-500",
-                "dark:text-gray-400",
                 "hover:text-gray-900",
-                "dark:hover:text-white",
                 "hover:bg-gray-100",
-                "dark:hover:bg-gray-700",
                 "rounded-md"
             );
             link.href = item.href;
@@ -234,9 +183,7 @@
             if (window.location.pathname.includes(item.href)) {
                 link.classList.add(
                     "bg-gray-100",
-                    "dark:bg-gray-700",
-                    "text-gray-900",
-                    "dark:text-white"
+                    "text-gray-900"
                 );
             }
 
@@ -248,47 +195,16 @@
         // Toggle mobile menu
         mobileMenuBtn.addEventListener("click", () => {
             const mobileMenu = document.getElementById("mobile-menu");
-            const isExpanded = mobileMenuBtn.getAttribute("aria-expanded") === "true";
-            
-            mobileMenuBtn.setAttribute("aria-expanded", !isExpanded);
-            mobileMenu.classList.toggle("hidden");
+            if (mobileMenu.classList.contains("hidden")) {
+                mobileMenu.classList.remove("hidden");
+            } else {
+                mobileMenu.classList.add("hidden");
+            }
         });
 
         navigation.appendChild(mobileMenu);
-
-        // Add padding to body to account for fixed navbar
-        const style = document.createElement('style');
-        style.textContent = `
-            body { 
-                padding-top: 4rem;
-            }
-        `;
-        document.head.appendChild(style);
-
         return navigation;
     }
 
-    window.createNavbar = createNavbar;
+    document.body.prepend(createNavbar());
 })();
-
-document.addEventListener("DOMContentLoaded", function () {
-    const navbar = createNavbar();
-    document.body.insertAdjacentElement('afterbegin', navbar);
-
-    // Only show notice banner on chat.html or tts.html pages
-    if (false) {
-        const noticeBanner = document.createElement('div');
-        noticeBanner.className = 'fixed top-16 left-0 right-0 z-40 bg-yellow-50 dark:bg-yellow-900 border-b border-yellow-200 dark:border-yellow-700 p-3';
-        noticeBanner.innerHTML = `
-            <div class="container mx-auto px-4 max-w-7xl">
-                <p class="text-center text-yellow-800 dark:text-yellow-200">
-                    🚧 This feature is currently under development. Some functionality may be limited or unstable. 🚧
-                </p>
-            </div>
-        `;
-        document.body.insertAdjacentElement('afterbegin', noticeBanner);
-        
-        // Adjust body padding when notice banner is present
-        document.body.style.paddingTop = '7rem';
-    }
-});

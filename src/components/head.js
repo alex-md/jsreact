@@ -107,12 +107,26 @@ function createHead(title, description) {
     const tailwindConfig = document.createElement('script');
     tailwindConfig.textContent = `
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0ea5e9',
-                        secondary: '#27272a',
+                        primary: {
+                            light: '#38bdf8',
+                            DEFAULT: '#0ea5e9',
+                            dark: '#0284c7'
+                        },
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
                     }
                 }
             }
@@ -120,14 +134,35 @@ function createHead(title, description) {
     `;
     head.appendChild(tailwindConfig);
 
-    // Dark mode initialization
-    const darkModeScript = document.createElement('script');
-    darkModeScript.textContent = `
-        if (!('theme' in localStorage)) {
-            localStorage.theme = 'dark';
+    // Add base styles
+    const baseStyles = document.createElement('style');
+    baseStyles.textContent = `
+        .bg-primary {
+            background-color: #0ea5e9 !important;
+        }
+        .hover\\:bg-primary\\/90:hover {
+            background-color: rgba(14, 165, 233, 0.9) !important;
+        }
+        .bg-gray-100 {
+            background-color: #f3f4f6 !important;
+        }
+        .hover\\:bg-gray-200:hover {
+            background-color: #e5e7eb !important;
+        }
+        .text-primary {
+            color: #0ea5e9 !important;
+        }
+        .text-white {
+            color: #ffffff !important;
+        }
+        .text-gray-700 {
+            color: #374151 !important;
+        }
+        .focus\\:ring-primary:focus {
+            --tw-ring-color: #0ea5e9 !important;
         }
     `;
-    head.appendChild(darkModeScript);
+    head.appendChild(baseStyles);
 
     // Font Awesome
     const fontAwesome = document.createElement('link');

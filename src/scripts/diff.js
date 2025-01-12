@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to show toast notification
     function showToast(message) {
         const toastMessage = document.getElementById('toast-message');
+        if (!toastMessage) return;
+        
         toastMessage.textContent = message;
         toast.classList.remove('translate-y-full', 'opacity-0');
         setTimeout(() => {
@@ -23,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to show error message
     function showError(message) {
+        if (!errorMessage) return;
         errorMessage.textContent = message;
         errorMessage.classList.remove('hidden');
         diffContainer.classList.add('hidden');
@@ -30,16 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to hide error message
     function hideError() {
+        if (!errorMessage) return;
         errorMessage.classList.add('hidden');
     }
 
     // Function to compute and display diff
     function computeDiff() {
-        const text1 = originalText.value;
-        const text2 = modifiedText.value;
+        const text1 = originalText.value.trim();
+        const text2 = modifiedText.value.trim();
 
         // Validate inputs
-        if (!text1.trim() || !text2.trim()) {
+        if (!text1 || !text2) {
             showError('Please enter text in both fields to compare');
             return;
         }
@@ -84,14 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
             diffOutput.innerHTML = html;
             diffContainer.classList.remove('hidden');
             hideError();
+            showToast('Differences highlighted successfully');
 
             // Scroll to diff output
             diffContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            showToast('Differences highlighted successfully');
         } catch (error) {
             console.error('Diff error:', error);
-            showError('An error occurred while comparing the texts');
+            showError('An error occurred while comparing the texts. Please try again.');
         }
     }
 
@@ -123,22 +126,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add paste event listeners
-    originalText.addEventListener('paste', (e) => {
-        // Small delay to ensure the paste completes
-        setTimeout(() => {
-            if (modifiedText.value && originalText.value) {
+    // Add paste event listeners with debounce
+    let pasteTimeout;
+    const handlePaste = () => {
+        clearTimeout(pasteTimeout);
+        pasteTimeout = setTimeout(() => {
+            if (modifiedText.value.trim() && originalText.value.trim()) {
                 computeDiff();
             }
-        }, 1000);
-    });
+        }, 500);
+    };
 
-    modifiedText.addEventListener('paste', (e) => {
-        // Small delay to ensure the paste completes
-        setTimeout(() => {
-            if (modifiedText.value && originalText.value) {
-                computeDiff();
-            }
-        }, 1000);
-    });
+    originalText.addEventListener('paste', handlePaste);
+    modifiedText.addEventListener('paste', handlePaste);
 });

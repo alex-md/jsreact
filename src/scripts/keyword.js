@@ -51,17 +51,17 @@ const preprocessText = (text) => {
     return text
         .toLowerCase()
         .normalize('NFKD')
-        // Handle special characters and formatting
+        // Handle smart quotes only
         .replace(/[\u201C\u201D]/g, '"')
+        // Handle em/en dashes
         .replace(/[\u2013\u2014]/g, '-')
         // Remove HTML tags if present
         .replace(/<[^>]*>/g, ' ')
-        // Handle common abbreviations
-        .replace(/(\w+)\.(\w+)/g, '$1 $2')
-        // Split on word boundaries while preserving hyphenated words
+        // Split on word boundaries while preserving punctuation
         .split(/\b/)
         .map(word => word.trim())
-        .filter(word => /\w+/.test(word));
+        // Keep words with apostrophes and hyphens
+        .filter(word => /[\w''-]+/.test(word));
 };
 
 /**
@@ -375,128 +375,202 @@ const highlightText = (text, keywords, densityRegion) => {
 
 // UI update functions
 const updateUI = (results) => {
-    if (!results) {
-        console.log('No results to display');
-        return;
-    }
+    if (!results) return;
 
-    console.log('Updating UI with results:', results);
-
-    // Update overview statistics
+    // Update overview section
     document.getElementById('total-words').textContent = results.totalWords.toLocaleString();
     document.getElementById('total-keywords').textContent = 
         Object.values(results.keywordResults)
-            .reduce((sum, result) => sum + result.occurrences, 0)
+            .reduce((sum, k) => sum + k.occurrences, 0)
             .toLocaleString();
     
     const overallDensity = 
         Object.values(results.keywordResults)
-            .reduce((sum, result) => sum + result.density, 0) / 
-        Object.keys(results.keywordResults).length;
-    document.getElementById('keyword-density').textContent = `${overallDensity.toFixed(1)}%`;
+            .reduce((sum, k) => sum + k.density, 0);
+    document.getElementById('keyword-density').textContent = 
+        overallDensity.toFixed(2) + '%';
 
     // Update intersection score
     const bestIntersection = results.intersections[0];
     document.getElementById('intersection-score').textContent = 
-        bestIntersection ? bestIntersection.score.toFixed(2) : '0';
+        bestIntersection ? (bestIntersection.score * 100).toFixed(2) : '0';
 
-    // Update keyword table with highest density regions
+    // Update keyword table
     const tableBody = document.getElementById('keyword-table');
-    tableBody.innerHTML = '';
+    if (!tableBody) return;
     
+    tableBody.innerHTML = '';
     Object.entries(results.keywordResults).forEach(([keyword, data]) => {
         const row = document.createElement('tr');
-        row.className = 'border-b';
-        const densityRegion = data.highestDensityRegion;
+        row.className = 'hover:bg-gray-50 cursor-pointer';
+        
+        // Create highlighted cluster text
+        let clusterText = data.highestDensityRegion ? data.highestDensityRegion.text : 'N/A';
+        if (clusterText !== 'N/A') {
+            clusterText = clusterText.replace(
+                new RegExp(escapeRegExp(keyword), 'gi'),
+                match => `<span class="bg-yellow-200 px-1 rounded">${match}</span>`
+            );
+        }
+        
         row.innerHTML = `
-            <td class="px-4 py-3">${keyword}</td>
-            <td class="px-4 py-3">${data.occurrences}</td>
-            <td class="px-4 py-3">${data.density.toFixed(1)}%</td>
-            <td class="px-4 py-3">${
-                densityRegion ? 
-                `${densityRegion.count} in ${results.windowSize} words (${densityRegion.density.toFixed(1)}%)` : 
-                '0%'
-            }</td>
+            <td class="px-4 py-3 text-sm text-gray-900 font-medium">${keyword}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">${data.occurrences.toLocaleString()}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">${data.density.toFixed(2)}%</td>
+            <td class="px-4 py-3 text-sm text-gray-900">${clusterText}</td>
         `;
         tableBody.appendChild(row);
     });
 
     // Update intersection section
-    const intersectionSection = document.getElementById('intersection-section');
     const intersectionText = document.getElementById('intersection-text');
-    
-    if (bestIntersection) {
-        intersectionSection.classList.remove('hidden');
-        // Highlight keywords within the intersection text
-        const highlightedIntersectionText = bestIntersection.text.replace(
-            new RegExp(state.keywords.get().join('|'), 'gi'),
-            match => `<span class="bg-green-300">${match}</span>`
-        );
-        intersectionText.innerHTML = highlightedIntersectionText;
-    } else {
-        intersectionSection.classList.add('hidden');
+    if (intersectionText && bestIntersection) {
+        // Highlight all keywords in the intersection text
+        let highlightedText = bestIntersection.text;
+        state.keywords.get().forEach(keyword => {
+            highlightedText = highlightedText.replace(
+                new RegExp(escapeRegExp(keyword), 'gi'),
+                match => `<span class="bg-green-200 px-1 rounded">${match}</span>`
+            );
+        });
+        intersectionText.innerHTML = highlightedText;
+        document.getElementById('intersection-section')?.classList.remove('hidden');
+    } else if (document.getElementById('intersection-section')) {
+        document.getElementById('intersection-section').classList.add('hidden');
     }
 
-    // Update distribution chart
-    const distributionChart = document.getElementById('distribution-chart');
-    distributionChart.innerHTML = '';
+    // Update distribution chart with highlighted bars
+    const chart = document.getElementById('distribution-chart');
+    if (!chart) return;
+    
+    chart.innerHTML = '';
+    chart.className = 'h-48 flex items-end gap-2 mt-4';
     
     const maxCount = Math.max(...results.distribution);
-    results.distribution.forEach((count, index) => {
+    results.distribution.forEach((count, i) => {
+        const barWrapper = document.createElement('div');
+        barWrapper.className = 'flex-1 flex flex-col items-center group relative';
+        
         const bar = document.createElement('div');
-        bar.className = 'bg-blue-500 hover:bg-blue-600 transition-colors rounded-t';
-        bar.style.height = `${(count / maxCount) * 100}%`;
-        bar.style.flex = '1';
-        bar.title = `Section ${index + 1}: ${count} occurrences`;
-        distributionChart.appendChild(bar);
+        const height = count ? (count / maxCount) * 100 : 0;
+        bar.className = 'w-full bg-primary/80 transition-all duration-300 group-hover:bg-primary cursor-pointer rounded-t';
+        bar.style.height = `${height}%`;
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded transition-opacity duration-200';
+        tooltip.textContent = `${count} keywords`;
+        
+        const label = document.createElement('div');
+        label.className = 'text-xs text-gray-500 mt-1';
+        label.textContent = count;
+        
+        barWrapper.appendChild(tooltip);
+        barWrapper.appendChild(bar);
+        barWrapper.appendChild(label);
+        chart.appendChild(barWrapper);
     });
 
-    // Add text highlighting with best intersection
-    const originalText = state.text.get();
-    const keywords = state.keywords.get();
+    // Update full text with highlights
+    const fullText = state.text.get();
+    if (!fullText) return;
     
-    // Pass the best intersection text directly for highlighting
-    const highlightedText = highlightText(
-        originalText,
-        keywords,
-        bestIntersection // Pass the entire intersection object which includes the text property
-    );
+    const highlightedText = document.createElement('div');
+    highlightedText.className = 'mt-6 p-4 bg-gray-50 rounded-lg text-gray-900 whitespace-pre-wrap';
     
-    document.getElementById('highlighted-text').innerHTML = highlightedText;
+    // Create highlighted version of the full text
+    let processedText = fullText;
+    
+    // First highlight intersections (green)
+    if (bestIntersection) {
+        const intersectionRegex = new RegExp(escapeRegExp(bestIntersection.text), 'g');
+        processedText = processedText.replace(
+            intersectionRegex,
+            match => `<span class="bg-green-200 px-1 rounded">${match}</span>`
+        );
+    }
+    
+    // Then highlight individual keywords (yellow)
+    state.keywords.get().forEach(keyword => {
+        const keywordRegex = new RegExp(escapeRegExp(keyword), 'gi');
+        processedText = processedText.replace(
+            keywordRegex,
+            match => `<span class="bg-yellow-200 px-1 rounded">${match}</span>`
+        );
+    });
+    
+    highlightedText.innerHTML = processedText;
+    
+    // Add or update the highlighted text section
+    let highlightedSection = document.getElementById('highlighted-text-section');
+    if (!highlightedSection) {
+        highlightedSection = document.createElement('div');
+        highlightedSection.id = 'highlighted-text-section';
+        highlightedSection.className = 'bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200';
+        highlightedSection.innerHTML = `
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Full Text Analysis</h2>
+                <div id="highlighted-text"></div>
+            </div>
+        `;
+        document.getElementById('results-section')?.appendChild(highlightedSection);
+    }
+    
+    const highlightedTextContainer = document.getElementById('highlighted-text');
+    if (highlightedTextContainer) {
+        highlightedTextContainer.innerHTML = '';
+        highlightedTextContainer.appendChild(highlightedText);
+    }
 
     // Show results section
-    document.getElementById('results-section').classList.remove('hidden');
+    const resultsSection = document.getElementById('results-section');
+    if (resultsSection) {
+        resultsSection.classList.remove('hidden');
+    }
+};
+
+// Utility function to escape special characters in regex
+const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
 // Event handlers
 const handleTextInput = debounce(() => {
-    const text = document.getElementById('input-text').value;
+    const inputElement = document.getElementById('input-text');
+    if (!inputElement) return;
+    
+    const text = inputElement.value;
     console.log('Text input updated:', text.slice(0, 50) + '...');
     state.text.set(text);
 }, 300);
 
 const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
     if (!file) return;
 
     try {
         const text = await file.text();
-        document.getElementById('input-text').value = text;
-        state.text.set(text);
+        const inputElement = document.getElementById('input-text');
+        if (inputElement) {
+            inputElement.value = text;
+            state.text.set(text);
+        }
     } catch (error) {
         console.error('Error reading file:', error);
+        alert('Error reading file. Please try again.');
     }
 };
 
 const handleAddKeyword = () => {
     const input = document.getElementById('keyword-input');
+    if (!input) return;
+    
     const keyword = input.value.trim();
     
     if (keyword && !state.keywords.get().includes(keyword)) {
         console.log('Adding keyword:', keyword);
         state.keywords.set([...state.keywords.get(), keyword]);
         input.value = '';
-        updateKeywordsList();
+        updateKeywordsList(state.keywords.get());
         // Trigger analysis if we have text
         if (state.text.get()) {
             handleAnalyze();
@@ -505,100 +579,111 @@ const handleAddKeyword = () => {
 };
 
 const handleRemoveKeyword = (keyword) => {
-    state.keywords.set(state.keywords.get().filter(k => k !== keyword));
-    updateKeywordsList();
+    if (!keyword) return;
+    
+    const currentKeywords = state.keywords.get();
+    state.keywords.set(currentKeywords.filter(k => k !== keyword));
+    updateKeywordsList(state.keywords.get());
     // Trigger analysis if we have text
     if (state.text.get()) {
         handleAnalyze();
     }
 };
 
-const updateKeywordsList = () => {
+const updateKeywordsList = (keywords = []) => {
     const container = document.getElementById('keywords-list');
-    container.innerHTML = '';
+    if (!container) return;
     
-    state.keywords.get().forEach(keyword => {
+    container.innerHTML = '';
+    keywords.forEach(keyword => {
         const tag = document.createElement('div');
-        tag.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2';
+        tag.className = 'bg-primary/10 text-primary px-3 py-1 rounded-lg flex items-center gap-2';
         tag.innerHTML = `
             <span>${keyword}</span>
-            <button class="text-blue-600 hover:text-blue-800" onclick="handleRemoveKeyword('${keyword}')">×</button>
+            <button 
+                class="hover:text-primary/80" 
+                onclick="window.keywordAnalyzer.handleRemoveKeyword('${escapeRegExp(keyword)}')"
+            >
+                <i class="fas fa-times"></i>
+            </button>
         `;
         container.appendChild(tag);
     });
 };
 
 const handleAnalyze = () => {
-    console.log('Analyze button clicked');
-    
-    // Get text directly from input instead of state
-    const text = document.getElementById('input-text').value;
-    state.text.set(text); // Update state with current value
-    
+    const text = state.text.get();
     const keywords = state.keywords.get();
-    const windowSize = parseInt(document.getElementById('window-size').value) || 100;
-    
-    console.log('Analysis parameters:', { 
-        textLength: text.length,
-        textPreview: text.slice(0, 100) + '...', 
-        keywords, 
-        windowSize 
-    });
-    
-    if (!text || !keywords.length) {
-        console.log('Missing required input:', { hasText: !!text, keywordsCount: keywords.length });
+    const windowSize = state.windowSize.get();
+
+    if (!text?.trim()) {
+        alert('Please enter some text to analyze');
         return;
     }
-    
-    state.windowSize.set(windowSize);
+
+    if (!keywords?.length) {
+        alert('Please add at least one keyword');
+        return;
+    }
+
     const results = analyzeText(text, keywords, windowSize);
-    console.log('Analysis results:', results);
-    
-    state.results.set(results);
-    updateUI(results);
+    if (results) {
+        state.results.set(results);
+        const resultsSection = document.getElementById('results-section');
+        if (resultsSection) {
+            resultsSection.classList.remove('hidden');
+        }
+    }
 };
 
-// Initialize event listeners and expose necessary functions to window
-window.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM Content Loaded');
-    
-    // Initialize text state with any existing input value
-    const initialText = document.getElementById('input-text').value;
-    if (initialText) {
-        state.text.set(initialText);
-    }
-    
+// Initialize DOM elements and event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Get DOM elements
+    const inputText = document.getElementById('input-text');
+    const keywordInput = document.getElementById('keyword-input');
+    const addKeywordButton = document.getElementById('add-keyword');
     const analyzeButton = document.getElementById('analyze-button');
-    if (!analyzeButton) {
-        console.error('Analyze button not found');
-        return;
-    }
+    const uploadButton = document.getElementById('upload-button');
+    const fileInput = document.getElementById('file-input');
+    const windowSizeInput = document.getElementById('window-size');
+
+    // Initialize state
+    state.windowSize.set(parseInt(windowSizeInput?.value || '100'));
+
+    // Event listeners
+    analyzeButton?.addEventListener('click', handleAnalyze);
+    addKeywordButton?.addEventListener('click', handleAddKeyword);
+    uploadButton?.addEventListener('click', () => fileInput?.click());
+    fileInput?.addEventListener('change', handleFileUpload);
     
-    analyzeButton.addEventListener('click', () => {
-        console.log('Analyze button clicked (from event listener)');
-        handleAnalyze();
+    // Add keyword on Enter key
+    keywordInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleAddKeyword();
+        }
     });
-    
-    // Add input event listener directly to ensure immediate state updates
-    document.getElementById('input-text').addEventListener('input', (e) => {
-        state.text.set(e.target.value);
-        handleTextInput();
+
+    // Update window size when changed
+    windowSizeInput?.addEventListener('change', () => {
+        const value = parseInt(windowSizeInput.value);
+        if (value >= 10 && value <= 1000) {
+            state.windowSize.set(value);
+        }
     });
-    
-    document.getElementById('file-input').addEventListener('change', handleFileUpload);
-    document.getElementById('upload-button').addEventListener('click', () => 
-        document.getElementById('file-input').click()
-    );
-    document.getElementById('keyword-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleAddKeyword();
-    });
-    document.getElementById('add-keyword').addEventListener('click', handleAddKeyword);
+
+    // Update text state when input changes
+    inputText?.addEventListener('input', handleTextInput);
+
+    // Subscribe to state changes
+    state.keywords.subscribe(updateKeywordsList);
+    state.results.subscribe(updateUI);
 });
 
 // Export functions to window for event handlers
-Object.assign(window, {
+window.keywordAnalyzer = {
     handleRemoveKeyword,
     handleAddKeyword,
     handleAnalyze,
     handleFileUpload
-});
+};

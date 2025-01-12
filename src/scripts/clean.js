@@ -1,3 +1,5 @@
+'use strict';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Get DOM elements
     const inputText = document.getElementById('input-text');
@@ -5,9 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cleanButton = document.getElementById('clean-button');
     const copyButton = document.getElementById('copy-button');
     const clearButton = document.getElementById('clear-button');
-    const replaceButton = document.getElementById('replace-button');
-    const findInput = document.getElementById('find-input');
-    const replaceInput = document.getElementById('replace-input');
     const toast = document.getElementById('toast');
 
     // Get option checkboxes
@@ -19,13 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const normalizeWhitespace = document.getElementById('normalize-whitespace');
     const normalizeDashes = document.getElementById('normalize-dashes');
     const convertNewlines = document.getElementById('convert-newlines');
-    const removeNumbers = document.getElementById('remove-numbers');
-    const caseSensitive = document.getElementById('case-sensitive');
-    const wholeWords = document.getElementById('whole-words');
 
     // Function to show toast notification
-    function showToast(message = 'Text copied to clipboard!') {
+    function showToast(message) {
         const toastMessage = document.getElementById('toast-message');
+        if (!toastMessage) return;
+        
         toastMessage.textContent = message;
         toast.classList.remove('translate-y-full', 'opacity-0');
         setTimeout(() => {
@@ -42,116 +40,75 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Normalize quotes if selected
-        if (normalizeQuotes.checked) {
-            text = text
-                .replace(/[\u2018\u2019]/g, "'") // Smart single quotes
-                .replace(/[\u201C\u201D]/g, '"') // Smart double quotes
-        }
-
-        // Normalize dashes if selected
-        if (normalizeDashes.checked) {
-            text = text
-                .replace(/[\u2013\u2014]/g, '-') // Em and en dashes
-                .replace(/--+/g, '-'); // Multiple dashes to single
-        }
-
-        // Remove numbers if selected
-        if (removeNumbers.checked) {
-            text = text.replace(/\d+/g, '');
-        }
-
-        // Remove punctuation if selected
-        if (removePunctuation.checked) {
-            text = text.replace(/[^\w\s\n]/g, '');
-        }
-
-        // Convert newlines to spaces if selected
-        if (convertNewlines.checked) {
-            text = text.replace(/\n/g, ' ');
-        }
-
-        // Split into lines for line-based operations (if not converting newlines)
-        let lines = convertNewlines.checked ? [text] : text.split('\n');
-
-        // Process each line
-        lines = lines.map(line => {
-            if (trimLines.checked) {
-                line = line.trim();
-            }
-            return line;
-        });
-
-        // Remove empty lines if selected
-        if (removeEmptyLines.checked) {
-            lines = lines.filter(line => line.trim() !== '');
-        }
-
-        // Join lines back together
-        text = lines.join(convertNewlines.checked ? ' ' : '\n');
-
-        // Remove extra spaces if selected
-        if (removeExtraSpaces.checked) {
-            text = text.replace(/\s+/g, ' ');
-        }
-
-        // Normalize whitespace if selected
-        if (normalizeWhitespace.checked) {
-            text = text
-                .replace(/\r\n/g, '\n') // Convert Windows line endings
-                .replace(/\r/g, '\n') // Convert Mac line endings
-                .replace(/\t/g, '    ') // Convert tabs to spaces
-                .replace(/[^\S\n]+/g, ' '); // Convert multiple spaces to single space (preserve newlines)
-        }
-
-        // Final trim
-        text = text.trim();
-
-        outputText.value = text;
-        showToast('Text cleaned successfully');
-    }
-
-    // Function to handle find and replace
-    function handleReplace() {
-        const findText = findInput.value;
-        const replaceText = replaceInput.value;
-
-        if (!findText) {
-            showToast('Please enter text to find');
-            return;
-        }
-
-        if (!inputText.value) {
-            showToast('Please enter some text to search in');
-            return;
-        }
-
         try {
-            let flags = 'g';
-            if (!caseSensitive.checked) {
-                flags += 'i';
+            // Normalize quotes if selected
+            if (normalizeQuotes.checked) {
+                text = text
+                    .replace(/[\u2018\u2019]/g, "'") // Smart single quotes
+                    .replace(/[\u201C\u201D]/g, '"') // Smart double quotes
+                    .replace(/['']/g, "'") // Other single quotes
+                    .replace(/[""]/g, '"'); // Other double quotes
             }
 
-            let pattern = findText;
-            if (wholeWords.checked) {
-                pattern = `\\b${findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`;
-            } else {
-                pattern = findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Normalize dashes if selected
+            if (normalizeDashes.checked) {
+                text = text
+                    .replace(/[\u2013\u2014]/g, '-') // Em and en dashes
+                    .replace(/--+/g, '-') // Multiple dashes to single
+                    .replace(/—/g, '-'); // Additional em dash
             }
 
-            const regex = new RegExp(pattern, flags);
-            const newText = inputText.value.replace(regex, replaceText);
-            
-            if (newText === inputText.value) {
-                showToast('No matches found');
-                return;
+            // Remove punctuation if selected
+            if (removePunctuation.checked) {
+                text = text.replace(/[^\w\s\n]/g, '');
             }
 
-            outputText.value = newText;
-            showToast('Text replaced successfully');
+            // Convert newlines to spaces if selected
+            if (convertNewlines.checked) {
+                text = text.replace(/\n/g, ' ');
+            }
+
+            // Split into lines for line-based operations (if not converting newlines)
+            let lines = convertNewlines.checked ? [text] : text.split('\n');
+
+            // Process each line
+            lines = lines.map(line => {
+                if (trimLines.checked) {
+                    line = line.trim();
+                }
+                return line;
+            });
+
+            // Remove empty lines if selected
+            if (removeEmptyLines.checked) {
+                lines = lines.filter(line => line.trim() !== '');
+            }
+
+            // Join lines back together
+            text = lines.join(convertNewlines.checked ? ' ' : '\n');
+
+            // Remove extra spaces if selected
+            if (removeExtraSpaces.checked) {
+                text = text.replace(/\s+/g, ' ');
+            }
+
+            // Normalize whitespace if selected
+            if (normalizeWhitespace.checked) {
+                text = text
+                    .replace(/\r\n/g, '\n') // Convert Windows line endings
+                    .replace(/\r/g, '\n') // Convert Mac line endings
+                    .replace(/\t/g, '    ') // Convert tabs to spaces
+                    .replace(/[^\S\n]+/g, ' '); // Convert multiple spaces to single space (preserve newlines)
+            }
+
+            // Final trim
+            text = text.trim();
+
+            outputText.value = text;
+            showToast('Text cleaned successfully');
         } catch (error) {
-            showToast('Error in find/replace operation');
-            console.error('Replace error:', error);
+            console.error('Error cleaning text:', error);
+            showToast('Error cleaning text. Please try again.');
         }
     }
 
@@ -175,8 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearAll() {
         inputText.value = '';
         outputText.value = '';
-        findInput.value = '';
-        replaceInput.value = '';
         showToast('All text cleared');
     }
 
@@ -184,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cleanButton.addEventListener('click', cleanText);
     copyButton.addEventListener('click', copyOutput);
     clearButton.addEventListener('click', clearAll);
-    replaceButton.addEventListener('click', handleReplace);
 
     // Add input event listener for real-time cleaning
     inputText.addEventListener('input', () => {
@@ -204,11 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
             e.preventDefault();
             copyOutput();
-        }
-        // Enter in find/replace inputs to trigger replace
-        if (e.key === 'Enter' && (document.activeElement === findInput || document.activeElement === replaceInput)) {
-            e.preventDefault();
-            handleReplace();
         }
     });
 });

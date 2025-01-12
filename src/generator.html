@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
+<html lang="en" class="scroll-smooth">
     <head>
         <script src="./components/head.js"></script>
         <script>
@@ -10,7 +10,8 @@
         </script>
     </head>
 
-    <body class="bg-gray-50 dark:bg-gray-900">
+    <body class="bg-gray-50">
+        <script src="./components/navbar.js"></script>
         <script src="./components/header.js"></script>
         <script>
             document.body.appendChild(
@@ -24,14 +25,14 @@
         <main class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="space-y-6">
                 <!-- Input Section -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                     <div class="p-6 space-y-6">
                         <div class="space-y-4">
-                            <label for="input-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label for="input-text" class="block text-sm font-medium text-gray-700">
                                 Enter words to generate names from
                             </label>
                             <textarea id="input-text" rows="3" placeholder="Enter words or phrases..."
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 dark:text-white"></textarea>
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900"></textarea>
                         </div>
 
                         <!-- Action Buttons -->
@@ -41,7 +42,7 @@
                                 Generate Names
                             </button>
                             <button id="clear-button"
-                                class="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
                                 Clear All
                             </button>
                         </div>
@@ -49,10 +50,10 @@
                 </div>
 
                 <!-- Results Section -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Generated Names</h2>
-                        <button id="copy-all-button" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium flex items-center gap-2">
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                    <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-900">Generated Names</h2>
+                        <button id="copy-all-button" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center gap-2">
                             <i class="fas fa-copy text-xs"></i> Copy All
                         </button>
                     </div>
@@ -71,7 +72,6 @@
         </main>
 
         <script src="https://unpkg.com/@rstacruz/startup-name-generator@latest/dist/startup-name-generator.js"></script>
-        <script src="./components/navbar.js"></script>
         <script src="./components/footer.js"></script>
         <script src="./components/toast.js"></script>
         <script src="./scripts/generator.js"></script>
