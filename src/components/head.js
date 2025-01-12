@@ -16,18 +16,57 @@ function createHead(title, description) {
     `;
     head.appendChild(gaInitScript);
 
+    // JSON-LD Structured Data
+    const structuredData = document.createElement('script');
+    structuredData.type = 'application/ld+json';
+    structuredData.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        'name': 'JSreact',
+        'headline': title,
+        'description': description,
+        'url': window.location.href.split('?')[0],
+        'applicationCategory': 'DeveloperApplication',
+        'operatingSystem': 'Any',
+        'offers': {
+            '@type': 'Offer',
+            'price': '0',
+            'priceCurrency': 'USD'
+        },
+        'author': {
+            '@type': 'Organization',
+            'name': 'JSreact',
+            'url': 'https://jsreact.com'
+        }
+    });
+    head.appendChild(structuredData);
+
     // Common utilities
     const commonScript = document.createElement('script');
     commonScript.src = './scripts/common.js';
     head.appendChild(commonScript);
 
     // Meta tags
-    document.title = title;
+    document.title = `${title} | JSreact`;
     const metaTags = [
         { charset: 'UTF-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         { name: 'description', content: description },
-        { name: 'theme-color', content: '#09090b' }
+        { name: 'theme-color', content: '#09090b' },
+        { name: 'robots', content: 'index, follow' },
+        { name: 'author', content: 'JSreact' },
+        { name: 'keywords', content: 'web developer tools, code minifier, text cleaner, diff checker, expression finder, keyword analyzer, javascript tools' },
+        // Open Graph tags
+        { property: 'og:title', content: `${title} | JSreact` },
+        { property: 'og:description', content: description },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: 'JSreact' },
+        { property: 'og:image', content: './images/og-image.png' },
+        // Twitter Card tags
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: `${title} | JSreact` },
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: './images/og-image.png' }
     ];
 
     metaTags.forEach(meta => {
@@ -37,6 +76,12 @@ function createHead(title, description) {
         });
         head.appendChild(metaElement);
     });
+
+    // Canonical URL
+    const canonical = document.createElement('link');
+    canonical.rel = 'canonical';
+    canonical.href = window.location.href.split('?')[0];
+    head.appendChild(canonical);
 
     // Favicons
     const favicons = [

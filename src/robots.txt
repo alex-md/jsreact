@@ -1,3 +1,12 @@
 User-agent: *
+Allow: /
 Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /private/
+
+# Allow all bots to crawl JavaScript and CSS
+Allow: /*.js$
+Allow: /*.css$
+
+# Sitemap location
 Sitemap: https://jsreact.com/sitemap.xml
