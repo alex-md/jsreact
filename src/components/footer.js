@@ -6,15 +6,58 @@ function createFooter() {
     }
 
     const footer = document.createElement('footer');
-    footer.classList.add('py-8', 'mt-12', 'bg-white', 'dark:bg-gray-800', 'border-t', 'border-gray-200', 'dark:border-gray-700');
+    footer.classList.add(
+        'mt-auto',
+        'py-12',
+        'bg-white',
+        'dark:bg-gray-900',
+        'border-t',
+        'border-gray-200',
+        'dark:border-gray-800'
+    );
 
     const container = document.createElement('div');
-    container.classList.add('container', 'mx-auto', 'px-4', 'max-w-7xl', 'flex', 'justify-between', 'items-center');
+    container.classList.add(
+        'container',
+        'mx-auto',
+        'px-4',
+        'max-w-7xl'
+    );
 
-    // Left section with copyright
-    const copyrightSection = document.createElement('div');
-    copyrightSection.classList.add('text-gray-500', 'dark:text-gray-400');
-    copyrightSection.textContent = `© ${new Date().getFullYear()} JSreact. All rights reserved.`;
+    const content = document.createElement('div');
+    content.classList.add(
+        'flex',
+        'flex-col',
+        'md:flex-row',
+        'justify-between',
+        'items-center',
+        'gap-6'
+    );
+
+    // Copyright section
+    const copyright = document.createElement('div');
+    copyright.classList.add(
+        'text-gray-600',
+        'dark:text-gray-400',
+        'flex',
+        'items-center',
+        'gap-2'
+    );
+    copyright.innerHTML = `
+        <span>© ${new Date().getFullYear()} JSReact.</span>
+        <span class="hidden md:inline">·</span>
+        <span>All rights reserved.</span>
+    `;
+
+    // Stats section
+    const stats = document.createElement('div');
+    stats.classList.add(
+        'flex',
+        'items-center',
+        'gap-6',
+        'text-gray-600',
+        'dark:text-gray-400'
+    );
 
     // Right section with view count
     const viewCountButton = document.createElement('button');
@@ -63,8 +106,9 @@ function createFooter() {
         viewCountButton.appendChild(viewCountText);
     });
 
-    container.appendChild(copyrightSection);
-    container.appendChild(viewCountButton);
+    stats.appendChild(viewCountButton);
+    content.appendChild(stats);
+    container.appendChild(content);
     footer.appendChild(container);
 
     return footer;
@@ -76,4 +120,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(footer);
 });
 
-window.createFooter = createFooter; 
+window.createFooter = createFooter;

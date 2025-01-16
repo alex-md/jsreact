@@ -1,17 +1,56 @@
 function createHeader(title, subtitle) {
     const header = document.createElement('header');
-    header.classList.add('py-16', 'bg-white', 'dark:bg-gray-800', 'shadow-sm');
+    header.classList.add(
+        'relative',
+        'py-24',
+        'overflow-hidden',
+        'bg-gradient-to-br',
+        'from-primary-900',
+        'to-primary-800',
+        'dark:from-gray-900',
+        'dark:to-gray-800'
+    );
+
+    // Add background pattern
+    const pattern = document.createElement('div');
+    pattern.classList.add(
+        'absolute',
+        'inset-0',
+        'bg-grid-white/[0.05]',
+        'bg-[size:60px_60px]'
+    );
+    header.appendChild(pattern);
 
     const container = document.createElement('div');
-    container.classList.add('container', 'mx-auto', 'px-4', 'max-w-7xl');
+    container.classList.add(
+        'relative',
+        'container',
+        'mx-auto',
+        'px-4',
+        'max-w-7xl',
+        'text-center'
+    );
 
     const heading = document.createElement('h1');
-    heading.classList.add('text-4xl', 'md:text-5xl', 'font-bold', 'text-center', 'text-gray-900', 'dark:text-white');
-    heading.textContent = title;
+    heading.classList.add(
+        'text-4xl',
+        'md:text-6xl',
+        'font-bold',
+        'text-white',
+        'mb-6'
+    );
+    heading.innerHTML = `<span class="text-primary-300">${title}</span>`;
 
     if (subtitle) {
         const subheading = document.createElement('p');
-        subheading.classList.add('mt-4', 'text-xl', 'text-gray-600', 'dark:text-gray-300', 'text-center', 'max-w-3xl', 'mx-auto');
+        subheading.classList.add(
+            'mt-6',
+            'text-lg',
+            'text-gray-300',
+            'max-w-2xl',
+            'mx-auto',
+            'leading-relaxed'
+        );
         subheading.textContent = subtitle;
         container.appendChild(heading);
         container.appendChild(subheading);
@@ -23,4 +62,4 @@ function createHeader(title, subtitle) {
     return header;
 }
 
-window.createHeader = createHeader; 
+window.createHeader = createHeader;
