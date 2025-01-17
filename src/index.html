@@ -2,6 +2,16 @@
 <html lang="en" class="scroll-smooth dark">
 
 	<head>
+		<!-- Add fallback styles -->
+		<style>
+			body {
+				opacity: 0.5;
+			}
+
+			.js-ready {
+				opacity: 1;
+			}
+		</style>
 		<script src="./components/head.js"></script>
 		<script>
 			createHead(
@@ -12,15 +22,18 @@
 	</head>
 
 	<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
-		<header class="relative py-24 bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 overflow-hidden">
+		<header
+			class="relative py-24 bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 overflow-hidden">
 			<div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]"></div>
 			<div class="container relative mx-auto px-4 max-w-7xl">
 				<h1 class="text-4xl md:text-6xl font-bold text-center text-white mb-6">
 					<span class="text-primary italic">JSreact</span>
-					<span class="block mt-2 text-2xl md:text-3xl font-normal text-gray-300">Free Online Developer Utilities</span>
+					<span class="block mt-2 text-2xl md:text-3xl font-normal text-gray-300">Free Online Developer
+						Utilities</span>
 				</h1>
 				<p class="mt-6 text-lg text-gray-300 text-center max-w-2xl mx-auto leading-relaxed">
-					A collection of free tools for developers to help with everyday tasks. From code minification to text cleaning, we've got you covered.
+					A collection of free tools for developers to help with everyday tasks. From code minification to
+					text cleaning, we've got you covered.
 				</p>
 			</div>
 		</header>
@@ -28,85 +41,103 @@
 		<main class="container mx-auto px-4 py-12 max-w-7xl">
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				<!-- Minifier Card -->
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
 							<i class="fas fa-compress-alt text-blue-600 dark:text-blue-500 text-xl"></i>
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Code Minifier</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Minify your JavaScript, CSS, and HTML code to reduce file size</p>
-					<a href="./minify.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Minify your JavaScript, CSS, and HTML
+						code to reduce file size</p>
+					<a href="./minify.html"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Minifier
 					</a>
 				</div>
 
 				<!-- Generator Card -->
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
 							<i class="fas fa-magic text-purple-600 dark:text-purple-500 text-xl"></i>
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">AI Name Generator</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Generate creative and unique names for your projects using AI</p>
-					<a href="./generator.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Generate creative and unique names for
+						your projects using AI</p>
+					<a href="./generator.html"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Generator
 					</a>
 				</div>
 
 				<!-- Text Cleaner Card -->
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
 							<i class="fas fa-broom text-green-600 dark:text-green-500 text-xl"></i>
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Text Cleaner</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Clean and format your text with powerful tools</p>
-					<a href="./clean.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Clean and format your text with
+						powerful tools</p>
+					<a href="./clean.html"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Cleaner
 					</a>
 				</div>
 
 				<!-- Diff Checker Card -->
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
 							<i class="fas fa-code-compare text-red-600 dark:text-red-500 text-xl"></i>
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Diff Checker</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compare text differences between two versions</p>
-					<a href="./diff.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compare text differences between two
+						versions</p>
+					<a href="./diff.html"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Diff Checker
 					</a>
 				</div>
 
 				<!-- Expression Finder Card -->
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
 							<i class="fas fa-calculator text-yellow-600 dark:text-yellow-500 text-xl"></i>
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Expression Finder</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Find expressions using arithmetic operations and parentheses</p>
-					<a href="./expression.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Find expressions using arithmetic
+						operations and parentheses</p>
+					<a href="./expression.html"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Expression Finder
 					</a>
 				</div>
 
 				<!-- Keyword Analyzer Card -->
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
 							<i class="fas fa-key text-teal-600 dark:text-teal-500 text-xl"></i>
 						</div>
 						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Keyword Analyzer</h3>
 					</div>
-					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Analyze keyword density and extract important terms from any text</p>
-					<a href="./keyword.html" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Analyze keyword density and extract
+						important terms from any text</p>
+					<a href="./keyword.html"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
 						Try Analyzer
 					</a>
 				</div>

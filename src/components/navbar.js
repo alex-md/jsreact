@@ -47,7 +47,8 @@
             'h-16',
             'flex',
             'items-center',
-            'justify-between'
+            'justify-between',
+            'bg-white',
         );
 
         // Modern logo section
@@ -66,8 +67,8 @@
             'hover:scale-105'
         );
         logoLink.innerHTML = `
-            <img src="./images/icon.png" alt="JSReact Logo" class="h-8 w-8">
-            <span>JSReact</span>
+            <img src="./images/logo.png" alt="JSReact Logo" class="h-8 px-5">
+            <span></span>
         `;
 
         // Navigation links

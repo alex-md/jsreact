@@ -5,10 +5,10 @@ function createHeader(title, subtitle) {
         'py-24',
         'overflow-hidden',
         'bg-gradient-to-br',
-        'from-primary-900',
-        'to-primary-800',
-        'dark:from-gray-900',
-        'dark:to-gray-800'
+        'from-gray-900',
+        'to-gray-800',
+        'dark:from-black',
+        'dark:to-gray-900'
     );
 
     // Add background pattern
@@ -28,7 +28,8 @@ function createHeader(title, subtitle) {
         'mx-auto',
         'px-4',
         'max-w-7xl',
-        'text-center'
+        'text-center',
+        'text-white'
     );
 
     const heading = document.createElement('h1');
@@ -36,7 +37,7 @@ function createHeader(title, subtitle) {
         'text-4xl',
         'md:text-6xl',
         'font-bold',
-        'text-white',
+        'text-dark',
         'mb-6'
     );
     heading.innerHTML = `<span class="text-primary-300">${title}</span>`;

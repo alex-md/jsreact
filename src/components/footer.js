@@ -1,11 +1,17 @@
 function createFooter() {
-    // Remove any existing footer first
-    const existingFooter = document.querySelector('footer');
-    if (existingFooter) {
-        existingFooter.remove();
+    // Prevent multiple footer instances
+    if (document.querySelector('footer[data-jsreact-footer]')) {
+        return;
+    }
+
+    // Wait for styles to be ready
+    if (!document.body.classList.contains('js-ready')) {
+        requestAnimationFrame(createFooter);
+        return;
     }
 
     const footer = document.createElement('footer');
+    footer.setAttribute('data-jsreact-footer', 'true');
     footer.classList.add(
         'mt-auto',
         'py-12',
@@ -31,7 +37,8 @@ function createFooter() {
         'md:flex-row',
         'justify-between',
         'items-center',
-        'gap-6'
+        'gap-6',
+        'w-full' // Add full width
     );
 
     // Copyright section
@@ -41,7 +48,9 @@ function createFooter() {
         'dark:text-gray-400',
         'flex',
         'items-center',
-        'gap-2'
+        'gap-2',
+        'order-2',     // Change order for mobile
+        'md:order-1'   // Change order for desktop
     );
     copyright.innerHTML = `
         <span>© ${new Date().getFullYear()} JSReact.</span>
@@ -56,8 +65,84 @@ function createFooter() {
         'items-center',
         'gap-6',
         'text-gray-600',
-        'dark:text-gray-400'
+        'dark:text-gray-400',
+        'order-1',      // Change order for mobile
+        'md:order-2',   // Change order for desktop
+        'ml-auto'       // Push to the right
     );
+
+    // Active users fetch function
+    async function fetchActiveUsers() {
+        try {
+            // Replace this URL with your actual worker URL from wrangler deploy
+            const response = await fetch('https://activeusers.vs.workers.dev/', {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                },
+                mode: 'cors' // Add CORS mode explicitly
+            });
+
+            if (!response.ok) {
+                console.error(`Server returned ${response.status}: ${response.statusText}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.activeUsers === 0 ? '0' : data.activeUsers || 'Unavailable';
+        } catch (error) {
+            console.error('Error fetching active users:', error);
+            return '0'; // Return '0' instead of 'Unavailable' for better UX
+        }
+    }
+
+    // Active users button
+    const activeUsersButton = document.createElement('button');
+    activeUsersButton.classList.add(
+        'inline-flex',
+        'items-center',
+        'gap-2',
+        'text-gray-500',
+        'dark:text-gray-400',
+        'hover:text-gray-700',
+        'dark:hover:text-gray-300',
+        'transition-colors'
+    );
+    activeUsersButton.id = 'activeUsersButton';
+
+    // Update active users count with debouncing
+    let updateTimeout;
+    const updateActiveUsers = async () => {
+        if (updateTimeout) clearTimeout(updateTimeout);
+        updateTimeout = setTimeout(async () => {
+            const count = await fetchActiveUsers();
+            const existingText = activeUsersButton.querySelector('span');
+            if (existingText) {
+                existingText.textContent = ` ${count} online`;
+            } else {
+                const activeUsersText = document.createElement('span');
+                activeUsersText.textContent = ` ${count} online`;
+                activeUsersButton.appendChild(activeUsersText);
+            }
+        }, 100);
+    };
+
+    // Add active users icon
+    const usersIcon = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
+    </svg>`;
+    activeUsersButton.innerHTML = usersIcon;
+
+    // Initialize active users count and set up interval
+    updateActiveUsers();
+    // Increase interval to 60 seconds to stay within free tier limits
+    const updateInterval = setInterval(updateActiveUsers, 60000);
+
+    // Clean up interval when the footer is removed
+    const cleanup = () => {
+        clearInterval(updateInterval);
+    };
+    footer.addEventListener('remove', cleanup);
+
+    stats.appendChild(activeUsersButton);
 
     // Right section with view count
     const viewCountButton = document.createElement('button');
@@ -107,17 +192,34 @@ function createFooter() {
     });
 
     stats.appendChild(viewCountButton);
-    content.appendChild(stats);
+
+    // Change append order
+    content.appendChild(copyright);  // Append copyright first
+    content.appendChild(stats);      // Append stats second
     container.appendChild(content);
     footer.appendChild(container);
+
+    // Make sure footer is always at the bottom
+    if (document.body) {
+        // Remove any existing footers without the data attribute
+        document.querySelectorAll('footer:not([data-jsreact-footer])').forEach(f => f.remove());
+        document.body.appendChild(footer);
+    } else {
+        // If body isn't ready, wait for it
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.appendChild(footer);
+        });
+    }
 
     return footer;
 }
 
-// Automatically create and append footer when the script loads
-document.addEventListener('DOMContentLoaded', () => {
-    const footer = createFooter();
-    document.body.appendChild(footer);
-});
+// Create footer when script loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createFooter);
+} else {
+    createFooter();
+}
 
+// Expose to window for manual creation if needed
 window.createFooter = createFooter;

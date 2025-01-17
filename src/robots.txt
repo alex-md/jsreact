@@ -4,9 +4,24 @@ Disallow: /cgi-bin/
 Disallow: /tmp/
 Disallow: /private/
 
-# Allow all bots to crawl JavaScript and CSS
+# Allow crawling of JavaScript and CSS
 Allow: /*.js$
 Allow: /*.css$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.svg$
+
+# Block common spam bots
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+# Crawl-delay
+Crawl-delay: 10
 
 # Sitemap location
 Sitemap: https://jsreact.com/sitemap.xml

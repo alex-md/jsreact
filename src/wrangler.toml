@@ -1,0 +1,7 @@
+name = "activeusers"
+main = "activeusers.js"
+compatibility_date = "2024-01-16"
+
+kv_namespaces = [
+  { binding = "ACTIVE_USERS", id = "1b66cbb6b1fa43c1912cb25553eddda5" }
+]
