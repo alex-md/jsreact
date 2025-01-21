@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ rollback ]
+    branches: [ cfpages ]
 
 jobs:
   sitemap_job:
