@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toast.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300';
         toast.textContent = message;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.remove();
         }, 3000);
@@ -35,36 +35,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const inputSize = new TextEncoder().encode(inputElement.value || '').length;
         const outputSize = new TextEncoder().encode(outputElement.value || '').length;
-        
+
         const reduction = inputSize ? ((inputSize - outputSize) / inputSize * 100).toFixed(1) : 0;
         showToast(`Size reduced by ${reduction}% (${(inputSize / 1024).toFixed(2)}KB → ${(outputSize / 1024).toFixed(2)}KB)`);
     }
 
+    // Function to format byte size
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 bytes';
+        const k = 1024;
+        const sizes = ['bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Function to update size indicators
+    function updateSizes() {
+        const inputSize = document.getElementById('input-size');
+        const outputSize = document.getElementById('output-size');
+
+        if (inputSize && inputElement) {
+            const size = new TextEncoder().encode(inputElement.value || '').length;
+            inputSize.textContent = formatBytes(size);
+        }
+
+        if (outputSize && outputElement) {
+            const size = new TextEncoder().encode(outputElement.value || '').length;
+            outputSize.textContent = formatBytes(size);
+        }
+    }
+
+    // Add input event listener
+    inputElement?.addEventListener('input', updateSizes);
+
     // Function to minify code using Google Closure Compiler
     async function minifyCode() {
-        if (!inputElement || !outputElement) {
-            showToast('Error: Input or output elements not found');
-            return;
-        }
+        if (!inputElement || !outputElement || !minifyButton) return;
 
-        const code = inputElement.value?.trim();
-        if (!code) {
-            showToast('Please enter some code to minify');
-            return;
-        }
+        // Show loading state
+        const originalButtonText = minifyButton.innerHTML;
+        minifyButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Minifying...';
+        minifyButton.disabled = true;
 
         try {
-            // Prepare request to Google Closure Compiler Service
-            const params = new URLSearchParams({
-                js_code: code,
-                compilation_level: compressCode?.checked ? 'ADVANCED_OPTIMIZATIONS' : 'SIMPLE_OPTIMIZATIONS',
-                output_format: 'json',
-                output_info: 'compiled_code',
-                language: 'ECMASCRIPT_2020'
-            });
+            const code = inputElement.value?.trim();
+            if (!code) {
+                throw new Error('Please enter some code to minify');
+            }
 
-            if (removeComments?.checked) {
-                params.append('formatting', 'PRETTY_PRINT');
+            // Prepare request parameters
+            const params = new URLSearchParams();
+            params.append('js_code', code);
+            params.append('compilation_level', document.querySelector('input[name="optimization"]:checked')?.value || 'SIMPLE_OPTIMIZATIONS');
+            params.append('output_format', 'json');
+            params.append('output_info', 'compiled_code');
+            params.append('output_info', 'warnings');
+            params.append('output_info', 'errors');
+            params.append('language', 'ECMASCRIPT_2020');
+            params.append('language_out', document.getElementById('language-out')?.checked ? 'ECMASCRIPT_2020' : 'ECMASCRIPT_2015');
+
+            if (document.getElementById('use-types')?.checked) {
+                params.append('use_types_for_optimization', 'true');
+            }
+
+            if (document.getElementById('source-map')?.checked) {
+                params.append('create_source_map', 'true');
+                params.append('source_map_format', 'V3');
             }
 
             const response = await fetch('https://closure-compiler.appspot.com/compile', {
@@ -77,21 +113,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const result = await response.json();
 
+            // Handle compilation errors
             if (result.errors && result.errors.length > 0) {
-                throw new Error(result.errors[0].error);
+                const errorMessages = result.errors
+                    .map(e => `Line ${e.lineno}: ${e.error}`)
+                    .join('\n');
+                throw new Error(`Compilation failed:\n${errorMessages}`);
             }
 
-            if (!result.compiledCode) {
-                throw new Error('No output generated');
+            // Handle warnings
+            if (result.warnings && result.warnings.length > 0) {
+                console.warn('Compilation warnings:', result.warnings);
+                showToast('⚠️ Compiled with warnings - check console for details', 'warning');
             }
 
-            outputElement.value = result.compiledCode;
+            // Validate and use compiled code
+            if (!result.compiledCode && !result.serverErrors) {
+                throw new Error('Compilation failed - no output generated. Try a lower optimization level.');
+            }
+
+            outputElement.value = result.compiledCode || '';
             updateSizeLabels();
-            showToast('Code minified successfully');
+            updateSizes(); // Add this line
+            showToast('✨ Code minified successfully', 'success');
+
         } catch (error) {
-            showToast('Error minifying code: ' + error.message);
+            showToast('❌ ' + error.message, 'error');
             console.error('Minification error:', error);
             outputElement.value = '/* Error minifying code */\n' + error.message;
+        } finally {
+            // Restore button state
+            minifyButton.innerHTML = originalButtonText;
+            minifyButton.disabled = false;
         }
     }
 
@@ -119,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to clear all
     function clearAll() {
         if (!inputElement || !outputElement) return;
-        
+
         inputElement.value = '';
         outputElement.value = '';
         showToast('All code cleared');
@@ -143,4 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             copyOutput();
         }
     });
+
+    // Update initial sizes
+    updateSizes();
 });
