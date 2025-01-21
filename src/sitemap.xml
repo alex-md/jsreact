@@ -1,60 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://jsreact.com/</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>weekly</changefreq>
-<priority>1.0</priority>
-<image:image>
-<image:loc>https://jsreact.com/images/og-image.png</image:loc>
-<image:title>JSreact Web Developer Tools</image:title>
-</image:image>
+<lastmod>2025-01-16T23:28:27-07:00</lastmod>
 </url>
 <url>
 <loc>https://jsreact.com/clean.html</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.8</priority>
+<lastmod>2025-01-11T22:42:34-07:00</lastmod>
 </url>
 <url>
 <loc>https://jsreact.com/diff.html</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.8</priority>
+<lastmod>2025-01-11T22:42:34-07:00</lastmod>
 </url>
 <url>
 <loc>https://jsreact.com/expression.html</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.8</priority>
+<lastmod>2025-01-11T22:42:34-07:00</lastmod>
 </url>
 <url>
 <loc>https://jsreact.com/generator.html</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.8</priority>
+<lastmod>2025-01-11T22:42:34-07:00</lastmod>
 </url>
 <url>
 <loc>https://jsreact.com/keyword.html</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.8</priority>
+<lastmod>2025-01-15T21:41:09-07:00</lastmod>
 </url>
 <url>
 <loc>https://jsreact.com/minify.html</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.8</priority>
+<lastmod>2025-01-11T22:42:34-07:00</lastmod>
 </url>
 <url>
 <loc>https://jsreact.com/policy.html</loc>
-<lastmod>2024-01-12</lastmod>
-<changefreq>yearly</changefreq>
-<priority>0.5</priority>
+<lastmod>2025-01-11T18:37:29-07:00</lastmod>
 </url>
 </urlset>
