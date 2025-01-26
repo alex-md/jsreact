@@ -5,10 +5,10 @@ function createHeader(title, subtitle) {
         'py-24',
         'overflow-hidden',
         'bg-gradient-to-br',
-        'from-gray-900',
-        'to-gray-800',
-        'dark:from-black',
-        'dark:to-gray-900'
+        // 'from-gray-900',
+        // 'to-gray-800',
+        // 'dark:from-black',
+        // 'dark:to-gray-900'
     );
 
     // Add background pattern
@@ -17,17 +17,17 @@ function createHeader(title, subtitle) {
         'absolute',
         'inset-0',
         'bg-grid-white/[0.05]',
-        'bg-[size:60px_60px]'
+        'bg-[size:30px_30px]'
     );
     header.appendChild(pattern);
 
     const container = document.createElement('div');
     container.classList.add(
         'relative',
-        'container',
+        'container-responsive',
         'mx-auto',
-        'px-4',
-        'max-w-7xl',
+        // 'px-4',
+        // 'max-w-7xl',
         'text-center',
         'text-white'
     );
@@ -38,19 +38,18 @@ function createHeader(title, subtitle) {
         'md:text-6xl',
         'font-bold',
         'text-dark',
-        'mb-6'
+        'mb-3'
     );
     heading.innerHTML = `<span class="text-primary-300">${title}</span>`;
 
     if (subtitle) {
         const subheading = document.createElement('p');
         subheading.classList.add(
-            'mt-6',
-            'text-lg',
-            'text-gray-300',
+            // 'p-6',
+            'text-md',
             'max-w-2xl',
             'mx-auto',
-            'leading-relaxed'
+            'text-gray-500',
         );
         subheading.textContent = subtitle;
         container.appendChild(heading);

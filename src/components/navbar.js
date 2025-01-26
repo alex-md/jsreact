@@ -32,12 +32,12 @@
             'sticky',
             'top-0',
             'z-50',
-            'bg-white/90',
-            'dark:bg-gray-900/90',
+            'bg-white',
+            // 'dark:bg-gray-900/10',
             'backdrop-blur-xl',
-            'shadow-elegant',
+            'shadow-lg',
             'transition-all',
-            'duration-300'
+            'duration-300',
         );
 
         // Container with modern styling
@@ -67,7 +67,7 @@
             'hover:scale-105'
         );
         logoLink.innerHTML = `
-            <img src="./images/logo.png" alt="JSReact Logo" class="h-8 px-5">
+            <img src="./images/logo.png" alt="JSReact Logo" class="h-8 md:h-10 lg:h-12 px-5 transition-transform duration-300 hover:scale-110" />
             <span></span>
         `;
 

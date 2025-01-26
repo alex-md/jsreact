@@ -18,7 +18,7 @@ function createHead(title, description) {
     // Load Tailwind CSS before other resources
     const tailwindCSS = document.createElement('link');
     tailwindCSS.rel = 'stylesheet';
-    tailwindCSS.href = 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css';
+    tailwindCSS.href = 'https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css';
     head.insertBefore(tailwindCSS, head.firstChild);
 
     // Load Font Awesome
@@ -117,17 +117,6 @@ function createHead(title, description) {
         { name: 'robots', content: 'index, follow' },
         { name: 'author', content: 'JSreact' },
         { name: 'keywords', content: 'web developer tools, code minifier, text cleaner, diff checker, expression finder, keyword analyzer, javascript tools' },
-        // Open Graph tags
-        { property: 'og:title', content: `${title} | JSreact` },
-        { property: 'og:description', content: description },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'JSreact' },
-        { property: 'og:image', content: './images/og-image.png' },
-        // Twitter Card tags
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: `${title} | JSreact` },
-        { name: 'twitter:description', content: description },
-        { name: 'twitter:image', content: './images/og-image.png' },
         // Enhanced Meta Tags for SEO
         { name: 'revisit-after', content: '7 days' },
         { name: 'googlebot', content: 'index, follow, max-snippet:-1, max-image-preview:large' },
@@ -135,7 +124,6 @@ function createHead(title, description) {
         { name: 'language', content: 'English' },
         { property: 'og:locale', content: 'en_US' },
         { property: 'og:updated_time', content: new Date().toISOString() },
-        { name: 'twitter:creator', content: '@JSreact' },
         { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'application-name', content: 'JSreact' },
@@ -158,10 +146,11 @@ function createHead(title, description) {
 
     // Favicons
     const favicons = [
-        { rel: 'icon', type: 'image/png', href: './images/favicon.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: './images/apple-touch-icon.png' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: './images/favicon-32x32.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: './images/favicon-16x16.png' },
-        { rel: 'shortcut icon', href: './images/favicon.ico' }
+        { rel: 'shortcut icon', href: './images/favicon.ico' },
+        { rel: 'manifest', href: './site.webmanifest' }
     ];
 
     favicons.forEach(favicon => {

@@ -9,6 +9,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearButton = document.getElementById('clear-button');
     const toast = document.getElementById('toast');
 
+    // Find & Replace elements
+    const findText = document.getElementById('find-text');
+    const replaceText = document.getElementById('replace-text');
+    const useRegex = document.getElementById('use-regex');
+    const findNextBtn = document.getElementById('find-next');
+    const replaceNextBtn = document.getElementById('replace-next');
+    const replaceAllBtn = document.getElementById('replace-all');
+    const matchCount = document.getElementById('match-count');
+
+    // Search state
+    let currentMatchIndex = -1;
+    let matches = [];
+    let lastSearchTerm = '';
+    let searchArea = null;
+
     // Get option checkboxes
     const removeExtraSpaces = document.getElementById('remove-extra-spaces');
     const removeEmptyLines = document.getElementById('remove-empty-lines');
@@ -29,6 +44,126 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             toast.classList.add('translate-y-full', 'opacity-0');
         }, 3000);
+    }
+
+    // Find and Replace Functions
+    function updateMatchCount() {
+        matchCount.textContent = matches.length ? `${currentMatchIndex + 1}/${matches.length}` : '0/0';
+    }
+
+    function getSearchArea() {
+        // Search in output if it has content, otherwise search in input
+        return outputText.value ? outputText : inputText;
+    }
+
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function findMatches(searchTerm) {
+        if (!searchTerm) {
+            matches = [];
+            currentMatchIndex = -1;
+            updateMatchCount();
+            return;
+        }
+
+        searchArea = getSearchArea();
+        const text = searchArea.value;
+        matches = [];
+        
+        try {
+            const pattern = useRegex.checked ? new RegExp(searchTerm, 'g') : new RegExp(escapeRegExp(searchTerm), 'g');
+            let match;
+            while ((match = pattern.exec(text)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0]
+                });
+            }
+        } catch (e) {
+            showToast('Invalid regular expression');
+            return;
+        }
+
+        currentMatchIndex = matches.length > 0 ? 0 : -1;
+        updateMatchCount();
+        if (matches.length > 0) {
+            highlightMatch();
+        }
+    }
+
+    function highlightMatch() {
+        if (currentMatchIndex === -1 || !matches.length) return;
+        
+        const match = matches[currentMatchIndex];
+        searchArea.focus();
+        searchArea.setSelectionRange(match.start, match.end);
+    }
+
+    function findNext() {
+        const searchTerm = findText.value;
+        if (!searchTerm) {
+            showToast('Please enter text to find');
+            return;
+        }
+
+        if (searchTerm !== lastSearchTerm || getSearchArea() !== searchArea) {
+            findMatches(searchTerm);
+            lastSearchTerm = searchTerm;
+        } else if (matches.length > 0) {
+            currentMatchIndex = (currentMatchIndex + 1) % matches.length;
+            highlightMatch();
+            updateMatchCount();
+        }
+    }
+
+    function replaceNext() {
+        if (currentMatchIndex === -1 || !matches.length) {
+            showToast('No match selected');
+            return;
+        }
+
+        const match = matches[currentMatchIndex];
+        const replacement = replaceText.value;
+        const text = searchArea.value;
+        
+        searchArea.value = text.substring(0, match.start) + replacement + text.substring(match.end);
+        
+        // Update matches after replacement
+        findMatches(findText.value);
+    }
+
+    function replaceAll() {
+        const searchTerm = findText.value;
+        if (!searchTerm) {
+            showToast('Please enter text to find');
+            return;
+        }
+
+        searchArea = getSearchArea();
+        try {
+            const pattern = useRegex.checked ? new RegExp(searchTerm, 'g') : new RegExp(escapeRegExp(searchTerm), 'g');
+            const replacement = replaceText.value;
+            const originalText = searchArea.value;
+            const newText = originalText.replace(pattern, replacement);
+            
+            if (originalText === newText) {
+                showToast('No matches found');
+                return;
+            }
+            
+            searchArea.value = newText;
+            showToast('All matches replaced');
+            
+            // Reset search state
+            matches = [];
+            currentMatchIndex = -1;
+            updateMatchCount();
+        } catch (e) {
+            showToast('Invalid regular expression');
+        }
     }
 
     // Function to clean text based on selected options
@@ -159,5 +294,35 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             copyOutput();
         }
+        // New shortcuts
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            findText.focus();
+        }
+        if (e.key === 'F3' || (e.ctrlKey && e.key === 'g')) {
+            e.preventDefault();
+            findNext();
+        }
+        if (e.shiftKey && e.key === 'Enter' && document.activeElement === findText) {
+            e.preventDefault();
+            findNext();
+        }
+        if (e.key === 'Enter' && document.activeElement === replaceText) {
+            e.preventDefault();
+            replaceNext();
+        }
     });
+
+    // Find & Replace Event Listeners
+    findText.addEventListener('input', () => {
+        findMatches(findText.value);
+    });
+
+    useRegex.addEventListener('change', () => {
+        findMatches(findText.value);
+    });
+
+    findNextBtn.addEventListener('click', findNext);
+    replaceNextBtn.addEventListener('click', replaceNext);
+    replaceAllBtn.addEventListener('click', replaceAll);
 });

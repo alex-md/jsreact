@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
     <head>
         <script src="./components/head.js"></script>
         <script>
@@ -13,20 +14,25 @@
                 background: linear-gradient(to right, #f8fafc, #ffffff);
                 border-left: 4px solid #0ea5e9;
             }
+
             .checkbox-wrapper {
                 transition: all 0.2s ease;
             }
+
             .checkbox-wrapper:hover {
                 transform: translateX(4px);
             }
+
             .tooltip {
                 position: relative;
             }
+
             .tooltip:hover .tooltip-text {
                 opacity: 1;
                 visibility: visible;
                 transform: translate(-50%, -0.25rem);
             }
+
             .tooltip-text {
                 position: absolute;
                 left: 50%;
@@ -45,6 +51,7 @@
                 pointer-events: none;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
+
             .tooltip-text::after {
                 content: '';
                 position: absolute;
@@ -73,7 +80,8 @@
         <main class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="max-w-5xl mx-auto space-y-6">
                 <!-- Text Input/Output Section -->
-                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                <div
+                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <!-- Input Section -->
@@ -119,8 +127,82 @@
                     </div>
                 </div>
 
+                <!-- Find and Replace Section -->
+                <div
+                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                    <div class="border-b border-gray-200 px-6 py-4">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-search-replace text-primary"></i>
+                            Find and Replace
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Find Input -->
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label for="find-text" class="block text-sm font-medium text-gray-700">
+                                        Find
+                                    </label>
+                                    <div class="tooltip">
+                                        <label class="flex items-center space-x-2 text-sm text-gray-600">
+                                            <input type="checkbox" id="use-regex"
+                                                class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <span>Use Regex</span>
+                                        </label>
+                                        <span class="tooltip-text">Enable regular expressions for advanced pattern
+                                            matching</span>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <input type="text" id="find-text"
+                                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                                        placeholder="Text to find...">
+                                    <span id="match-count"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500"></span>
+                                </div>
+                            </div>
+
+                            <!-- Replace Input -->
+                            <div class="space-y-2">
+                                <label for="replace-text" class="block text-sm font-medium text-gray-700">
+                                    Replace With
+                                </label>
+                                <div class="relative">
+                                    <input type="text" id="replace-text"
+                                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                                        placeholder="Replacement text...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-4 mt-6">
+                            <button id="find-next"
+                                class="tooltip px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                <i class="fas fa-search"></i>
+                                Find Next
+                                <span class="tooltip-text">Find the next match (Ctrl+F)</span>
+                            </button>
+                            <button id="replace-next"
+                                class="tooltip px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                <i class="fas fa-exchange-alt"></i>
+                                Replace
+                                <span class="tooltip-text">Replace the current match</span>
+                            </button>
+                            <button id="replace-all"
+                                class="tooltip px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2">
+                                <i class="fas fa-sync"></i>
+                                Replace All
+                                <span class="tooltip-text">Replace all matches</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Options Section -->
-                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                <div
+                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                     <div class="border-b border-gray-200 px-6 py-4">
                         <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
                             <i class="fas fa-sliders-h text-primary"></i>
@@ -139,7 +221,8 @@
                                         <label for="remove-extra-spaces" class="ml-2 text-sm text-gray-700">
                                             Remove Extra Spaces
                                         </label>
-                                        <span class="tooltip-text">Removes multiple consecutive spaces, keeping only one space between words</span>
+                                        <span class="tooltip-text">Removes multiple consecutive spaces, keeping only one
+                                            space between words</span>
                                     </div>
                                     <div class="checkbox-wrapper tooltip flex items-center">
                                         <input type="checkbox" id="remove-empty-lines" checked
@@ -147,7 +230,8 @@
                                         <label for="remove-empty-lines" class="ml-2 text-sm text-gray-700">
                                             Remove Empty Lines
                                         </label>
-                                        <span class="tooltip-text">Removes blank lines and lines containing only whitespace</span>
+                                        <span class="tooltip-text">Removes blank lines and lines containing only
+                                            whitespace</span>
                                     </div>
                                     <div class="checkbox-wrapper tooltip flex items-center">
                                         <input type="checkbox" id="trim-lines" checked
@@ -155,7 +239,8 @@
                                         <label for="trim-lines" class="ml-2 text-sm text-gray-700">
                                             Trim Line Spaces
                                         </label>
-                                        <span class="tooltip-text">Removes leading and trailing spaces from each line</span>
+                                        <span class="tooltip-text">Removes leading and trailing spaces from each
+                                            line</span>
                                     </div>
                                 </div>
                             </div>
@@ -170,7 +255,8 @@
                                         <label for="normalize-quotes" class="ml-2 text-sm text-gray-700">
                                             Convert Smart Quotes
                                         </label>
-                                        <span class="tooltip-text">Converts curly quotes (""'') to straight quotes ("")</span>
+                                        <span class="tooltip-text">Converts curly quotes (""'') to straight quotes
+                                            ("")</span>
                                     </div>
                                     <div class="checkbox-wrapper tooltip flex items-center">
                                         <input type="checkbox" id="normalize-whitespace" checked
@@ -178,7 +264,8 @@
                                         <label for="normalize-whitespace" class="ml-2 text-sm text-gray-700">
                                             Normalize Whitespace
                                         </label>
-                                        <span class="tooltip-text">Standardizes line endings and converts tabs to spaces</span>
+                                        <span class="tooltip-text">Standardizes line endings and converts tabs to
+                                            spaces</span>
                                     </div>
                                     <div class="checkbox-wrapper tooltip flex items-center">
                                         <input type="checkbox" id="normalize-dashes" checked
@@ -186,7 +273,8 @@
                                         <label for="normalize-dashes" class="ml-2 text-sm text-gray-700">
                                             Convert Em/En Dashes
                                         </label>
-                                        <span class="tooltip-text">Converts em dashes (—) and en dashes (–) to regular hyphens (-)</span>
+                                        <span class="tooltip-text">Converts em dashes (—) and en dashes (–) to regular
+                                            hyphens (-)</span>
                                     </div>
                                 </div>
                             </div>
@@ -222,4 +310,5 @@
         <script src="./components/footer.js"></script>
         <script src="./scripts/clean.js"></script>
     </body>
+
 </html>

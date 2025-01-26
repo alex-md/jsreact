@@ -56,7 +56,7 @@ const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize }) => {
                         h('div', { className: 'font-semibold text-lg text-gray-900 mb-2' }, keyword),
                         h('div', { className: 'space-y-1' },
                             h('div', { className: 'flex items-center justify-between' },
-                                h('span', { className: 'text-sm text-gray-500' }, 'Occurrences'),
+                                h('span', { className: 'text-sm text-gray-500' }, 'Total occurrences'),
                                 h('span', { className: 'text-lg font-bold text-primary-600' }, count)
                             ),
                             h('div', { className: 'flex items-center justify-between' },
@@ -81,7 +81,7 @@ const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize }) => {
 
         // Individual Keyword Highest Density Clusters
         h('div', {
-            className: 'grid grid-cols-1 lg:grid-cols-2 gap-6'
+            className: 'grid grid-cols-1 lg:grid-cols-1 gap-6'
         },
             individualClusters.map(({ keyword, clusters }, index) => {
                 console.log('Processing cluster:', { keyword, matchingStrategy });
@@ -131,21 +131,21 @@ const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize }) => {
 
         // Full Text Analysis
         h('div', {
-            className: 'bg-white rounded-xl shadow-lg border border-gray-100 p-6 transform transition-all hover:shadow-xl',
+            className: 'bg-white rounded-xl shadow-lg card p-6 transform transition-all hover:shadow-xl',
             style: {
                 animation: 'slideIn 0.5s ease-out 0.8s both'
             }
         },
             h('h3', {
-                className: 'text-xl font-bold text-gray-900 mb-4'
+                className: 'text-md font-bold text-gray-900 mb-4'
             },
                 'Full Text Analysis'
             ),
             h('div', {
                 className: 'prose prose-lg max-w-none prose-primary',
                 dangerouslySetInnerHTML: {
-                    __html: highlightedFullText.split('\n').map(line =>
-                        `<p class="mb-3 leading-relaxed">${line || '&nbsp;'}</p>`
+                    __html: (highlightedFullText || '').split('\n').map(line =>
+                        `<p class="mb-3 text-gray-900 text-sm">${line || '&nbsp;'}</p>`
                     ).join('')
                 }
             })

@@ -6,7 +6,7 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
 
         // Find intersection clusters first
         const intersectionClusters = utils.findIntersectionClusters(text, keywords, windowSize, matchingStrategy);
-        
+
         // Then find individual clusters for each keyword
         const individualClusters = keywords.map(keyword => ({
             keyword,
@@ -25,7 +25,7 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
 
     const { intersectionClusters, individualClusters } = clusters;
 
-    return h('div', { 
+    return h('div', {
         className: 'space-y-8 animate-fade-in',
         style: { animation: 'fadeIn 0.5s ease-out' }
     },
@@ -33,12 +33,12 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
         intersectionClusters.length > 0 && h('div', {
             className: 'bg-white rounded-xl shadow-lg border border-gray-100 p-6'
         },
-            h('h3', { 
+            h('h3', {
                 className: 'text-xl font-bold text-gray-900 mb-4'
-            }, 
+            },
                 'Keyword Intersection Clusters'
             ),
-            h('div', { 
+            h('div', {
                 className: 'space-y-4'
             },
                 intersectionClusters.slice(0, 3).map((cluster, index) =>
@@ -49,7 +49,7 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
                             animation: `slideIn 0.5s ease-out ${index * 0.1}s both`
                         }
                     },
-                        h('div', { 
+                        h('div', {
                             className: 'flex flex-wrap gap-2 mb-3'
                         },
                             cluster.keywords.map(keyword =>
@@ -59,9 +59,9 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
                                 }, keyword)
                             )
                         ),
-                        h('div', { 
+                        h('div', {
                             className: 'text-sm text-gray-600 mb-2'
-                        }, 
+                        },
                             `Words ${cluster.start + 1}-${cluster.end + 1}`
                         ),
                         h('div', {
@@ -76,7 +76,7 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
         ),
 
         // Individual Keyword Clusters Section
-        h('div', { 
+        h('div', {
             className: 'grid grid-cols-1 lg:grid-cols-2 gap-6'
         },
             individualClusters.map(({ keyword, clusters }, index) =>
@@ -87,12 +87,12 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
                         animation: `slideIn 0.5s ease-out ${index * 0.1}s both`
                     }
                 },
-                    h('h3', { 
+                    h('h3', {
                         className: 'text-xl font-bold text-gray-900 mb-4'
                     },
                         `Highest Density: "${keyword}"`
                     ),
-                    h('div', { 
+                    h('div', {
                         className: 'space-y-4'
                     },
                         clusters.slice(0, 2).map((cluster, clusterIndex) =>
@@ -100,19 +100,19 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
                                 key: clusterIndex,
                                 className: 'bg-gray-50 rounded-lg p-4 border border-gray-100'
                             },
-                                h('div', { 
+                                h('div', {
                                     className: 'flex flex-wrap gap-3 mb-3'
                                 },
-                                    h('div', { 
+                                    h('div', {
                                         className: 'px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-sm font-medium'
                                     }, `${cluster.count} occurrences`),
-                                    h('div', { 
+                                    h('div', {
                                         className: 'px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-sm font-medium'
                                     }, `${cluster.density.toFixed(2)}% density`)
                                 ),
-                                h('div', { 
+                                h('div', {
                                     className: 'text-sm text-gray-600 mb-2'
-                                }, 
+                                },
                                     `Words ${cluster.start + 1}-${cluster.end + 1}`
                                 ),
                                 h('div', {
