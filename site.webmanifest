@@ -2,7 +2,7 @@
     "name": "JSreact Tools",
     "short_name": "JSreact",
     "description": "Collection of web developer tools including keyword density analyzer",
-    "start_url": "./",
+    "start_url": "./src/index.html",
     "display": "standalone",
     "background_color": "#f8fafc",
     "theme_color": "#0ea5e9",

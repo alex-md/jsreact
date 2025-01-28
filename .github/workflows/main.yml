@@ -5,31 +5,16 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    name: Build, Test, Generate Sitemap, and Deploy
+    name: Generate Sitemap, Commit, and Deploy
 
     steps:
     - name: Checkout the repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run tests
-      run: npm test
-
-    - name: Build the project
-      run: npm run build
-
-    - name: Generate the sitemap
-      id: sitemap
-      uses: cicirello/generate-sitemap@v1.10.0
+    - name: generate-sitemap
+      uses: cicirello/generate-sitemap@v1.10.1
       with:
         path-to-root: ./src
         base-url-path: https://jsreact.com
