@@ -41,6 +41,7 @@ jobs:
         if [[ $(git diff --stat --staged) != '' ]]; then
           git commit -m "Add generated sitemap"
           git push
+        fi
 
     - name: Deploy
       if: success()
