@@ -1,0 +1,19 @@
+{
+    "name": "jsreact",
+    "version": "1.0.0",
+    "description": "Developer utilities and tools",
+    "main": "index.html",
+    "scripts": {
+        "deploy": "gh-pages -d src"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/alex-md/jsreact.git"
+    },
+    "keywords": [],
+    "license": "MIT",
+    "dependencies": {
+        "gh-pages": "^5.0.0"
+    },
+    "devDependencies": {}
+}
