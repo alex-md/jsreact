@@ -6,12 +6,15 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     name: Generate Sitemap, Commit, and Deploy
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout the repo
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -44,8 +47,8 @@ jobs:
 
     - name: Commit and push if changes
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         git add -A
         if [[ $(git diff --stat --staged) != '' ]]; then
           git commit -m "Add generated sitemap"
@@ -54,4 +57,8 @@ jobs:
 
     - name: Deploy
       if: success()
-      run: npm run deploy
+      run: |
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+        npm run deploy -- -u "github-actions-bot <support+actions@github.com>"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
