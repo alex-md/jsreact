@@ -107,28 +107,26 @@ function createHead(title, description) {
     commonScript.src = './scripts/common.js';
     head.appendChild(commonScript);
 
-    // Meta tags
+    // Meta tags - Updated for better SEO handling
     document.title = `${title} | JSreact`;
     const metaTags = [
         { charset: 'UTF-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         { name: 'description', content: description },
         { name: 'theme-color', content: '#09090b' },
-        { name: 'robots', content: 'index, follow' },
+        { name: 'robots', content: 'index, follow' }, // Ensure pages are indexable
         { name: 'author', content: 'JSreact' },
-        { name: 'keywords', content: 'web developer tools, code minifier, text cleaner, diff checker, expression finder, keyword analyzer, javascript tools' },
-        // Enhanced Meta Tags for SEO
-        { name: 'revisit-after', content: '7 days' },
-        { name: 'googlebot', content: 'index, follow, max-snippet:-1, max-image-preview:large' },
-        { name: 'bingbot', content: 'index, follow, max-snippet:-1, max-image-preview:large' },
-        { name: 'language', content: 'English' },
-        { property: 'og:locale', content: 'en_US' },
-        { property: 'og:updated_time', content: new Date().toISOString() },
-        { name: 'mobile-web-app-capable', content: 'yes' },
-        { name: 'apple-mobile-web-app-capable', content: 'yes' },
-        { name: 'application-name', content: 'JSreact' },
-        { name: 'apple-mobile-web-app-title', content: 'JSreact' }
+        { property: 'og:type', content: 'website' },
+        { property: 'og:title', content: `${title} | JSreact` },
+        { property: 'og:description', content: description },
+        { property: 'og:url', content: window.location.href.split('?')[0] }, // Consistent URL without parameters
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: `${title} | JSreact` },
+        { name: 'twitter:description', content: description }
     ];
+
+    // Remove any existing meta tags first
+    document.querySelectorAll('meta').forEach(meta => meta.remove());
 
     metaTags.forEach(meta => {
         const metaElement = document.createElement('meta');
@@ -138,10 +136,14 @@ function createHead(title, description) {
         head.appendChild(metaElement);
     });
 
-    // Canonical URL
+    // Remove any existing canonical tags first
+    document.querySelectorAll('link[rel="canonical"]').forEach(link => link.remove());
+
+    // Add canonical URL - Important for fixing duplicate content issues
     const canonical = document.createElement('link');
     canonical.rel = 'canonical';
-    canonical.href = window.location.href.split('?')[0];
+    // Ensure consistent URL format without parameters or trailing slashes
+    canonical.href = window.location.origin + window.location.pathname.replace(/\/$/, '');
     head.appendChild(canonical);
 
     // Favicons

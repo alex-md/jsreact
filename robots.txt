@@ -1,27 +1,7 @@
 User-agent: *
 Allow: /
-Disallow: /cgi-bin/
-Disallow: /tmp/
-Disallow: /private/
+Disallow: /api/
+Disallow: /admin/
 
-# Allow crawling of JavaScript and CSS
-Allow: /*.js$
-Allow: /*.css$
-Allow: /*.jpg$
-Allow: /*.jpeg$
-Allow: /*.png$
-Allow: /*.gif$
-Allow: /*.svg$
-
-# Block common spam bots
-User-agent: Baiduspider
-Disallow: /
-
-User-agent: PetalBot
-Disallow: /
-
-# Crawl-delay
-Crawl-delay: 10
-
-# Sitemap location
+# Sitemaps
 Sitemap: https://jsreact.com/sitemap.xml
