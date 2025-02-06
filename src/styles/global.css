@@ -9,7 +9,7 @@
     --card-foreground: #1d1d1f;
     --popover: rgba(255, 255, 255, 0.98);
     --popover-foreground: #1d1d1f;
-    --primary: #0071e3;
+    --primary: #005cb8;
     --primary-foreground: #ffffff;
     --secondary: #86b6ff;
     --secondary-foreground: #1d1d1f;
@@ -218,7 +218,7 @@ pre {
 }
 
 .btn-primary {
-    background: #0071e3;
+    background: #005194;
     color: #ffffff;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
@@ -402,7 +402,7 @@ pre {
     font-weight: 500;
     border-radius: 12px;
     transition: all 0.3s ease;
-    background: var(--primary);
+    background: var(--secondary);
     color: var(--primary-foreground);
     font-size: 0.9375rem;
     letter-spacing: -0.01em;

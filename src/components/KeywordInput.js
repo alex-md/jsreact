@@ -33,7 +33,7 @@ const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatching
                     onChange: (e) => setNewKeyword(e.target.value),
                     onKeyPress: handleKeyPress,
                     placeholder: 'Add a keyword...',
-                    className: 'w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg ' +
+                    className: 'w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg ' +
                         'focus:border-primary-500 focus:bg-white transition-all duration-200 ' +
                         'placeholder-gray-400 text-gray-700 text-base shadow-sm'
                 }),

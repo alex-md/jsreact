@@ -82,16 +82,24 @@
                                 500: '#0ea5e9',
                                 600: '#0284c7',
                                 700: '#0369a1',
-                            }
+                                800: '#075985',
+                                900: '#0c4a6e',
+                            },
+                            neutral: {
+                                850: '#1f2937',
+                            },
                         },
                         fontFamily: {
-                            sans: ['Inter', 'sans-serif'],
+                            sans: ['Inter var', 'Inter', 'system-ui', 'sans-serif'],
+                            mono: ['JetBrains Mono', 'monospace'],
                         },
                         animation: {
-                            'fade-in': 'fadeIn 0.5s ease-out',
-                            'slide-up': 'slideUp 0.5s ease-out',
-                            'slide-in': 'slideIn 0.5s ease-out',
+                            'fade-in': 'fadeIn 0.5s ease-out forwards',
+                            'slide-up': 'slideUp 0.6s ease-out forwards',
+                            'slide-in': 'slideIn 0.5s ease-out forwards',
                             'float': 'float 3s ease-in-out infinite',
+                            'shimmer': 'shimmer 2s linear infinite',
+                            'spin-slow': 'spin 3s linear infinite',
                         },
                         keyframes: {
                             fadeIn: {
@@ -110,23 +118,31 @@
                                 '0%, 100%': { transform: 'translateY(0)' },
                                 '50%': { transform: 'translateY(-10px)' },
                             },
+                            shimmer: {
+                                '100%': { transform: 'translateX(100%)' },
+                            },
                         },
-                        typography: {
+                        typography: theme => ({
                             DEFAULT: {
                                 css: {
                                     maxWidth: 'none',
-                                    color: '#334155',
+                                    color: theme('colors.gray.700'),
                                     p: {
-                                        marginBottom: '1.5rem',
-                                        lineHeight: '1.75',
+                                        marginBottom: theme('spacing.6'),
+                                        lineHeight: theme('lineHeight.relaxed'),
+                                    },
+                                    'h1, h2, h3, h4': {
+                                        color: theme('colors.gray.900'),
+                                        fontWeight: theme('fontWeight.semibold'),
                                     },
                                     mark: {
+                                        backgroundColor: theme('colors.yellow.100'),
                                         padding: '0.2em 0.4em',
-                                        borderRadius: '0.25rem',
+                                        borderRadius: theme('borderRadius.md'),
                                     },
                                 },
                             },
-                        },
+                        }),
                     },
                 },
             }
@@ -232,6 +248,104 @@
                 padding: 0.75rem;
                 border-radius: 0.375rem;
                 margin: 1rem 0;
+            }
+
+            /* Modern animations with reduced motion support */
+            @media (prefers-reduced-motion: no-preference) {
+                .animate-fade-in {
+                    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                }
+
+                .animate-slide-in {
+                    animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                }
+            }
+
+            /* Enhanced hover effects */
+            .hover-lift {
+                transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform, box-shadow;
+            }
+
+            .hover-lift:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1),
+                    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+
+            /* Modern scrollbar styling */
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f8fafc;
+                border-radius: 8px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 8px;
+                transition: background 0.2s ease;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+
+            /* Enhanced form elements */
+            input,
+            select,
+            textarea {
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid #e2e8f0;
+                border-radius: 0.375rem;
+            }
+
+            input:focus,
+            select:focus,
+            textarea:focus {
+                outline: none;
+                border-color: #0ea5e9;
+                box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+            }
+
+            /* Shimmer effect for loading states */
+            .shimmer {
+                background: linear-gradient(90deg,
+                        rgba(255, 255, 255, 0) 0%,
+                        rgba(255, 255, 255, 0.8) 50%,
+                        rgba(255, 255, 255, 0) 100%);
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+            }
+
+            /* Enhanced error states */
+            .error-message {
+                background-color: #fef2f2;
+                border: 1px solid #fee2e2;
+                color: #991b1b;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin: 1rem 0;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .error-message::before {
+                content: '⚠️';
+                font-size: 1.25rem;
+            }
+
+            /* Glass morphism effect */
+            .glass {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
         </style>
     </head>

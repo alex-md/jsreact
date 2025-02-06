@@ -11,16 +11,26 @@
         </script>
         <style>
             .option-group {
-                background: linear-gradient(to right, #f8fafc, #ffffff);
-                border-left: 4px solid #0ea5e9;
+                background: linear-gradient(135deg, #ffffff, #f8fafc);
+                border: 1px solid rgba(59, 148, 184, 0.1);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+
+            .option-group:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.1);
+                border-color: rgba(59, 148, 184, 0.2);
             }
 
             .checkbox-wrapper {
                 transition: all 0.2s ease;
+                padding: 0.5rem;
+                border-radius: 0.5rem;
             }
 
             .checkbox-wrapper:hover {
-                transform: translateX(4px);
+                background: rgba(59, 148, 184, 0.05);
             }
 
             .tooltip {
@@ -61,6 +71,24 @@
                 border-width: 0.25rem;
                 border-style: solid;
                 border-color: #1f2937 transparent transparent transparent;
+            }
+
+            .option-group h3 {
+                position: relative;
+                padding-left: 1.5rem;
+            }
+
+            .option-group h3::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 0.75rem;
+                height: 0.75rem;
+                background: #3b94b8;
+                border-radius: 50%;
+                opacity: 0.6;
             }
         </style>
     </head>
@@ -203,101 +231,130 @@
                 <!-- Options Section -->
                 <div
                     class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                    <div class="border-b border-gray-200 px-6 py-4">
-                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <div class="border-b border-gray-200 px-6 py-4 bg-gradient-to-r from-primary/5 to-transparent">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-3">
                             <i class="fas fa-sliders-h text-primary"></i>
                             Cleaning Options
+                            <span class="text-sm font-normal text-gray-500">(Hover for details)</span>
                         </h2>
                     </div>
                     <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <!-- Basic Cleaning -->
-                            <div class="option-group p-4 rounded-lg space-y-4">
-                                <h3 class="font-medium text-gray-900 mb-3">Basic Cleaning</h3>
-                                <div class="space-y-3">
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="remove-extra-spaces" checked
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="remove-extra-spaces" class="ml-2 text-sm text-gray-700">
-                                            Remove Extra Spaces
+                            <div class="option-group p-5 rounded-xl">
+                                <h3 class="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                    Basic Cleaning
+                                    <span class="text-xs text-primary/60">(Recommended)</span>
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="remove-extra-spaces" checked
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Remove Extra
+                                                    Spaces</span>
+                                                <span class="text-xs text-gray-500">Consolidates multiple spaces into
+                                                    one</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Removes multiple consecutive spaces, keeping only one
-                                            space between words</span>
                                     </div>
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="remove-empty-lines" checked
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="remove-empty-lines" class="ml-2 text-sm text-gray-700">
-                                            Remove Empty Lines
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="remove-empty-lines" checked
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Remove Empty
+                                                    Lines</span>
+                                                <span class="text-xs text-gray-500">Removes blank lines and
+                                                    whitespace</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Removes blank lines and lines containing only
-                                            whitespace</span>
                                     </div>
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="trim-lines" checked
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="trim-lines" class="ml-2 text-sm text-gray-700">
-                                            Trim Line Spaces
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="trim-lines" checked
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Trim Line
+                                                    Spaces</span>
+                                                <span class="text-xs text-gray-500">Removes leading/trailing
+                                                    spaces</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Removes leading and trailing spaces from each
-                                            line</span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Text Formatting -->
-                            <div class="option-group p-4 rounded-lg space-y-4">
-                                <h3 class="font-medium text-gray-900 mb-3">Text Formatting</h3>
-                                <div class="space-y-3">
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="normalize-quotes" checked
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="normalize-quotes" class="ml-2 text-sm text-gray-700">
-                                            Convert Smart Quotes
+                            <div class="option-group p-5 rounded-xl">
+                                <h3 class="font-medium text-gray-900 mb-4">Text Formatting</h3>
+                                <div class="space-y-4">
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="normalize-quotes" checked
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Convert Smart
+                                                    Quotes</span>
+                                                <span class="text-xs text-gray-500">Standardizes quote marks</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Converts curly quotes (""'') to straight quotes
-                                            ("")</span>
                                     </div>
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="normalize-whitespace" checked
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="normalize-whitespace" class="ml-2 text-sm text-gray-700">
-                                            Normalize Whitespace
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="normalize-whitespace" checked
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Normalize
+                                                    Whitespace</span>
+                                                <span class="text-xs text-gray-500">Standardizes spaces and line
+                                                    endings</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Standardizes line endings and converts tabs to
-                                            spaces</span>
                                     </div>
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="normalize-dashes" checked
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="normalize-dashes" class="ml-2 text-sm text-gray-700">
-                                            Convert Em/En Dashes
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="normalize-dashes" checked
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Convert Em/En
+                                                    Dashes</span>
+                                                <span class="text-xs text-gray-500">Standardizes dash types</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Converts em dashes (—) and en dashes (–) to regular
-                                            hyphens (-)</span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Advanced Options -->
-                            <div class="option-group p-4 rounded-lg space-y-4">
-                                <h3 class="font-medium text-gray-900 mb-3">Advanced Options</h3>
-                                <div class="space-y-3">
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="remove-punctuation"
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="remove-punctuation" class="ml-2 text-sm text-gray-700">
-                                            Remove Punctuation
+                            <div class="option-group p-5 rounded-xl">
+                                <h3 class="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                    Advanced Options
+                                    <span class="text-xs text-amber-600">(Use with care)</span>
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="remove-punctuation"
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Remove
+                                                    Punctuation</span>
+                                                <span class="text-xs text-gray-500">Strips all punctuation marks</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Removes all punctuation marks from the text</span>
                                     </div>
-                                    <div class="checkbox-wrapper tooltip flex items-center">
-                                        <input type="checkbox" id="convert-newlines"
-                                            class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                        <label for="convert-newlines" class="ml-2 text-sm text-gray-700">
-                                            Convert Newlines
+                                    <div class="checkbox-wrapper tooltip">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" id="convert-newlines"
+                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-700 block">Convert
+                                                    Newlines</span>
+                                                <span class="text-xs text-gray-500">Changes line breaks to spaces</span>
+                                            </div>
                                         </label>
-                                        <span class="tooltip-text">Converts newlines to spaces</span>
                                     </div>
                                 </div>
                             </div>
