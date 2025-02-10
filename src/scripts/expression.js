@@ -20,147 +20,72 @@ document.addEventListener("DOMContentLoaded", function () {
     const calculatorDescription = document.getElementById("calculator-description");
     let descriptionTimeout;
 
-    infoButton.addEventListener("click", function() {
+    infoButton.addEventListener("click", function () {
         calculatorDescription.classList.remove("hidden");
-        // Use setTimeout to ensure the transition works
         setTimeout(() => {
             calculatorDescription.classList.remove("translate-y-full", "opacity-0");
         }, 10);
 
-        // Auto-hide after 5 seconds
         clearTimeout(descriptionTimeout);
         descriptionTimeout = setTimeout(() => {
             calculatorDescription.classList.add("translate-y-full", "opacity-0");
             setTimeout(() => {
                 calculatorDescription.classList.add("hidden");
-            }, 300); // Match the transition duration
+            }, 300);
         }, 5000);
     });
 
     /**
-     * Generates all possible expressions using parentheses and operators
-     * @param {string[]} tokens - Array of numbers and operators
-     * @param {number} start - Start index
-     * @param {number} end - End index
-     * @returns {string[]} Array of possible expressions
-     */
-    function generateExpressions(tokens, start = 0, end = tokens.length) {
-        if (1 === end - start) {
-            return [tokens[start]];
-        }
-        let expressions = [];
-        for (let i = start + 1; i < end; i += 2) {
-            let leftExpressions = generateExpressions(tokens, start, i);
-            let rightExpressions = generateExpressions(tokens, i + 1, end);
-            leftExpressions.forEach(left => {
-                rightExpressions.forEach(right => {
-                    expressions.push(`(${left}${tokens[i]}${right})`);
-                });
-            });
-        }
-        return expressions;
-    }
-
-    /**
-     * Evaluates an expression and checks if it equals the target
-     * @param {string} expression - The arithmetic expression to evaluate
-     * @param {number} target - The target number
-     * @returns {boolean} Whether the expression equals the target
-     */
-    function evaluateExpression(expression, target) {
-        try {
-            return eval(expression) === target;
-        } catch (error) {
-            if (error instanceof SyntaxError || error instanceof ReferenceError || error instanceof EvalError) {
-                return false;
-            }
-            throw error;
-        }
-    }
-
-    /**
-     * Generates all possible expressions using the input numbers and operators
-     * @param {number[]} numbers - Array of input numbers
-     * @param {string[]} operators - Array of operators
-     * @yields {string} A possible expression
-     */
-    function* generateAllExpressions(numbers, operators) {
-        if (1 === numbers.length) {
-            yield numbers[0].toString();
-        } else {
-            for (let numberPermutation of generateNumberPermutations(numbers)) {
-                for (let operatorCombination of generateOperatorCombinations(operators, numbers.length - 1)) {
-                    let tokens = [];
-                    for (let i = 0; i < numberPermutation.length; i++) {
-                        if (i > 0) tokens.push(operatorCombination[i - 1]);
-                        tokens.push(numberPermutation[i].toString());
-                    }
-                    for (let expression of generateExpressions(tokens)) {
-                        yield expression;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Generates all possible permutations of numbers
-     * @param {number[]} numbers - Array of numbers
-     * @yields {number[]} A permutation of numbers
-     */
-    function* generateNumberPermutations(numbers) {
-        if (0 === numbers.length) {
-            yield [];
-        } else {
-            for (let i = 0; i < numbers.length; i++) {
-                for (let permutation of generateNumberPermutations(numbers.slice(0, i).concat(numbers.slice(i + 1)))) {
-                    yield [numbers[i], ...permutation];
-                }
-            }
-        }
-    }
-
-    /**
-     * Generates all possible combinations of operators
-     * @param {string[]} operators - Array of operators
-     * @param {number} count - Number of operators needed
-     * @yields {string[]} A combination of operators
-     */
-    function* generateOperatorCombinations(operators, count) {
-        if (0 === count) {
-            yield [];
-        } else {
-            for (let operator of operators) {
-                for (let combination of generateOperatorCombinations(operators, count - 1)) {
-                    yield [operator, ...combination];
-                }
-            }
-        }
-    }
-
-    /**
-     * Finds an expression that evaluates to the target number
+     * Finds one expression that evaluates to the target efficiently
      * @param {number[]} numbers - Array of input numbers
      * @param {number} target - Target number
-     * @returns {Promise<string>} The found expression or "No solution found"
+     * @returns {string} The found expression or "No solution found"
      */
-    function findExpression(numbers, target) {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                const operators = ["+", "-", "*", "/"];
-                if (document.getElementById("exponents-checkbox").checked) {
-                    operators.push("**");
-                }
-                
-                for (let expression of generateAllExpressions(numbers, operators)) {
-                    if (evaluateExpression(expression, target)) {
-                        resolve(expression);
-                        return;
+    function findExpressionOptimized(numbers, target) {
+        const operators = ["+", "-", "*", "/"];
+        if (document.getElementById("exponents-checkbox").checked) {
+            operators.push("**");
+        }
+
+        const seen = new Set();
+
+        function evaluateExpression(expression) {
+            try {
+                return eval(expression);
+            } catch {
+                return null;
+            }
+        }
+
+        function generateExpressions(nums) {
+            if (nums.length === 1) {
+                return nums[0].toString();
+            }
+
+            for (let i = 1; i < nums.length; i++) {
+                const left = nums.slice(0, i);
+                const right = nums.slice(i);
+
+                const leftExpr = generateExpressions(left);
+                const rightExpr = generateExpressions(right);
+
+                for (let le of [leftExpr]) {
+                    for (let re of [rightExpr]) {
+                        for (let op of operators) {
+                            let expr = `(${le}${op}${re})`;
+
+                            if (!seen.has(expr)) {
+                                seen.add(expr);
+                                if (evaluateExpression(expr) === target) return expr;
+                            }
+                        }
                     }
                 }
-                resolve("No solution found");
-            }, 800);
-        });
+            }
+            return null;
+        }
+
+        return generateExpressions(numbers) || "No solution found";
     }
 
     // Event handler for random numbers generation
@@ -178,26 +103,24 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             const submitButton = document.getElementById("submit-button");
             const solutionOutput = document.getElementById("solution-output");
-            
+
             submitButton.innerHTML = "Calculating...";
-            solutionOutput.classList.remove("hidden"); // Show the solution element
-            
+            solutionOutput.classList.remove("hidden");
+
             const numbers = document.getElementById("numbers-input").value.split(",").map(Number);
             const target = Number(document.getElementById("target-input").value);
-            const result = yield findExpression(numbers, target);
-            
+
+            const result = yield new Promise(resolve => setTimeout(() => resolve(findExpressionOptimized(numbers, target)), 10));
+
             solutionOutput.innerHTML = result;
-            solutionOutput.classList.remove("hidden"); // Ensure it's visible
             submitButton.innerHTML = "Find expression";
         }());
     });
-});
 
-// Event handlers for advanced settings
-document.addEventListener("DOMContentLoaded", function () {
+    // Event handlers for advanced settings
     const advancedSettings = document.querySelector("#advanced-settings");
     const advancedSettingsToggle = document.querySelector("#advanced-settings-toggle");
-    
+
     advancedSettingsToggle.addEventListener("click", function () {
         advancedSettings.style.display = advancedSettings.style.display === "none" ? "block" : "none";
     });
