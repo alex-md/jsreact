@@ -97,51 +97,52 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Expression finder logic
-    function findExpressionOptimized(numbers, target) {
-        const operators = ["+", "-", "*", "/"];
-        if (document.getElementById("exponents-checkbox").checked) {
-            operators.push("**");
-        }
-
-        const seen = new Set();
-
-        function generateExpressions(nums) {
-            if (nums.length === 1) {
-                return [nums[0].toString()];
-            }
-
-            let expressions = [];
-            for (let i = 1; i < nums.length; i++) {
-                const left = nums.slice(0, i);
-                const right = nums.slice(i);
-
-                const leftExprs = generateExpressions(left);
-                const rightExprs = generateExpressions(right);
-
-                for (let le of leftExprs) {
-                    for (let re of rightExprs) {
-                        for (let op of operators) {
-                            let expr = `(${le}${op}${re})`;
-
-                            if (!seen.has(expr)) {
-                                seen.add(expr);
-                                expressions.push(expr);
-
-                                const result = evaluate(expr);
-                                if (result === target) {
-                                    return expr; // Return the expression string immediately
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return expressions;
-        }
-
-        const result = generateExpressions(numbers);
-        return result.find(expr => evaluate(expr) === target) || "No solution found";
+   function findExpressionOptimized(numbers, target) {
+    const operators = ["+", "-", "*", "/"];
+    if (document.getElementById("exponents-checkbox").checked) {
+        operators.push("**");
     }
+
+    function backtrack(nums, currentExpr, currentValue) {
+    if (nums.length === 0) {
+        if (Math.abs(currentValue - target) < 1e-6) { // Account for floating-point precision
+            return currentExpr;
+        }
+        return null;
+    }
+
+        for (let i = 0; i < nums.length; i++) {
+            const num = nums[i];
+            const remainingNums = nums.slice(0, i).concat(nums.slice(i + 1));
+
+            for (const op of operators) {
+                if (op === "/" && currentValue === 0) continue; // Avoid division by zero
+                
+                let newValue;
+                try {
+                    newValue = evaluate(`${currentValue}${op}${num}`);
+                } catch (error) {
+                    // If evaluation fails (e.g., division by zero), skip this operation
+                    continue; 
+                }
+                
+                const newExpr = `(${currentExpr}${op}${num})`;
+                const result = backtrack(remainingNums, newExpr, newValue);
+                if (result) return result;
+            }
+        }
+        return null;
+    }
+
+    for (let i = 0; i < numbers.length; i++) {
+        const num = numbers[i];
+        const remainingNums = numbers.slice(0, i).concat(numbers.slice(i + 1));
+        const result = backtrack(remainingNums, num.toString(), num);
+        if (result) return result;
+    }
+
+    return "No solution found";
+}
 
     // Event handler for random numbers generation
     document.getElementById("random-numbers-button").addEventListener("click", function (event) {
