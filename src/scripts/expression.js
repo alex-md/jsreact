@@ -1,164 +1,160 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Info button functionality
     const infoButton = document.getElementById("info-toggle");
     const calculatorDescription = document.getElementById("calculator-description");
-    
-    // Info Button Toggle with CSS Transitions
-    infoButton.addEventListener("click", function () {
-        calculatorDescription.classList.toggle("hidden");
+    let descriptionTimeout;
 
-        if (!calculatorDescription.classList.contains("hidden")) {
-            setTimeout(() => calculatorDescription.classList.add("hidden"), 5000);
-        }
+    infoButton.addEventListener("click", function () {
+        calculatorDescription.classList.remove("hidden");
+        setTimeout(() => {
+            calculatorDescription.classList.remove("translate-y-full", "opacity-0");
+        }, 10);
+
+        clearTimeout(descriptionTimeout);
+        descriptionTimeout = setTimeout(() => {
+            calculatorDescription.classList.add("translate-y-full", "opacity-0");
+            setTimeout(() => {
+                calculatorDescription.classList.add("hidden");
+            }, 300);
+        }, 5000);
     });
 
+    // Custom expression evaluator
     function evaluate(expression) {
-        if (!/^[\d+\-*/() **]+$/.test(expression)) return null; // Prevents invalid characters
+        const tokens = expression.match(/\d+|\+|\-|\*|\/|\*\*|\(|\)/g);
 
-        const tokens = expression.match(/(\d+|\+|\-|\*{1,2}|\/|\(|\))/g);
-        if (!tokens) return null;
+        function applyOperator(operator, a, b) {
+            switch (operator) {
+                case "+": return a + b;
+                case "-": return a - b;
+                case "*": return a * b;
+                case "/": return a / b;
+                case "**": return a ** b;
+                default: throw new Error(`Unknown operator: ${operator}`);
+            }
+        }
 
-        function validateSyntax(tokens) {
-            let openParens = 0, prevToken = null;
+        function precedence(operator) {
+            switch (operator) {
+                case "+":
+                case "-":
+                    return 1;
+                case "*":
+                case "/":
+                    return 2;
+                case "**":
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
 
+        function shuntingYard(tokens) {
+            const output = [];
+            const operators = [];
             for (const token of tokens) {
-                if (token === "(") openParens++;
-                if (token === ")") openParens--;
-                if (openParens < 0) return false; // Mismatched closing parenthesis
-
-                if (prevToken && /[\+\-*/]/.test(prevToken) && /[\+\-*/]/.test(token)) {
-                    return false; // Consecutive operators like "2++3"
-                }
-
-                prevToken = token;
-            }
-            return openParens === 0; // Ensure parentheses are balanced
-        }
-
-        if (!validateSyntax(tokens)) return null; // Reject malformed expressions
-
-        function parseExpression(tokens) {
-            let index = 0;
-
-            function parsePrimary() {
-                if (tokens[index] === "(") {
-                    index++;
-                    let value = parseAdditionSubtraction();
-                    if (tokens[index] !== ")") throw new Error("Mismatched parentheses");
-                    index++;
-                    return value;
-                }
-                return parseFloat(tokens[index++]);
-            }
-
-            function parseExponentiation() {
-                let left = parsePrimary();
-                while (tokens[index] === "**") {
-                    index++;
-                    let right = parsePrimary();
-                    left = Math.pow(left, right);
-                }
-                return left;
-            }
-
-            function parseMultiplicationDivision() {
-                let left = parseExponentiation();
-                while (tokens[index] === "*" || tokens[index] === "/") {
-                    let operator = tokens[index++];
-                    let right = parseExponentiation();
-                    if (operator === "/") {
-                        if (right === 0) return null; // Prevent division by zero
-                        left /= right;
-                    } else {
-                        left *= right;
+                if (!isNaN(token)) {
+                    output.push(Number(token));
+                } else if (token === "(") {
+                    operators.push(token);
+                } else if (token === ")") {
+                    while (operators.length && operators[operators.length - 1] !== "(") {
+                        output.push(operators.pop());
                     }
+                    operators.pop(); 
+                } else {
+                    while (
+                        operators.length &&
+                        precedence(operators[operators.length - 1]) >= precedence(token)
+                    ) {
+                        output.push(operators.pop());
+                    }
+                    operators.push(token);
                 }
-                return left;
             }
-
-            function parseAdditionSubtraction() {
-                let left = parseMultiplicationDivision();
-                while (tokens[index] === "+" || tokens[index] === "-") {
-                    let operator = tokens[index++];
-                    let right = parseMultiplicationDivision();
-                    left = operator === "+" ? left + right : left - right;
-                }
-                return left;
+            while (operators.length) {
+                output.push(operators.pop());
             }
-
-            return parseAdditionSubtraction();
+            return output;
         }
 
-        try {
-            return parseExpression(tokens);
-        } catch {
-            return null;
+        function evaluatePostfix(postfix) {
+            const stack = [];
+            for (const token of postfix) {
+                if (!isNaN(token)) {
+                    stack.push(token);
+                } else {
+                    const b = stack.pop();
+                    const a = stack.pop();
+                    stack.push(applyOperator(token, a, b));
+                }
+            }
+            return stack.pop();
         }
+
+        const postfix = shuntingYard(tokens);
+        return evaluatePostfix(postfix);
     }
 
-    function findExpressionOptimized(numbers, target) {
-        const operators = ["+", "-", "*", "/"];
-        if (document.getElementById("exponents-checkbox").checked) {
-            operators.push("**");
-        }
-
-        const memo = new Map(); // Cache for subexpression results
-        const seen = new Set(); // Prevent duplicate expressions
-
-        function generateExpressions(nums) {
-            const key = nums.join(",");
-            if (memo.has(key)) return memo.get(key);
-
-            if (nums.length === 1) {
-                return [nums[0].toString()];
-            }
-
-            let expressions = [];
-
-            for (let i = 1; i < nums.length; i++) {
-                const leftNums = nums.slice(0, i);
-                const rightNums = nums.slice(i);
-
-                const leftExprs = generateExpressions(leftNums);
-                const rightExprs = generateExpressions(rightNums);
-
-                for (let le of leftExprs) {
-                    for (let re of rightExprs) {
-                        for (let op of operators) {
-                            let expr = `(${le}${op}${re})`;
-
-                            if (!seen.has(expr)) {
-                                seen.add(expr);
-                                expressions.push(expr);
-
-                                const result = evaluate(expr);
-                                if (result === target) {
-                                    memo.set(key, expr);
-                                    return expr; // Return immediately if a valid expression is found
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            memo.set(key, expressions);
-            return expressions;
-        }
-
-        return generateExpressions(numbers) || "No solution found";
+    // Expression finder logic
+   function findExpressionOptimized(numbers, target) {
+    const operators = ["+", "-", "*", "/"];
+    if (document.getElementById("exponents-checkbox").checked) {
+        operators.push("**");
     }
 
-    // Random Number Generation
+    function backtrack(nums, currentExpr, currentValue) {
+    if (nums.length === 0) {
+        if (Math.abs(currentValue - target) < 1e-6) { // Account for floating-point precision
+            return currentExpr;
+        }
+        return null;
+    }
+
+        for (let i = 0; i < nums.length; i++) {
+            const num = nums[i];
+            const remainingNums = nums.slice(0, i).concat(nums.slice(i + 1));
+
+            for (const op of operators) {
+                if (op === "/" && currentValue === 0) continue; // Avoid division by zero
+                
+                let newValue;
+                try {
+                    newValue = evaluate(`${currentValue}${op}${num}`);
+                } catch (error) {
+                    // If evaluation fails (e.g., division by zero), skip this operation
+                    continue; 
+                }
+                
+                const newExpr = `(${currentExpr}${op}${num})`;
+                const result = backtrack(remainingNums, newExpr, newValue);
+                if (result) return result;
+            }
+        }
+        return null;
+    }
+
+    for (let i = 0; i < numbers.length; i++) {
+        const num = numbers[i];
+        const remainingNums = numbers.slice(0, i).concat(numbers.slice(i + 1));
+        const result = backtrack(remainingNums, num.toString(), num);
+        if (result) return result;
+    }
+
+    return "No solution found";
+}
+
+    // Event handler for random numbers generation
     document.getElementById("random-numbers-button").addEventListener("click", function (event) {
         event.preventDefault();
-        const count = Number(document.getElementById("num-integers-input").value) || 6;
-        const maxValue = Number(document.getElementById("max-number-input").value) || 60;
+        const count = document.getElementById("num-integers-input").value || 6;
+        const maxValue = document.getElementById("max-number-input").value || 60;
         const randomNumbers = Array.from({ length: count }, () => Math.floor(Math.random() * maxValue) + 1);
         document.getElementById("numbers-input").value = randomNumbers.join(",");
     });
 
-    // Form Submission Handling
-    document.getElementById("expression-form").addEventListener("submit", async function (event) {
+    // Event handler for form submission
+    document.getElementById("submit-button").addEventListener("click", function (event) {
         event.preventDefault();
         const submitButton = document.getElementById("submit-button");
         const solutionOutput = document.getElementById("solution-output");
@@ -169,15 +165,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const numbers = document.getElementById("numbers-input").value.split(",").map(Number);
         const target = Number(document.getElementById("target-input").value);
 
-        const result = await new Promise(resolve => setTimeout(() => resolve(findExpressionOptimized(numbers, target)), 10));
-
-        solutionOutput.innerHTML = result;
-        submitButton.innerHTML = "Find Expression";
+        setTimeout(() => {
+            const result = findExpressionOptimized(numbers, target);
+            solutionOutput.innerHTML = result;
+            submitButton.innerHTML = "Find Expression";
+        }, 10);
     });
 
-    // Advanced Settings Toggle
-    const advancedSettings = document.getElementById("advanced-settings");
-    const advancedSettingsToggle = document.getElementById("advanced-settings-toggle");
+    // Event handlers for advanced settings
+    const advancedSettings = document.querySelector("#advanced-settings");
+    const advancedSettingsToggle = document.querySelector("#advanced-settings-toggle");
 
     advancedSettingsToggle.addEventListener("click", function () {
         advancedSettings.style.display = advancedSettings.style.display === "none" ? "block" : "none";
