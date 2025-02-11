@@ -1,19 +1,3 @@
-// Helper function to handle async generator functions
-function handleAsyncGenerator(generator) {
-    function next(value) {
-        return generator.next(value);
-    }
-    function throwError(error) {
-        return generator.throw(error);
-    }
-    return new Promise(function (resolve, reject) {
-        function step(result) {
-            result.done ? resolve(result.value) : Promise.resolve(result.value).then(next, throwError).then(step, reject);
-        }
-        step(generator.next());
-    });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
     // Info button functionality
     const infoButton = document.getElementById("info-toggle");
@@ -35,12 +19,84 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 5000);
     });
 
-    /**
-     * Finds one expression that evaluates to the target efficiently
-     * @param {number[]} numbers - Array of input numbers
-     * @param {number} target - Target number
-     * @returns {string} The found expression or "No solution found"
-     */
+    // Custom expression evaluator
+    function evaluate(expression) {
+        const tokens = expression.match(/\d+|\+|\-|\*|\/|\*\*|\(|\)/g);
+
+        function applyOperator(operator, a, b) {
+            switch (operator) {
+                case "+": return a + b;
+                case "-": return a - b;
+                case "*": return a * b;
+                case "/": return a / b;
+                case "**": return a ** b;
+                default: throw new Error(`Unknown operator: ${operator}`);
+            }
+        }
+
+        function precedence(operator) {
+            switch (operator) {
+                case "+":
+                case "-":
+                    return 1;
+                case "*":
+                case "/":
+                    return 2;
+                case "**":
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
+
+        function shuntingYard(tokens) {
+            const output = [];
+            const operators = [];
+            for (const token of tokens) {
+                if (!isNaN(token)) {
+                    output.push(Number(token));
+                } else if (token === "(") {
+                    operators.push(token);
+                } else if (token === ")") {
+                    while (operators.length && operators[operators.length - 1] !== "(") {
+                        output.push(operators.pop());
+                    }
+                    operators.pop(); 
+                } else {
+                    while (
+                        operators.length &&
+                        precedence(operators[operators.length - 1]) >= precedence(token)
+                    ) {
+                        output.push(operators.pop());
+                    }
+                    operators.push(token);
+                }
+            }
+            while (operators.length) {
+                output.push(operators.pop());
+            }
+            return output;
+        }
+
+        function evaluatePostfix(postfix) {
+            const stack = [];
+            for (const token of postfix) {
+                if (!isNaN(token)) {
+                    stack.push(token);
+                } else {
+                    const b = stack.pop();
+                    const a = stack.pop();
+                    stack.push(applyOperator(token, a, b));
+                }
+            }
+            return stack.pop();
+        }
+
+        const postfix = shuntingYard(tokens);
+        return evaluatePostfix(postfix);
+    }
+
+    // Expression finder logic
     function findExpressionOptimized(numbers, target) {
         const operators = ["+", "-", "*", "/"];
         if (document.getElementById("exponents-checkbox").checked) {
@@ -49,43 +105,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const seen = new Set();
 
-        function evaluateExpression(expression) {
-            try {
-                return eval(expression);
-            } catch {
-                return null;
-            }
-        }
-
         function generateExpressions(nums) {
             if (nums.length === 1) {
-                return nums[0].toString();
+                return [nums[0].toString()];
             }
 
+            let expressions = [];
             for (let i = 1; i < nums.length; i++) {
                 const left = nums.slice(0, i);
                 const right = nums.slice(i);
 
-                const leftExpr = generateExpressions(left);
-                const rightExpr = generateExpressions(right);
+                const leftExprs = generateExpressions(left);
+                const rightExprs = generateExpressions(right);
 
-                for (let le of [leftExpr]) {
-                    for (let re of [rightExpr]) {
+                for (let le of leftExprs) {
+                    for (let re of rightExprs) {
                         for (let op of operators) {
                             let expr = `(${le}${op}${re})`;
 
                             if (!seen.has(expr)) {
                                 seen.add(expr);
-                                if (evaluateExpression(expr) === target) return expr;
+                                expressions.push(expr);
+
+                                const result = evaluate(expr);
+                                if (result === target) {
+                                    return expr; // Return the expression string immediately
+                                }
                             }
                         }
                     }
                 }
             }
-            return null;
+            return expressions;
         }
 
-        return generateExpressions(numbers) || "No solution found";
+        const result = generateExpressions(numbers);
+        return result.find(expr => evaluate(expr) === target) || "No solution found";
     }
 
     // Event handler for random numbers generation
@@ -99,22 +154,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Event handler for form submission
     document.getElementById("submit-button").addEventListener("click", function (event) {
-        return handleAsyncGenerator(function* () {
-            event.preventDefault();
-            const submitButton = document.getElementById("submit-button");
-            const solutionOutput = document.getElementById("solution-output");
+        event.preventDefault();
+        const submitButton = document.getElementById("submit-button");
+        const solutionOutput = document.getElementById("solution-output");
 
-            submitButton.innerHTML = "Calculating...";
-            solutionOutput.classList.remove("hidden");
+        submitButton.innerHTML = "Calculating...";
+        solutionOutput.classList.remove("hidden");
 
-            const numbers = document.getElementById("numbers-input").value.split(",").map(Number);
-            const target = Number(document.getElementById("target-input").value);
+        const numbers = document.getElementById("numbers-input").value.split(",").map(Number);
+        const target = Number(document.getElementById("target-input").value);
 
-            const result = yield new Promise(resolve => setTimeout(() => resolve(findExpressionOptimized(numbers, target)), 10));
-
+        setTimeout(() => {
+            const result = findExpressionOptimized(numbers, target);
             solutionOutput.innerHTML = result;
-            submitButton.innerHTML = "Find expression";
-        }());
+            submitButton.innerHTML = "Find Expression";
+        }, 10);
     });
 
     // Event handlers for advanced settings
