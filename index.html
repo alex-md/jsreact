@@ -12,17 +12,21 @@
 				opacity: 1;
 			}
 		</style>
-		<script src="./components/head.js"></script>
+		
+		
 		<script>
 			createHead(
-				'JSreact - Web Developer Tools',
-				'Collection of web developer tools for minifying code, TTS UI with Whisper, cleaning text, comparing diffs, and more!'
+				'Free Web Developer Tools & Utilities',
+				'Essential web development tools for minifying code, analyzing text, cleaning content, comparing differences, finding expressions, and optimizing your workflow. Open-source and free to use.'
 			);
 		</script>
+		<script type="module" crossorigin src="/assets/main.9de30dbd.js"></script>
+		<link rel="modulepreload" crossorigin href="/assets/footer.f88893a1.js">
+		<link rel="stylesheet" href="/assets/footer.dc08a0ae.css">
 	</head>
 
 	<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
-		<header
+		<header role="banner"
 			class="relative py-24 bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 overflow-hidden">
 			<div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]"></div>
 			<div class="container relative mx-auto px-4 max-w-7xl">
@@ -38,10 +42,11 @@
 			</div>
 		</header>
 
-		<main class="container mx-auto px-4 py-12 max-w-7xl">
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+		<main role="main" class="container mx-auto px-4 py-12 max-w-7xl">
+			<nav role="navigation" aria-label="Tools navigation"
+				class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				<!-- Minifier Card -->
-				<div
+				<article
 					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
@@ -51,14 +56,14 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Minify your JavaScript, CSS, and HTML
 						code to reduce file size</p>
-					<a href="./minify.html"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/minify"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Minifier
 					</a>
-				</div>
+				</article>
 
 				<!-- Generator Card -->
-				<div
+				<article
 					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
@@ -68,14 +73,14 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Generate creative and unique names for
 						your projects using AI</p>
-					<a href="./generator.html"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/generator"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Generator
 					</a>
-				</div>
+				</article>
 
 				<!-- Text Cleaner Card -->
-				<div
+				<article
 					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
@@ -85,14 +90,14 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Clean and format your text with
 						powerful tools</p>
-					<a href="./clean.html"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/clean"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Cleaner
 					</a>
-				</div>
+				</article>
 
 				<!-- Diff Checker Card -->
-				<div
+				<article
 					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
@@ -102,14 +107,14 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compare text differences between two
 						versions</p>
-					<a href="./diff.html"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/diff"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Diff Checker
 					</a>
-				</div>
+				</article>
 
 				<!-- Expression Finder Card -->
-				<div
+				<article
 					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
@@ -119,14 +124,14 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Find expressions using arithmetic
 						operations and parentheses</p>
-					<a href="./expression.html"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/expression"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Expression Finder
 					</a>
-				</div>
+				</article>
 
 				<!-- Keyword Analyzer Card -->
-				<div
+				<article
 					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
 					<div class="flex items-center gap-3 mb-4">
 						<div class="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
@@ -136,16 +141,18 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Analyze keyword density and extract
 						important terms from any text</p>
-					<a href="./keyword.html"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/keyword"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Analyzer
 					</a>
-				</div>
-			</div>
+				</article>
+			</nav>
 		</main>
 
-		<script src="./components/navbar.js"></script>
-		<script src="./components/footer.js"></script>
+		
+		
+		
+		
 	</body>
 
 </html>
