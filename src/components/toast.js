@@ -1,4 +1,4 @@
-function createToast(title, message, type = 'error') {
+export function showToast(message, type = 'info') {
     // Create or get toast container
     let toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
@@ -30,67 +30,50 @@ function createToast(title, message, type = 'error') {
         'ease-in-out',
         'opacity-0',
         'translate-y-2',
-        'pointer-events-auto'
+        'pointer-events-auto',
+        'p-4',
+        'flex',
+        'items-center',
+        'gap-2'
     );
 
-    // Add type-specific styles
+    // Add type-specific styles and icon
+    let icon = '';
     switch (type) {
         case 'error':
             toast.classList.add('border-l-4', 'border-l-red-500');
+            icon = '<i class="fas fa-exclamation-circle text-red-500"></i>';
             break;
         case 'success':
             toast.classList.add('border-l-4', 'border-l-green-500');
+            icon = '<i class="fas fa-check-circle text-green-500"></i>';
             break;
         case 'warning':
             toast.classList.add('border-l-4', 'border-l-yellow-500');
+            icon = '<i class="fas fa-exclamation-triangle text-yellow-500"></i>';
             break;
         case 'info':
+        default:
             toast.classList.add('border-l-4', 'border-l-blue-500');
+            icon = '<i class="fas fa-info-circle text-blue-500"></i>';
             break;
     }
 
-    // Create toast content
-    const content = document.createElement('div');
-    content.classList.add('p-4');
+    // Create toast content with icon
+    toast.innerHTML = `
+        ${icon}
+        <p class="text-sm text-gray-900 dark:text-white flex-1">${message}</p>
+        <button class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
 
-    const titleElement = document.createElement('h3');
-    titleElement.classList.add(
-        'text-sm',
-        'font-medium',
-        'text-gray-900',
-        'dark:text-white'
-    );
-    titleElement.textContent = title;
-
-    const messageElement = document.createElement('p');
-    messageElement.classList.add(
-        'mt-1',
-        'text-sm',
-        'text-gray-500',
-        'dark:text-gray-400'
-    );
-    messageElement.textContent = message;
-
-    content.appendChild(titleElement);
-    content.appendChild(messageElement);
-    toast.appendChild(content);
-
-    // Add close button
-    const closeButton = document.createElement('button');
-    closeButton.classList.add(
-        'absolute',
-        'top-2',
-        'right-2',
-        'text-gray-400',
-        'hover:text-gray-500',
-        'dark:hover:text-gray-300'
-    );
-    closeButton.innerHTML = '<i class="fas fa-times"></i>';
+    // Add click handler for close button
+    const closeButton = toast.querySelector('button');
     closeButton.onclick = () => {
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 300);
     };
-    toast.appendChild(closeButton);
 
     // Add to container and animate in
     toastContainer.appendChild(toast);
@@ -106,5 +89,3 @@ function createToast(title, message, type = 'error') {
         }
     }, 5000);
 }
-
-window.createToast = createToast; 

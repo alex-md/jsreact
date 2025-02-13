@@ -1,15 +1,49 @@
-function createFooter() {
+// Import styles
+import '@/assets/styles/global.css';
+
+// Active users fetch function
+async function fetchActiveUsers() {
+    try {
+        const response = await fetch('https://activeusers.vs.workers.dev/', {
+            headers: {
+                'Cache-Control': 'no-cache',
+            },
+            mode: 'cors'
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.activeUsers === 0 ? '0' : data.activeUsers || 'Unavailable';
+    } catch (error) {
+        console.error('Error fetching active users:', error);
+        return '0';
+    }
+}
+
+// View count fetch function
+async function fetchViewCount() {
+    try {
+        const response = await fetch('https://views.vs.workers.dev');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.text();
+        const count = parseInt(data);
+        return isNaN(count) ? 'Unavailable' : count.toLocaleString();
+    } catch (error) {
+        console.error('Error fetching view count:', error);
+        return 'Unavailable';
+    }
+}
+
+export function createFooter() {
     // Prevent multiple footer instances
     if (document.querySelector('footer[data-jsreact-footer]')) {
         return;
     }
 
-    // Wait for styles to be ready
-    if (!document.body.classList.contains('js-ready')) {
-        requestAnimationFrame(createFooter);
-        return;
-    }
-
+    // Create footer elements
     const footer = document.createElement('footer');
     footer.setAttribute('data-jsreact-footer', 'true');
     footer.classList.add(
@@ -71,30 +105,37 @@ function createFooter() {
         'ml-auto'       // Push to the right
     );
 
-    // Active users fetch function
-    async function fetchActiveUsers() {
-        try {
-            // Replace this URL with your actual worker URL from wrangler deploy
-            const response = await fetch('https://activeusers.vs.workers.dev/', {
-                headers: {
-                    'Cache-Control': 'no-cache',
-                },
-                mode: 'cors' // Add CORS mode explicitly
-            });
+    // Add active users icon
+    const usersIcon = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
+    </svg>`;
 
-            if (!response.ok) {
-                console.error(`Server returned ${response.status}: ${response.statusText}`);
-                throw new Error(`HTTP error! status: ${response.status}`);
+    const viewsIcon = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.5 18.5V4H4V20H20V18.5H5.5Z" fill="currentColor"/>
+        <path d="M10.5 17V8H12V17H10.5Z" fill="currentColor"/>
+        <path d="M7 17V12H8.5V17H7Z" fill="currentColor"/>
+        <path d="M17.5 17V10H19V17H17.5Z" fill="currentColor"/>
+        <path d="M14 17V5H15.5V17H14Z" fill="currentColor"/>
+    </svg>`;
+
+    // Update active users count with debouncing
+    let updateTimeout;
+    const updateActiveUsers = async () => {
+        if (updateTimeout) clearTimeout(updateTimeout);
+        updateTimeout = setTimeout(async () => {
+            const count = await fetchActiveUsers();
+            const activeUsersText = activeUsersButton.querySelector('span');
+            if (activeUsersText) {
+                activeUsersText.textContent = ` ${count} online`;
+            } else {
+                const text = document.createElement('span');
+                text.textContent = ` ${count} online`;
+                activeUsersButton.appendChild(text);
             }
-            const data = await response.json();
-            return data.activeUsers === 0 ? '0' : data.activeUsers || 'Unavailable';
-        } catch (error) {
-            console.error('Error fetching active users:', error);
-            return '0'; // Return '0' instead of 'Unavailable' for better UX
-        }
-    }
+        }, 100);
+    };
 
-    // Active users button
+    // Create and initialize active users button
     const activeUsersButton = document.createElement('button');
     activeUsersButton.classList.add(
         'inline-flex',
@@ -107,44 +148,16 @@ function createFooter() {
         'transition-colors'
     );
     activeUsersButton.id = 'activeUsersButton';
-
-    // Update active users count with debouncing
-    let updateTimeout;
-    const updateActiveUsers = async () => {
-        if (updateTimeout) clearTimeout(updateTimeout);
-        updateTimeout = setTimeout(async () => {
-            const count = await fetchActiveUsers();
-            const existingText = activeUsersButton.querySelector('span');
-            if (existingText) {
-                existingText.textContent = ` ${count} online`;
-            } else {
-                const activeUsersText = document.createElement('span');
-                activeUsersText.textContent = ` ${count} online`;
-                activeUsersButton.appendChild(activeUsersText);
-            }
-        }, 100);
-    };
-
-    // Add active users icon
-    const usersIcon = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
-    </svg>`;
     activeUsersButton.innerHTML = usersIcon;
 
     // Initialize active users count and set up interval
     updateActiveUsers();
-    // Increase interval to 60 seconds to stay within free tier limits
     const updateInterval = setInterval(updateActiveUsers, 60000);
 
     // Clean up interval when the footer is removed
-    const cleanup = () => {
-        clearInterval(updateInterval);
-    };
-    footer.addEventListener('remove', cleanup);
+    footer.addEventListener('remove', () => clearInterval(updateInterval));
 
-    stats.appendChild(activeUsersButton);
-
-    // Right section with view count
+    // Create and initialize view count button
     const viewCountButton = document.createElement('button');
     viewCountButton.classList.add(
         'inline-flex',
@@ -157,32 +170,7 @@ function createFooter() {
         'transition-colors'
     );
     viewCountButton.id = 'viewCountButton';
-
-    // Add view count icon
-    const viewsIcon = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5.5 18.5V4H4V20H20V18.5H5.5Z" fill="currentColor"/>
-        <path d="M10.5 17V8H12V17H10.5Z" fill="currentColor"/>
-        <path d="M7 17V12H8.5V17H7Z" fill="currentColor"/>
-        <path d="M17.5 17V10H19V17H17.5Z" fill="currentColor"/>
-        <path d="M14 17V5H15.5V17H14Z" fill="currentColor"/>
-    </svg>`;
     viewCountButton.innerHTML = viewsIcon;
-
-    // Fetch and update view count
-    async function fetchViewCount() {
-        try {
-            const response = await fetch('https://views.vs.workers.dev');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.text();
-            const count = parseInt(data);
-            return isNaN(count) ? 'Unavailable' : count.toLocaleString();
-        } catch (error) {
-            console.error('Error fetching view count:', error);
-            return 'Unavailable';
-        }
-    }
 
     // Initialize view count
     fetchViewCount().then(count => {
@@ -191,6 +179,7 @@ function createFooter() {
         viewCountButton.appendChild(viewCountText);
     });
 
+    stats.appendChild(activeUsersButton);
     stats.appendChild(viewCountButton);
 
     // Change append order
@@ -214,7 +203,7 @@ function createFooter() {
     return footer;
 }
 
-// Create footer when script loads
+// Auto-create footer when imported
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', createFooter);
 } else {

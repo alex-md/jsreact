@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
-        <script src="../../components/head.js"></script>
+        <script type="module" src="../../components/head.js"></script>
         <script>
             createHead(
                 'Text Cleaner & Formatter',
@@ -94,7 +94,7 @@
     </head>
 
     <body class="bg-gray-50">
-        <script src="../../components/navbar.js"></script>
+        <script type="module" src="../../components/navbar.js"></script>
         <script>
             document.body.appendChild(
                 createHeader(
@@ -133,7 +133,7 @@
                         <!-- Action Buttons -->
                         <div class="flex flex-wrap gap-4">
                             <button id="clean-button"
-                                class="tooltip px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors flex items-center gap-2">
+                                class="tooltip px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors flex items-center gap-2">
                                 <i class="fas fa-magic"></i>
                                 Clean Text
                                 <span class="tooltip-text">Apply selected cleaning options to the text</span>
@@ -218,7 +218,7 @@
                                 <span class="tooltip-text">Replace the current match</span>
                             </button>
                             <button id="replace-all"
-                                class="tooltip px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2">
+                                class="tooltip px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2">
                                 <i class="fas fa-sync"></i>
                                 Replace All
                                 <span class="tooltip-text">Replace all matches</span>
@@ -364,9 +364,9 @@
             </div>
         </main>
 
-        <script src="../../components/footer.js"></script>
-        <script src="../../components/toast.js"></script>
-        <script src="./clean.js"></script>
+        <script type="module" src="../../components/footer.js"></script>
+        <script type="module" src="../../components/toast.js"></script>
+        <script type="module" src="./clean.js"></script>
     </body>
 
 </html>

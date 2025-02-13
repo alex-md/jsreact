@@ -1,14 +1,14 @@
-function createHeader(title, subtitle) {
+export function createHeader(title, subtitle) {
     const header = document.createElement('header');
     header.classList.add(
         'relative',
         'py-24',
         'overflow-hidden',
         'bg-gradient-to-br',
-        // 'from-gray-900',
-        // 'to-gray-800',
-        // 'dark:from-black',
-        // 'dark:to-gray-900'
+        'from-gray-900',
+        'to-gray-800',
+        'dark:from-gray-800',
+        'dark:to-gray-900'
     );
 
     // Add background pattern
@@ -17,19 +17,17 @@ function createHeader(title, subtitle) {
         'absolute',
         'inset-0',
         'bg-grid-white/[0.05]',
-        'bg-[size:30px_30px]'
+        'bg-[size:60px_60px]'
     );
     header.appendChild(pattern);
 
     const container = document.createElement('div');
     container.classList.add(
+        'container',
         'relative',
-        'container-responsive',
         'mx-auto',
-        // 'px-4',
-        // 'max-w-7xl',
-        'text-center',
-        'text-white'
+        'px-4',
+        'max-w-7xl'
     );
 
     const heading = document.createElement('h1');
@@ -37,19 +35,22 @@ function createHeader(title, subtitle) {
         'text-4xl',
         'md:text-6xl',
         'font-bold',
-        'text-dark',
-        'mb-3'
+        'text-center',
+        'text-white',
+        'mb-6'
     );
-    heading.innerHTML = `<span class="text-primary-300">${title}</span>`;
+    heading.innerHTML = `<span class="text-primary italic">${title}</span>`;
 
     if (subtitle) {
         const subheading = document.createElement('p');
         subheading.classList.add(
-            // 'p-6',
-            'text-md',
+            'mt-6',
+            'text-lg',
+            'text-gray-300',
+            'text-center',
             'max-w-2xl',
             'mx-auto',
-            'text-gray-500',
+            'leading-relaxed'
         );
         subheading.textContent = subtitle;
         container.appendChild(heading);
@@ -61,5 +62,3 @@ function createHeader(title, subtitle) {
     header.appendChild(container);
     return header;
 }
-
-window.createHeader = createHeader;

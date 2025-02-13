@@ -1,3 +1,9 @@
+// Import styles
+import '../../assets/styles/global.css';
+
+// Import components
+import { showToast } from '../../components/toast.js';
+
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {

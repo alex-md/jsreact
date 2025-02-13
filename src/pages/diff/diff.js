@@ -1,5 +1,13 @@
 'use strict';
 
+// Import styles and components
+import '@/assets/styles/global.css';
+import { showToast } from '@/components/toast.js';
+
+// Import the diff-match-patch library using CDN
+// We'll keep using the CDN version since it's already working well and doesn't need bundling
+// The script is loaded in the HTML file
+
 document.addEventListener('DOMContentLoaded', () => {
     // Get DOM elements
     const originalText = document.getElementById('original-text');
@@ -10,18 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const diffOutput = document.getElementById('diff-output');
     const errorMessage = document.getElementById('error-message');
     const toast = document.getElementById('toast');
-
-    // Function to show toast notification
-    function showToast(message) {
-        const toastMessage = document.getElementById('toast-message');
-        if (!toastMessage) return;
-        
-        toastMessage.textContent = message;
-        toast.classList.remove('translate-y-full', 'opacity-0');
-        setTimeout(() => {
-            toast.classList.add('translate-y-full', 'opacity-0');
-        }, 3000);
-    }
 
     // Function to show error message
     function showError(message) {
@@ -51,10 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Create diff-match-patch instance
             const dmp = new diff_match_patch();
-            
+
             // Compute diff
             const diffs = dmp.diff_main(text1, text2);
-            
+
             // Optimize diff result
             dmp.diff_cleanupSemantic(diffs);
 

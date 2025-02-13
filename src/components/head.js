@@ -1,7 +1,10 @@
-function createHead(title, description) {
+// Import styles
+import '@/assets/styles/global.css';
+
+export function createHead(title, description) {
     const head = document.head;
 
-    // Load critical styles first
+    // Critical styles
     const criticalStyles = document.createElement('style');
     criticalStyles.textContent = `
         .js-loading { opacity: 0; }
@@ -15,34 +18,19 @@ function createHead(title, description) {
     `;
     head.insertBefore(criticalStyles, head.firstChild);
 
-    // Load Tailwind CSS before other resources
-    const tailwindCSS = document.createElement('link'); `   `
-    tailwindCSS.rel = 'stylesheet';
-    tailwindCSS.href = 'https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css';
-    head.insertBefore(tailwindCSS, head.firstChild);
-
-    // Load Font Awesome
+    // Load external styles (these will be imported via Vite during build)
     const fontAwesome = document.createElement('link');
     fontAwesome.rel = 'stylesheet';
     fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
     head.appendChild(fontAwesome);
 
-    // Custom styles - Update path based on page depth
-    const customStyles = document.createElement('link');
-    customStyles.rel = 'stylesheet';
-    customStyles.href = window.location.pathname.includes('/pages/') ? '../../assets/styles/global.css' : './assets/styles/global.css';
-    head.appendChild(customStyles);
-
-    // Check when all stylesheets are loaded
+    // Show content when styles are loaded
     Promise.all([
-        new Promise(resolve => tailwindCSS.onload = resolve),
-        new Promise(resolve => fontAwesome.onload = resolve),
-        new Promise(resolve => customStyles.onload = resolve)
+        new Promise(resolve => fontAwesome.onload = resolve)
     ]).then(() => {
         document.body.classList.add('js-ready');
     }).catch(err => {
         console.error('Error loading styles:', err);
-        // Show content anyway after timeout
         setTimeout(() => document.body.classList.add('js-ready'), 1000);
     });
 
@@ -61,7 +49,7 @@ function createHead(title, description) {
     `;
     head.appendChild(gaInitScript);
 
-    // Enhanced JSON-LD with more detailed structured data
+    // Enhanced JSON-LD
     const enhancedStructuredData = {
         "@context": "https://schema.org",
         "@type": "WebApplication",
@@ -77,7 +65,7 @@ function createHead(title, description) {
         "dateModified": new Date().toISOString(),
         "image": {
             "@type": "ImageObject",
-            "url": window.location.origin + '/assets/images/og-image.png',
+            "url": new URL('/assets/images/og-image.png', window.location.origin).href,
             "width": "1200",
             "height": "630"
         },
@@ -92,7 +80,7 @@ function createHead(title, description) {
             "url": "https://jsreact.com",
             "logo": {
                 "@type": "ImageObject",
-                "url": window.location.origin + '/assets/images/icon.png'
+                "url": new URL('/assets/images/icon.png', window.location.origin).href
             }
         },
         "potentialAction": {
@@ -103,17 +91,13 @@ function createHead(title, description) {
             }
         }
     };
+
     const structuredData = document.createElement('script');
     structuredData.type = 'application/ld+json';
     structuredData.textContent = JSON.stringify(enhancedStructuredData);
     head.appendChild(structuredData);
 
-    // Common utilities - Update path based on page depth
-    const commonScript = document.createElement('script');
-    commonScript.src = window.location.pathname.includes('/pages/') ? '../../utils/common.js' : './utils/common.js';
-    head.appendChild(commonScript);
-
-    // Meta tags - Updated for better SEO handling
+    // Meta tags
     document.title = `${title} | JSreact`;
     const metaTags = [
         { charset: 'UTF-8' },
@@ -128,17 +112,16 @@ function createHead(title, description) {
         { property: 'og:description', content: description },
         { property: 'og:url', content: window.location.href.split('?')[0] },
         { property: 'og:site_name', content: 'JSreact' },
-        { property: 'og:image', content: window.location.origin + '/assets/images/og-image.png' },
+        { property: 'og:image', content: new URL('/assets/images/og-image.png', window.location.origin).href },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: `${title} | JSreact` },
         { name: 'twitter:description', content: description },
-        { name: 'twitter:image', content: window.location.origin + '/assets/images/og-image.png' },
+        { name: 'twitter:image', content: new URL('/assets/images/og-image.png', window.location.origin).href },
         { name: 'format-detection', content: 'telephone=no' }
     ];
 
-    // Remove any existing meta tags first
+    // Update meta tags
     document.querySelectorAll('meta').forEach(meta => meta.remove());
-
     metaTags.forEach(meta => {
         const metaElement = document.createElement('meta');
         Object.entries(meta).forEach(([key, value]) => {
@@ -147,23 +130,20 @@ function createHead(title, description) {
         head.appendChild(metaElement);
     });
 
-    // Remove any existing canonical tags first
+    // Canonical URL
     document.querySelectorAll('link[rel="canonical"]').forEach(link => link.remove());
-
-    // Add canonical URL - Important for fixing duplicate content issues
     const canonical = document.createElement('link');
     canonical.rel = 'canonical';
-    // Ensure consistent URL format without parameters or trailing slashes
     canonical.href = window.location.origin + window.location.pathname.replace(/\/$/, '');
     head.appendChild(canonical);
 
-    // Favicons
+    // Favicons (using URLs that Vite will handle)
     const favicons = [
-        { rel: 'apple-touch-icon', sizes: '180x180', href: './images/apple-touch-icon.png' },
-        { rel: 'icon', type: 'image/png', sizes: '32x32', href: './images/favicon-32x32.png' },
-        { rel: 'icon', type: 'image/png', sizes: '16x16', href: './images/favicon-16x16.png' },
-        { rel: 'shortcut icon', href: './images/favicon.ico' },
-        { rel: 'manifest', href: './site.webmanifest' }
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/assets/images/apple-touch-icon.png' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/assets/images/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/assets/images/favicon-16x16.png' },
+        { rel: 'shortcut icon', href: '/assets/images/favicon.ico' },
+        { rel: 'manifest', href: '/site.webmanifest' }
     ];
 
     favicons.forEach(favicon => {
@@ -174,40 +154,20 @@ function createHead(title, description) {
         head.appendChild(link);
     });
 
-    // Tailwind CSS
-    const tailwindConfig = document.createElement('script');
-    tailwindConfig.textContent = `
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                            950: '#082f49'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    `;
-    head.appendChild(tailwindConfig);
-
     // Base styles with important tags
     const baseStyles = document.createElement('style');
     baseStyles.textContent = `
+        .site-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .site-description {
+            font-size: 1.125rem;
+            color: #4b5563;
+        }
+        
         .bg-primary { background-color: #0ea5e9 !important; }
         .text-primary { color: #0ea5e9 !important; }
         .text-gray-700 { color: #374151 !important; }
@@ -215,11 +175,10 @@ function createHead(title, description) {
     `;
     head.appendChild(baseStyles);
 
-    // Add preconnect for external resources
+    // Preconnect for external resources
     const preconnects = [
         'https://fonts.googleapis.com',
         'https://fonts.gstatic.com',
-        'https://cdn.tailwindcss.com',
         'https://cdnjs.cloudflare.com'
     ];
 
@@ -231,5 +190,3 @@ function createHead(title, description) {
         head.appendChild(link);
     });
 }
-
-window.createHead = createHead;

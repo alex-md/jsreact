@@ -12,8 +12,8 @@
 				opacity: 1;
 			}
 		</style>
-		<link rel="stylesheet" href="./assets/styles/global.css">
-		<script src="./components/head.js"></script>
+		<link rel="stylesheet" href="/assets/styles/global.css">
+		<script type="module" src="/components/head.js"></script>
 		<script>
 			createHead(
 				'Free Web Developer Tools & Utilities',
@@ -53,8 +53,8 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Minify your JavaScript, CSS, and HTML
 						code to reduce file size</p>
-					<a href="./pages/minify"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/minify"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Minifier
 					</a>
 				</article>
@@ -70,8 +70,8 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Generate creative and unique names for
 						your projects using AI</p>
-					<a href="./pages/generator"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/generator"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Generator
 					</a>
 				</article>
@@ -87,8 +87,8 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Clean and format your text with
 						powerful tools</p>
-					<a href="./pages/clean"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/clean"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Cleaner
 					</a>
 				</article>
@@ -104,8 +104,8 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Compare text differences between two
 						versions</p>
-					<a href="./pages/diff"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/diff"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Diff Checker
 					</a>
 				</article>
@@ -121,8 +121,8 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Find expressions using arithmetic
 						operations and parentheses</p>
-					<a href="./pages/expression"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/expression"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Expression Finder
 					</a>
 				</article>
@@ -138,17 +138,18 @@
 					</div>
 					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Analyze keyword density and extract
 						important terms from any text</p>
-					<a href="./pages/keyword"
-						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors w-full">
+					<a href="/pages/keyword"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Analyzer
 					</a>
 				</article>
 			</nav>
 		</main>
 
-		<script src="./utils/common.js" defer></script>
-		<script src="./components/navbar.js" defer></script>
-		<script src="./components/footer.js" defer></script>
+		<script type="module" src="/utils/app.js"></script>
+		<script type="module" src="/utils/utils.js"></script>
+		<script type="module" src="/components/navbar.js"></script>
+		<script type="module" src="/components/footer.js"></script>
 	</body>
 
 </html>

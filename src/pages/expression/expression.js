@@ -1,50 +1,24 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Info button functionality
-    const infoButton = document.getElementById("info-toggle");
-    const calculatorDescription = document.getElementById("calculator-description");
-    let descriptionTimeout;
+// Import styles and components
+import '@/assets/styles/global.css';
+import { showToast } from '@/components/toast.js';
 
-    infoButton.addEventListener("click", function() {
-        calculatorDescription.classList.remove("hidden");
-        setTimeout( () => {
-            calculatorDescription.classList.remove("translate-y-full", "opacity-0");
+// Utility functions
+const evaluate = (expression) => {
+    const tokens = expression.match(/\d+|\+|\-|\*|\/|\*\*|\(|\)/g);
+
+    const applyOperator = (operator, a, b) => {
+        switch (operator) {
+            case "+": return a + b;
+            case "-": return a - b;
+            case "*": return a * b;
+            case "/": return a / b;
+            case "**": return a ** b;
+            default: throw new Error(`Unknown operator: ${operator}`);
         }
-        , 10);
+    };
 
-        clearTimeout(descriptionTimeout);
-        descriptionTimeout = setTimeout( () => {
-            calculatorDescription.classList.add("translate-y-full", "opacity-0");
-            setTimeout( () => {
-                calculatorDescription.classList.add("hidden");
-            }
-            , 300);
-        }
-        , 5000);
-    });
-
-    // Custom expression evaluator
-    function evaluate(expression) {
-        const tokens = expression.match(/\d+|\+|\-|\*|\/|\*\*|\(|\)/g);
-
-        function applyOperator(operator, a, b) {
-            switch (operator) {
-            case "+":
-                return a + b;
-            case "-":
-                return a - b;
-            case "*":
-                return a * b;
-            case "/":
-                return a / b;
-            case "**":
-                return a ** b;
-            default:
-                throw new Error(`Unknown operator: ${operator}`);
-            }
-        }
-
-        function precedence(operator) {
-            switch (operator) {
+    function precedence(operator) {
+        switch (operator) {
             case "+":
             case "-":
                 return 1;
@@ -55,54 +29,76 @@ document.addEventListener("DOMContentLoaded", function() {
                 return 3;
             default:
                 return 0;
-            }
         }
-
-        function shuntingYard(tokens) {
-            const output = [];
-            const operators = [];
-            for (const token of tokens) {
-                if (!isNaN(token)) {
-                    output.push(Number(token));
-                } else if (token === "(") {
-                    operators.push(token);
-                } else if (token === ")") {
-                    while (operators.length && operators[operators.length - 1] !== "(") {
-                        output.push(operators.pop());
-                    }
-                    operators.pop();
-                } else {
-                    while (operators.length && precedence(operators[operators.length - 1]) >= precedence(token)) {
-                        output.push(operators.pop());
-                    }
-                    operators.push(token);
-                }
-            }
-            while (operators.length) {
-                output.push(operators.pop());
-            }
-            return output;
-        }
-
-        function evaluatePostfix(postfix) {
-            const stack = [];
-            for (const token of postfix) {
-                if (!isNaN(token)) {
-                    stack.push(token);
-                } else {
-                    const b = stack.pop();
-                    const a = stack.pop();
-                    stack.push(applyOperator(token, a, b));
-                }
-            }
-            return stack.pop();
-        }
-
-        const postfix = shuntingYard(tokens);
-        return evaluatePostfix(postfix);
     }
 
-    // Expression finder logic
+    function shuntingYard(tokens) {
+        const output = [];
+        const operators = [];
+        for (const token of tokens) {
+            if (!isNaN(token)) {
+                output.push(Number(token));
+            } else if (token === "(") {
+                operators.push(token);
+            } else if (token === ")") {
+                while (operators.length && operators[operators.length - 1] !== "(") {
+                    output.push(operators.pop());
+                }
+                operators.pop();
+            } else {
+                while (operators.length && precedence(operators[operators.length - 1]) >= precedence(token)) {
+                    output.push(operators.pop());
+                }
+                operators.push(token);
+            }
+        }
+        while (operators.length) {
+            output.push(operators.pop());
+        }
+        return output;
+    }
+
+    function evaluatePostfix(postfix) {
+        const stack = [];
+        for (const token of postfix) {
+            if (!isNaN(token)) {
+                stack.push(token);
+            } else {
+                const b = stack.pop();
+                const a = stack.pop();
+                stack.push(applyOperator(token, a, b));
+            }
+        }
+        return stack.pop();
+    }
+
+    const postfix = shuntingYard(tokens);
+    return evaluatePostfix(postfix);
+};
+
+// Main logic
+document.addEventListener("DOMContentLoaded", () => {
+    // Info button functionality
+    const infoButton = document.getElementById("info-toggle");
+    const calculatorDescription = document.getElementById("calculator-description");
+    let descriptionTimeout;
+
+    const showDescription = () => {
+        calculatorDescription.classList.remove("hidden");
+        setTimeout(() => {
+            calculatorDescription.classList.remove("translate-y-full", "opacity-0");
+        }, 10);
+
+        clearTimeout(descriptionTimeout);
+        descriptionTimeout = setTimeout(() => {
+            calculatorDescription.classList.add("translate-y-full", "opacity-0");
+            setTimeout(() => {
+                calculatorDescription.classList.add("hidden");
+            }, 300);
+        }, 5000);
+    };
+
+    // Custom expression evaluator
     function findExpressionOptimized(numbers, target) {
         const operators = ["+", "-", "*", "/"];
         if (document.getElementById("exponents-checkbox").checked) {
@@ -155,19 +151,22 @@ document.addEventListener("DOMContentLoaded", function() {
         return "No solution found";
     }
 
-    // Event handler for random numbers generation
-    document.getElementById("random-numbers-button").addEventListener("click", function(event) {
+    // Event handlers
+    infoButton.addEventListener("click", showDescription);
+
+    document.getElementById("random-numbers-button").addEventListener("click", (event) => {
         event.preventDefault();
         const count = document.getElementById("num-integers-input").value || 6;
         const maxValue = document.getElementById("max-number-input").value || 60;
-        const randomNumbers = Array.from({
-            length: count
-        }, () => Math.floor(Math.random() * maxValue) + 1);
+        const randomNumbers = Array.from(
+            { length: parseInt(count) },
+            () => Math.floor(Math.random() * parseInt(maxValue)) + 1
+        );
         document.getElementById("numbers-input").value = randomNumbers.join(",");
+        showToast('Random numbers generated');
     });
 
-    // Event handler for form submission
-    document.getElementById("submit-button").addEventListener("click", function(event) {
+    document.getElementById("submit-button").addEventListener("click", (event) => {
         event.preventDefault();
         const submitButton = document.getElementById("submit-button");
         const solutionOutput = document.getElementById("solution-output");
@@ -175,28 +174,34 @@ document.addEventListener("DOMContentLoaded", function() {
         submitButton.innerHTML = "Calculating...";
         solutionOutput.classList.remove("hidden");
 
-        const numbers = document.getElementById("numbers-input").value.split(",").map(Number);
-        const target = Number(document.getElementById("target-input").value);
+        const numbers = document.getElementById("numbers-input").value
+            .split(",")
+            .map(num => parseInt(num.trim()));
+        const target = parseInt(document.getElementById("target-input").value);
 
-        setTimeout( () => {
+        if (!numbers.every(n => !isNaN(n)) || isNaN(target)) {
+            showToast('Please enter valid numbers');
+            submitButton.innerHTML = "Find Expression";
+            return;
+        }
+
+        setTimeout(() => {
             const result = findExpressionOptimized(numbers, target);
             solutionOutput.innerHTML = result;
             submitButton.innerHTML = "Find Expression";
-        }
-        , 10);
+            showToast(result === "No solution found" ? 'No solution found' : 'Solution found!');
+        }, 10);
     });
 
-    // Event handlers for advanced settings
+    // Advanced settings toggle
     const advancedSettings = document.querySelector("#advanced-settings");
     const advancedSettingsToggle = document.querySelector("#advanced-settings-toggle");
 
-    advancedSettingsToggle.addEventListener("click", function() {
+    advancedSettingsToggle.addEventListener("click", () => {
         advancedSettings.style.display = advancedSettings.style.display === "none" ? "block" : "none";
     });
 
-    advancedSettings.querySelectorAll('input[type="number"]').forEach(function(input) {
-        input.addEventListener("click", function(event) {
-            event.stopPropagation();
-        });
+    advancedSettings.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener("click", (event) => event.stopPropagation());
     });
 });

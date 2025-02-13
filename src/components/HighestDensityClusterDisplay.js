@@ -55,7 +55,7 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
                             cluster.keywords.map(keyword =>
                                 h('span', {
                                     key: keyword,
-                                    className: 'px-2 py-1 rounded-full bg-primary-100 text-primary-700 text-sm font-medium'
+                                    className: 'px-2 py-1 rounded-full bg-primary-100 text-primary-600 text-sm font-medium'
                                 }, keyword)
                             )
                         ),
@@ -104,10 +104,10 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
                                     className: 'flex flex-wrap gap-3 mb-3'
                                 },
                                     h('div', {
-                                        className: 'px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-sm font-medium'
+                                        className: 'px-3 py-1 rounded-full bg-primary-100 text-primary-600 text-sm font-medium'
                                     }, `${cluster.count} occurrences`),
                                     h('div', {
-                                        className: 'px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-sm font-medium'
+                                        className: 'px-3 py-1 rounded-full bg-primary-100 text-primary-600 text-sm font-medium'
                                     }, `${cluster.density.toFixed(2)}% density`)
                                 ),
                                 h('div', {
@@ -128,4 +128,4 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
             )
         )
     );
-}; 
+};

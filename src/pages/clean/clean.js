@@ -1,5 +1,9 @@
 'use strict';
 
+// Import styles and components
+import '@/assets/styles/global.css';
+import { showToast } from '@/components/toast.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Get DOM elements
     const inputText = document.getElementById('input-text');
@@ -34,18 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const normalizeDashes = document.getElementById('normalize-dashes');
     const convertNewlines = document.getElementById('convert-newlines');
 
-    // Function to show toast notification
-    function showToast(message) {
-        const toastMessage = document.getElementById('toast-message');
-        if (!toastMessage) return;
-        
-        toastMessage.textContent = message;
-        toast.classList.remove('translate-y-full', 'opacity-0');
-        setTimeout(() => {
-            toast.classList.add('translate-y-full', 'opacity-0');
-        }, 3000);
-    }
-
     // Find and Replace Functions
     function updateMatchCount() {
         matchCount.textContent = matches.length ? `${currentMatchIndex + 1}/${matches.length}` : '0/0';
@@ -71,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchArea = getSearchArea();
         const text = searchArea.value;
         matches = [];
-        
+
         try {
             const pattern = useRegex.checked ? new RegExp(searchTerm, 'g') : new RegExp(escapeRegExp(searchTerm), 'g');
             let match;
@@ -96,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function highlightMatch() {
         if (currentMatchIndex === -1 || !matches.length) return;
-        
+
         const match = matches[currentMatchIndex];
         searchArea.focus();
         searchArea.setSelectionRange(match.start, match.end);
@@ -128,9 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const match = matches[currentMatchIndex];
         const replacement = replaceText.value;
         const text = searchArea.value;
-        
+
         searchArea.value = text.substring(0, match.start) + replacement + text.substring(match.end);
-        
+
         // Update matches after replacement
         findMatches(findText.value);
     }
@@ -148,15 +140,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const replacement = replaceText.value;
             const originalText = searchArea.value;
             const newText = originalText.replace(pattern, replacement);
-            
+
             if (originalText === newText) {
                 showToast('No matches found');
                 return;
             }
-            
+
             searchArea.value = newText;
             showToast('All matches replaced');
-            
+
             // Reset search state
             matches = [];
             currentMatchIndex = -1;
@@ -169,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to clean text based on selected options
     function cleanText() {
         let text = inputText.value;
-        
+
         if (!text.trim()) {
             showToast('Please enter some text to clean');
             return;
@@ -271,9 +263,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event listeners
-    cleanButton.addEventListener('click', cleanText);
-    copyButton.addEventListener('click', copyOutput);
-    clearButton.addEventListener('click', clearAll);
+    cleanButton.addEventListener('click', () => {
+        cleanText();
+        showToast('Text cleaned successfully');
+    });
+    copyButton.addEventListener('click', async () => {
+        if (!outputText.value) {
+            showToast('No text to copy');
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(outputText.value);
+            showToast('Text copied to clipboard');
+        } catch (error) {
+            showToast('Failed to copy text');
+            console.error('Copy error:', error);
+        }
+    });
+    clearButton.addEventListener('click', () => {
+        clearAll();
+        showToast('All text cleared');
+    });
 
     // Add input event listener for real-time cleaning
     inputText.addEventListener('input', () => {
