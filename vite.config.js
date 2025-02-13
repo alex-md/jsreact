@@ -9,7 +9,7 @@ export default defineConfig({
     plugins: [react()],
     root: 'src',
     build: {
-        outDir: 'dist',
+        outDir: '../dist', // Changed to output to root dist directory
         emptyOutDir: true,
         sourcemap: true,
         assetsDir: 'assets',
@@ -58,7 +58,7 @@ export default defineConfig({
         ]
     },
     server: {
-        middlewareMode: 'html',
+        middlewareMode: true, // Updated deprecated value
         watch: {
             ignored: ['!**/src/components/**']
         }
