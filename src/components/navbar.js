@@ -1,39 +1,44 @@
 (function () {
     const navItems = [
         {
-            href: './minify.html',
+            href: 'minify',
             text: 'Minify',
         },
         {
-            href: './generator.html',
+            href: 'generator',
             text: 'AI Name Generator',
         },
         {
-            href: './expression.html',
+            href: 'expression',
             text: 'Solve',
         },
         {
-            href: './clean.html',
+            href: 'clean',
             text: 'Clean Text',
         },
         {
-            href: './diff.html',
+            href: 'diff',
             text: 'Diff Checker',
         },
         {
-            href: './keyword.html',
+            href: 'keyword',
             text: 'Keyword Density Analyzer',
         }
     ];
 
     function createNavbar() {
+        // Helper function to generate correct navigation paths
+        function getNavigationPath(path) {
+            const isInPagesDirectory = window.location.pathname.includes('/pages/');
+            return isInPagesDirectory ? `../${path}` : `./pages/${path}`;
+        }
+
         const nav = document.createElement('nav');
         nav.classList.add(
             'sticky',
             'top-0',
             'z-50',
             'bg-white',
-            // 'dark:bg-gray-900/10',
             'backdrop-blur-xl',
             'shadow-lg',
             'transition-all',
@@ -53,7 +58,7 @@
 
         // Modern logo section
         const logoLink = document.createElement('a');
-        logoLink.href = './';
+        logoLink.href = window.location.pathname.includes('/pages/') ? '../../' : './';
         logoLink.classList.add(
             'flex',
             'items-center',
@@ -66,8 +71,10 @@
             'duration-300',
             'hover:scale-105'
         );
+
+        const logoPath = window.location.pathname.includes('/pages/') ? '../../assets/images/logo.png' : './assets/images/logo.png';
         logoLink.innerHTML = `
-            <img src="./images/logo.png" alt="JSReact Logo" class="h-8 md:h-10 lg:h-12 px-5 transition-transform duration-300 hover:scale-110" />
+            <img src="${logoPath}" alt="JSReact Logo" class="h-8 md:h-10 lg:h-12 px-5 transition-transform duration-300 hover:scale-110" />
             <span></span>
         `;
 
@@ -99,10 +106,15 @@
                 "dark:hover:bg-primary-900/20"
             );
             link.setAttribute('data-tooltip', item.text);
-            link.href = item.href;
+
+            // Use helper function for navigation paths
+            link.href = getNavigationPath(item.href);
             link.textContent = item.text;
 
-            if (window.location.pathname.includes(item.href)) {
+            // Check if current page matches nav item
+            const currentPath = window.location.pathname.toLowerCase();
+            const itemPath = item.href.toLowerCase();
+            if (currentPath.includes(`/pages/${itemPath}`) || currentPath.includes(`/pages/${itemPath}/`)) {
                 link.classList.add(
                     "bg-gray-100",
                     "text-gray-900"
@@ -161,10 +173,15 @@
                 "hover:bg-gray-100",
                 "rounded-md"
             );
-            link.href = item.href;
+
+            // Use helper function for navigation paths
+            link.href = getNavigationPath(item.href);
             link.textContent = item.text;
 
-            if (window.location.pathname.includes(item.href)) {
+            // Check if current page matches nav item
+            const currentPath = window.location.pathname.toLowerCase();
+            const itemPath = item.href.toLowerCase();
+            if (currentPath.includes(`/pages/${itemPath}`) || currentPath.includes(`/pages/${itemPath}/`)) {
                 link.classList.add(
                     "bg-gray-100",
                     "text-gray-900"

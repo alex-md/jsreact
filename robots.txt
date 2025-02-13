@@ -3,5 +3,10 @@ Allow: /
 Disallow: /api/
 Disallow: /admin/
 
+# Important pages
+Allow: /index.html
+Allow: /pages/
+Allow: /sitemap.xml
+
 # Sitemaps
 Sitemap: https://jsreact.com/sitemap.xml

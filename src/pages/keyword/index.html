@@ -6,24 +6,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- Load head.js first -->
-        <script src="./components/head.js"></script>
+        <script src="../../components/head.js"></script>
         <script>
             // Initialize head with title and description
             createHead(
                 'Keyword Density Analyzer',
-                'Analyze keyword density, find intersection clusters, and optimize your content with our advanced SEO text analysis tool.'
+                'Analyze keyword density, find intersection clusters, and optimize your content with our advanced SEO text analysis tool. Features multiple matching strategies and visual results.'
             );
         </script>
-
-        <!-- SEO Meta Tags -->
-        <title>Keyword Density Analyzer - Advanced SEO Text Analysis Tool</title>
-        <meta name="description"
-            content="Analyze keyword density, find intersection clusters, and optimize your content with our advanced SEO text analysis tool. Features multiple matching strategies and visual results.">
-        <meta name="keywords"
-            content="keyword density, seo tool, text analysis, keyword intersection, content optimization">
-        <meta name="author" content="Your Name">
-
-        <link rel="manifest" href="./site.webmanifest">
 
         <!-- Dependencies -->
         <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -391,8 +381,8 @@
         </template>
 
         <!-- Component Scripts -->
-        <script src="./components/navbar.js"></script>
-        <script src="./components/footer.js"></script>
+        <script src="../../components/navbar.js"></script>
+        <script src="../../components/footer.js"></script>
 
         <!-- Application Scripts -->
         <script>
@@ -419,19 +409,19 @@
                     }
 
                     // Load utilities first
-                    await loadScript('./utils/utils.js');
+                    await loadScript('../../utils/utils.js');
                     console.log('Utils loaded');
 
                     // Load app.js before components
-                    await loadScript('./app.js');
+                    await loadScript('../../utils/app.js');
                     console.log('App.js loaded');
 
                     // Load components after app.js
                     await Promise.all([
-                        loadScript('./components/FileUpload.js'),
-                        loadScript('./components/KeywordInput.js'),
-                        loadScript('./components/ResultsDisplay.js'),
-                        loadScript('./components/HighestDensityClusterDisplay.js')
+                        loadScript('../../components/FileUpload.js'),
+                        loadScript('../../components/KeywordInput.js'),
+                        loadScript('../../components/ResultsDisplay.js'),
+                        loadScript('../../components/HighestDensityClusterDisplay.js')
                     ]);
                     console.log('Components loaded');
 

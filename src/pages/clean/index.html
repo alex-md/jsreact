@@ -2,11 +2,11 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
-        <script src="./components/head.js"></script>
+        <script src="../../components/head.js"></script>
         <script>
             createHead(
-                'Text Cleaner',
-                'Clean and format your text with powerful tools for better readability.'
+                'Text Cleaner & Formatter',
+                'Free online text cleaning tool to remove unwanted characters, format content, and improve readability. Features customizable cleaning options, find & replace, and instant preview.'
             );
         </script>
         <style>
@@ -94,8 +94,7 @@
     </head>
 
     <body class="bg-gray-50">
-        <script src="./components/navbar.js"></script>
-        <script src="./components/header.js"></script>
+        <script src="../../components/navbar.js"></script>
         <script>
             document.body.appendChild(
                 createHeader(
@@ -105,10 +104,10 @@
             );
         </script>
 
-        <main class="container mx-auto px-4 py-12 max-w-7xl">
+        <main role="main" class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="max-w-5xl mx-auto space-y-6">
                 <!-- Text Input/Output Section -->
-                <div
+                <section role="region" aria-label="Text editor"
                     class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -153,10 +152,10 @@
                             </button>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Find and Replace Section -->
-                <div
+                <section role="region" aria-label="Find and replace tools"
                     class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                     <div class="border-b border-gray-200 px-6 py-4">
                         <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -226,146 +225,148 @@
                             </button>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Options Section -->
-                <div
+                <section role="region" aria-label="Cleaning options"
                     class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                    <div class="border-b border-gray-200 px-6 py-4 bg-gradient-to-r from-primary/5 to-transparent">
-                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-3">
-                            <i class="fas fa-sliders-h text-primary"></i>
-                            Cleaning Options
-                            <span class="text-sm font-normal text-gray-500">(Hover for details)</span>
-                        </h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- Basic Cleaning -->
-                            <div class="option-group p-5 rounded-xl">
-                                <h3 class="font-medium text-gray-900 mb-4 flex items-center gap-2">
-                                    Basic Cleaning
-                                    <span class="text-xs text-primary/60">(Recommended)</span>
-                                </h3>
-                                <div class="space-y-4">
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="remove-extra-spaces" checked
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Remove Extra
-                                                    Spaces</span>
-                                                <span class="text-xs text-gray-500">Consolidates multiple spaces into
-                                                    one</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="remove-empty-lines" checked
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Remove Empty
-                                                    Lines</span>
-                                                <span class="text-xs text-gray-500">Removes blank lines and
-                                                    whitespace</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="trim-lines" checked
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Trim Line
-                                                    Spaces</span>
-                                                <span class="text-xs text-gray-500">Removes leading/trailing
-                                                    spaces</span>
-                                            </div>
-                                        </label>
-                                    </div>
+                </section>
+                <div class="border-b border-gray-200 px-6 py-4 bg-gradient-to-r from-primary/5 to-transparent">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-3">
+                        <i class="fas fa-sliders-h text-primary"></i>
+                        Cleaning Options
+                        <span class="text-sm font-normal text-gray-500">(Hover for details)</span>
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Basic Cleaning -->
+                        <div class="option-group p-5 rounded-xl">
+                            <h3 class="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                Basic Cleaning
+                                <span class="text-xs text-primary/60">(Recommended)</span>
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="remove-extra-spaces" checked
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Remove Extra
+                                                Spaces</span>
+                                            <span class="text-xs text-gray-500">Consolidates multiple spaces into
+                                                one</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="remove-empty-lines" checked
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Remove Empty
+                                                Lines</span>
+                                            <span class="text-xs text-gray-500">Removes blank lines and
+                                                whitespace</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="trim-lines" checked
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Trim Line
+                                                Spaces</span>
+                                            <span class="text-xs text-gray-500">Removes leading/trailing
+                                                spaces</span>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Text Formatting -->
-                            <div class="option-group p-5 rounded-xl">
-                                <h3 class="font-medium text-gray-900 mb-4">Text Formatting</h3>
-                                <div class="space-y-4">
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="normalize-quotes" checked
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Convert Smart
-                                                    Quotes</span>
-                                                <span class="text-xs text-gray-500">Standardizes quote marks</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="normalize-whitespace" checked
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Normalize
-                                                    Whitespace</span>
-                                                <span class="text-xs text-gray-500">Standardizes spaces and line
-                                                    endings</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="normalize-dashes" checked
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Convert Em/En
-                                                    Dashes</span>
-                                                <span class="text-xs text-gray-500">Standardizes dash types</span>
-                                            </div>
-                                        </label>
-                                    </div>
+                        <!-- Text Formatting -->
+                        <div class="option-group p-5 rounded-xl">
+                            <h3 class="font-medium text-gray-900 mb-4">Text Formatting</h3>
+                            <div class="space-y-4">
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="normalize-quotes" checked
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Convert Smart
+                                                Quotes</span>
+                                            <span class="text-xs text-gray-500">Standardizes quote marks</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="normalize-whitespace" checked
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Normalize
+                                                Whitespace</span>
+                                            <span class="text-xs text-gray-500">Standardizes spaces and line
+                                                endings</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="normalize-dashes" checked
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Convert Em/En
+                                                Dashes</span>
+                                            <span class="text-xs text-gray-500">Standardizes dash types</span>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Advanced Options -->
-                            <div class="option-group p-5 rounded-xl">
-                                <h3 class="font-medium text-gray-900 mb-4 flex items-center gap-2">
-                                    Advanced Options
-                                    <span class="text-xs text-amber-600">(Use with care)</span>
-                                </h3>
-                                <div class="space-y-4">
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="remove-punctuation"
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Remove
-                                                    Punctuation</span>
-                                                <span class="text-xs text-gray-500">Strips all punctuation marks</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-wrapper tooltip">
-                                        <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="convert-newlines"
-                                                class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-700 block">Convert
-                                                    Newlines</span>
-                                                <span class="text-xs text-gray-500">Changes line breaks to spaces</span>
-                                            </div>
-                                        </label>
-                                    </div>
+                        <!-- Advanced Options -->
+                        <div class="option-group p-5 rounded-xl">
+                            <h3 class="font-medium text-gray-900 mb-4 flex items-center gap-2"></h3>
+                            Advanced Options
+                            <span class="text-xs text-amber-600">(Use with care)</span>
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="remove-punctuation"
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Remove
+                                                Punctuation</span>
+                                            <span class="text-xs text-gray-500">Strips all punctuation marks</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="checkbox-wrapper tooltip">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="convert-newlines"
+                                            class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 block">Convert
+                                                Newlines</span>
+                                            <span class="text-xs text-gray-500">Changes line breaks to spaces</span>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                </section>
             </div>
         </main>
 
-        <script src="./components/footer.js"></script>
-        <script src="./scripts/clean.js"></script>
+        <script src="../../components/footer.js"></script>
+        <script src="../../components/toast.js"></script>
+        <script src="./clean.js"></script>
     </body>
 
 </html>

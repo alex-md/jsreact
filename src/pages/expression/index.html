@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
     <head>
-        <script src="./components/head.js"></script>
+        <script src="../../components/head.js"></script>
         <script>
             createHead(
                 'Expression Finder',
@@ -11,8 +12,7 @@
     </head>
 
     <body class="bg-gray-50">
-        <script src="./components/navbar.js"></script>
-        <script src="./components/header.js"></script>
+        <script src="../../components/navbar.js"></script>
         <script>
             document.body.appendChild(
                 createHeader(
@@ -30,10 +30,11 @@
                         class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
                         What is this?
                     </button>
-                    <div id="calculator-description" 
+                    <div id="calculator-description"
                         class="hidden fixed bottom-4 right-4 max-w-sm bg-white rounded-xl p-6 text-gray-600 shadow-xl border border-gray-200 transform transition-all duration-300 translate-y-full opacity-0 z-50">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Expression Finder</h3>
-                        <p class="mb-4">Enter a series of numbers and a target number, and our calculator will find a valid expression using parentheses and basic arithmetic operations to reach that target.</p>
+                        <p class="mb-4">Enter a series of numbers and a target number, and our calculator will find a
+                            valid expression using parentheses and basic arithmetic operations to reach that target.</p>
                         <p class="mb-2"><strong>Example:</strong></p>
                         <p>Numbers: 1,2,3,4</p>
                         <p>Target: 24</p>
@@ -42,7 +43,8 @@
                 </div>
 
                 <!-- Main Calculator Card -->
-                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                <div
+                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                     <div class="p-6 space-y-6">
                         <form id="expression-form" class="space-y-6">
                             <div>
@@ -75,7 +77,8 @@
                             </button>
                         </form>
 
-                        <div id="solution-output" class="hidden p-4 bg-gray-50 rounded-lg text-center text-gray-900"></div>
+                        <div id="solution-output" class="hidden p-4 bg-gray-50 rounded-lg text-center text-gray-900">
+                        </div>
 
                         <!-- Advanced Settings -->
                         <div class="relative">
@@ -85,7 +88,8 @@
                             </button>
                             <div id="advanced-settings" class="hidden mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
                                 <div>
-                                    <label for="num-integers-input" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <label for="num-integers-input"
+                                        class="block text-sm font-medium text-gray-700 mb-2">
                                         Generated values
                                     </label>
                                     <input type="number" id="num-integers-input" placeholder="6"
@@ -112,7 +116,9 @@
             </div>
         </main>
 
-        <script src="./components/footer.js"></script>
-        <script src="./scripts/expression.js"></script>
+        <script src="../../components/footer.js"></script>
+        <script src="../../components/toast.js"></script>
+        <script src="./expression.js"></script>
     </body>
+
 </html>

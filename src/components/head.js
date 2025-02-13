@@ -16,7 +16,7 @@ function createHead(title, description) {
     head.insertBefore(criticalStyles, head.firstChild);
 
     // Load Tailwind CSS before other resources
-    const tailwindCSS = document.createElement('link');
+    const tailwindCSS = document.createElement('link'); `   `
     tailwindCSS.rel = 'stylesheet';
     tailwindCSS.href = 'https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css';
     head.insertBefore(tailwindCSS, head.firstChild);
@@ -27,10 +27,10 @@ function createHead(title, description) {
     fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
     head.appendChild(fontAwesome);
 
-    // Custom styles
+    // Custom styles - Update path based on page depth
     const customStyles = document.createElement('link');
     customStyles.rel = 'stylesheet';
-    customStyles.href = './styles/global.css';
+    customStyles.href = window.location.pathname.includes('/pages/') ? '../../assets/styles/global.css' : './assets/styles/global.css';
     head.appendChild(customStyles);
 
     // Check when all stylesheets are loaded
@@ -75,6 +75,12 @@ function createHead(title, description) {
         "softwareVersion": "1.0",
         "datePublished": "2024-01-01",
         "dateModified": new Date().toISOString(),
+        "image": {
+            "@type": "ImageObject",
+            "url": window.location.origin + '/assets/images/og-image.png',
+            "width": "1200",
+            "height": "630"
+        },
         "offers": {
             "@type": "Offer",
             "price": "0",
@@ -86,7 +92,7 @@ function createHead(title, description) {
             "url": "https://jsreact.com",
             "logo": {
                 "@type": "ImageObject",
-                "url": "./images/icon-512.png"
+                "url": window.location.origin + '/assets/images/icon.png'
             }
         },
         "potentialAction": {
@@ -102,9 +108,9 @@ function createHead(title, description) {
     structuredData.textContent = JSON.stringify(enhancedStructuredData);
     head.appendChild(structuredData);
 
-    // Common utilities
+    // Common utilities - Update path based on page depth
     const commonScript = document.createElement('script');
-    commonScript.src = './scripts/common.js';
+    commonScript.src = window.location.pathname.includes('/pages/') ? '../../utils/common.js' : './utils/common.js';
     head.appendChild(commonScript);
 
     // Meta tags - Updated for better SEO handling
@@ -114,15 +120,20 @@ function createHead(title, description) {
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         { name: 'description', content: description },
         { name: 'theme-color', content: '#09090b' },
-        { name: 'robots', content: 'index, follow' }, // Ensure pages are indexable
+        { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
         { name: 'author', content: 'JSreact' },
+        { property: 'og:locale', content: 'en_US' },
         { property: 'og:type', content: 'website' },
         { property: 'og:title', content: `${title} | JSreact` },
         { property: 'og:description', content: description },
-        { property: 'og:url', content: window.location.href.split('?')[0] }, // Consistent URL without parameters
+        { property: 'og:url', content: window.location.href.split('?')[0] },
+        { property: 'og:site_name', content: 'JSreact' },
+        { property: 'og:image', content: window.location.origin + '/assets/images/og-image.png' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: `${title} | JSreact` },
-        { name: 'twitter:description', content: description }
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: window.location.origin + '/assets/images/og-image.png' },
+        { name: 'format-detection', content: 'telephone=no' }
     ];
 
     // Remove any existing meta tags first
@@ -203,6 +214,22 @@ function createHead(title, description) {
         .text-white { color: #ffffff !important; }
     `;
     head.appendChild(baseStyles);
+
+    // Add preconnect for external resources
+    const preconnects = [
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com',
+        'https://cdn.tailwindcss.com',
+        'https://cdnjs.cloudflare.com'
+    ];
+
+    preconnects.forEach(url => {
+        const link = document.createElement('link');
+        link.rel = 'preconnect';
+        link.href = url;
+        link.crossOrigin = 'anonymous';
+        head.appendChild(link);
+    });
 }
 
 window.createHead = createHead;
