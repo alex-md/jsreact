@@ -1,0 +1,16 @@
+{
+    "build": {
+        "command": "npm run build",
+        "output": "dist"
+    },
+    "routes": [
+        {
+            "handle": "static"
+        },
+        {
+            "src": "/.*",
+            "status": 200,
+            "dest": "/index.html"
+        }
+    ]
+}

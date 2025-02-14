@@ -1,31 +1,23 @@
 {
-    "name": "jsreact",
-    "version": "1.0.0",
-    "description": "Developer utilities and tools",
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build && cp public/_redirects dist/",
-        "preview": "vite preview",
-        "deploy": "npm run build && gh-pages -d dist"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/alex-md/jsreact.git"
-    },
-    "keywords": [],
-    "license": "MIT",
-    "dependencies": {
-        "@rstacruz/startup-name-generator": "^0.3.0",
-        "gh-pages": "^5.0.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-react": "^4.0.0",
-        "autoprefixer": "^10.4.20",
-        "postcss": "^8.5.2",
-        "tailwindcss": "^3.4.1",
-        "vite": "^4.3.9"
-    }
+  "name": "jsreact",
+  "version": "1.0.0",
+  "description": "Free Web Developer Tools & Utilities",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "@rstacruz/startup-name-generator": "^0.3.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "gh-pages": "^6.1.0",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "vite": "^5.0.7"
+  }
 }

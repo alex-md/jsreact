@@ -1,5 +1,5 @@
 // Import styles
-import '@/assets/styles/global.css';
+import '../assets/styles/global.css';
 
 export function createHead(title, description) {
     const head = document.head;
