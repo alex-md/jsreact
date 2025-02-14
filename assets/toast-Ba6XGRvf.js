@@ -5,4 +5,3 @@ function i(s,r="info"){let t=document.getElementById("toastContainer");t||(t=doc
             <i class="fas fa-times"></i>
         </button>
     `;const o=e.querySelector("button");o.onclick=()=>{e.classList.add("opacity-0","translate-y-2"),setTimeout(()=>e.remove(),300)},t.appendChild(e),requestAnimationFrame(()=>{e.classList.remove("opacity-0","translate-y-2")}),setTimeout(()=>{e.parentElement&&(e.classList.add("opacity-0","translate-y-2"),setTimeout(()=>e.remove(),300))},5e3)}export{i as s};
-//# sourceMappingURL=toast.bb4e117b.js.map
