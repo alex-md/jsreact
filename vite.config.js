@@ -1,28 +1,33 @@
-import { defineConfig } from 'vite';
-import path from 'path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
-    root: 'src',
-    build: {
-        outDir: '../dist',
-        emptyOutDir: true,
-        rollupOptions: {
-            input: {
-                main: '/index.html',
-                clean: '/pages/clean/index.html',
-                diff: '/pages/diff/index.html',
-                expression: '/pages/expression/index.html',
-                generator: '/pages/generator/index.html',
-                keyword: '/pages/keyword/index.html',
-                minify: '/pages/minify/index.html',
-                policy: '/pages/policy/index.html'
-            }
-        }
-    },
+    plugins: [react()],
+    root: 'src', // Set root to src directory
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, './src')
-        }
+            '@': path.resolve(__dirname, './src'),
+        },
     },
-    publicDir: '../public'
-});
+    server: {
+        port: 5174,
+        strictPort: true,
+    },
+    build: {
+        rollupOptions: {
+            input: {
+                main: path.resolve(__dirname, 'src/index.html'),
+                keyword: path.resolve(__dirname, 'src/pages/keyword/index.html'),
+                clean: path.resolve(__dirname, 'src/pages/clean/index.html'),
+                diff: path.resolve(__dirname, 'src/pages/diff/index.html'),
+                expression: path.resolve(__dirname, 'src/pages/expression/index.html'),
+                generator: path.resolve(__dirname, 'src/pages/generator/index.html'),
+                minify: path.resolve(__dirname, 'src/pages/minify/index.html'),
+                policy: path.resolve(__dirname, 'src/pages/policy/index.html')
+            },
+        },
+        outDir: '../dist', // Output to dist in root since root is now src
+        emptyOutDir: true
+    },
+})

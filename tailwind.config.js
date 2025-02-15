@@ -1,9 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
-        "./src/**/*.{html,js}",
-        "./src/components/**/*.js",
-        "./src/pages/**/*.{html,js}"
+        "./src/**/*.{html,js,jsx,ts,tsx}",
+        "./src/components/**/*.{js,jsx,ts,tsx}",
+        "./src/pages/**/*.{html,js,jsx,ts,tsx}"
     ],
     darkMode: 'class',
     theme: {
@@ -20,7 +20,6 @@ export default {
                     700: '#0369a1',
                     800: '#075985',
                     900: '#0c4a6e',
-                    950: '#082f49'
                 }
             },
             fontFamily: {
@@ -28,5 +27,5 @@ export default {
             }
         }
     },
-    plugins: []
+    plugins: [],
 }

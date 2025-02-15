@@ -5,19 +5,44 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- Load head.js first -->
-        <script type="module" src="../../components/head.js"></script>
-        <script>
-            // Initialize head with title and description
-            createHead(
-                'Keyword Density Analyzer',
-                'Analyze keyword density, find intersection clusters, and optimize your content with our advanced SEO text analysis tool. Features multiple matching strategies and visual results.'
-            );
+        <!-- Production-ready Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Load React dependencies first -->
+        <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react@18.2.0",
+                "react-dom/client": "https://esm.sh/react-dom@18.2.0/client"
+            }
+        }
         </script>
 
-        <!-- Dependencies -->
-        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <!-- Load React -->
+        <script type="module">
+            import React from 'react';
+            import { createRoot } from 'react-dom/client';
+            window.React = React;
+            window.ReactDOM = { createRoot };
+        </script>
+
+        <!-- Load Components First -->
+        <script type="module" src="../../components/KeywordInput.js"></script>
+        <script type="module" src="../../components/ResultsDisplay.js"></script>
+        <script type="module" src="../../components/HighestDensityClusterDisplay.js"></script>
+        <script type="module" src="../../components/FileUpload.js"></script>
+        <script type="module" src="../../components/TextInput.js"></script>
+        <script type="module" src="../../utils/utils.js"></script>
+        <script type="module" src="../../utils/app.js"></script>
+
+        <!-- Load head.js last since it depends on other components -->
+        <script type="module">
+            import { createHead } from '../../components/head.js';
+            createHead(
+                'Keyword Density Analyzer',
+                'Analyze keyword density, find intersection clusters, and optimize your content with our advanced SEO text analysis tool.'
+            );
+        </script>
 
         <!-- Verify React Loading -->
         <script>
@@ -38,10 +63,6 @@
                 }
             });
         </script>
-
-        <!-- Production-ready Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@4.0.0/dist/tailwind.min.css" rel="stylesheet">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -341,24 +362,18 @@
     </head>
 
     <body class="bg-gray-50/80 min-h-screen flex flex-col text-gray-700">
-        <!-- Navbar will be injected here by navbar.js -->
+        <script type="module" src="../../components/navbar.js"></script>
 
         <!-- Main content container -->
         <main class="flex-grow container-custom py-8">
             <div id="root">
-                <!-- Enhanced loading state -->
+                <!-- Loading state will be replaced by React -->
                 <div class="min-h-[60vh] flex items-center justify-center">
-                    <div class="card-modern text-center space-y-6 max-w-md w-full mx-auto">
-                        <div class="animate-float text-primary-500 text-6xl mb-4">⚡</div>
-                        <div class="space-y-3">
-                            <div
-                                class="h-4 w-3/4 mx-auto bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-full animate-shimmer">
-                            </div>
-                            <div
-                                class="h-3 w-1/2 mx-auto bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-full animate-shimmer">
-                            </div>
-                        </div>
+                    <div class="text-center"></div>
+                    <div
+                        class="animate-spin h-8 w-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto">
                     </div>
+                    <p class="mt-4 text-gray-600">Loading analyzer...</p>
                 </div>
             </div>
         </main>
@@ -372,89 +387,117 @@
                     <p class="text-gray-600 dark:text-gray-400">Please try refreshing the page. If the problem persists,
                         contact support.</p>
                     <button onclick="location.reload()"
-                        class="btn-modern bg-primary-500 hover:bg-primary-600 text-white">
-                        <i class="fas fa-redo-alt mr-2"></i>
-                        Refresh Page
+                        class="btn-modern bg-primary-500 hover:bg-primary-600 text-white"></button>
+                    <i class="fas fa-redo-alt mr-2"></i>
+                    Refresh Page
                     </button>
                 </div>
             </div>
         </template>
 
-        <!-- Component Scripts -->
-        <script type="module" src="../../components/navbar.js"></script>
         <script type="module" src="../../components/footer.js"></script>
 
         <!-- Application Scripts -->
-        <script>
-            // Error handling for script loading
-            function loadScript(src) {
-                return new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    script.src = src;
-                    script.onload = () => {
-                        console.log(`Loaded: ${src}`);
-                        resolve();
-                    };
-                    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-                    document.body.appendChild(script);
-                });
-            }
-
-            // Load scripts in sequence
-            async function loadApplicationScripts() {
+        <script type="module">
+            // Wait for all dependencies to be loaded
+            const init = async () => {
                 try {
-                    // First ensure React is available
-                    if (!window.React || !window.ReactDOM) {
-                        throw new Error('React or ReactDOM not loaded');
+                    // Verify all required components are loaded
+                    if (!window.KeywordInput || !window.React || !window.ReactDOM || !window.TextInput) {
+                        throw new Error('Required components not loaded');
                     }
 
-                    // Load utilities first
-                    await loadScript('../../utils/utils.js');
-                    console.log('Utils loaded');
-
-                    // Load app.js before components
-                    await loadScript('../../utils/app.js');
-                    console.log('App.js loaded');
-
-                    // Load components after app.js
-                    await Promise.all([
-                        loadScript('../../components/FileUpload.js'),
-                        loadScript('../../components/KeywordInput.js'),
-                        loadScript('../../components/ResultsDisplay.js'),
-                        loadScript('../../components/HighestDensityClusterDisplay.js')
-                    ]);
-                    console.log('Components loaded');
-
-                    // Initialize app immediately after all scripts are loaded
                     const root = document.getElementById('root');
+                    if (!root) throw new Error('Root element not found');
+
+                    // Create the app container component
+                    const AppContainer = () => {
+                        const [text, setText] = React.useState('');
+                        const [keywords, setKeywords] = React.useState([]);
+                        const [matchingStrategy, setMatchingStrategy] = React.useState('partial');
+                        const [windowSize, setWindowSize] = React.useState(10);
+
+                        return React.createElement('div', { className: 'space-y-8' },
+                            // Page Header
+                            React.createElement('div', { className: 'text-center mb-12' },
+                                React.createElement('h1', {
+                                    className: 'text-4xl font-bold text-gray-900 mb-4'
+                                }, 'Keyword Density Analyzer'),
+                                React.createElement('p', {
+                                    className: 'text-lg text-gray-600 max-w-2xl mx-auto'
+                                }, 'Analyze your text for keyword density and optimize your content for better SEO performance.')
+                            ),
+
+                            // Main Analysis Section
+                            React.createElement('div', { className: 'grid grid-cols-1 lg:grid-cols-3 gap-8' },
+                                // Left Column - Keywords Input
+                                React.createElement('div', { className: 'lg:col-span-1' },
+                                    React.createElement('div', {
+                                        className: 'sticky top-4 space-y-6'
+                                    },
+                                        React.createElement(window.KeywordInput, {
+                                            keywords,
+                                            onKeywordsChange: setKeywords,
+                                            matchingStrategy,
+                                            onMatchingStrategyChange: setMatchingStrategy
+                                        })
+                                    )
+                                ),
+
+                                // Right Column - Text Input and Results
+                                React.createElement('div', { className: 'lg:col-span-2 space-y-6' },
+                                    // Text Input Options
+                                    React.createElement('div', { className: 'grid grid-cols-1 gap-6' },
+                                        React.createElement(window.TextInput, {
+                                            onTextChange: setText
+                                        }),
+                                        React.createElement('div', {
+                                            className: 'bg-white rounded-xl shadow-lg border border-gray-100 p-6'
+                                        },
+                                            React.createElement('h3', {
+                                                className: 'text-lg font-semibold text-gray-900 mb-4'
+                                            }, 'Or Upload a File'),
+                                            React.createElement(window.FileUpload, {
+                                                handleFileLoad: setText
+                                            })
+                                        )
+                                    ),
+
+                                    // Results Sections
+                                    keywords.length > 0 && text && React.createElement('div', { className: 'space-y-8' },
+                                        React.createElement(window.ResultsDisplay, {
+                                            text,
+                                            keywords,
+                                            matchingStrategy,
+                                            windowSize,
+                                            utils: window.utils
+                                        }),
+                                        React.createElement(window.HighestDensityClusterDisplay, {
+                                            text,
+                                            keywords,
+                                            windowSize,
+                                            matchingStrategy,
+                                            utils: window.utils
+                                        })
+                                    )
+                                )
+                            )
+                        );
+                    };
+
                     const appRoot = ReactDOM.createRoot(root);
-                    appRoot.render(React.createElement(window.App));
-                    console.log('App rendered');
-
+                    appRoot.render(React.createElement(window.ErrorBoundary, null,
+                        React.createElement(AppContainer)
+                    ));
+                    console.log('App rendered successfully');
                 } catch (error) {
-                    console.error('Error loading application:', error);
-                    document.getElementById('root').innerHTML = `
-                    <div class="min-h-[60vh] flex items-center justify-center p-4">
-                        <div class="card max-w-lg w-full text-center space-y-4">
-                            <div class="text-3xl text-red-500 mb-4">⚠️</div>
-                            <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Error Loading Application</h2>
-                            <p class="text-gray-600 dark:text-gray-400">Please try refreshing the page. If the problem persists, contact support.</p>
-                            <button onclick="location.reload()" class="btn btn-primary mt-4">
-                                Refresh Page
-                            </button>
-                        </div>
-                    </div>
-                `;
+                    console.error('Error initializing app:', error);
+                    document.getElementById('root').innerHTML = document.getElementById('error-template').innerHTML;
                 }
-            }
+            };
 
-            // Global error handler
-            window.addEventListener('error', function (event) {
-                console.error('Global error:', event.error);
-            });
-
-            // Start loading scripts when DOM is ready
-            document.addEventListener('DOMContentLoaded', loadApplicationScripts);
+            // Initialize when everything is loaded
+            window.addEventListener('load', init);
         </script>
 
     </body>
