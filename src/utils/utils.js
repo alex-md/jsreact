@@ -142,6 +142,4 @@ const utils = {
     }
 };
 
-// Export utils to window scope for component access
-window.utils = utils;
-console.log('Utils loaded successfully');
+export { utils };
