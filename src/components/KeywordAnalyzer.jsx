@@ -4,13 +4,14 @@ import FileUpload from './FileUpload.jsx';
 import ResultsDisplay from './ResultsDisplay.jsx';
 import HighestDensityClusterDisplay from './HighestDensityClusterDisplay.jsx';
 import KeywordInput from './KeywordInput.jsx';
+import TextHighlightDisplay from './TextHighlightDisplay.jsx';
 import { utils } from '../utils/utils';
 
 const KeywordAnalyzer = () => {
     const [text, setText] = useState('');
     const [keywords, setKeywords] = useState([]);
     const [matchingStrategy, setMatchingStrategy] = useState('partial');
-    const [windowSize, setWindowSize] = useState(10);
+    const [windowSizePercent, setWindowSizePercent] = useState(10); // Changed to percentage
 
     const handleKeywordsChange = useCallback((newKeywords) => {
         setKeywords(newKeywords);
@@ -20,9 +21,15 @@ const KeywordAnalyzer = () => {
         setMatchingStrategy(newStrategy);
     }, []);
 
-    const handleWindowSizeChange = useCallback((newSize) => {
-        setWindowSize(newSize);
+    const handleWindowSizeChange = useCallback((newSizePercent) => {
+        setWindowSizePercent(newSizePercent);
     }, []);
+
+    // Calculate actual window size based on text length and percentage
+    const getActualWindowSize = useCallback(() => {
+        const words = text.trim().split(/\s+/);
+        return Math.max(1, Math.round((windowSizePercent / 100) * words.length));
+    }, [text, windowSizePercent]);
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -49,25 +56,31 @@ const KeywordAnalyzer = () => {
                         onKeywordsChange={handleKeywordsChange}
                         matchingStrategy={matchingStrategy}
                         onMatchingStrategyChange={handleMatchingStrategyChange}
-                        windowSize={windowSize}
+                        windowSizePercent={windowSizePercent}
                         onWindowSizeChange={handleWindowSizeChange}
                     />
                 </div>
 
-                {/* Results Section */}
+                {/* Results Section - Swapped order and enhanced styling */}
                 {keywords.length > 0 && text && (
                     <div className="space-y-8">
+                        <HighestDensityClusterDisplay
+                            text={text}
+                            keywords={keywords}
+                            windowSize={getActualWindowSize()}
+                            matchingStrategy={matchingStrategy}
+                            utils={utils}
+                        />
                         <ResultsDisplay
                             text={text}
                             keywords={keywords}
                             matchingStrategy={matchingStrategy}
-                            windowSize={windowSize}
+                            windowSize={getActualWindowSize()}
                             utils={utils}
                         />
-                        <HighestDensityClusterDisplay
+                        <TextHighlightDisplay
                             text={text}
                             keywords={keywords}
-                            windowSize={windowSize}
                             matchingStrategy={matchingStrategy}
                             utils={utils}
                         />

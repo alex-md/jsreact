@@ -103,42 +103,253 @@ const utils = {
         return 100;
     },
 
+    getKeywordColor: (keywordIndex) => {
+        // Array of distinct colors for different keywords
+        const colors = [
+            'bg-yellow-200',
+            'bg-green-200',
+            'bg-blue-200',
+            'bg-pink-200',
+            'bg-purple-200',
+            'bg-orange-200',
+            'bg-cyan-200',
+            'bg-red-200'
+        ];
+        return colors[keywordIndex % colors.length];
+    },
+
+    calculateMultiKeywordDensity: (text, keywords, matchingStrategy = 'exact') => {
+        if (!text || !keywords.length) return { totalCount: 0, density: 0, intersections: 0 };
+
+        const words = text.split(/\s+/);
+        let totalCount = 0;
+        let intersectionCount = 0;
+        let wordMatches = new Array(words.length).fill([]);
+
+        keywords.forEach((keyword, keywordIndex) => {
+            let matches = [];
+            words.forEach((word, wordIndex) => {
+                let isMatch = false;
+                switch (matchingStrategy) {
+                    case 'exact':
+                        isMatch = word.toLowerCase() === keyword.toLowerCase();
+                        break;
+                    case 'partial':
+                        isMatch = word.toLowerCase().includes(keyword.toLowerCase());
+                        break;
+                    case 'regex':
+                        try {
+                            isMatch = new RegExp(keyword, 'i').test(word);
+                        } catch (e) {
+                            console.error('Invalid regex pattern:', e);
+                        }
+                        break;
+                }
+                if (isMatch) {
+                    matches.push(wordIndex);
+                    wordMatches[wordIndex] = [...wordMatches[wordIndex], keywordIndex];
+                }
+            });
+            totalCount += matches.length;
+        });
+
+        // Count intersections (words matching multiple keywords)
+        intersectionCount = wordMatches.filter(matches => matches.length > 1).length;
+
+        return {
+            totalCount,
+            density: (totalCount / words.length) * 100,
+            intersections: intersectionCount
+        };
+    },
+
     highlightText: (text, keywords, matchingStrategy = 'exact') => {
         if (!text || !keywords.length) return text;
 
-        let highlightedText = text;
-        const wordCount = text.split(/\s+/).length;
+        let positions = [];
+        const words = text.split(/\s+/);
 
-        keywords.forEach(keyword => {
-            const { count } = utils.calculateDensity(text, keyword, matchingStrategy);
-            const colorIntensity = utils.calculateColorIntensity(count, wordCount);
-
-            let pattern;
-            switch (matchingStrategy) {
-                case 'exact':
-                    pattern = new RegExp(`\\b${keyword}\\b`, 'gi');
-                    break;
-                case 'partial':
-                    pattern = new RegExp(`\\b\\w*${keyword}\\w*\\b`, 'gi');
-                    break;
-                case 'regex':
-                    try {
-                        pattern = new RegExp(keyword, 'gi');
-                    } catch (e) {
-                        console.error('Invalid regex pattern:', e);
-                        return;
-                    }
-                    break;
-                default:
-                    pattern = new RegExp(`\\b${keyword}\\b`, 'gi');
-            }
-
-            highlightedText = highlightedText.replace(pattern, match =>
-                `<mark class="bg-danger-${colorIntensity} bg-opacity-60 rounded px-1">${match}</mark>`
-            );
+        // Find all keyword matches and their positions
+        keywords.forEach((keyword, keywordIndex) => {
+            words.forEach((word, wordIndex) => {
+                let isMatch = false;
+                switch (matchingStrategy) {
+                    case 'exact':
+                        isMatch = word.toLowerCase() === keyword.toLowerCase();
+                        break;
+                    case 'partial':
+                        isMatch = word.toLowerCase().includes(keyword.toLowerCase());
+                        break;
+                    case 'regex':
+                        try {
+                            isMatch = new RegExp(keyword, 'i').test(word);
+                        } catch (e) {
+                            console.error('Invalid regex pattern:', e);
+                        }
+                        break;
+                }
+                if (isMatch) {
+                    positions.push({
+                        word,
+                        index: wordIndex,
+                        keywordIndex,
+                        keywords: [keywordIndex]
+                    });
+                }
+            });
         });
 
-        return highlightedText;
+        // Merge overlapping highlights
+        positions = positions.reduce((acc, curr) => {
+            const existing = acc.find(p => p.index === curr.index);
+            if (existing) {
+                existing.keywords = [...new Set([...existing.keywords, ...curr.keywords])];
+                return acc;
+            }
+            return [...acc, curr];
+        }, []);
+
+        // Apply highlights
+        let highlightedWords = [...words];
+        positions.forEach(pos => {
+            const colorClasses = pos.keywords.map(idx => utils.getKeywordColor(idx)).join(' ');
+            const opacity = pos.keywords.length > 1 ? '90' : '60';
+            highlightedWords[pos.index] = `<mark class="${colorClasses} bg-opacity-${opacity} rounded px-1">${pos.word}</mark>`;
+        });
+
+        return highlightedWords.join(' ');
+    },
+
+    findHighestDensityCluster: (text, keywords, windowSize, matchingStrategy = 'exact') => {
+        if (!text || !keywords.length || windowSize <= 0) return null;
+
+        const words = text.split(/\s+/);
+        let highestDensityCluster = null;
+        let maxCombinedScore = 0;
+
+        // Find clusters with highest density for individual keywords
+        const individualClusters = keywords.map(keyword => {
+            let maxScore = 0;
+            let bestCluster = null;
+
+            for (let i = 0; i <= words.length - windowSize; i++) {
+                const windowText = words.slice(i, i + windowSize).join(' ');
+                const { count } = utils.calculateDensity(windowText, keyword, matchingStrategy);
+                const score = count / windowSize;
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestCluster = {
+                        text: windowText,
+                        highlightedText: utils.highlightText(windowText, [keyword], matchingStrategy),
+                        start: i,
+                        end: i + windowSize,
+                        keyword,
+                        count,
+                        density: score * 100
+                    };
+                }
+            }
+            return bestCluster;
+        }).filter(Boolean);
+
+        // Find clusters with highest combined density
+        // Consider both total matches and balanced distribution across keywords
+        for (let i = 0; i <= words.length - windowSize; i++) {
+            const windowText = words.slice(i, i + windowSize).join(' ');
+            const keywordCounts = keywords.map(keyword => {
+                const { count } = utils.calculateDensity(windowText, keyword, matchingStrategy);
+                return count;
+            });
+
+            const totalCount = keywordCounts.reduce((sum, count) => sum + count, 0);
+            const { intersections } = utils.calculateMultiKeywordDensity(windowText, keywords, matchingStrategy);
+
+            // Enhanced scoring that considers:
+            // 1. Total keyword density
+            // 2. Number of intersections (words matching multiple keywords)
+            // 3. Balance of keyword distribution
+            const avgCount = totalCount / keywords.length;
+            const distribution = 1 - Math.sqrt(
+                keywordCounts.reduce((variance, count) =>
+                    variance + Math.pow(count - avgCount, 2), 0) / keywords.length
+            ) / avgCount;
+
+            const combinedScore = (
+                (totalCount / windowSize) * 0.4 + // 40% weight on total density
+                (intersections / windowSize) * 0.3 + // 30% weight on intersections
+                distribution * 0.3 // 30% weight on balanced distribution
+            );
+
+            if (combinedScore > maxCombinedScore) {
+                maxCombinedScore = combinedScore;
+                highestDensityCluster = {
+                    text: windowText,
+                    highlightedText: utils.highlightText(windowText, keywords, matchingStrategy),
+                    matchCount: totalCount,
+                    intersections,
+                    density: (totalCount / windowSize) * 100,
+                    wordCount: windowSize,
+                    score: combinedScore,
+                    distribution: distribution * 100,
+                    keywordCounts: Object.fromEntries(
+                        keywords.map((keyword, i) => [keyword, keywordCounts[i]])
+                    ),
+                    start: i,
+                    end: i + windowSize
+                };
+            }
+        }
+
+        // Add individual best clusters to the result
+        if (highestDensityCluster) {
+            highestDensityCluster.individualClusters = individualClusters;
+        }
+
+        return highestDensityCluster;
+    },
+
+    analyzeKeywords: (text, keywords, matchingStrategy = 'exact') => {
+        if (!text || !keywords.length) return [];
+
+        const words = text.split(/\s+/);
+        const totalWords = words.length;
+
+        return keywords.map(keyword => {
+            const { count } = utils.calculateDensity(text, keyword, matchingStrategy);
+            // Calculate distribution as percentage of text covered
+            const distribution = count / totalWords;
+            return {
+                keyword,
+                count,
+                density: distribution,
+                distribution
+            };
+        });
+    },
+
+    calculateSpeakingTime: (wordCount, rate = "average") => {
+        // Words per minute rates based on research
+        const rates = {
+            slow: 130,   // Public speaking/presentation speed
+            average: 150, // General conversational speed
+            fast: 183     // Professional audiobook/podcast narration
+        };
+
+        // Ensure a valid rate is used, defaulting to "average" if invalid
+        const wordsPerMinute = rates[rate] || rates.average;
+
+        // Calculate total seconds (more accurate than relying on minutes alone)
+        const totalSeconds = Math.round((wordCount / wordsPerMinute) * 60);
+
+        // Convert seconds into minutes and seconds
+        const fullMinutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        // Format output
+        if (fullMinutes === 0) return `${seconds} sec`;
+        if (seconds === 0) return `${fullMinutes} min`;
+        return `${fullMinutes}m ${seconds}s`;
     }
 };
 

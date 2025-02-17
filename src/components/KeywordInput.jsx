@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatchingStrategyChange, windowSize, onWindowSizeChange }) => {
+const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatchingStrategyChange, windowSizePercent, onWindowSizeChange }) => {
     const [newKeyword, setNewKeyword] = useState('');
 
     const handleAdd = (e) => {
@@ -75,17 +75,24 @@ const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatching
 
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
-                            Content Window Size (words)
+                            Content Window Size (% of text)
                         </label>
-                        <input
-                            type="number"
-                            value={windowSize}
-                            onChange={(e) => onWindowSizeChange(Math.max(1, parseInt(e.target.value) || 1))}
-                            min="1"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg 
-                                focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:bg-white 
-                                transition-all duration-200 text-gray-900 hover:bg-gray-100"
-                        />
+                        <div className="flex items-center gap-4">
+                            <input
+                                type="range"
+                                value={windowSizePercent}
+                                onChange={(e) => onWindowSizeChange(parseInt(e.target.value))}
+                                min="1"
+                                max="50"
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <span className="text-sm text-gray-600 min-w-[3rem]">
+                                {windowSizePercent}%
+                            </span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                            Slide to adjust the analysis window size (1-50% of total text)
+                        </p>
                     </div>
                 </div>
 
