@@ -7,7 +7,8 @@ const navItems = [
     { href: '/pages/expression', text: 'Solve' },
     { href: '/pages/clean', text: 'Clean Text' },
     { href: '/pages/diff', text: 'Diff Checker' },
-    { href: '/pages/keyword', text: 'Keyword Density Analyzer' }
+    { href: '/pages/keyword', text: 'Keyword Density Analyzer' },
+    { href: '/pages/speech', text: 'TTS' }
 ];
 
 // Helper function to generate correct navigation paths

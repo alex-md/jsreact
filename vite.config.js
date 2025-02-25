@@ -24,7 +24,8 @@ export default defineConfig({
                 expression: path.resolve(__dirname, 'src/pages/expression/index.html'),
                 generator: path.resolve(__dirname, 'src/pages/generator/index.html'),
                 minify: path.resolve(__dirname, 'src/pages/minify/index.html'),
-                policy: path.resolve(__dirname, 'src/pages/policy/index.html')
+                policy: path.resolve(__dirname, 'src/pages/policy/index.html'),
+                speech: path.resolve(__dirname, 'src/pages/speech/index.html'),
             },
         },
         outDir: '../dist', // Output to dist in root since root is now src

@@ -106,14 +106,14 @@ const utils = {
     getKeywordColor: (keywordIndex) => {
         // Array of distinct colors for different keywords
         const colors = [
-            'bg-yellow-200',
-            'bg-green-200',
-            'bg-blue-200',
-            'bg-pink-200',
-            'bg-purple-200',
-            'bg-orange-200',
-            'bg-cyan-200',
-            'bg-red-200'
+            'bg-yellow-400',
+            'bg-green-300',
+            'bg-blue-300',
+            'bg-pink-300',
+            'bg-purple-300',
+            'bg-orange-300',
+            'bg-cyan-300',
+            'bg-red-300'
         ];
         return colors[keywordIndex % colors.length];
     },
@@ -347,9 +347,9 @@ const utils = {
         const seconds = totalSeconds % 60;
 
         // Format output
-        if (fullMinutes === 0) return `${seconds} sec`;
-        if (seconds === 0) return `${fullMinutes} min`;
-        return `${fullMinutes}m ${seconds}s`;
+        if (fullMinutes === 0) return `~${seconds} sec of speaking time`;
+        if (seconds === 0) return `~${fullMinutes} min of speaking time`;
+        return `~${fullMinutes} min ${seconds} sec of speaking time`;
     }
 };
 

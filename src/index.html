@@ -14,7 +14,8 @@
 		</style>
 		<link rel="stylesheet" href="/assets/styles/global.css">
 		<script type="module" src="/components/head.js"></script>
-		<script>
+		<script type="module">
+			import { createHead } from '/components/head.js';
 			createHead(
 				'Free Web Developer Tools & Utilities',
 				'Essential web development tools for minifying code, analyzing text, cleaning content, comparing differences, finding expressions, and optimizing your workflow. Open-source and free to use.'
@@ -141,6 +142,23 @@
 					<a href="/pages/keyword"
 						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
 						Try Analyzer
+					</a>
+				</article>
+
+				<!-- Speech Tools Card -->
+				<article
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+							<i class="fas fa-microphone-lines text-indigo-600 dark:text-indigo-500 text-xl"></i>
+						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Speech Tools</h3>
+					</div>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Convert between speech and text using
+						advanced AI technologies</p>
+					<a href="/pages/speech"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
+						Try Speech Tools
 					</a>
 				</article>
 			</nav>
