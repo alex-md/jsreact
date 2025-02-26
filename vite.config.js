@@ -11,7 +11,7 @@ export default defineConfig({
     build: {
         outDir: '../dist', // Changed to output to root dist directory
         emptyOutDir: true,
-        sourcemap: true,
+        sourcemap: false,
         assetsDir: 'assets',
         rollupOptions: {
             input: {
