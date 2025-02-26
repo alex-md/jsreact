@@ -22,8 +22,7 @@ export default defineConfig({
                 generator: resolve(__dirname, 'src/pages/generator/index.html'),
                 keyword: resolve(__dirname, 'src/pages/keyword/index.html'),
                 minify: resolve(__dirname, 'src/pages/minify/index.html'),
-                policy: resolve(__dirname, 'src/pages/policy/index.html'),
-                speech: resolve(__dirname, 'src/pages/speech/index.html') // Add speech page
+                policy: resolve(__dirname, 'src/pages/policy/index.html')
             },
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
@@ -61,9 +60,7 @@ export default defineConfig({
     server: {
         middlewareMode: true, // Updated deprecated value
         watch: {
-            // Watch all source files
-            usePolling: true,
-            ignored: ['!**/node_modules/**']
+            ignored: ['!**/src/components/**']
         }
     }
 })
