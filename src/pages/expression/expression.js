@@ -11,7 +11,11 @@ const evaluate = (expression) => {
             case "+": return a + b;
             case "-": return a - b;
             case "*": return a * b;
-            case "/": return a / b;
+            case "/":
+                if (b === 0) {
+                    throw new Error("Division by zero"); // Handle division by zero
+                }
+                return a / b;
             case "**": return a ** b;
             default: throw new Error(`Unknown operator: ${operator}`);
         }
@@ -44,7 +48,10 @@ const evaluate = (expression) => {
                 while (operators.length && operators[operators.length - 1] !== "(") {
                     output.push(operators.pop());
                 }
-                operators.pop();
+                if (operators.length === 0) {
+                  throw new Error("Mismatched parentheses");
+                }
+                operators.pop(); // Remove the '('
             } else {
                 while (operators.length && precedence(operators[operators.length - 1]) >= precedence(token)) {
                     output.push(operators.pop());
@@ -53,6 +60,9 @@ const evaluate = (expression) => {
             }
         }
         while (operators.length) {
+             if (operators[operators.length - 1] === '(') {
+                throw new Error("Mismatched parentheses");
+             }
             output.push(operators.pop());
         }
         return output;
@@ -64,16 +74,28 @@ const evaluate = (expression) => {
             if (!isNaN(token)) {
                 stack.push(token);
             } else {
+                if (stack.length < 2) {
+                  throw new Error("Invalid expression");
+                }
                 const b = stack.pop();
                 const a = stack.pop();
                 stack.push(applyOperator(token, a, b));
             }
         }
+        if (stack.length !== 1) {
+            throw new Error("Invalid expression");
+        }
         return stack.pop();
     }
+    let result;
+    try {
+        const postfix = shuntingYard(tokens);
+        result = evaluatePostfix(postfix);
+    } catch (error) {
+        return NaN;  // Return NaN if there is an error in evaluation.
+    }
 
-    const postfix = shuntingYard(tokens);
-    return evaluatePostfix(postfix);
+    return result;
 };
 
 // Main logic
@@ -94,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             calculatorDescription.classList.add("translate-y-full", "opacity-0");
             setTimeout(() => {
                 calculatorDescription.classList.add("hidden");
-            }, 300);
+            }, 3000);  // Shorter timeout
         }, 5000);
     };
 
@@ -105,12 +127,17 @@ document.addEventListener("DOMContentLoaded", () => {
             operators.push("**");
         }
 
-        function backtrack(nums, currentExpr, currentValue) {
+        function backtrack(nums, currentExpr) {
             if (nums.length === 0) {
-                if (Math.abs(currentValue - target) < 1e-6) {
-                    // Account for floating-point precision
-                    return currentExpr;
+                try {
+                    const currentValue = evaluate(currentExpr);
+                     if (!isNaN(currentValue) && Math.abs(currentValue - target) < 1e-6) {
+                        return currentExpr;
+                    }
+                } catch (e) {
+                    return null; //invalid expressions
                 }
+
                 return null;
             }
 
@@ -118,37 +145,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 const num = nums[i];
                 const remainingNums = nums.slice(0, i).concat(nums.slice(i + 1));
 
-                for (const op of operators) {
-                    if (op === "/" && currentValue === 0)
-                        continue;
-                    // Avoid division by zero
+                // First number, no operator needed
+                if (currentExpr === "") {
+                     const result = backtrack(remainingNums, num.toString());
+                     if (result) return result;
+                }
+                else {
 
-                    let newValue;
-                    try {
-                        newValue = evaluate(`${currentValue}${op}${num}`);
-                    } catch (error) {
-                        // If evaluation fails (e.g., division by zero), skip this operation
-                        continue;
-                    }
+                  for (const op of operators) {
 
-                    const newExpr = `(${currentExpr}${op}${num})`;
-                    const result = backtrack(remainingNums, newExpr, newValue);
-                    if (result)
+                    const newExpr = `(${currentExpr}${op}${num})`; // Always use parentheses
+                    const result = backtrack(remainingNums, newExpr);
+                      if (result) {
                         return result;
+                      }
+                  }
                 }
             }
             return null;
         }
 
-        for (let i = 0; i < numbers.length; i++) {
-            const num = numbers[i];
-            const remainingNums = numbers.slice(0, i).concat(numbers.slice(i + 1));
-            const result = backtrack(remainingNums, num.toString(), num);
-            if (result)
-                return result;
-        }
 
-        return "No solution found";
+        const result = backtrack(numbers, "");
+        return result || "No solution found";
     }
 
     // Event handlers
