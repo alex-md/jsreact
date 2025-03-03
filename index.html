@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
+<html lang="en" class="smooth-scroll">
 
 	<head>
 		<!-- Add fallback styles -->
@@ -11,19 +11,17 @@
 			.js-ready {
 				opacity: 1;
 			}
-		</style>
-		<script>
-			createHead(
-				'Free Web Developer Tools & Utilities',
-				'Essential web development tools for minifying code, analyzing text, cleaning content, comparing differences, finding expressions, and optimizing your workflow. Open-source and free to use.'
-			);
-		</script>
-		<script type="module" crossorigin src="/assets/main-DyArmHzu.js"></script>
-		<link rel="modulepreload" crossorigin href="/assets/footer-Le0p3Eqs.js">
-		<link rel="stylesheet" crossorigin href="/assets/footer-BxbC4yX3.css">
+		</style>
+		
+		
+		
+		<script type="module" crossorigin src="/assets/main.9d4399c4.js"></script>
+		<link rel="modulepreload" crossorigin href="/assets/footer.47ac51d8.js">
+		<link rel="modulepreload" crossorigin href="/assets/utils.7d66aff6.js">
+		<link rel="stylesheet" href="/assets/footer.d205bcd1.css">
 	</head>
 
-	<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
+	<body class="js-ready dark:bg-gray-900 min-h-screen flex flex-col">
 		<header role="banner"
 			class="relative py-24 bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 overflow-hidden">
 			<div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]"></div>
@@ -144,9 +142,47 @@
 						Try Analyzer
 					</a>
 				</article>
+
+				<!-- Speech Tools Card -->
+				<article
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+							<i class="fas fa-microphone-lines text-indigo-600 dark:text-indigo-500 text-xl"></i>
+						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Speech Tools</h3>
+					</div>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Convert between speech and text using
+						advanced AI technologies</p>
+					<a href="/pages/speech"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
+						Try Speech Tools
+					</a>
+				</article>
+
+				<!-- Code Playground Card -->
+				<article
+					class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700">
+					<div class="flex items-center gap-3 mb-4">
+						<div class="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
+							<i class="fas fa-code text-pink-600 dark:text-pink-500 text-xl"></i>
+						</div>
+						<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Code Playground</h3>
+					</div>
+					<p class="text-gray-600 dark:text-gray-300 mb-6 min-h-[3rem]">Interactive HTML, CSS, and JavaScript
+						editor with live preview</p>
+					<a href="/pages/playground"
+						class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 transition-colors w-full">
+						Try Playground
+					</a>
+				</article>
 			</nav>
 		</main>
-
+
+		
+		
+		
+		
 	</body>
 
 </html>
