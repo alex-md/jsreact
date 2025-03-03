@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <script type="module" src="../../components/head.js"></script>
+        <script>
+            createHead(
+                'Online Code Playground - Interactive HTML, CSS & JavaScript Editor',
+                'Free online code editor with live preview. Write, test, and experiment with HTML, CSS, and JavaScript in real-time. Features library imports, console output, and auto-reload.'
+            );
+        </script>
+        <!-- SEO Meta Tags -->
+        <meta name="keywords"
+            content="code playground, online editor, html editor, css editor, javascript editor, live preview, code testing, web development tools, CDN import, library management">
+        <meta name="author" content="JSReact Tools">
+        <meta name="robots" content="index, follow">
+        <meta name="revisit-after" content="7 days">
+        <meta name="language" content="English">
+
+        <!-- Open Graph / Social Media Meta Tags -->
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="JSReact Tools">
+        <meta property="og:title" content="Online Code Playground - Interactive HTML, CSS & JavaScript Editor">
+        <meta property="og:description"
+            content="Free online code editor with live preview. Write, test, and experiment with code in real-time.">
+        <meta property="og:image:alt" content="Code Playground Preview">
+
+        <!-- Twitter Card Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Online Code Playground - Interactive HTML, CSS & JavaScript Editor">
+        <meta name="twitter:description"
+            content="Free online code editor with live preview. Write, test, and experiment with code in real-time.">
+
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "Online Code Playground",
+                "description": "Interactive HTML, CSS, and JavaScript editor with live preview. Write, test, and experiment with code in real-time.",
+                "applicationCategory": "DeveloperApplication",
+                "operatingSystem": "Any",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                },
+                "featureList": [
+                    "Live HTML, CSS, JavaScript editing",
+                    "Real-time preview",
+                    "CDN library imports",
+                    "Console output",
+                    "Auto-reload functionality",
+                    "Multiple framework support"
+                ],
+                "url": "https://jsreact.tools/pages/playground"
+            }
+        </script>
+        <!-- Monaco Editor -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+        <style>
+            .resizer.active,
+            .resizer:hover,
+            .tab-button.active {
+                background: var(--primary)
+            }
+
+            .editor-container {
+                height: calc(100vh - 20rem);
+                min-height: 400px
+            }
+
+            .resizer {
+                width: 4px;
+                cursor: col-resize;
+                background: #e5e7eb;
+                transition: background .2s
+            }
+
+            .editor-pane {
+                min-width: 200px;
+                height: 100%
+            }
+
+            .preview-pane {
+                min-width: 300px;
+                background: #fff;
+                border-radius: .75rem
+            }
+
+            .monaco-editor {
+                border-radius: .75rem;
+                overflow: hidden
+            }
+
+            .tab-button {
+                padding: .5rem 1rem;
+                font-size: .875rem;
+                border-radius: .5rem;
+                transition: .2s
+            }
+
+            .tab-button.active {
+                color: #fff
+            }
+
+            .console-container {
+                display: none;
+                background: #1e1e1e;
+                color: #fff;
+                font-family: monospace;
+                border-top: 2px solid #333;
+                height: 200px;
+                overflow-y: auto
+            }
+
+            .console-container.visible,
+            .library-menu.visible {
+                display: block
+            }
+
+            .console-line {
+                padding: 4px 8px;
+                border-bottom: 1px solid #333
+            }
+
+            .console-line.error {
+                color: #ff6b6b
+            }
+
+            .console-line.warn {
+                color: #ffd93d
+            }
+
+            .toggle-switch {
+                position: relative;
+                display: inline-block;
+                width: 44px;
+                height: 24px
+            }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0
+            }
+
+            .toggle-slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 24px
+            }
+
+            .toggle-slider:before {
+                position: absolute;
+                content: "";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: #fff;
+                transition: .4s;
+                border-radius: 50%
+            }
+
+            input:checked+.toggle-slider {
+                background-color: var(--primary)
+            }
+
+            input:checked+.toggle-slider:before {
+                transform: translateX(20px)
+            }
+
+            .library-picker {
+                position: relative
+            }
+
+            .library-menu {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                width: 300px;
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                border-radius: .5rem;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1);
+                z-index: 50;
+                padding: .75rem;
+                display: none;
+                max-height: 400px;
+                overflow-y: auto
+            }
+
+            .library-category {
+                margin-bottom: 1rem
+            }
+
+            .library-category-title {
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: .5rem;
+                font-size: .9rem
+            }
+
+            .library-item {
+                display: flex;
+                align-items: center;
+                padding: .5rem;
+                border-radius: .375rem;
+                cursor: pointer;
+                transition: .2s
+            }
+
+            .library-item:hover {
+                background: #f3f4f6
+            }
+
+            .library-item-icon {
+                width: 20px;
+                height: 20px;
+                margin-right: .75rem;
+                display: flex;
+                align-items: center;
+                justify-content: center
+            }
+
+            .library-item-info {
+                flex: 1
+            }
+
+            .library-item-name {
+                font-weight: 500;
+                font-size: .875rem;
+                color: #111827
+            }
+
+            .library-item-version {
+                font-size: .75rem;
+                color: #6b7280
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-50">
+        <script type="module" src="../../components/navbar.js"></script>
+        <script>
+            document.body.appendChild(
+                createHeader(
+                    'Code Playground',
+                    'Write, test, and experiment with code in real-time'
+                )
+            );
+        </script>
+
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="space-y-6">
+                <!-- Editor Section -->
+                <div
+                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                    <div class="border-b border-gray-200 px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <button id="html-tab" class="tab-button active">HTML</button>
+                                <button id="css-tab" class="tab-button">CSS</button>
+                                <button id="js-tab" class="tab-button">JavaScript</button>
+                            </div>
+                            <!-- Library Import Button -->
+                            <div class="library-picker">
+                                <button id="library-button"
+                                    class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                    <i class="fas fa-puzzle-piece"></i>
+                                    Import Library
+                                </button>
+                                <!-- Library Selection Menu -->
+                                <div id="library-menu" class="library-menu">
+                                    <!-- CSS Frameworks -->
+                                    <div class="library-category">
+                                        <h4 class="library-category-title">CSS Frameworks</h4>
+                                        <div class="space-y-1">
+                                            <div class="library-item" data-library="bootstrap">
+                                                <div class="library-item-icon">
+                                                    <i class="fab fa-bootstrap text-purple-600"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">Bootstrap</div>
+                                                    <div class="library-item-version">v5.3.2</div>
+                                                </div>
+                                            </div>
+                                            <div class="library-item" data-library="tailwind">
+                                                <div class="library-item-icon">
+                                                    <i class="fab fa-css3 text-blue-500"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">Tailwind CSS</div>
+                                                    <div class="library-item-version">v3.3.5</div>
+                                                </div>
+                                            </div>
+                                            <div class="library-item" data-library="bulma">
+                                                <div class="library-item-icon">
+                                                    <i class="fas fa-leaf text-green-500"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">Bulma</div>
+                                                    <div class="library-item-version">v0.9.4</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- UI Component Libraries -->
+                                    <div class="library-category">
+                                        <h4 class="library-category-title">UI Components</h4>
+                                        <div class="space-y-1">
+                                            <div class="library-item" data-library="daisyui">
+                                                <div class="library-item-icon">
+                                                    <i class="fas fa-flower text-yellow-500"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">DaisyUI</div>
+                                                    <div class="library-item-version">v4.4.2</div>
+                                                </div>
+                                            </div>
+                                            <div class="library-item" data-library="materialui">
+                                                <div class="library-item-icon">
+                                                    <i class="fas fa-square text-blue-600"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">Material Design</div>
+                                                    <div class="library-item-version">v3.0.0</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- JS Frameworks -->
+                                    <div class="library-category">
+                                        <h4 class="library-category-title">JavaScript Libraries</h4>
+                                        <div class="space-y-1">
+                                            <div class="library-item" data-library="jquery">
+                                                <div class="library-item-icon">
+                                                    <i class="fab fa-js text-yellow-500"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">jQuery</div>
+                                                    <div class="library-item-version">v3.7.1</div>
+                                                </div>
+                                            </div>
+                                            <div class="library-item" data-library="alpine">
+                                                <div class="library-item-icon">
+                                                    <i class="fas fa-mountain text-gray-600"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">Alpine.js</div>
+                                                    <div class="library-item-version">v3.13.0</div>
+                                                </div>
+                                            </div>
+                                            <div class="library-item" data-library="react">
+                                                <div class="library-item-icon">
+                                                    <i class="fab fa-react text-blue-400"></i>
+                                                </div>
+                                                <div class="library-item-info">
+                                                    <div class="library-item-name">React</div>
+                                                    <div class="library-item-version">v18.2.0</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Custom CDN Input -->
+                                    <div class="library-category border-t border-gray-200 pt-4 mt-4">
+                                        <h4 class="library-category-title">Custom CDN Link</h4>
+                                        <div class="space-y-3">
+                                            <input type="text" id="cdn-url-input"
+                                                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+                                                placeholder="Paste CDN URL here (e.g., https://cdn.../library.js)">
+                                            <div class="flex items-center gap-2">
+                                                <select id="cdn-type"
+                                                    class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm">
+                                                    <option value="js">JavaScript</option>
+                                                    <option value="css">CSS</option>
+                                                </select>
+                                                <button id="add-cdn-library"
+                                                    class="px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-600 transition-colors">
+                                                    Add Library
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="editor-container flex">
+                            <!-- Editor Pane -->
+                            <div class="editor-pane flex-1">
+                                <div id="editor" class="w-full h-full"></div>
+                            </div>
+                            <!-- Resizer -->
+                            <div id="resizer" class="resizer"></div>
+                            <!-- Preview Pane -->
+                            <div id="preview" class="preview-pane flex-1 border border-gray-200">
+                                <iframe id="preview-frame" class="w-full h-full rounded-xl"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap items-center gap-4">
+                    <button id="run-button"
+                        class="px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                        <i class="fas fa-play mr-2"></i>
+                        Run
+                    </button>
+                    <button id="copy-all-button"
+                        class="px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                        <i class="fas fa-copy mr-2"></i>
+                        Copy All
+                    </button>
+                    <button id="clear-button"
+                        class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-trash-alt mr-2"></i>
+                        Clear
+                    </button>
+                    <button id="toggle-console"
+                        class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-terminal mr-2"></i>
+                        Console
+                    </button>
+                    <div class="flex items-center gap-2 ml-auto">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-reload" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-sm text-gray-600">Auto-reload</span>
+                    </div>
+                </div>
+
+                <!-- Console Section -->
+                <div id="console" class="console-container">
+                    <div id="console-content"></div>
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="../../components/footer.js"></script>
+        <script type="module" src="../../components/toast.js"></script>
+        <script type="module" src="./playground.js"></script>
+    </body>
+
+</html>

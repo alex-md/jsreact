@@ -22,7 +22,9 @@ export default defineConfig({
                 generator: resolve(__dirname, 'src/pages/generator/index.html'),
                 keyword: resolve(__dirname, 'src/pages/keyword/index.html'),
                 minify: resolve(__dirname, 'src/pages/minify/index.html'),
-                policy: resolve(__dirname, 'src/pages/policy/index.html')
+                playground: resolve(__dirname, 'src/pages/playground/index.html'),
+                policy: resolve(__dirname, 'src/pages/policy/index.html'),
+                speech: resolve(__dirname, 'src/pages/speech/index.html'),
             },
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
@@ -58,7 +60,8 @@ export default defineConfig({
         ]
     },
     server: {
-        middlewareMode: true, // Updated deprecated value
+        port: 3000, // You can specify a port
+        open: true, // Open browser automatically
         watch: {
             ignored: ['!**/src/components/**']
         }
