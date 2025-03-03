@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp public/_redirects dist/",
+    "build": "vite build && [ -f public/_redirects ] && cp public/_redirects dist/ || true",
     "preview": "vite preview",
     "deploy": "npm run build && gh-pages -d dist"
   },
