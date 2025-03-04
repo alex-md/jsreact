@@ -15,14 +15,18 @@ export class EditorManager {
             this.editor = monaco.editor.create(document.getElementById('editor'), {
                 value: this.state[this.state.currentTab],
                 language: this.state.currentTab,
-                theme: 'vs',
+                theme: 'vs-dark',
                 automaticLayout: true,
                 minimap: { enabled: false },
-                fontSize: 14,
-                padding: { top: 16 },
+                fontSize: 13,
+                suggestOnTriggerCharacters: true,
+                wordBasedSuggestions: false,
+                suggest: { showWords: false, showClasses: false, showVariables: false },
+                padding: { top: 10 },
                 roundedSelection: true,
-                scrollBeyondLastLine: false,
-                renderWhitespace: 'selection'
+                scrollBeyondLastLine: true,
+                renderWhitespace: 'selection',
+                lineNumbers: 'on'
             });
 
             this.setupEditorEvents();
@@ -112,15 +116,10 @@ export class EditorManager {
         // Get library links if there are any
         const libraryLinks = this.getLibraryLinksHtml();
 
-        return `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combined Code</title>
+        return `<head>
     ${libraryLinks.css}
     <style>
-${this.state.css}
+    ${this.state.css}
     </style>
     ${libraryLinks.jsHead}
 </head>
@@ -131,7 +130,7 @@ ${libraryLinks.jsBody}
 ${this.state.js}
 </script>
 </body>
-</html>`;
+`;
     }
 
     getLibraryLinksHtml() {
@@ -172,19 +171,7 @@ ${this.state.js}
 
     extractBodyContent(html) {
         const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-        if (bodyMatch) {
-            return bodyMatch[1].trim();
-        } else if (html.includes('<!DOCTYPE html>')) {
-            return html
-                .replace(/<\!DOCTYPE[^>]*>/i, '')
-                .replace(/<html[^>]*>/i, '')
-                .replace(/<\/html>/i, '')
-                .replace(/<head[^>]*>[\s\S]*<\/head>/i, '')
-                .replace(/<body[^>]*>/i, '')
-                .replace(/<\/body>/i, '')
-                .trim();
-        }
-        return html.trim();
+        return bodyMatch ? bodyMatch[1].trim() : html.trim();
     }
 
     setupResizer() {

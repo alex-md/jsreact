@@ -2,6 +2,13 @@ export class ConsoleManager {
     constructor() {
         this.container = document.getElementById('console');
         this.content = document.getElementById('console-content');
+        this.setupCloseButton();
+    }
+
+    setupCloseButton() {
+        document.getElementById('close-console').addEventListener('click', () => {
+            this.toggle();
+        });
     }
 
     log(message, type = 'log') {
@@ -16,8 +23,7 @@ export class ConsoleManager {
         this.content.innerHTML = '';
     }
 
-    toggle(state) {
-        state.consoleVisible = !state.consoleVisible;
+    toggle() {
         this.container.classList.toggle('visible');
     }
 }

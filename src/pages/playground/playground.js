@@ -23,7 +23,7 @@ const editorManager = new EditorManager(state, previewManager);
 
 // Setup console toggle
 document.getElementById('toggle-console').addEventListener('click', () => {
-    consoleManager.toggle(state);
+    consoleManager.toggle();
 });
 
 // Setup library menu toggle
