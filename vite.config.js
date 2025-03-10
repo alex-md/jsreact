@@ -3,13 +3,12 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import path from 'path'
 
-// https://vitejs.dev/config/
 export default defineConfig({
     base: '/',
     plugins: [react()],
     root: 'src',
     build: {
-        outDir: '../dist', // Changed to output to root dist directory
+        outDir: '../dist',
         emptyOutDir: true,
         sourcemap: false,
         assetsDir: 'assets',
@@ -46,10 +45,15 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
-            '@components': resolve(__dirname, 'src/components'),
-            '@utils': resolve(__dirname, 'src/utils'),
-            '@assets': resolve(__dirname, 'src/assets'),
-            '@styles': resolve(__dirname, 'src/assets/styles')
+            '@config': path.resolve(__dirname, './src/config'),
+            '@components': path.resolve(__dirname, './src/components'),
+            '@layouts': path.resolve(__dirname, './src/layouts'),
+            '@utils': path.resolve(__dirname, './src/utils'),
+            '@assets': path.resolve(__dirname, './src/assets'),
+            '@styles': path.resolve(__dirname, './src/styles'),
+            '@pages': path.resolve(__dirname, './src/pages'),
+            '@hooks': path.resolve(__dirname, './src/hooks'),
+            '@services': path.resolve(__dirname, './src/services')
         }
     },
     optimizeDeps: {
@@ -60,8 +64,8 @@ export default defineConfig({
         ]
     },
     server: {
-        port: 3000, // You can specify a port
-        open: true, // Open browser automatically
+        port: 3000,
+        open: true,
         watch: {
             ignored: ['!**/src/components/**']
         }

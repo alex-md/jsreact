@@ -1,3 +1,9 @@
+import { analytics } from '@services/analytics';
+import { cache } from '@services/cache';
+import { logger } from '@services/logger';
+import { store } from '@services/store';
+import config from '@config/project.config';
+
 console.log('App.js loading...');
 
 // Verify React is available
@@ -174,3 +180,58 @@ window.App = () => {
 window.ErrorBoundary = ErrorBoundary;
 
 console.log('App.js loaded successfully');
+
+// Initialize app
+export function initializeApp() {
+    // Setup error handling
+    window.addEventListener('error', (event) => {
+        logger.error('Uncaught error:', event.error);
+        analytics.trackError(event.error);
+    });
+
+    window.addEventListener('unhandledrejection', (event) => {
+        logger.error('Unhandled promise rejection:', event.reason);
+        analytics.trackError(event.reason);
+    });
+
+    // Initialize theme
+    const theme = store.get('theme') || config.ui.defaultTheme;
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    store.set('theme', theme);
+
+    // Add toast event listener
+    window.addEventListener('show-toast', (event) => {
+        const { message, variant, duration } = event.detail;
+        const Toast = document.querySelector('#toast-container');
+        if (Toast) {
+            Toast.dispatchEvent(new CustomEvent('show', {
+                detail: { message, variant, duration }
+            }));
+        }
+    });
+
+    // Track initial page view
+    analytics.trackPageView({
+        title: document.title,
+        path: window.location.pathname,
+        type: 'page'
+    });
+
+    logger.info('App initialized successfully');
+
+    return {
+        services: {
+            analytics,
+            cache,
+            logger,
+            store
+        },
+        config
+    };
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
+    document.body.classList.add('js-ready');
+});

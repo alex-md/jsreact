@@ -1,5 +1,7 @@
 // Import styles
 import '../assets/styles/global.css';
+import { generateMetaTags } from '@config/meta.config';
+import { analytics } from '@services/analytics';
 
 /**
  * Creates and configures the document head with metadata, styles, and tracking
@@ -345,6 +347,13 @@ export function createHead(title, description, options = {}) {
             console.error('Error adding speech-specific metadata:', error);
         }
     }
+
+    // Track page view in analytics
+    analytics.trackPageView({
+        title,
+        path: window.location.pathname,
+        type: 'page'
+    });
 
     return {
         title,
