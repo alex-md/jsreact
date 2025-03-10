@@ -9,10 +9,13 @@
                 'Find expressions using arithmetic operations and parentheses to reach a target number.'
             );
         </script>
-      <script type="module" crossorigin src="/assets/expression.4f2356e6.js"></script>
-      <link rel="modulepreload" crossorigin href="/assets/footer.47ac51d8.js">
+        <!-- Add KaTeX -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+      <script type="module" crossorigin src="/assets/expression.015e9061.js"></script>
+      <link rel="modulepreload" crossorigin href="/assets/footer.b0c3b906.js">
       <link rel="modulepreload" crossorigin href="/assets/toast.bb4e117b.js">
-      <link rel="stylesheet" href="/assets/footer.d205bcd1.css">
+      <link rel="stylesheet" href="/assets/footer.d166f20f.css">
     </head>
 
     <body class="bg-gray-50">
@@ -118,6 +121,13 @@
                                         class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
                                     <label for="sqrt-checkbox" class="ml-2 text-sm text-gray-700">Allow Square
                                         Roots</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="no-parentheses-checkbox"
+                                        class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                    <label for="no-parentheses-checkbox" class="ml-2 text-sm text-gray-700">
+                                        Solve Without Parentheses
+                                    </label>
                                 </div>
                             </div>
                         </div>
