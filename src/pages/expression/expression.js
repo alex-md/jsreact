@@ -173,8 +173,197 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Add square root if enabled
         const useSqrt = document.getElementById("sqrt-checkbox").checked;
+        const noParentheses = document.getElementById("no-parentheses-checkbox").checked;
+
+        // Memoization cache
+        const memo = new Map();
+        // Set a computation time limit (15 seconds)
+        const timeLimit = 15000;
+        const startTime = Date.now();
+        let timeoutReached = false;
+
+        // Check if we've exceeded the time limit
+        function checkTimeout() {
+            if (Date.now() - startTime > timeLimit) {
+                timeoutReached = true;
+                return true;
+            }
+            return false;
+        }
+
+        function buildExpressionWithoutParentheses(nums, ops) {
+            let expr = nums[0].toString();
+            for (let i = 0; i < ops.length; i++) {
+                expr += ops[i] + nums[i + 1].toString();
+            }
+            return expr;
+        }
+
+        function evaluateOperatorPrecedence(nums, ops) {
+            // First handle ** (exponents)
+            let values = [...nums];
+            let operators = [...ops];
+
+            // Handle exponents first
+            if (operators.includes("**")) {
+                for (let i = operators.length - 1; i >= 0; i--) {
+                    if (operators[i] === "**") {
+                        const result = Math.pow(values[i], values[i + 1]);
+                        values.splice(i, 2, result);
+                        operators.splice(i, 1);
+                    }
+                }
+            }
+
+            // Handle multiplication and division from left to right
+            for (let i = 0; i < operators.length; i++) {
+                if (operators[i] === "*" || operators[i] === "/") {
+                    const a = values[i];
+                    const b = values[i + 1];
+                    let result;
+                    if (operators[i] === "*") {
+                        result = a * b;
+                    } else {
+                        if (b === 0) return NaN;
+                        result = a / b;
+                    }
+                    values.splice(i, 2, result);
+                    operators.splice(i, 1);
+                    i--;
+                }
+            }
+
+            // Handle addition and subtraction from left to right
+            for (let i = 0; i < operators.length; i++) {
+                if (operators[i] === "+" || operators[i] === "-") {
+                    const a = values[i];
+                    const b = values[i + 1];
+                    const result = operators[i] === "+" ? a + b : a - b;
+                    values.splice(i, 2, result);
+                    operators.splice(i, 1);
+                    i--;
+                }
+            }
+
+            return values[0];
+        }
+
+        function backtrackWithoutParentheses(nums) {
+            // Early termination if timeout reached
+            if (checkTimeout()) return null;
+
+            if (nums.length === 1) {
+                return Math.abs(nums[0] - target) < 1e-6 ? nums[0].toString() : null;
+            }
+
+            // Smart pruning: Don't generate all permutations at once
+            // Instead, use an iterative approach with limited batch size
+            const batchSize = 30; // Limit number of permutations to try at once
+            let permutationCount = 0;
+
+            // Calculate factorial for the permutation count
+            let totalPermutations = 1;
+            for (let i = 2; i <= nums.length; i++) {
+                totalPermutations *= i;
+            }
+
+            // Use a permutation generator instead of generating all at once
+            function* permutationGenerator(arr) {
+                const n = arr.length;
+                const c = Array(n).fill(0);
+                let i = 0;
+
+                yield [...arr]; // First permutation
+
+                while (i < n) {
+                    if (c[i] < i) {
+                        const swapPos = i % 2 === 0 ? 0 : c[i];
+                        [arr[i], arr[swapPos]] = [arr[swapPos], arr[i]];
+                        yield [...arr];
+                        c[i]++;
+                        i = 0;
+                    } else {
+                        c[i] = 0;
+                        i++;
+                    }
+
+                    // Check for timeout periodically
+                    if (permutationCount++ % 100 === 0 && checkTimeout()) {
+                        return;
+                    }
+                }
+            }
+
+            const permGen = permutationGenerator(nums);
+            let permutation;
+
+            // Process permutations in batches with a limited operation count
+            while ((permutation = permGen.next()).done === false && !timeoutReached) {
+                const numPermutation = permutation.value;
+
+                // Generate operation combinations more efficiently - use predefined patterns first
+                const opPatterns = [];
+                // Try common patterns first (all multiplications, then all additions, etc.)
+                if (operators.includes("*")) {
+                    opPatterns.push(Array(nums.length - 1).fill("*"));
+                }
+                if (operators.includes("+")) {
+                    opPatterns.push(Array(nums.length - 1).fill("+"));
+                }
+
+                // Try operations
+                for (const opPattern of opPatterns) {
+                    const value = evaluateOperatorPrecedence(numPermutation, opPattern);
+                    if (!isNaN(value) && Math.abs(value - target) < 1e-6) {
+                        return buildExpressionWithoutParentheses(numPermutation, opPattern);
+                    }
+                }
+
+                // If predefined patterns don't work, then try combinations
+                // But limit how many we try per permutation
+                let opCombinationsCount = 0;
+                const maxOpCombinations = 100; // Limit combinations to try per permutation
+
+                function tryOperatorCombinations(current = [], index = 0) {
+                    if (checkTimeout() || opCombinationsCount >= maxOpCombinations) {
+                        return null;
+                    }
+
+                    if (index === nums.length - 1) {
+                        opCombinationsCount++;
+                        const value = evaluateOperatorPrecedence(numPermutation, current);
+                        if (!isNaN(value) && Math.abs(value - target) < 1e-6) {
+                            return buildExpressionWithoutParentheses(numPermutation, current);
+                        }
+                        return null;
+                    }
+
+                    for (const op of operators) {
+                        current[index] = op;
+                        const result = tryOperatorCombinations(current, index + 1);
+                        if (result) return result;
+                    }
+
+                    return null;
+                }
+
+                const result = tryOperatorCombinations(Array(nums.length - 1));
+                if (result) return result;
+            }
+
+            return null;
+        }
 
         function backtrack(nums, currentExpr) {
+            // Early termination if timeout reached
+            if (checkTimeout()) return null;
+
+            // Use memoization to avoid recalculating the same expressions
+            const key = nums.sort().join(',') + '|' + currentExpr;
+            if (memo.has(key)) {
+                return memo.get(key);
+            }
+
             if (nums.length === 0) {
                 try {
                     const currentValue = evaluate(currentExpr);
@@ -182,46 +371,94 @@ document.addEventListener("DOMContentLoaded", () => {
                         return currentExpr;
                     }
                 } catch (e) {
-                    return null; //invalid expressions
+                    memo.set(key, null);
+                    return null;
                 }
+                memo.set(key, null);
                 return null;
+            }
+
+            // Optimization: Try operations that are more likely to succeed first
+            // For example, multiplication and division are more likely to reach higher targets
+            let orderedOps = [...operators];
+            const absTarget = Math.abs(target);
+            // If target is large, prioritize multiplication and exponents
+            if (absTarget > 100) {
+                orderedOps.sort((a, b) => {
+                    if ((a === '*' || a === '**') && (b !== '*' && b !== '**')) return -1;
+                    if ((b === '*' || b === '**') && (a !== '*' && a !== '**')) return 1;
+                    return 0;
+                });
+            }
+            // If target is small, prioritize division and subtraction
+            else if (absTarget < 10) {
+                orderedOps.sort((a, b) => {
+                    if ((a === '/' || a === '-') && (b !== '/' && b !== '-')) return -1;
+                    if ((b === '/' || b === '-') && (a !== '/' && a !== '-')) return 1;
+                    return 0;
+                });
             }
 
             for (let i = 0; i < nums.length; i++) {
                 const num = nums[i];
                 const remainingNums = nums.slice(0, i).concat(nums.slice(i + 1));
 
-                // First number, no operator needed
                 if (currentExpr === "") {
-                    // Try with and without square root for the first number
-                    const result = backtrack(remainingNums, num.toString());
-                    if (result) return result;
-
                     if (useSqrt && num >= 0) {
                         const sqrtResult = backtrack(remainingNums, `sqrt(${num})`);
                         if (sqrtResult) return sqrtResult;
                     }
-                }
-                else {
-                    for (const op of operators) {
-                        // Try normal operation
-                        const newExpr = `(${currentExpr}${op}${num})`;
-                        const result = backtrack(remainingNums, newExpr);
-                        if (result) return result;
+                    const result = backtrack(remainingNums, num.toString());
+                    if (result) {
+                        memo.set(key, result);
+                        return result;
+                    }
+                } else {
+                    for (const op of orderedOps) {
+                        // Skip division by zero
+                        if (op === '/' && num === 0) continue;
 
-                        // Try with square root if enabled
+                        const newExpr = noParentheses ? `${currentExpr}${op}${num}` : `(${currentExpr}${op}${num})`;
+                        const result = backtrack(remainingNums, newExpr);
+                        if (result) {
+                            memo.set(key, result);
+                            return result;
+                        }
+
                         if (useSqrt && num >= 0) {
-                            const sqrtNewExpr = `(${currentExpr}${op}sqrt(${num}))`;
+                            const sqrtNewExpr = noParentheses ?
+                                `${currentExpr}${op}sqrt(${num})` :
+                                `(${currentExpr}${op}sqrt(${num}))`;
                             const sqrtResult = backtrack(remainingNums, sqrtNewExpr);
-                            if (sqrtResult) return sqrtResult;
+                            if (sqrtResult) {
+                                memo.set(key, sqrtResult);
+                                return sqrtResult;
+                            }
                         }
                     }
                 }
             }
+
+            memo.set(key, null);
             return null;
         }
 
-        const result = backtrack(numbers, "");
+        // Try without parentheses first if the option is selected
+        let result = null;
+        if (noParentheses) {
+            result = backtrackWithoutParentheses(numbers);
+        }
+
+        // Fall back to regular solution with parentheses if no solution found or parentheses are allowed
+        if (!result && !timeoutReached) {
+            result = backtrack(numbers, "");
+        }
+
+        // Handle timeout message
+        if (timeoutReached) {
+            return result || "Computation timed out - try with fewer numbers";
+        }
+
         return result || "No solution found";
     }
 
@@ -245,7 +482,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const submitButton = document.getElementById("submit-button");
         const solutionOutput = document.getElementById("solution-output");
 
-        submitButton.innerHTML = "Calculating...";
+        // Create and add loading spinner
+        const originalButtonText = submitButton.innerHTML;
+        const loadingSpinner = document.createElement('span');
+        loadingSpinner.className = 'loading-spinner';
+        submitButton.innerHTML = 'Calculating';
+        submitButton.appendChild(loadingSpinner);
+        submitButton.disabled = true;
+
         solutionOutput.classList.remove("hidden");
 
         const numbers = document.getElementById("numbers-input").value
@@ -255,19 +499,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!numbers.every(n => !isNaN(n)) || isNaN(target)) {
             showToast('Please enter valid numbers');
-            submitButton.innerHTML = "Find Expression";
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
             return;
         }
 
         setTimeout(() => {
             let result = findExpressionOptimized(numbers, target);
-            // Replace 'sqrt(' with '√(' for proper display if solution found
-            let displayResult = result;
-            if (result !== "No solution found") {
-                displayResult = result.replace(/sqrt\(/g, "√(");
+
+            if (result !== "No solution found" && result !== "Computation timed out - try with fewer numbers") {
+                function parseExpression(expr) {
+                    // First handle square roots to avoid conflicts
+                    expr = expr.replace(/sqrt\(([^)]+)\)/g, "\\sqrt{$1}");
+
+                    // Split into terms while preserving structure
+                    const tokens = expr.match(/(\d+|\+|\-|\*|\/|\(|\))/g) || [];
+
+                    // Convert tokens to LaTeX with proper spacing
+                    let latexExpr = '';
+                    let prevToken = '';
+
+                    for (const token of tokens) {
+                        if (/\d+/.test(token)) {
+                            // Number - add space if previous token was an operator
+                            latexExpr += (/[\+\-\*\/]/.test(prevToken) ? ' ' : '') + token;
+                        } else {
+                            switch (token) {
+                                case '*':
+                                    latexExpr += ' \\times ';
+                                    break;
+                                case '/':
+                                    latexExpr += ' \\div ';
+                                    break;
+                                case '+':
+                                    latexExpr += ' + ';
+                                    break;
+                                case '-':
+                                    latexExpr += ' - ';
+                                    break;
+                                case '(':
+                                    latexExpr += '\\left(';
+                                    break;
+                                case ')':
+                                    latexExpr += '\\right)';
+                                    break;
+                                default:
+                                    latexExpr += token;
+                            }
+                        }
+                        prevToken = token;
+                    }
+
+                    return latexExpr.trim();
+                }
+
+                const displayResult = parseExpression(result);
+                const latexExpression = `${displayResult} = ${target}`;
+
+                try {
+                    solutionOutput.style.fontSize = "1.2em";
+                    solutionOutput.style.padding = "1.5rem";
+                    solutionOutput.style.overflowX = "auto";
+                    solutionOutput.style.overflowY = "hidden";
+
+                    katex.render(latexExpression, solutionOutput, {
+                        displayMode: true,
+                        throwOnError: false,
+                        trust: true
+                    });
+                } catch (e) {
+                    console.error('KaTeX error:', e);
+                    // Fallback to normal display if KaTeX fails
+                    solutionOutput.innerHTML = result.replace(/sqrt\(/g, "√(");
+                }
+            } else {
+                solutionOutput.textContent = result;
             }
-            solutionOutput.innerHTML = displayResult;
-            submitButton.innerHTML = "Find Expression";
+
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
             showToast(result === "No solution found" ? 'No solution found' : 'Solution found!');
         }, 10);
     });

@@ -9,6 +9,9 @@
                 'Find expressions using arithmetic operations and parentheses to reach a target number.'
             );
         </script>
+        <!-- Add KaTeX -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     </head>
 
     <body class="bg-gray-50">
@@ -114,6 +117,13 @@
                                         class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
                                     <label for="sqrt-checkbox" class="ml-2 text-sm text-gray-700">Allow Square
                                         Roots</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="no-parentheses-checkbox"
+                                        class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                    <label for="no-parentheses-checkbox" class="ml-2 text-sm text-gray-700">
+                                        Solve Without Parentheses
+                                    </label>
                                 </div>
                             </div>
                         </div>
