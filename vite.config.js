@@ -5,7 +5,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: './', // Changed to relative path for assets
+    base: '/', // Changed to relative path for assets
     plugins: [react()],
     root: 'src',
     build: {
