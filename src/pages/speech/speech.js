@@ -1,5 +1,5 @@
-import '@/assets/styles/global.css';
-import { showToast } from '@/components/toast.js';
+import '@styles/global.css';
+import { showToast } from '@components/toast.js';
 
 class SpeechApp {
     constructor() {

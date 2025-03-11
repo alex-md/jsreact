@@ -1,5 +1,5 @@
 // Import styles
-import '@/assets/styles/global.css';
+import '@styles/global.css';
 
 // Active users fetch function
 async function fetchActiveUsers() {

@@ -137,10 +137,10 @@ const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatching
             handleAdd(e);
         }
     };
-    
+
     // Calculate speaking time for current window size
     const speakingTime = utils.calculateSpeakingTime(windowSize);
-    
+
     return React.createElement("div", {
         className: "bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow duration-300"
     }, React.createElement("div", {
@@ -264,14 +264,14 @@ const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize, utils })
     // Modified to display both window and total matches
     const totalWords = text.trim().split(/\s+/).length;
     const speakingTime = utils.calculateSpeakingTime(totalWords);
-    
+
     // Get total matches across the entire text
     const totalResults = utils.analyzeKeywords(text, keywords, matchingStrategy);
     const allMatches = totalResults.reduce((sum, r) => sum + r.count, 0);
-    
+
     // Find the window with highest combined density for analysis
     const cluster = utils.findHighestDensityCluster(text, keywords, windowSize, matchingStrategy);
-    
+
     // Map keywords to their counts within the window
     const keywordCounts = keywords.map(keyword => {
         const count = cluster ? (cluster.keywordCounts[keyword] || 0) : 0;
@@ -280,10 +280,10 @@ const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize, utils })
             count
         };
     });
-    
+
     // Sort by count (descending)
     const results = keywordCounts.sort((a, b) => b.count - a.count);
-    
+
     const windowMatches = results.reduce((sum, r) => sum + r.count, 0);
 
     return React.createElement("div", {
