@@ -5,23 +5,22 @@ const KeywordAnalyzer = () => {
     const [text, setText] = useState('');
     const [keywords, setKeywords] = useState([]);
     const [matchingStrategy, setMatchingStrategy] = useState('partial');
-    const [windowSizePercent, setWindowSizePercent] = useState(10);
+    const [windowSize, setWindowSize] = useState(50); // Changed from windowSizePercent to windowSize
+
     const handleKeywordsChange = useCallback((newKeywords) => {
         setKeywords(newKeywords);
     }, []);
+
     const handleMatchingStrategyChange = useCallback((newStrategy) => {
         setMatchingStrategy(newStrategy);
     }, []);
-    const handleWindowSizeChange = useCallback((newSizePercent) => {
-        setWindowSizePercent(newSizePercent);
+
+    const handleWindowSizeChange = useCallback((newSize) => {
+        setWindowSize(newSize);
     }, []);
-    const getActualWindowSize = useCallback(() => {
-        const words = text.trim().split(/\s+/);
-        return Math.max(1, Math.round(windowSizePercent / 100 * words.length));
-    }, [
-        text,
-        windowSizePercent
-    ]);
+
+    // No longer need getActualWindowSize as we're using direct word count now
+
     return React.createElement("div", {
         className: "container mx-auto px-4 py-8 max-w-7xl"
     }, React.createElement("div", {
@@ -45,29 +44,35 @@ const KeywordAnalyzer = () => {
         onKeywordsChange: handleKeywordsChange,
         matchingStrategy: matchingStrategy,
         onMatchingStrategyChange: handleMatchingStrategyChange,
-        windowSizePercent: windowSizePercent,
-        onWindowSizeChange: handleWindowSizeChange
+        windowSize: windowSize,
+        onWindowSizeChange: handleWindowSizeChange,
+        maxWindowSize: text.trim().split(/\s+/).length || 100 // Set max based on text length or default value
     })), keywords.length > 0 && text && React.createElement("div", {
         className: "space-y-8"
-    }, React.createElement(HighestDensityClusterDisplay, {
-        text: text,
-        keywords: keywords,
-        windowSize: getActualWindowSize(),
-        matchingStrategy: matchingStrategy,
-        utils: utils
-    }), React.createElement(ResultsDisplay, {
-        text: text,
-        keywords: keywords,
-        matchingStrategy: matchingStrategy,
-        windowSize: getActualWindowSize(),
-        utils: utils
-    }), React.createElement(TextHighlightDisplay, {
-        text: text,
-        keywords: keywords,
-        matchingStrategy: matchingStrategy,
-        utils: utils
-    }))));
+    },
+        // Reordered components with keyword overview first, then highest densities, then full text
+        React.createElement(ResultsDisplay, {
+            text: text,
+            keywords: keywords,
+            matchingStrategy: matchingStrategy,
+            windowSize: windowSize,
+            utils: utils
+        }),
+        React.createElement(HighestDensityClusterDisplay, {
+            text: text,
+            keywords: keywords,
+            windowSize: windowSize,
+            matchingStrategy: matchingStrategy,
+            utils: utils
+        }),
+        React.createElement(TextHighlightDisplay, {
+            text: text,
+            keywords: keywords,
+            matchingStrategy: matchingStrategy,
+            utils: utils
+        }))));
 };
+
 const TextInput = ({ onTextChange }) => {
     return React.createElement("div", {
         className: "bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow duration-300"
@@ -83,6 +88,7 @@ const TextInput = ({ onTextChange }) => {
         className: "w-full h-48 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg   focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:bg-white   transition-all duration-200 placeholder-gray-400 text-gray-900 resize-none"
     }));
 };
+
 const FileUpload = ({ handleFileLoad }) => {
     const fileInputRef = useRef(null);
     const handleFileChange = (e) => {
@@ -108,7 +114,9 @@ const FileUpload = ({ handleFileLoad }) => {
         className: "mt-2 text-sm text-gray-500"
     }, "Supported formats: TXT, DOC, DOCX, PDF, MD"));
 };
-const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatchingStrategyChange, windowSizePercent, onWindowSizeChange }) => {
+
+// Updated KeywordInput component to add speaking time tooltip to window size slider
+const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatchingStrategyChange, windowSize, onWindowSizeChange, maxWindowSize }) => {
     const [newKeyword, setNewKeyword] = useState('');
     const handleAdd = (e) => {
         e.preventDefault();
@@ -129,6 +137,10 @@ const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatching
             handleAdd(e);
         }
     };
+    
+    // Calculate speaking time for current window size
+    const speakingTime = utils.calculateSpeakingTime(windowSize);
+    
     return React.createElement("div", {
         className: "bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow duration-300"
     }, React.createElement("div", {
@@ -172,21 +184,23 @@ const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatching
     }, "Word Boundary Match"))), React.createElement("div", {
         className: "space-y-2"
     }, React.createElement("label", {
-        className: "block text-sm font-medium text-gray-700"
-    }, "Content Window Size (% of text)"), React.createElement("div", {
+        className: "block text-sm font-medium text-gray-700 flex items-center justify-between"
+    }, "Content Window Size (words)", React.createElement("span", {
+        className: "inline-flex items-center gap-1 text-xs text-primary-600 bg-primary-50 px-2 py-1 rounded-md"
+    }, "🎙️ ", speakingTime)), React.createElement("div", {
         className: "flex items-center gap-4"
     }, React.createElement("input", {
         type: "range",
-        value: windowSizePercent,
+        value: windowSize,
         onChange: (e) => onWindowSizeChange(parseInt(e.target.value)),
-        min: "1",
-        max: "50",
+        min: "10",
+        max: maxWindowSize,
         className: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
     }), React.createElement("span", {
-        className: "text-sm text-gray-600 min-w-[3rem]"
-    }, windowSizePercent, "%")), React.createElement("p", {
+        className: "text-sm text-gray-600 min-w-[4rem]"
+    }, windowSize, " words")), React.createElement("p", {
         className: "text-xs text-gray-500 mt-1"
-    }, "Slide to adjust the analysis window size (1-50% of total text)"))), React.createElement("div", {
+    }, "Slide to adjust the analysis window size (10-", maxWindowSize, " words)"))), React.createElement("div", {
         className: "flex flex-wrap gap-2 mt-4"
     }, keywords.map((keyword) => React.createElement("div", {
         key: keyword,
@@ -197,6 +211,7 @@ const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatching
         "aria-label": "Remove keyword"
     }, "×"))))));
 };
+
 const TextHighlightDisplay = ({ text, keywords, matchingStrategy, utils }) => {
     const highlightedText = utils.highlightText(text, keywords, matchingStrategy);
     const wordCount = text.trim().split(/\s+/).length;
@@ -244,10 +259,33 @@ const TextHighlightDisplay = ({ text, keywords, matchingStrategy, utils }) => {
         }
     }))));
 };
+
 const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize, utils }) => {
-    const results = utils.analyzeKeywords(text, keywords, matchingStrategy);
+    // Modified to display both window and total matches
     const totalWords = text.trim().split(/\s+/).length;
     const speakingTime = utils.calculateSpeakingTime(totalWords);
+    
+    // Get total matches across the entire text
+    const totalResults = utils.analyzeKeywords(text, keywords, matchingStrategy);
+    const allMatches = totalResults.reduce((sum, r) => sum + r.count, 0);
+    
+    // Find the window with highest combined density for analysis
+    const cluster = utils.findHighestDensityCluster(text, keywords, windowSize, matchingStrategy);
+    
+    // Map keywords to their counts within the window
+    const keywordCounts = keywords.map(keyword => {
+        const count = cluster ? (cluster.keywordCounts[keyword] || 0) : 0;
+        return {
+            keyword,
+            count
+        };
+    });
+    
+    // Sort by count (descending)
+    const results = keywordCounts.sort((a, b) => b.count - a.count);
+    
+    const windowMatches = results.reduce((sum, r) => sum + r.count, 0);
+
     return React.createElement("div", {
         className: "bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl shadow-lg border border-emerald-100 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
     }, React.createElement("div", {
@@ -265,7 +303,7 @@ const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize, utils })
     }, "🎙️ ", speakingTime))), React.createElement("div", {
         className: "space-y-6"
     }, React.createElement("div", {
-        className: "grid grid-cols-1 md:grid-cols-3 gap-4"
+        className: "grid grid-cols-1 md:grid-cols-4 gap-4"
     }, React.createElement("div", {
         className: "bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-emerald-100"
     }, React.createElement("p", {
@@ -282,38 +320,32 @@ const ResultsDisplay = ({ text, keywords, matchingStrategy, windowSize, utils })
         className: "bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-emerald-100"
     }, React.createElement("p", {
         className: "text-sm font-medium text-emerald-600 mb-1"
+    }, "Window Matches"), React.createElement("p", {
+        className: "text-2xl font-bold text-gray-900"
+    }, windowMatches)), React.createElement("div", {
+        className: "bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-emerald-100"
+    }, React.createElement("p", {
+        className: "text-sm font-medium text-emerald-600 mb-1"
     }, "Total Matches"), React.createElement("p", {
         className: "text-2xl font-bold text-gray-900"
-    }, results.reduce((sum, r) => sum + r.count, 0)))), React.createElement("div", {
+    }, allMatches))), React.createElement("div", {
         className: "bg-white/80 backdrop-blur-sm rounded-lg border border-emerald-100 overflow-hidden"
     }, React.createElement("div", {
-        className: "grid grid-cols-4 gap-4 p-4 border-b border-emerald-100 bg-emerald-50/50"
+        className: "grid grid-cols-2 gap-4 p-4 border-b border-emerald-100 bg-emerald-50/50"
     }, React.createElement("div", {
         className: "font-medium text-gray-700"
     }, "Keyword"), React.createElement("div", {
         className: "font-medium text-gray-700"
-    }, "Occurrences"), React.createElement("div", {
-        className: "font-medium text-gray-700"
-    }, "Density (%)"), React.createElement("div", {
-        className: "font-medium text-gray-700"
-    }, "Distribution")), React.createElement("div", {
+    }, "Window Occurrences")), React.createElement("div", {
         className: "divide-y divide-emerald-100"
     }, results.map((result, index) => React.createElement("div", {
         key: index,
-        className: "grid grid-cols-4 gap-4 p-4 hover:bg-emerald-50/50 transition-colors"
+        className: "grid grid-cols-2 gap-4 p-4 hover:bg-emerald-50/50 transition-colors"
     }, React.createElement("div", {
         className: "font-medium text-emerald-700"
-    }, result.keyword), React.createElement("div", null, result.count), React.createElement("div", null, (result.density * 100).toFixed(2), "%"), React.createElement("div", {
-        className: "flex items-center"
-    }, React.createElement("div", {
-        className: "w-full bg-gray-200 rounded-full h-2"
-    }, React.createElement("div", {
-        className: "bg-emerald-500 h-2 rounded-full",
-        style: {
-            width: `${Math.min(100, result.distribution * 100)}%`
-        }
-    })))))))));
+    }, result.keyword), React.createElement("div", null, result.count)))))));
 };
+
 const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStrategy, utils }) => {
     useEffect(() => {
         console.log('HighestDensityCluster Props:', {
@@ -442,4 +474,5 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
         className: "text-gray-600 text-center"
     }, "No keyword clusters found in the text.")));
 };
+
 export default KeywordAnalyzer;

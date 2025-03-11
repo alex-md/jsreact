@@ -14,7 +14,11 @@
     </head>
 
     <body class="bg-gray-50">
-        <script type="module" src="../../components/navbar.js"></script>
+        <script type="module">
+            import { createNavbar } from '/components/navbar.js';
+            createNavbar();
+        </script>
+        <script type="module" src="../../components/header.js"></script>
         <script>
             document.body.appendChild(
                 createHeader(
@@ -27,17 +31,18 @@
         <main class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="space-y-6">
                 <!-- API Key Section -->
-                <section class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                <section
+                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                     <div class="p-6">
                         <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
                             <i class="fas fa-key text-primary"></i>
                             API Configuration
                         </h2>
                         <div class="flex gap-4">
-                            <input type="password" id="apiKeyInput" 
+                            <input type="password" id="apiKeyInput"
                                 class="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                                 placeholder="Enter your OpenAI API key">
-                            <button id="saveApiKey" 
+                            <button id="saveApiKey"
                                 class="px-6 py-2 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                 Save API Key
                             </button>
@@ -48,7 +53,8 @@
                 <!-- Main Features Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Speech to Text Card -->
-                    <section class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                    <section
+                        class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                         <div class="p-6 space-y-4">
                             <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                 <i class="fas fa-microphone text-primary"></i>
@@ -70,7 +76,8 @@
                     </section>
 
                     <!-- Text to Speech Card -->
-                    <section class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                    <section
+                        class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
                         <div class="p-6 space-y-4">
                             <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                 <i class="fas fa-volume-up text-primary"></i>
@@ -80,7 +87,7 @@
                                 <!-- Voice Selection -->
                                 <div class="space-y-2">
                                     <label class="block text-sm font-medium text-gray-700">Voice</label>
-                                    <select id="voiceSelect" 
+                                    <select id="voiceSelect"
                                         class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
                                         <option value="alloy">Alloy (female)</option>
                                         <option value="echo">Echo (female)</option>
@@ -108,7 +115,8 @@
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" id="hdModel"
                                         class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                                    <span class="text-sm text-gray-700">Use HD Model (higher quality, slower generation)</span>
+                                    <span class="text-sm text-gray-700">Use HD Model (higher quality, slower
+                                        generation)</span>
                                 </label>
 
                                 <!-- Text Input -->

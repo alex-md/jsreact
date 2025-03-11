@@ -1,3 +1,10 @@
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs) {
+    return twMerge(clsx(inputs));
+}
+
 const utils = {
     calculateDensity: (text, keyword, matchingStrategy = 'exact') => {
         if (!text || !keyword) return { count: 0, density: 0 };

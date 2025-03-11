@@ -5,7 +5,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/',
+    base: './', // Changed to relative path for assets
     plugins: [react()],
     root: 'src',
     build: {
@@ -29,7 +29,13 @@ export default defineConfig({
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
                 chunkFileNames: 'assets/[name].[hash].js',
-                assetFileNames: 'assets/[name].[hash][extname]',
+                assetFileNames: ({ name }) => {
+                    // Keep images in their original directory structure
+                    if (/\.(gif|jpe?g|png|svg)$/i.test(name ?? '')) {
+                        return name ?? '[name][extname]';
+                    }
+                    return 'assets/[name].[hash][extname]';
+                },
                 manualChunks: {
                     vendor: ['react', 'react-dom'],
                 }

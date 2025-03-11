@@ -1,64 +1,39 @@
-export function createHeader(title, subtitle) {
+export default function createHeader(title, subtitle) {
     const header = document.createElement('header');
-    header.classList.add(
-        'relative',
-        'py-24',
-        'overflow-hidden',
-        'bg-gradient-to-br',
-        'from-gray-900',
-        'to-gray-800',
-        'dark:from-gray-800',
-        'dark:to-gray-900'
-    );
+    header.className = 'relative bg-background border-b border-border';
 
-    // Add background pattern
-    const pattern = document.createElement('div');
-    pattern.classList.add(
-        'absolute',
-        'inset-0',
-        'bg-grid-white/[0.05]',
-        'bg-[size:60px_60px]'
-    );
-    header.appendChild(pattern);
+    // Background decorative elements
+    const bgDecorator = document.createElement('div');
+    bgDecorator.className = 'absolute inset-0 pointer-events-none';
+    bgDecorator.innerHTML = `
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5"></div>
+        <div class="absolute inset-0 bg-grid-primary/[0.02] [mask-image:linear-gradient(0deg,transparent,black)]"></div>
+    `;
 
+    // Container
     const container = document.createElement('div');
-    container.classList.add(
-        'container',
-        'relative',
-        'mx-auto',
-        'px-4',
-        'max-w-7xl'
-    );
+    container.className = 'container mx-auto px-4 py-12 relative z-10 max-w-7xl';
 
-    const heading = document.createElement('h1');
-    heading.classList.add(
-        'text-4xl',
-        'md:text-6xl',
-        'font-bold',
-        'text-center',
-        'text-white',
-        'mb-6'
-    );
-    heading.innerHTML = `<span class="text-primary italic">${title}</span>`;
+    // Content wrapper
+    const content = document.createElement('div');
+    content.className = 'max-w-3xl mx-auto text-center space-y-4';
 
-    if (subtitle) {
-        const subheading = document.createElement('p');
-        subheading.classList.add(
-            'mt-6',
-            'text-lg',
-            'text-gray-300',
-            'text-center',
-            'max-w-2xl',
-            'mx-auto',
-            'leading-relaxed'
-        );
-        subheading.textContent = subtitle;
-        container.appendChild(heading);
-        container.appendChild(subheading);
-    } else {
-        container.appendChild(heading);
-    }
+    // Title
+    const titleElement = document.createElement('h1');
+    titleElement.className = 'text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70';
+    titleElement.textContent = title;
 
+    // Subtitle
+    const subtitleElement = document.createElement('p');
+    subtitleElement.className = 'text-xl text-muted-foreground';
+    subtitleElement.textContent = subtitle;
+
+    // Assemble the header
+    content.appendChild(titleElement);
+    content.appendChild(subtitleElement);
+    container.appendChild(content);
+    header.appendChild(bgDecorator);
     header.appendChild(container);
+
     return header;
 }

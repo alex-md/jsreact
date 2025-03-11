@@ -49,11 +49,12 @@ export function createFooter() {
     footer.classList.add(
         'mt-auto',
         'py-12',
-        'bg-white',
-        'dark:bg-gray-900',
+        'bg-background',
         'border-t',
-        'border-gray-200',
-        'dark:border-gray-800'
+        'border-border',
+        'animate-fade-in',
+        'relative',
+        'bottom-0',
     );
 
     const container = document.createElement('div');
@@ -72,45 +73,42 @@ export function createFooter() {
         'justify-between',
         'items-center',
         'gap-6',
-        'w-full' // Add full width
+        'w-full',
+        'fixed',  // Changed from absolute to fixed for sticky behavior
+        'bottom-0',
+        'left-0',  // Added to ensure full width alignment
+        'right-0', // Added to ensure full width alignment
+        `px-4`,
+        `opacity-90`,
     );
 
     // Copyright section
     const copyright = document.createElement('div');
-    copyright.classList.add(
-        'text-gray-600',
-        'dark:text-gray-400',
-        'flex',
-        'items-center',
-        'gap-2',
-        'order-2',     // Change order for mobile
-        'md:order-1'   // Change order for desktop
-    );
     copyright.innerHTML = `
-        <span>© ${new Date().getFullYear()} JSReact.</span>
-        <span class="hidden md:inline">·</span>
-        <span>All rights reserved.</span>
-    `;
+   `;
 
     // Stats section
     const stats = document.createElement('div');
     stats.classList.add(
         'flex',
         'items-center',
-        'gap-6',
-        'text-gray-600',
-        'dark:text-gray-400',
-        'order-1',      // Change order for mobile
-        'md:order-2',   // Change order for desktop
-        'ml-auto'       // Push to the right
+        'text-muted-foreground',
+        'md:order-2',
+        // 'm-2rem',
+        'animate-slide-up',
+        'delay-400',
+        'card',
+        `border-none`,
+        `text-sm`,
+        `shadow-float`
     );
 
     // Add active users icon
-    const usersIcon = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    const usersIcon = `<svg class="w-5 h-5 text-muted-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
     </svg>`;
 
-    const viewsIcon = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    const viewsIcon = `<svg class="w-5 h-5 text-muted-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M5.5 18.5V4H4V20H20V18.5H5.5Z" fill="currentColor"/>
         <path d="M10.5 17V8H12V17H10.5Z" fill="currentColor"/>
         <path d="M7 17V12H8.5V17H7Z" fill="currentColor"/>
@@ -130,6 +128,7 @@ export function createFooter() {
             } else {
                 const text = document.createElement('span');
                 text.textContent = ` ${count} online`;
+                text.classList.add('group-hover:text-foreground', 'transition-colors');
                 activeUsersButton.appendChild(text);
             }
         }, 100);
@@ -141,11 +140,10 @@ export function createFooter() {
         'inline-flex',
         'items-center',
         'gap-2',
-        'text-gray-500',
-        'dark:text-gray-400',
-        'hover:text-gray-700',
-        'dark:hover:text-gray-300',
-        'transition-colors'
+        'text-muted-foreground',
+        'hover:text-foreground',
+        'transition-colors',
+        'group'
     );
     activeUsersButton.id = 'activeUsersButton';
     activeUsersButton.innerHTML = usersIcon;
@@ -163,11 +161,10 @@ export function createFooter() {
         'inline-flex',
         'items-center',
         'gap-2',
-        'text-gray-500',
-        'dark:text-gray-400',
-        'hover:text-gray-700',
-        'dark:hover:text-gray-300',
-        'transition-colors'
+        'text-muted-foreground',
+        'hover:text-foreground',
+        'transition-colors',
+        'group'
     );
     viewCountButton.id = 'viewCountButton';
     viewCountButton.innerHTML = viewsIcon;
@@ -176,6 +173,7 @@ export function createFooter() {
     fetchViewCount().then(count => {
         const viewCountText = document.createElement('span');
         viewCountText.textContent = ` ${count} views`;
+        viewCountText.classList.add('group-hover:text-foreground', 'transition-colors');
         viewCountButton.appendChild(viewCountText);
     });
 

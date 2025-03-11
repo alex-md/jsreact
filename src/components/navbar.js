@@ -26,13 +26,6 @@ const navGroups = [
             { href: '/pages/generator', text: 'Name Generator' },
             { href: '/pages/speech', text: 'Speech Tools' },
         ]
-    },
-    {
-        name: 'Math Tools',
-        icon: 'fa-calculator',
-        items: [
-            { href: '/pages/expression', text: 'Expression Finder' },
-        ]
     }
 ];
 
@@ -41,185 +34,131 @@ function getNavigationPath(path) {
     return path;
 }
 
-function createDropdownMenu(group) {
-    const dropdown = document.createElement('div');
-    dropdown.className = 'group relative';
-
-    const trigger = document.createElement('button');
-    trigger.className = 'flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 rounded-lg transition-all duration-300 hover:bg-primary-50/80 dark:hover:bg-primary-900/20';
-    trigger.innerHTML = `
-        <i class="fas ${group.icon}"></i>
-        ${group.name}
-        <i class="fas fa-chevron-down text-xs transition-transform duration-300 group-hover:rotate-180"></i>
-    `;
-
-    const menu = document.createElement('div');
-    menu.className = 'absolute left-0 top-full mt-1 w-48 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50';
-
-    group.items.forEach(item => {
-        const link = document.createElement('a');
-        link.href = getNavigationPath(item.href);
-        link.className = 'block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-primary-500 hover:bg-primary-50/80 dark:hover:bg-primary-900/20 transition-colors';
-        link.textContent = item.text;
-
-        const currentPath = window.location.pathname.toLowerCase();
-        const itemPath = item.href.toLowerCase();
-        if (currentPath.includes(itemPath)) {
-            link.classList.add('bg-primary-50', 'text-primary-500');
-        }
-
-        menu.appendChild(link);
-    });
-
-    dropdown.appendChild(trigger);
-    dropdown.appendChild(menu);
-    return dropdown;
-}
-
 export function createNavbar() {
-    const nav = document.createElement('nav');
-    nav.classList.add(
-        'sticky',
-        'top-0',
-        'z-50',
-        'bg-white/90',
-        'dark:bg-gray-900/90',
-        'backdrop-blur-xl',
-        'shadow-lg',
-        'transition-all',
-        'duration-300'
-    );
+    const navbar = document.createElement('nav');
+    navbar.className = 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sticky top-0 w-full border-b border-border z-50';
 
-    // Container with modern styling
     const container = document.createElement('div');
-    container.classList.add(
-        'container-custom',
-        'h-16',
-        'flex',
-        'items-center',
-        'justify-between'
-    );
+    container.className = 'container mx-auto px-4 max-w-7xl';
 
-    // Modern logo section
+    const navContent = document.createElement('div');
+    navContent.className = 'flex h-16 items-center justify-between';
+
+    // Logo section with fixed asset path
+    const logoSection = document.createElement('div');
+    logoSection.className = 'flex items-center gap-2';
+
     const logoLink = document.createElement('a');
     logoLink.href = '/';
-    logoLink.classList.add(
-        'flex',
-        'items-center',
-        'gap-3',
-        'text-gray-900',
-        'dark:text-white',
-        'font-semibold',
-        'text-lg',
-        'transition-transform',
-        'duration-300',
-        'hover:scale-105'
-    );
+    logoLink.className = 'flex items-center gap-2';
 
-    const logoPath = new URL('/assets/images/logo.png', import.meta.url).href;
-    logoLink.innerHTML = `
-        <img src="${logoPath}" alt="JSReact Logo" class="h-8 md:h-10 lg:h-12 px-5 transition-transform duration-300 hover:scale-110" />
-    `;
+    const logoImage = document.createElement('img');
+    logoImage.src = '/assets/images/logo.png';
+    logoImage.alt = 'JSReact Logo';
+    logoImage.className = 'w-auto h-8 rounded-full';
 
-    // Navigation links with dropdowns
-    const navLinks = document.createElement('div');
-    navLinks.classList.add(
-        'hidden',
-        'md:flex',
-        'items-center',
-        'gap-2'
-    );
+    // Only append logo image, remove empty text element
+    logoLink.appendChild(logoImage);
+    logoSection.appendChild(logoLink);
 
-    navGroups.forEach(group => {
-        navLinks.appendChild(createDropdownMenu(group));
+    // Menu section
+    const menuSection = document.createElement('div');
+    menuSection.className = 'flex items-center gap-4';
+
+    const links = [
+        { text: 'Minifier', href: '/pages/minify/', icon: 'fa-compress-alt' },
+        { text: 'Generator', href: '/pages/generator/', icon: 'fa-magic' },
+        { text: 'Cleaner', href: '/pages/clean/', icon: 'fa-broom' },
+        { text: 'Diff', href: '/pages/diff/', icon: 'fa-code-compare' },
+        { text: 'Expression', href: '/pages/expression/', icon: 'fa-calculator' },
+        { text: 'Keywords', href: '/pages/keyword/', icon: 'fa-key' },
+        { text: 'Speech', href: '/pages/speech/', icon: 'fa-microphone-alt' },
+        { text: 'Playground', href: '/pages/playground/', icon: 'fa-code' }
+    ];
+
+    // Desktop menu
+    const desktopMenu = document.createElement('div');
+    desktopMenu.className = 'hidden md:flex items-center gap-1';
+
+    links.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.className = 'group inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground rounded-md';
+
+        const icon = document.createElement('i');
+        icon.className = `fas ${link.icon} mr-2 opacity-70 group-hover:opacity-100 transition-opacity`;
+
+        const text = document.createElement('span');
+        text.textContent = link.text;
+
+        a.appendChild(icon);
+        a.appendChild(text);
+        desktopMenu.appendChild(a);
     });
 
-    container.appendChild(logoLink);
-    container.appendChild(navLinks);
-    nav.appendChild(container);
+    // Mobile menu button
+    const mobileMenuButton = document.createElement('button');
+    mobileMenuButton.className = 'md:hidden btn-modern variant-ghost p-2';
+    mobileMenuButton.setAttribute('aria-label', 'Menu');
 
-    // Mobile menu
+    const mobileMenuIcon = document.createElement('i');
+    mobileMenuIcon.className = 'fas fa-bars text-lg';
+    mobileMenuButton.appendChild(mobileMenuIcon);
+
+    // Mobile menu content
     const mobileMenu = document.createElement('div');
-    mobileMenu.classList.add(
-        'md:hidden',
-        'fixed',
-        'inset-x-0',
-        'top-16',
-        'bg-white',
-        'dark:bg-gray-900',
-        'border-b',
-        'border-gray-200',
-        'dark:border-gray-700',
-        'shadow-lg',
-        'transform',
-        'transition-all',
-        'duration-300',
-        'hidden'
-    );
-    mobileMenu.id = 'mobile-menu';
+    mobileMenu.className = 'md:hidden absolute top-16 inset-x-0 bg-background border-b border-border hidden';
 
-    // Create mobile menu content with collapsible sections
-    navGroups.forEach(group => {
-        const section = document.createElement('div');
-        section.className = 'border-b border-gray-100 dark:border-gray-800 last:border-0';
+    const mobileMenuList = document.createElement('div');
+    mobileMenuList.className = 'container mx-auto px-4 py-4 space-y-1';
 
-        const header = document.createElement('button');
-        header.className = 'flex items-center justify-between w-full px-4 py-3 text-left text-gray-600 dark:text-gray-300 hover:text-primary-500';
-        header.innerHTML = `
-            <span class="flex items-center gap-2">
-                <i class="fas ${group.icon}"></i>
-                ${group.name}
-            </span>
-            <i class="fas fa-chevron-down text-xs transition-transform duration-300"></i>
-        `;
+    links.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.className = 'flex items-center px-4 py-3 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors';
 
-        const content = document.createElement('div');
-        content.className = 'hidden px-4 py-2 bg-gray-50 dark:bg-gray-800/50';
+        const icon = document.createElement('i');
+        icon.className = `fas ${link.icon} mr-3`;
 
-        group.items.forEach(item => {
-            const link = document.createElement('a');
-            link.href = getNavigationPath(item.href);
-            link.className = 'block py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-primary-500';
-            link.textContent = item.text;
-            content.appendChild(link);
-        });
+        const text = document.createElement('span');
+        text.textContent = link.text;
 
-        header.addEventListener('click', () => {
-            const isExpanded = !content.classList.contains('hidden');
-            header.querySelector('.fa-chevron-down').style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-            content.classList.toggle('hidden');
-        });
-
-        section.appendChild(header);
-        section.appendChild(content);
-        mobileMenu.appendChild(section);
+        a.appendChild(icon);
+        a.appendChild(text);
+        mobileMenuList.appendChild(a);
     });
 
-    const mobileMenuBtn = document.createElement('button');
-    mobileMenuBtn.classList.add(
-        'md:hidden',
-        'p-2',
-        'text-gray-600',
-        'dark:text-gray-300',
-        'hover:text-primary-500'
-    );
-    mobileMenuBtn.innerHTML = '<i class="fas fa-bars text-xl"></i>';
-    mobileMenuBtn.addEventListener('click', () => {
-        const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('hidden');
+    mobileMenu.appendChild(mobileMenuList);
+
+    // Mobile menu toggle functionality
+    mobileMenuButton.addEventListener('click', () => {
+        const isVisible = mobileMenu.classList.contains('hidden');
+        mobileMenu.classList.toggle('hidden', !isVisible);
+        mobileMenuIcon.className = isVisible ? 'fas fa-times text-lg' : 'fas fa-bars text-lg';
     });
 
-    nav.appendChild(mobileMenu);
-    container.appendChild(mobileMenuBtn);
+    // Assemble the navbar
+    menuSection.appendChild(desktopMenu);
+    menuSection.appendChild(mobileMenuButton);
 
-    return nav;
+    navContent.appendChild(logoSection);
+    navContent.appendChild(menuSection);
+
+    container.appendChild(navContent);
+    navbar.appendChild(container);
+    navbar.appendChild(mobileMenu);
+
+    document.body.prepend(navbar);
 }
 
-// Auto-create navbar when imported
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.prepend(createNavbar());
-    });
-} else {
-    document.body.prepend(createNavbar());
+// Export the function as default for consistency
+export default createNavbar;
+
+// Only auto-create if the script is loaded directly (not imported)
+if (document.currentScript?.type === 'module') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', createNavbar);
+    } else {
+        createNavbar();
+    }
 }

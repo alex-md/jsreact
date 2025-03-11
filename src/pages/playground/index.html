@@ -248,7 +248,10 @@
     </head>
 
     <body class="bg-gray-50">
-        <script type="module" src="../../components/navbar.js"></script>
+        <script type="module">
+            import { createNavbar } from '/components/navbar.js';
+            createNavbar();
+        </script>
         <script>
             document.body.appendChild(
                 createHeader(

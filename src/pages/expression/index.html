@@ -5,8 +5,8 @@
         <script type="module" src="../../components/head.js"></script>
         <script>
             createHead(
-                'Expression Finder',
-                'Find expressions using arithmetic operations and parentheses to reach a target number.'
+                'Expression Evaluator',
+                'Evaluate mathematical and logical expressions with our easy-to-use calculator'
             );
         </script>
         <!-- Add KaTeX -->
@@ -15,12 +15,16 @@
     </head>
 
     <body class="bg-gray-50">
-        <script type="module" src="../../components/navbar.js"></script>
+        <script type="module">
+            import { createNavbar } from '/components/navbar.js';
+            createNavbar();
+        </script>
+        <script type="module" src="../../components/header.js"></script>
         <script>
             document.body.appendChild(
                 createHeader(
-                    'Expression Finder',
-                    'Find expressions using arithmetic operations and parentheses'
+                    'Expression Evaluator',
+                    'Calculate complex expressions with ease'
                 )
             );
         </script>

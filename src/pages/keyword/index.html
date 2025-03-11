@@ -25,6 +25,11 @@
     </head>
 
     <body class="bg-gray-50">
+        <script type="module">
+            import { createNavbar } from '/components/navbar.js';
+            createNavbar();
+        </script>
+
         <div id="root" class="min-h-screen">
             <!-- Loading state -->
             <div class="min-h-[60vh] flex items-center justify-center">
@@ -39,7 +44,6 @@
 
         <script type="module" src="./index.jsx"></script>
         <script type="module" src="../../components/footer.js"></script>
-        <script type="module" src="../../components/navbar.js"></script>
     </body>
 
 </html>

@@ -6,7 +6,7 @@
         <script>
             createHead(
                 'Text Cleaner & Formatter',
-                'Free online text cleaning tool to remove unwanted characters, format content, and improve readability. Features customizable cleaning options, find & replace, and instant preview.'
+                'Clean and format text content with powerful text manipulation tools'
             );
         </script>
         <style>
@@ -94,7 +94,11 @@
     </head>
 
     <body class="bg-gray-50">
-        <script type="module" src="../../components/navbar.js"></script>
+        <script type="module">
+            import { createNavbar } from '/components/navbar.js';
+            createNavbar();
+        </script>
+        <script type="module" src="../../components/header.js"></script>
         <script>
             document.body.appendChild(
                 createHeader(
