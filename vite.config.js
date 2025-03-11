@@ -1,38 +1,41 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
-// https://vitejs.dev/config/
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export default defineConfig({
-    base: '/', // Changed to relative path for assets
+    base: '/',
     plugins: [react()],
     root: 'src',
     build: {
-        outDir: '../dist', // Changed to output to root dist directory
+        outDir: '../dist',
         emptyOutDir: true,
         sourcemap: false,
         assetsDir: 'assets',
         rollupOptions: {
             input: {
-                main: resolve(__dirname, 'src/index.html'),
-                clean: resolve(__dirname, 'src/pages/clean/index.html'),
-                diff: resolve(__dirname, 'src/pages/diff/index.html'),
-                expression: resolve(__dirname, 'src/pages/expression/index.html'),
-                generator: resolve(__dirname, 'src/pages/generator/index.html'),
-                keyword: resolve(__dirname, 'src/pages/keyword/index.html'),
-                minify: resolve(__dirname, 'src/pages/minify/index.html'),
-                playground: resolve(__dirname, 'src/pages/playground/index.html'),
-                policy: resolve(__dirname, 'src/pages/policy/index.html'),
-                speech: resolve(__dirname, 'src/pages/speech/index.html'),
+                main: path.resolve(__dirname, 'src/index.html'),
+                clean: path.resolve(__dirname, 'src/pages/clean/index.html'),
+                diff: path.resolve(__dirname, 'src/pages/diff/index.html'),
+                expression: path.resolve(__dirname, 'src/pages/expression/index.html'),
+                generator: path.resolve(__dirname, 'src/pages/generator/index.html'),
+                keyword: path.resolve(__dirname, 'src/pages/keyword/index.html'),
+                minify: path.resolve(__dirname, 'src/pages/minify/index.html'),
+                playground: path.resolve(__dirname, 'src/pages/playground/index.html'),
+                policy: path.resolve(__dirname, 'src/pages/policy/index.html'),
+                speech: path.resolve(__dirname, 'src/pages/speech/index.html'),
             },
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
                 chunkFileNames: 'assets/[name].[hash].js',
                 assetFileNames: ({ name }) => {
-                    // Keep images in their original directory structure
-                    if (/\.(gif|jpe?g|png|svg)$/i.test(name ?? '')) {
-                        return name ?? '[name][extname]';
+                    if (name && name.includes('src/assets/images/logo.png')) {
+                        return 'assets/images/logo.png';
+                    }
+                    if (name && /\.(gif|jpe?g|png|svg)$/i.test(name)) {
+                        return name;
                     }
                     return 'assets/[name].[hash][extname]';
                 },
@@ -51,23 +54,18 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, './src'),
-            '@components': resolve(__dirname, 'src/components'),
-            '@utils': resolve(__dirname, 'src/utils'),
-            '@assets': resolve(__dirname, 'src/assets'),
-            '@styles': resolve(__dirname, 'src/assets/styles')
+            '@components': path.resolve(__dirname, 'src/components'),
+            '@utils': path.resolve(__dirname, 'src/utils'),
+            '@assets': path.resolve(__dirname, 'src/assets'),
+            '@styles': path.resolve(__dirname, 'src/assets/styles')
         }
     },
     optimizeDeps: {
-        include: [
-            'react',
-            'react-dom',
-            '@rstacruz/startup-name-generator'
-        ]
+        include: ['react', 'react-dom', '@rstacruz/startup-name-generator']
     },
     server: {
-        port: 3000, // You can specify a port
-        open: true, // Open browser automatically
+        port: 3000,
+        open: true,
         watch: {
             ignored: ['!**/src/components/**']
         }
