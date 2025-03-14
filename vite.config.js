@@ -8,11 +8,13 @@ export default defineConfig({
     base: '/',
     plugins: [react()],
     root: 'src',
+    publicDir: '../public', // Add public directory configuration
     build: {
         outDir: '../dist', // Changed to output to root dist directory
         emptyOutDir: true,
         sourcemap: false,
         assetsDir: 'assets',
+        copyPublicDir: true, // Ensure public directory is copied
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'src/index.html'),
@@ -29,7 +31,13 @@ export default defineConfig({
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
                 chunkFileNames: 'assets/[name].[hash].js',
-                assetFileNames: 'assets/[name].[hash][extname]',
+                assetFileNames: ({ name }) => {
+                    // Keep images in their own directory
+                    if (/\.(gif|jpe?g|png|svg|ico)$/.test(name ?? '')) {
+                        return 'assets/images/[name].[hash][extname]'
+                    }
+                    return 'assets/[name].[hash][extname]'
+                },
                 manualChunks: {
                     vendor: ['react', 'react-dom'],
                 }

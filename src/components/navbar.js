@@ -55,7 +55,12 @@ export function createNavbar() {
     const logoImage = document.createElement('img');
     logoImage.src = '/assets/images/logo.png';
     logoImage.alt = 'JSReact Logo';
-    logoImage.className = 'w-auto h-8 rounded-full';
+    // calculate logo size based on screen size, once it gets below 768px, it will turn into a full width image
+    logoImage.style.width = 'calc(100% - 2rem)';
+    logoImage.style.maxWidth = 'calc(min(100%, 200px))';
+    logoImage.style.minWidth = '100px';
+    logoImage.style.height = 'auto';
+    logoImage.className = ''
 
     // Only append logo image, remove empty text element
     logoLink.appendChild(logoImage);

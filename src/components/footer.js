@@ -47,14 +47,7 @@ export function createFooter() {
     const footer = document.createElement('footer');
     footer.setAttribute('data-jsreact-footer', 'true');
     footer.classList.add(
-        'mt-auto',
-        'py-12',
-        'bg-background',
-        'border-t',
-        'border-border',
-        'animate-fade-in',
-        'relative',
-        'bottom-0',
+        'card-hover'
     );
 
     const container = document.createElement('div');
@@ -69,16 +62,6 @@ export function createFooter() {
     content.classList.add(
         'flex',
         'flex-col',
-        'md:flex-row',
-        'justify-between',
-        'items-center',
-        'gap-6',
-        'w-full',
-        'fixed',  // Changed from absolute to fixed for sticky behavior
-        'bottom-0',
-        'left-0',  // Added to ensure full width alignment
-        'right-0', // Added to ensure full width alignment
-        `px-4`,
         `opacity-90`,
     );
 
@@ -92,6 +75,7 @@ export function createFooter() {
     stats.classList.add(
         'flex',
         'items-center',
+        'justify-end', // Added this line to align content to the right
         'text-muted-foreground',
         'md:order-2',
         // 'm-2rem',
