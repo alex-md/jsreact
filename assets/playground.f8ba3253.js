@@ -1,4 +1,4 @@
-import{a as p}from"./footer.7c210576.js";import{s as i}from"./toast.bf8b0bbc.js";p();class y{constructor(){this.previewFrame=document.getElementById("preview-frame")}update(e){const t=this.getLibraryLinksHtml(e.libraries),n=`
+import{a as p}from"./footer.0f80d522.js";import{s as i}from"./toast.bf8b0bbc.js";p();class y{constructor(){this.previewFrame=document.getElementById("preview-frame")}update(e){const t=this.getLibraryLinksHtml(e.libraries),n=`
             <!DOCTYPE html>
             <html>
             <head>
