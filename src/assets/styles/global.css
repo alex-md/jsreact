@@ -1,34 +1,76 @@
+.dark,
+:root {
+    --primary: 198 93% 60%;
+    --accent: 225 85% 65%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 198 93% 60%
+}
+
+code,
+pre,
+textarea {
+    font-family: monospace
+}
+
+.transition-all,
+.transition-colors,
+.transition-opacity,
+.transition-transform {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.tooltip:after,
+.tooltip:before {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 600
+}
+
+.btn-modern,
+h3 {
+    letter-spacing: -.01em
+}
+
+.btn,
+.btn-modern,
+.btn-primary,
+.btn-secondary,
+.tag {
+    font-weight: 500
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-}
-
 :root {
-    /* Colors - light theme */
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 198 93% 60%;
     --primary-foreground: 0 0% 98%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 225 85% 65%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 198 93% 60%;
     --ring-offset: #ffffff;
-    --radius: 0.75rem;
+    --radius: 0.75rem
 }
 
 .dark {
@@ -38,130 +80,100 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 198 93% 60%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 225 85% 65%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 198 93% 60%;
+    --input: 240 3.7% 15.9%
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
-    height: 8px;
+    height: 8px
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background: 0 0
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
+    background: rgba(0, 0, 0, .1);
+    border-radius: 4px
 }
 
 .dark ::-webkit-scrollbar-thumb {
-    background: #4b5563;
+    background: #4b5563
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, .2)
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-    background: #6b7280;
+    background: #6b7280
 }
 
-/* Override for highlighted text container */
 #highlighted-text {
     overflow: visible !important;
-    height: auto !important;
+    height: auto !important
 }
 
 #highlighted-text::-webkit-scrollbar {
-    display: none;
-}
-
-/* Form Elements */
-textarea,
-input[type="text"],
-input[type="number"],
-input[type="email"],
-input[type="password"],
-input[type="search"] {
-    background: var(--input);
-    border: none;
-    border-radius: 12px;
-    padding: 0.875rem 1.25rem;
-    font-size: 0.9375rem;
-    color: var(--foreground);
-    transition: all 0.2s ease;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+    display: none
 }
 
 textarea {
-    font-family: monospace;
     min-height: 120px;
-    resize: vertical;
+    resize: vertical
 }
 
-textarea:focus,
-input:focus {
-    background: #ffffff;
-    box-shadow:
-        0 0 0 4px rgba(0, 113, 227, 0.15),
-        inset 0 0 0 1px rgba(0, 113, 227, 0.5);
-    outline: none;
+input:focus,
+textarea:focus {
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, .15), inset 0 0 0 1px rgba(0, 113, 227, .5);
+    outline: 0
 }
 
-/* Code Blocks */
-pre,
-code {
-    font-family: monospace;
-    font-size: 0.875rem;
+code,
+pre {
+    font-size: .875rem;
     background: #f3f4f6;
-    border-radius: 0.25rem;
-    padding: 0.25rem 0.5rem;
+    border-radius: .25rem;
+    padding: .25rem .5rem
 }
 
 pre {
     padding: 1rem;
-    overflow-x: auto;
+    overflow-x: auto
 }
 
-/* Loading Animation */
 @keyframes pulse {
 
     0%,
     100% {
-        opacity: 1;
+        opacity: 1
     }
 
     50% {
-        opacity: .5;
+        opacity: .5
     }
 }
 
 .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: 2s cubic-bezier(.4, 0, .6, 1) infinite pulse
 }
 
-/* Loading Spinner Animation */
 @keyframes spin {
     0% {
-        transform: rotate(0deg);
+        transform: rotate(0)
     }
 
     100% {
-        transform: rotate(360deg);
+        transform: rotate(360deg)
     }
 }
 
@@ -169,488 +181,420 @@ pre {
     display: inline-block;
     width: 1.25rem;
     height: 1.25rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, .3);
     border-radius: 50%;
-    border-top-color: #ffffff;
-    animation: spin 0.8s linear infinite;
-    margin-left: 0.5rem;
+    border-top-color: #fff;
+    animation: .8s linear infinite spin;
+    margin-left: .5rem
 }
 
-/* Transitions */
 .transition-all {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    transition-property: all
 }
 
 .transition-colors {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke
 }
 
 .transition-opacity {
-    transition-property: opacity;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    transition-property: opacity
 }
 
 .transition-transform {
-    transition-property: transform;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    transition-property: transform
 }
 
-/* Focus Styles */
 .focus-visible:focus {
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: 2px
 }
 
 .focus-visible:focus-visible {
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: 2px
 }
 
-/* Selection */
 ::selection {
     background-color: var(--primary);
-    color: var(--primary-foreground);
+    color: var(--primary-foreground)
 }
 
-/* Print Styles */
 @media print {
     .no-print {
-        display: none !important;
+        display: none !important
     }
 }
 
-/* Modern Card Styles */
 .card {
-    background: #ffffff;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-radius: .5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px -1px rgba(0, 0, 0, .1);
     padding: 1.5rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e5e7eb
 }
 
 .card-hover {
-    transition: all 0.2s;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    transition: .2s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1), 0 2px 4px -2px rgba(0, 0, 0, .1)
 }
 
-.card-modern {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.02),
-        0 2px 4px -2px rgba(0, 0, 0, 0.02),
-        0 0 0 1px rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(20px);
-    transition: all 0.3s ease;
-}
-
-.card-modern:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 12px 24px -4px rgba(0, 0, 0, 0.08),
-        0 6px 12px -6px rgba(0, 0, 0, 0.04),
-        0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-
-/* Modern Button Styles */
 .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    transition: .2s
 }
 
 .btn-primary {
     background: #005194;
-    color: #ffffff;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    color: #fff;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    transition: .2s
+}
+
+.btn-secondary,
+.input {
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    color: #1d1d1f;
+    transition: .2s
 }
 
 .btn-secondary {
-    background: #f3f4f6;
-    color: #1d1d1f;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    background: #f3f4f6
 }
 
-/* Input Styles */
 .input {
     width: 100%;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
     border: 1px solid #d1d5db;
-    background: #ffffff;
+    background: #fff;
     color: #1d1d1f;
-    transition: all 0.2s;
 }
 
-/* Modern Container */
 .container-custom {
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 2rem;
+    @apply container px-4 mx-auto max-w-7xl;
 }
 
-/* Modern Shadows */
 .shadow-elegant {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02),
-        0 4px 8px rgba(0, 0, 0, 0.02),
-        0 8px 16px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .02), 0 4px 8px rgba(0, 0, 0, .02), 0 8px 16px rgba(0, 0, 0, .02)
 }
 
 .shadow-float {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05),
-        0 8px 24px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .05), 0 8px 24px rgba(0, 0, 0, .05)
 }
 
-/* Enhanced Animations */
 @keyframes float {
 
     0%,
     100% {
-        transform: translateY(0px);
+        transform: translateY(0)
     }
 
     50% {
-        transform: translateY(-8px);
+        transform: translateY(-8px)
     }
 }
 
 @keyframes shimmer {
     0% {
-        background-position: -1000px 0;
+        background-position: -1000px 0
     }
 
     100% {
-        background-position: 1000px 0;
+        background-position: 1000px 0
     }
 }
 
 @keyframes fadeIn {
     from {
-        opacity: 0;
+        opacity: 0
     }
 
     to {
-        opacity: 1;
+        opacity: 1
     }
 }
 
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(20px)
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0)
     }
 }
 
 @keyframes slideDown {
     from {
         transform: translateY(-1rem);
-        opacity: 0;
+        opacity: 0
     }
 
     to {
         transform: translateY(0);
-        opacity: 1;
+        opacity: 1
     }
 }
 
 @keyframes slideLeft {
     from {
         transform: translateX(1rem);
-        opacity: 0;
+        opacity: 0
     }
 
     to {
         transform: translateX(0);
-        opacity: 1;
+        opacity: 1
     }
 }
 
 @keyframes slideRight {
     from {
         transform: translateX(-1rem);
-        opacity: 0;
+        opacity: 0
     }
 
     to {
         transform: translateX(0);
-        opacity: 1;
+        opacity: 1
     }
 }
 
 @keyframes scale {
     from {
-        transform: scale(0.95);
-        opacity: 0;
+        transform: scale(.95);
+        opacity: 0
     }
 
     to {
         transform: scale(1);
-        opacity: 1;
+        opacity: 1
     }
 }
 
 .animate-float {
-    animation: float 3s ease-in-out infinite;
+    animation: 3s ease-in-out infinite float
 }
 
 .animate-shimmer {
-    background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.2) 50%,
-            rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, 0) 100%);
     background-size: 1000px 100%;
-    animation: shimmer 2s infinite;
+    animation: 2s infinite shimmer
 }
 
 .animate-fade-in {
-    animation: fadeIn 0.6s ease-out;
+    animation: .6s ease-out fadeIn
 }
 
 .animate-slide-up {
-    animation: slideUp 0.6s ease-out;
+    animation: .6s ease-out slideUp
 }
 
-/* Tooltips */
 .tooltip {
     position: relative;
-    display: inline-block;
+    display: inline-block
 }
 
 .tooltip:before {
     content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.375rem 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    color: white;
+    padding: .375rem .75rem;
+    border-radius: .5rem;
+    font-size: .875rem;
+    color: #fff;
     background: #1d1d1f;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
+    transition: .2s;
     white-space: nowrap;
-    margin-bottom: 5px;
+    margin-bottom: 5px
+}
+
+.btn-modern,
+.tag:hover {
+    color: var(--primary-foreground)
 }
 
 .tooltip:after {
     content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
     border: 4px solid transparent;
     border-top-color: #1d1d1f;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-    margin-bottom: 3px;
+    transition: .2s;
+    margin-bottom: 3px
 }
 
-.tooltip:hover:before,
-.tooltip:hover:after {
+.tooltip:hover:after,
+.tooltip:hover:before {
     opacity: 1;
-    visibility: visible;
+    visibility: visible
 }
 
-/* Modern Card Styles */
 .card-modern {
     background: var(--card);
     border-radius: 20px;
     padding: 2rem;
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.02),
-        0 2px 4px -2px rgba(0, 0, 0, 0.02),
-        0 0 0 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .02), 0 2px 4px -2px rgba(0, 0, 0, .02), 0 0 0 1px rgba(0, 0, 0, .05);
     backdrop-filter: blur(20px);
-    transition: all 0.3s ease;
+    transition: .3s
 }
 
 .card-modern:hover {
     transform: translateY(-2px);
-    box-shadow:
-        0 12px 24px -4px rgba(0, 0, 0, 0.08),
-        0 6px 12px -6px rgba(0, 0, 0, 0.04),
-        0 0 0 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 12px 24px -4px rgba(0, 0, 0, .08), 0 6px 12px -6px rgba(0, 0, 0, .04), 0 0 0 1px rgba(0, 0, 0, .05)
 }
 
-/* Enhanced Button Styles */
 .btn-modern {
-    padding: 0.75rem 1.5rem;
-    font-weight: 500;
+    padding: .75rem 1.5rem;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: .3s;
     background: var(--secondary);
-    color: var(--primary-foreground);
-    font-size: 0.9375rem;
-    letter-spacing: -0.01em;
+    font-size: .9375rem
+}
+
+.tag,
+h1 {
+    color: var(--foreground)
 }
 
 .btn-modern:hover {
     transform: translateY(-1px);
-    background: var(--accent);
+    background: var(--accent)
 }
 
-/* Typography */
 h1 {
     font-size: 3rem;
     line-height: 1.1;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    color: var(--foreground);
+    letter-spacing: -.03em
+}
+
+.katex,
+h2 {
+    line-height: 1.2
+}
+
+.stat-value,
+h2 {
+    letter-spacing: -.02em
 }
 
 h2 {
-    font-size: 2rem;
-    line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-size: 2rem
 }
 
 h3 {
     font-size: 1.5rem;
-    line-height: 1.3;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    line-height: 1.3
 }
 
 p {
     font-size: 1.0625rem;
     line-height: 1.5;
-    color: var(--muted);
+    color: var(--muted)
 }
 
-/* Results Section Styles */
 .results-grid {
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
 }
 
 .result-card {
     background: var(--card);
     border-radius: 16px;
     padding: 1.5rem;
-    transition: all 0.3s ease;
+    transition: .3s
 }
 
 .result-card:hover {
     transform: translateY(-2px);
-    box-shadow:
-        0 12px 24px -4px rgba(0, 0, 0, 0.08),
-        0 6px 12px -6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 12px 24px -4px rgba(0, 0, 0, .08), 0 6px 12px -6px rgba(0, 0, 0, .04)
 }
 
-/* Tags and Labels */
 .tag {
     display: inline-flex;
     align-items: center;
-    padding: 0.375rem 0.75rem;
+    padding: .375rem .75rem;
     border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: .875rem;
     background: var(--input);
-    color: var(--foreground);
-    transition: all 0.2s ease;
+    transition: .2s
 }
 
 .tag:hover {
-    background: var(--primary);
-    color: var(--primary-foreground);
+    background: var(--primary)
 }
 
-/* Stats Display */
 .stat-card {
-    background: linear-gradient(180deg, var(--card) 0%, rgba(255, 255, 255, 0.95) 100%);
+    background: linear-gradient(180deg, var(--card) 0, rgba(255, 255, 255, .95) 100%);
     border-radius: 16px;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    transition: all 0.3s ease;
+    gap: .75rem;
+    transition: .3s
 }
 
 .stat-value {
     font-size: 2rem;
     font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--primary);
+    color: var(--primary)
 }
 
 .stat-label {
-    font-size: 0.875rem;
+    font-size: .875rem;
     color: var(--muted);
-    font-weight: 500;
+    font-weight: 500
 }
 
-/* Text styles */
 .text-muted {
-    color: #4b5563;
+    color: #4b5563
 }
 
 .text-muted-dark {
-    color: #374151;
+    color: #374151
 }
 
-/* KaTeX Styles */
 .katex-display {
     margin: 1rem 0;
     overflow-x: auto;
     overflow-y: hidden;
-    text-align: center;
+    text-align: center
 }
 
 .katex {
     font-size: 1.1em;
-    line-height: 1.2;
-    white-space: normal;
+    white-space: normal
 }
 
 .katex-error {
     color: #e53e3e;
-    font-size: 0.9em;
-    padding: 0.5rem;
+    font-size: .9em;
+    padding: .5rem;
     background: #fff5f5;
-    border-radius: 0.5rem;
+    border-radius: .5rem
 }
 
-/* Ensure KaTeX expressions wrap properly on small screens */
 .katex-display>.katex {
     white-space: nowrap;
     max-width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 0.5rem 0;
+    padding: .5rem 0
 }
 
 @layer base {
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
     * {
         @apply border-border;
     }
 
     body {
         @apply bg-background text-foreground;
-        font-feature-settings: "rlig" 1, "calt" 1;
+        font-feature-settings: "rlig" 1, "calt" 1
     }
 }
 
@@ -658,22 +602,4 @@ p {
     .container-custom {
         @apply container mx-auto px-4 max-w-7xl;
     }
-
-    .btn-modern {
-        @apply inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2;
-    }
-
-    .card-modern {
-        @apply bg-card text-card-foreground rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-    }
-}
-
-/* Container Styles */
-.container-custom {
-    @apply container px-4 mx-auto max-w-7xl;
-}
-
-/* Form Elements */
-.input-modern {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 }

@@ -144,45 +144,43 @@ const evaluate = (expression) => {
 
 // Main logic
 document.addEventListener("DOMContentLoaded", () => {
-    // Info button functionality
+    // Info button functionality - Optimized
     const infoButton = document.getElementById("info-toggle");
     const calculatorDescription = document.getElementById("calculator-description");
     let descriptionTimeout;
 
     const showDescription = () => {
-        calculatorDescription.classList.remove("hidden");
-        setTimeout(() => {
-            calculatorDescription.classList.remove("translate-y-full", "opacity-0");
-        }, 10);
+        calculatorDescription.classList.remove("hidden", "translate-y-full", "opacity-0");
 
         clearTimeout(descriptionTimeout);
         descriptionTimeout = setTimeout(() => {
-            calculatorDescription.classList.add("translate-y-full", "opacity-0");
+            // Use a single class for hiding with transition
+            calculatorDescription.classList.add("hiding");
+
+            // Remove the hiding class after the transition (300ms is standard, reduce if desired)
             setTimeout(() => {
+                calculatorDescription.classList.remove("hiding"); // Remove class after animation
                 calculatorDescription.classList.add("hidden");
-            }, 3000);  // Shorter timeout
+            }, 300); // Match CSS transition time
         }, 5000);
     };
 
-    // Custom expression evaluator
+    infoButton.addEventListener("click", showDescription);
+
     function findExpressionOptimized(numbers, target) {
         const operators = ["+", "-", "*", "/"];
-        if (document.getElementById("exponents-checkbox").checked) {
+        const useExponents = document.getElementById("exponents-checkbox").checked;
+        const useSqrt = document.getElementById("sqrt-checkbox").checked;
+        const noParentheses = document.getElementById("no-parentheses-checkbox").checked;
+        if (useExponents) {
             operators.push("**");
         }
 
-        // Add square root if enabled
-        const useSqrt = document.getElementById("sqrt-checkbox").checked;
-        const noParentheses = document.getElementById("no-parentheses-checkbox").checked;
-
-        // Memoization cache
-        const memo = new Map();
-        // Set a computation time limit (15 seconds)
-        const timeLimit = 15000;
+        const timeLimit = 15000; // 15 seconds
         const startTime = Date.now();
         let timeoutReached = false;
+        const memo = new Map();
 
-        // Check if we've exceeded the time limit
         function checkTimeout() {
             if (Date.now() - startTime > timeLimit) {
                 timeoutReached = true;
@@ -191,272 +189,300 @@ document.addEventListener("DOMContentLoaded", () => {
             return false;
         }
 
-        function buildExpressionWithoutParentheses(nums, ops) {
-            let expr = nums[0].toString();
-            for (let i = 0; i < ops.length; i++) {
-                expr += ops[i] + nums[i + 1].toString();
+        // Optimized Evaluation (Handles operator precedence and avoids eval)
+        function evaluateExpression(expression) {
+            try {
+                if (noParentheses) {
+                    return evaluateWithoutParentheses(expression)
+                }
+                else {
+                    return evaluateWithParentheses(expression);
+                }
+            } catch (e) {
+                return NaN; // Handle any evaluation errors
             }
-            return expr;
         }
 
-        function evaluateOperatorPrecedence(nums, ops) {
-            // First handle ** (exponents)
-            let values = [...nums];
-            let operators = [...ops];
+        function evaluateWithoutParentheses(expression) {
+            const tokens = tokenize(expression); // Tokenize once
 
-            // Handle exponents first
-            if (operators.includes("**")) {
-                for (let i = operators.length - 1; i >= 0; i--) {
-                    if (operators[i] === "**") {
-                        const result = Math.pow(values[i], values[i + 1]);
-                        values.splice(i, 2, result);
-                        operators.splice(i, 1);
+            function tokenize(expr) {
+                const tokens = [];
+                let currentNumber = '';
+
+                for (const char of expr) {
+                    if (operators.includes(char)) {
+                        if (currentNumber !== '') {
+                            tokens.push(parseFloat(currentNumber));
+                            currentNumber = '';
+                        }
+                        tokens.push(char);
+                    } else if (char === 's') { // Handle 'sqrt('
+                        if (currentNumber !== '') {
+                            tokens.push(parseFloat(currentNumber));
+                            currentNumber = '';
+                        }
+                        tokens.push('sqrt(');
+                    }
+                    else if (char === ')') {
+                        if (currentNumber !== '') {
+                            tokens.push(parseFloat(currentNumber));
+                            currentNumber = '';
+                        }
+                        tokens.push(')');
+
+                    }
+                    else {
+                        currentNumber += char;
                     }
                 }
+
+                if (currentNumber !== '') {
+                    tokens.push(parseFloat(currentNumber));
+                }
+                return tokens;
             }
 
-            // Handle multiplication and division from left to right
-            for (let i = 0; i < operators.length; i++) {
-                if (operators[i] === "*" || operators[i] === "/") {
-                    const a = values[i];
-                    const b = values[i + 1];
-                    let result;
-                    if (operators[i] === "*") {
-                        result = a * b;
-                    } else {
-                        if (b === 0) return NaN;
-                        result = a / b;
+            // Helper function to apply an operator
+            function applyOp(op, b, a) { // Note the order for correct subtraction/division
+                if (op === "+") return a + b;
+                if (op === "-") return a - b;
+                if (op === "*") return a * b;
+                if (op === "/") {
+                    if (b === 0) throw new Error("Division by zero");
+                    return a / b;
+                }
+                if (op === "**") return Math.pow(a, b);
+                throw new Error("Invalid operator");
+            }
+
+
+            // Operator precedence handling using shunting yard principle (simplified for no parentheses)
+            function precedence(op) {
+                if (op === "+" || op === "-") return 1;
+                if (op === "*" || op === "/") return 2;
+                if (op === "**") return 3; // Exponents have higher precedence
+                if (op === 'sqrt(') return 4;
+                return 0;
+            }
+
+            const values = [];
+            const ops = [];
+
+            for (const token of tokens) {
+                if (typeof token === 'number') {
+                    values.push(token);
+                } else if (token === 'sqrt(') {
+                    ops.push(token);
+                }
+                else if (token === ')') {
+                    while (ops.length > 0 && ops[ops.length - 1] !== 'sqrt(') {
+                        values.push(applyOp(ops.pop(), values.pop(), values.pop()));
                     }
-                    values.splice(i, 2, result);
-                    operators.splice(i, 1);
-                    i--;
+                    if (ops.length > 0 && ops[ops.length - 1] === 'sqrt(') {
+                        ops.pop(); //remove 'sqrt('
+                        values.push(Math.sqrt(values.pop()));
+                    }
+
+                } else { // Operator
+                    while (ops.length > 0 && precedence(ops[ops.length - 1]) >= precedence(token)) {
+                        values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                    }
+                    ops.push(token);
                 }
             }
 
-            // Handle addition and subtraction from left to right
-            for (let i = 0; i < operators.length; i++) {
-                if (operators[i] === "+" || operators[i] === "-") {
-                    const a = values[i];
-                    const b = values[i + 1];
-                    const result = operators[i] === "+" ? a + b : a - b;
-                    values.splice(i, 2, result);
-                    operators.splice(i, 1);
-                    i--;
+            while (ops.length > 0) {
+                values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+            }
+            return values[0];
+        }
+        function evaluateWithParentheses(expression) {
+            function tokenize(expr) {
+                const tokens = [];
+                let currentNumber = '';
+                for (let i = 0; i < expr.length; i++) {
+                    const char = expr[i];
+                    if (operators.includes(char) || char === '(' || char === ')') {
+                        if (currentNumber !== '') {
+                            tokens.push(parseFloat(currentNumber));
+                            currentNumber = '';
+                        }
+                        tokens.push(char);
+                    }
+                    else if (char === 's' && expr.substring(i, i + 5) === 'sqrt(') {
+                        if (currentNumber !== '') {
+                            tokens.push(parseFloat(currentNumber));
+                            currentNumber = '';
+                        }
+                        tokens.push('sqrt(');
+                        i += 4; // Skip 'qrt('
+                    }
+                    else {
+                        currentNumber += char;
+                    }
+                }
+                if (currentNumber !== '') {
+                    tokens.push(parseFloat(currentNumber));
+                }
+                return tokens;
+            }
+            const tokens = tokenize(expression);
+
+            function precedence(op) {
+                if (op === "+" || op === "-") return 1;
+                if (op === "*" || op === "/") return 2;
+                if (op === "**") return 3;
+                if (op === 'sqrt(') return 4;
+                return 0;
+            }
+
+            function applyOp(op, b, a) {
+                if (op === "+") return a + b;
+                if (op === "-") return a - b;
+                if (op === "*") return a * b;
+                if (op === "/") {
+                    if (b === 0) throw new Error("Division by zero");
+                    return a / b;
+                }
+                if (op === "**") return Math.pow(a, b);
+                throw new Error("Invalid operator");
+            }
+
+
+            const values = [];
+            const ops = [];
+
+            for (const token of tokens) {
+                if (typeof token === 'number') {
+                    values.push(token);
+                }
+                else if (token === '(') {
+                    ops.push(token);
+                }
+                else if (token === ')') {
+                    while (ops.length > 0 && ops[ops.length - 1] !== '(') {
+                        values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                    }
+                    ops.pop(); // Remove '('
+                }
+                else if (token === 'sqrt(') {
+                    ops.push(token);
+                }
+                else { // Operator
+                    while (ops.length > 0 && ops[ops.length - 1] !== '(' && precedence(ops[ops.length - 1]) >= precedence(token)) {
+                        values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                    }
+                    ops.push(token);
                 }
             }
 
+            while (ops.length > 0) {
+                if (ops[ops.length - 1] === 'sqrt(') {
+                    ops.pop();
+                    values.push(Math.sqrt(values.pop()));
+                }
+                else {
+                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                }
+            }
             return values[0];
         }
 
-        function backtrackWithoutParentheses(nums) {
-            // Early termination if timeout reached
-            if (checkTimeout()) return null;
+        function* permutationGenerator(arr) {
+            const n = arr.length;
+            const c = Array(n).fill(0);
+            let i = 0;
 
-            if (nums.length === 1) {
-                return Math.abs(nums[0] - target) < 1e-6 ? nums[0].toString() : null;
-            }
+            yield [...arr]; // First permutation
 
-            // Smart pruning: Don't generate all permutations at once
-            // Instead, use an iterative approach with limited batch size
-            const batchSize = 30; // Limit number of permutations to try at once
-            let permutationCount = 0;
-
-            // Calculate factorial for the permutation count
-            let totalPermutations = 1;
-            for (let i = 2; i <= nums.length; i++) {
-                totalPermutations *= i;
-            }
-
-            // Use a permutation generator instead of generating all at once
-            function* permutationGenerator(arr) {
-                const n = arr.length;
-                const c = Array(n).fill(0);
-                let i = 0;
-
-                yield [...arr]; // First permutation
-
-                while (i < n) {
-                    if (c[i] < i) {
-                        const swapPos = i % 2 === 0 ? 0 : c[i];
-                        [arr[i], arr[swapPos]] = [arr[swapPos], arr[i]];
-                        yield [...arr];
-                        c[i]++;
-                        i = 0;
-                    } else {
-                        c[i] = 0;
-                        i++;
-                    }
-
-                    // Check for timeout periodically
-                    if (permutationCount++ % 100 === 0 && checkTimeout()) {
-                        return;
-                    }
+            while (i < n) {
+                if (c[i] < i) {
+                    const swapPos = i % 2 === 0 ? 0 : c[i];
+                    [arr[i], arr[swapPos]] = [arr[swapPos], arr[i]];
+                    yield [...arr];
+                    c[i]++;
+                    i = 0;
+                } else {
+                    c[i] = 0;
+                    i++;
                 }
             }
-
-            const permGen = permutationGenerator(nums);
-            let permutation;
-
-            // Process permutations in batches with a limited operation count
-            while ((permutation = permGen.next()).done === false && !timeoutReached) {
-                const numPermutation = permutation.value;
-
-                // Generate operation combinations more efficiently - use predefined patterns first
-                const opPatterns = [];
-                // Try common patterns first (all multiplications, then all additions, etc.)
-                if (operators.includes("*")) {
-                    opPatterns.push(Array(nums.length - 1).fill("*"));
-                }
-                if (operators.includes("+")) {
-                    opPatterns.push(Array(nums.length - 1).fill("+"));
-                }
-
-                // Try operations
-                for (const opPattern of opPatterns) {
-                    const value = evaluateOperatorPrecedence(numPermutation, opPattern);
-                    if (!isNaN(value) && Math.abs(value - target) < 1e-6) {
-                        return buildExpressionWithoutParentheses(numPermutation, opPattern);
-                    }
-                }
-
-                // If predefined patterns don't work, then try combinations
-                // But limit how many we try per permutation
-                let opCombinationsCount = 0;
-                const maxOpCombinations = 100; // Limit combinations to try per permutation
-
-                function tryOperatorCombinations(current = [], index = 0) {
-                    if (checkTimeout() || opCombinationsCount >= maxOpCombinations) {
-                        return null;
-                    }
-
-                    if (index === nums.length - 1) {
-                        opCombinationsCount++;
-                        const value = evaluateOperatorPrecedence(numPermutation, current);
-                        if (!isNaN(value) && Math.abs(value - target) < 1e-6) {
-                            return buildExpressionWithoutParentheses(numPermutation, current);
-                        }
-                        return null;
-                    }
-
-                    for (const op of operators) {
-                        current[index] = op;
-                        const result = tryOperatorCombinations(current, index + 1);
-                        if (result) return result;
-                    }
-
-                    return null;
-                }
-
-                const result = tryOperatorCombinations(Array(nums.length - 1));
-                if (result) return result;
-            }
-
-            return null;
         }
 
+        // Optimized backtracking (combines features, avoids string concatenation)
         function backtrack(nums, currentExpr) {
-            // Early termination if timeout reached
             if (checkTimeout()) return null;
 
-            // Use memoization to avoid recalculating the same expressions
-            const key = nums.sort().join(',') + '|' + currentExpr;
+            const key = nums.slice().sort((a, b) => a - b).join(',') + '|' + currentExpr;
             if (memo.has(key)) {
                 return memo.get(key);
             }
 
+
             if (nums.length === 0) {
-                try {
-                    const currentValue = evaluate(currentExpr);
-                    if (!isNaN(currentValue) && Math.abs(currentValue - target) < 1e-6) {
-                        return currentExpr;
-                    }
-                } catch (e) {
-                    memo.set(key, null);
-                    return null;
+                const currentValue = evaluateExpression(currentExpr);
+                if (!isNaN(currentValue) && Math.abs(currentValue - target) < 1e-6) {
+                    return currentExpr;
                 }
                 memo.set(key, null);
                 return null;
             }
+            //Permutation optimization
+            for (const permutedNums of permutationGenerator(nums)) {
+                for (let i = 0; i < permutedNums.length; i++) {
+                    const num = permutedNums[i];
+                    const remainingNums = permutedNums.slice(0, i).concat(permutedNums.slice(i + 1));
 
-            // Optimization: Try operations that are more likely to succeed first
-            // For example, multiplication and division are more likely to reach higher targets
-            let orderedOps = [...operators];
-            const absTarget = Math.abs(target);
-            // If target is large, prioritize multiplication and exponents
-            if (absTarget > 100) {
-                orderedOps.sort((a, b) => {
-                    if ((a === '*' || a === '**') && (b !== '*' && b !== '**')) return -1;
-                    if ((b === '*' || b === '**') && (a !== '*' && a !== '**')) return 1;
-                    return 0;
-                });
-            }
-            // If target is small, prioritize division and subtraction
-            else if (absTarget < 10) {
-                orderedOps.sort((a, b) => {
-                    if ((a === '/' || a === '-') && (b !== '/' && b !== '-')) return -1;
-                    if ((b === '/' || b === '-') && (a !== '/' && a !== '-')) return 1;
-                    return 0;
-                });
-            }
-
-            for (let i = 0; i < nums.length; i++) {
-                const num = nums[i];
-                const remainingNums = nums.slice(0, i).concat(nums.slice(i + 1));
-
-                if (currentExpr === "") {
-                    if (useSqrt && num >= 0) {
-                        const sqrtResult = backtrack(remainingNums, `sqrt(${num})`);
-                        if (sqrtResult) return sqrtResult;
-                    }
-                    const result = backtrack(remainingNums, num.toString());
-                    if (result) {
-                        memo.set(key, result);
-                        return result;
-                    }
-                } else {
-                    for (const op of orderedOps) {
-                        // Skip division by zero
-                        if (op === '/' && num === 0) continue;
-
-                        const newExpr = noParentheses ? `${currentExpr}${op}${num}` : `(${currentExpr}${op}${num})`;
-                        const result = backtrack(remainingNums, newExpr);
+                    //Initial Expression
+                    if (currentExpr === "") {
+                        if (useSqrt && num >= 0) {
+                            const sqrtResult = backtrack(remainingNums, `sqrt(${num})`);
+                            if (sqrtResult) {
+                                memo.set(key, sqrtResult);
+                                return sqrtResult
+                            };
+                        }
+                        const result = backtrack(remainingNums, num.toString());
                         if (result) {
                             memo.set(key, result);
                             return result;
                         }
+                    }
+                    else {
+                        //Operator optimization
+                        for (const op of operators) {
+                            if (op === "/" && num === 0) continue; // Avoid division by zero
 
-                        if (useSqrt && num >= 0) {
-                            const sqrtNewExpr = noParentheses ?
-                                `${currentExpr}${op}sqrt(${num})` :
-                                `(${currentExpr}${op}sqrt(${num}))`;
-                            const sqrtResult = backtrack(remainingNums, sqrtNewExpr);
-                            if (sqrtResult) {
-                                memo.set(key, sqrtResult);
-                                return sqrtResult;
+                            const newExpr = noParentheses ? `${currentExpr}${op}${num}` : `(${currentExpr}${op}${num})`;
+                            const result = backtrack(remainingNums, newExpr);
+                            if (result) {
+                                memo.set(key, result);
+                                return result;
+                            }
+
+                            if (useSqrt && num >= 0) {
+                                const sqrtNewExpr = noParentheses ?
+                                    `${currentExpr}${op}sqrt(${num})` :
+                                    `(${currentExpr}${op}sqrt(${num}))`;
+                                const sqrtResult = backtrack(remainingNums, sqrtNewExpr);
+                                if (sqrtResult) {
+                                    memo.set(key, result);
+                                    return sqrtResult;
+                                }
                             }
                         }
                     }
                 }
             }
-
             memo.set(key, null);
             return null;
         }
 
-        // Try without parentheses first if the option is selected
-        let result = null;
-        if (noParentheses) {
-            result = backtrackWithoutParentheses(numbers);
-        }
+        let result = backtrack(numbers, "");
 
-        // Fall back to regular solution with parentheses if no solution found or parentheses are allowed
-        if (!result && !timeoutReached) {
-            result = backtrack(numbers, "");
-        }
-
-        // Handle timeout message
         if (timeoutReached) {
-            return result || "Computation timed out - try with fewer numbers";
+            return "Computation timed out - try with fewer numbers";
         }
 
         return result || "No solution found";
@@ -468,7 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("random-numbers-button").addEventListener("click", (event) => {
         event.preventDefault();
         const count = document.getElementById("num-integers-input").value || 6;
-        const maxValue = document.getElementById("max-number-input").value || 60;
+        const maxValue = document.getElementById("max-number-input").value || 90;
         const randomNumbers = Array.from(
             { length: parseInt(count) },
             () => Math.floor(Math.random() * parseInt(maxValue)) + 1
@@ -508,443 +534,66 @@ document.addEventListener("DOMContentLoaded", () => {
             let result = findExpressionOptimized(numbers, target);
 
             if (result !== "No solution found" && result !== "Computation timed out - try with fewer numbers") {
-                // Store original expression for copying
                 const originalExpression = result;
 
-                function parseExpression(expr) {
-                    // Preprocess the expression to handle special cases
-                    expr = expr.replace(/sqrt\(([^)]+)\)/g, "\\sqrt{$1}");
-                    expr = expr.replace(/\*\*/g, "^");
-
-                    // Helper function to preserve parentheses while parsing
-                    function preserveParentheses(input) {
-                        // First handle any basic substitutions
-                        let processed = input
-                            .replace(/\*/g, "\\times ")
-                            .replace(/\//g, "\\div ");
-
-                        // Ensure all parentheses are wrapped with \left( and \right)
-                        let result = "";
-                        let lastPos = 0;
-                        let level = 0;
-
-                        // Direct character-by-character parsing
-                        for (let i = 0; i < processed.length; i++) {
-                            if (processed[i] === '(') {
-                                if (level === 0) {
-                                    // Start of a parenthesis group
-                                    result += processed.substring(lastPos, i) + "\\left(";
-                                    lastPos = i + 1;
-                                }
-                                level++;
-                            } else if (processed[i] === ')') {
-                                level--;
-                                if (level === 0) {
-                                    // End of a parenthesis group
-                                    result += processed.substring(lastPos, i) + "\\right)";
-                                    lastPos = i + 1;
-                                }
-                            }
-                            //Removed the else if statement, as it is redundant with processDivisions
-                        }
-
-                        // Add any remaining content
-                        if (lastPos < processed.length) {
-                            result += processed.substring(lastPos);
-                        }
-
-                        return result;
-                    }
-
-                    function findLeftOperand(str, pos) {
-                        // Go left until we find an operator or the beginning of the string
-                        let start = pos;
-                        let parenCount = 0;
-
-                        while (start >= 0) {
-                            if (str[start] === ')') parenCount++;
-                            if (str[start] === '(') parenCount--;
-
-                            // If we find an operator and we're not within parentheses, break
-                            if (parenCount === 0 && start !== pos && "+-*/".includes(str[start])) {
-                                start++;
-                                break;
-                            }
-
-                            start--;
-                        }
-
-                        // If we reached the beginning of the string
-                        if (start < 0) start = 0;
-
-                        return str.substring(start, pos + 1).trim();
-                    }
-
-                    function findRightOperand(str, pos) {
-                        let end = pos;
-                        let parenCount = 0;
-
-                        while (end < str.length) {
-                            if (str[end] === '(') parenCount++;
-                            if (str[end] === ')') parenCount--;
-
-                            // If we find an operator and we're not within parentheses, break
-                            if (parenCount === 0 && end !== pos && "+-*/".includes(str[end])) {
-                                break;
-                            }
-
-                            end++;
-                        }
-
-                        return str.substring(pos, end).trim();
-                    }
-
-                    // Convert the expression to a syntax tree for better operator precedence
-                    function parseToTree(input) {
-                        // Remove outer parentheses if they wrap the entire expression
-                        input = input.trim();
-                        if (input.startsWith('(') && input.endsWith(')')) {
-                            let level = 0;
-                            let allWrapped = true;
-
-                            for (let i = 0; i < input.length - 1; i++) {
-                                if (input[i] === '(') level++;
-                                if (input[i] === ')') level--;
-                                if (level === 0 && i < input.length - 1) {
-                                    allWrapped = false;
-                                    break;
-                                }
-                            }
-
-                            if (allWrapped) {
-                                return {
-                                    type: 'parentheses',
-                                    content: parseToTree(input.substring(1, input.length - 1))
-                                };
-                            }
-                        }
-
-                        // Find the last operator outside of parentheses with lowest precedence
-                        let level = 0;
-                        let lowestPrecedenceIndex = -1;
-                        let lowestPrecedence = Infinity;
-
-                        // First pass - look for addition/subtraction
-                        for (let i = input.length - 1; i >= 0; i--) {
-                            const char = input[i];
-
-                            if (char === ')') level++;
-                            else if (char === '(') level--;
-
-                            if (level === 0) {
-                                if (char === '+') {
-                                    lowestPrecedenceIndex = i;
-                                    lowestPrecedence = 1;
-                                    break;
-                                } else if (char === '-' && lowestPrecedence > 1) {
-                                    lowestPrecedenceIndex = i;
-                                    lowestPrecedence = 1;
-                                }
-                            }
-                        }
-
-                        // Second pass - look for multiplication/division
-                        if (lowestPrecedenceIndex === -1) {
-                            for (let i = input.length - 1; i >= 0; i--) {
-                                const char = input[i];
-
-                                if (char === ')') level++;
-                                else if (char === '(') level--;
-
-                                if (level === 0) {
-                                    if (char === '*' && lowestPrecedence > 2) {
-                                        lowestPrecedenceIndex = i;
-                                        lowestPrecedence = 2;
-                                    } else if (char === '/' && lowestPrecedence > 2) {
-                                        lowestPrecedenceIndex = i;
-                                        lowestPrecedence = 2;
-                                    }
-                                }
-                            }
-                        }
-
-                        // Third pass - look for exponents
-                        if (lowestPrecedenceIndex === -1) {
-                            for (let i = input.length - 1; i >= 0; i--) {
-                                const char = input[i];
-
-                                if (char === ')') level++;
-                                else if (char === '(') level--;
-
-                                if (level === 0 && char === '^') {
-                                    lowestPrecedenceIndex = i;
-                                    lowestPrecedence = 3;
-                                    break;
-                                }
-                            }
-                        }
-
-                        // If we found a top-level operator
-                        if (lowestPrecedenceIndex !== -1) {
-                            const op = input[lowestPrecedenceIndex];
-                            const left = input.substring(0, lowestPrecedenceIndex).trim();
-                            const right = input.substring(lowestPrecedenceIndex + 1).trim();
-
-                            return {
-                                type: 'operator',
-                                operator: op,
-                                left: parseToTree(left),
-                                right: parseToTree(right)
-                            };
-                        }
-
-                        // Check for square root
-                        if (input.startsWith('\\sqrt{')) {
-                            const endBrace = findMatchingBrace(input, 6);
-                            if (endBrace !== -1) {
-                                return {
-                                    type: 'function',
-                                    name: 'sqrt',
-                                    argument: parseToTree(input.substring(6, endBrace))
-                                };
-                            }
-                        }
-
-                        // Handle parentheses
-                        if (input.startsWith('(') && input.endsWith(')')) {
-                            return {
-                                type: 'parentheses',
-                                content: parseToTree(input.substring(1, input.length - 1))
-                            };
-                        }
-
-                        // Must be a number or variable
-                        return {
-                            type: 'value',
-                            value: input
-                        };
-                    }
-
-                    function findMatchingBrace(str, startIndex) {
-                        let level = 1;
-                        for (let i = startIndex; i < str.length; i++) {
-                            if (str[i] === '{') level++;
-                            if (str[i] === '}') level--;
-                            if (level === 0) return i;
-                        }
-                        return -1;
-                    }
-
-                    // Convert the syntax tree back to LaTeX
-                    function treeToLatex(node) {
-                        if (node.type === 'value') {
-                            return node.value;
-                        }
-
-                        if (node.type === 'function' && node.name === 'sqrt') {
-                            return `\\sqrt{${treeToLatex(node.argument)}}`;
-                        }
-
-                        if (node.type === 'parentheses') {
-                            return `\\left(${treeToLatex(node.content)}\\right)`;
-                        }
-
-                        // For operators
-                        const leftLatex = treeToLatex(node.left);
-                        const rightLatex = treeToLatex(node.right);
-
-                        switch (node.operator) {
-                            case '+':
-                                return `${leftLatex} + ${rightLatex}`;
-                            case '-':
-                                return `${leftLatex} - ${rightLatex}`;
-                            case '*':
-                                return `${leftLatex} \\times ${rightLatex}`;
-                            case '/':
-                                return `\\frac{${leftLatex}}{${rightLatex}}`;
-                            case '^':
-                                return `{${leftLatex}}^{${rightLatex}}`;
-                            default:
-                                return `${leftLatex} ${node.operator} ${rightLatex}`;
-                        }
-                    }
-
-                    // Function to properly handle fractions in division
-                    function processDivisions(input) {
-                        // Replace all divisions with fractions
-                        let result = input;
-                        let divIndex = result.indexOf('/');
-
-                        while (divIndex !== -1) {
-                            // Find the left operand (could be complex)
-                            let leftStart = divIndex - 1;
-                            let parenLevel = 0;
-
-                            // Go backwards to find the start of the left operand
-                            while (leftStart >= 0) {
-                                if (result[leftStart] === ')') parenLevel++;
-                                if (result[leftStart] === '(') parenLevel--;
-
-                                if (parenLevel === 0 && leftStart !== divIndex - 1 &&
-                                    (result[leftStart] === '+' || result[leftStart] === '-' ||
-                                        result[leftStart] === '*' || result[leftStart] === '/')) {
-                                    leftStart++;
-                                    break;
-                                }
-
-                                leftStart--;
-                            }
-
-                            if (leftStart < 0) leftStart = 0;
-
-                            // Find the right operand (could be complex)
-                            let rightEnd = divIndex + 1;
-                            parenLevel = 0;
-
-                            // Go forwards to find the end of the right operand
-                            while (rightEnd < result.length) {
-                                if (result[rightEnd] === '(') parenLevel++;
-                                if (result[rightEnd] === ')') parenLevel--;
-
-                                if (parenLevel === 0 && rightEnd !== divIndex + 1 &&
-                                    (result[rightEnd] === '+' || result[rightEnd] === '-' ||
-                                        result[rightEnd] === '*' || result[rightEnd] === '/')) {
-                                    break;
-                                }
-
-                                rightEnd++;
-                            }
-
-                            // Extract the operands
-                            const leftOperand = result.substring(leftStart, divIndex).trim();
-                            const rightOperand = result.substring(divIndex + 1, rightEnd).trim();
-
-                            // Replace with a fraction, adding parentheses if needed
-                            const before = result.substring(0, leftStart);
-                            const after = result.substring(rightEnd);
-
-                            //This is where the fix is.
-                            const wrappedLeft = /^[0-9]+$/.test(leftOperand) ? leftOperand : `\\left(${leftOperand}\\right)`;
-                            const wrappedRight = /^[0-9]+$/.test(rightOperand) ? rightOperand : `\\left(${rightOperand}\\right)`;
-
-
-                            result = before + `\\frac{${wrappedLeft}}{${wrappedRight}}` + after;
-
-                            // Find next division, start search *after* current fraction
-                            divIndex = result.indexOf('/', before.length + `\\frac{${wrappedLeft}}{${wrappedRight}}`.length);
-
-                        }
-
-                        return result;
-                    }
-
-                    // First, ensure consistent spacing around operators
-                    let cleanedExpr = expr.replace(/\s+/g, ''); // Remove all whitespace
-                    cleanedExpr = cleanedExpr.replace(/([+\-*\/\(\)])/g, ' $1 ').trim(); // Add space around operators
-                    cleanedExpr = cleanedExpr.replace(/\s+/g, ' '); // Normalize spaces
-
-                    // Convert to LaTeX
+                function expressionToLatex(expr) {
                     try {
-                        // First, convert special operators
-                        let latexExpr = cleanedExpr
-                            .replace(/\*/g, '\\times ')
-                        //.replace(/\(/g, '\\left(')  // Removed: Handled by processDivisions and treeToLatex
-                        //.replace(/\)/g, '\\right)') // Removed: Handled by processDivisions and treeToLatex
+                        // Use Math.js to parse the expression
+                        const node = math.parse(expr);
 
-                        // Process divisions to create fractions
-                        latexExpr = processDivisions(latexExpr);
-                        const tree = parseToTree(latexExpr);
-                        latexExpr = treeToLatex(tree)
-                        return latexExpr;
-
+                        // Use the toTex() method to convert to LaTeX
+                        return node.toTex({ parenthesis: 'keep' }); // 'keep' is crucial
 
                     } catch (e) {
-                        console.error("Error parsing expression to LaTeX:", e);
-                        // Fallback to basic format
-                        return expr
-                            .replace(/\*/g, '\\times ')
-                            .replace(/\//g, '\\div ')
-                            .replace(/\(/g, '\\left(')
-                            .replace(/\)/g, '\\right)');
+                        console.error("Error parsing expression with Math.js:", e);
+                        // Fallback (basic formatting, no fractions)
+                        return expr.replace(/\*/g, ' \\times ')
+                            .replace(/\//g, ' \\div ')
+                            .replace(/\*\*/g, '^');
                     }
                 }
 
-                const displayResult = parseExpression(result);
-                const latexExpression = `${displayResult} = ${target}`;
+                const latexExpression = `${expressionToLatex(result)} = ${target}`;
 
                 try {
-                    // Clear previous content
                     solutionOutput.innerHTML = '';
-
-                    // Create a div for KaTeX rendering
                     const katexDiv = document.createElement('div');
                     katexDiv.className = 'katex-display';
                     solutionOutput.appendChild(katexDiv);
-
-                    // Style the solution output container
                     solutionOutput.style.fontSize = "1.2em";
                     solutionOutput.style.padding = "1.5rem";
                     solutionOutput.style.overflowX = "auto";
                     solutionOutput.style.overflowY = "hidden";
 
-                    // Render KaTeX expression in the div
+                    // Render using KaTeX
                     katex.render(latexExpression, katexDiv, {
                         displayMode: true,
-                        throwOnError: false,
-                        trust: true
+                        throwOnError: false, // Handle rendering errors gracefully
+                        trust: true        // Allow LaTeX commands
                     });
 
-                    // Create a "Copy" button
+                    // Copy button
                     const copyButton = document.createElement('button');
-                    copyButton.className = 'px-3 py-1 mt-4 bg-gray-200 text-gray-800 rounded-md text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors';
+                    copyButton.className = 'px-3 py-1 mt-4 bg-gray-200 text-gray-800 rounded-md text-sm hover:bg-gray-300';
                     copyButton.textContent = 'Copy Expression';
-
-                    // Add copy functionality
                     copyButton.addEventListener('click', () => {
-                        // Format the expression for copying
                         const copyText = `${originalExpression} `;
-
-                        // Use the clipboard API to copy the text
                         navigator.clipboard.writeText(copyText).then(() => {
-                            showToast('Expression copied to clipboard!');
-
-                            // Visual feedback for the button
-                            const originalText = copyButton.textContent;
+                            showToast('Expression copied!');
                             copyButton.textContent = 'Copied!';
-                            copyButton.classList.add('bg-green-200', 'text-green-800');
-
-                            setTimeout(() => {
-                                copyButton.textContent = originalText;
-                                copyButton.classList.remove('bg-green-200', 'text-green-800');
-                            }, 2000);
-                        }).catch(err => {
-                            console.error('Failed to copy: ', err);
-                            showToast('Failed to copy to clipboard');
-                        });
+                            setTimeout(() => { copyButton.textContent = 'Copy Expression'; }, 2000);
+                        }).catch(err => console.error('Failed to copy:', err));
                     });
-
-                    // Append the button to the solution output
                     solutionOutput.appendChild(copyButton);
 
                 } catch (e) {
                     console.error('KaTeX error:', e);
-                    // Fallback to normal display if KaTeX fails
-                    solutionOutput.innerHTML = result.replace(/sqrt\(/g, "√(").replace(/\*\*/g, "^").replace(/\*/g, "×").replace(/\//g, "÷");
-
-                    // Add copy button even in fallback mode
+                    solutionOutput.innerHTML = result.replace(/\*/g, "×").replace(/\//g, "÷").replace(/\*\*/g, "^");
                     const copyButton = document.createElement('button');
-                    copyButton.className = 'px-3 py-1 mt-4 bg-gray-200 text-gray-800 rounded-md text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors';
                     copyButton.textContent = 'Copy Expression';
-
                     copyButton.addEventListener('click', () => {
-                        navigator.clipboard.writeText(`${originalExpression}`).then(() => {
-                            showToast('Expression copied to clipboard!');
-                        }).catch(err => {
-                            console.error('Failed to copy: ', err);
-                        });
+                        navigator.clipboard.writeText(originalExpression);
                     });
-
-                    solutionOutput.appendChild(document.createElement('br'));
                     solutionOutput.appendChild(copyButton);
                 }
             } else {

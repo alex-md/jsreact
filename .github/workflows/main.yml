@@ -28,7 +28,8 @@ jobs:
     - name: generate-sitemap
       uses: cicirello/generate-sitemap@v1.10.1
       with:
-        path-to-root: ./src
+        path-to-root: .
+        input-paths: src
         base-url-path: https://jsreact.com
         include-html: true
         include-pdf: true

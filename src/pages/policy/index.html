@@ -14,10 +14,9 @@
     <body class="bg-gray-50 dark:bg-gray-900">
         <script type="module">
             import { createNavbar } from '/components/navbar.js';
+            import { createHeader } from '../../components/head.js';
+
             createNavbar();
-        </script>
-        <script type="module" src="../../components/header.js"></script>
-        <script>
             document.body.appendChild(
                 createHeader(
                     'Privacy Policy',

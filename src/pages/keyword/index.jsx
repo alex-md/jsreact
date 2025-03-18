@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import KeywordAnalyzer from '../../components/KeywordAnalyzer';
+import KeywordAnalyzer from './KeywordAnalyzer';
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
