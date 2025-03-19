@@ -90,8 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentMatchIndex === -1 || !matches.length) return;
 
         const match = matches[currentMatchIndex];
-        searchArea.focus();
-        searchArea.setSelectionRange(match.start, match.end);
+        // Only focus and select if this was triggered by a user action (not by input event)
+        if (!event || event.type !== 'input') {
+            searchArea.focus();
+            searchArea.setSelectionRange(match.start, match.end);
+        }
     }
 
     function findNext() {
@@ -324,8 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Find & Replace Event Listeners
-    findText.addEventListener('input', () => {
+    findText.addEventListener('input', (e) => {
         findMatches(findText.value);
+        // Don't highlight on input to prevent focus stealing
+        updateMatchCount();
     });
 
     useRegex.addEventListener('change', () => {

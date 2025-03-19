@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { utils } from '../../utils/KeywordUtils';
+import { utils } from './KeywordUtils';
 
 const KeywordAnalyzer = () => {
     const [text, setText] = useState('');

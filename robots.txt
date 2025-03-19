@@ -1,12 +1,18 @@
 User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /admin/
-
-# Important pages
-Allow: /index.html
 Allow: /pages/
-Allow: /sitemap.xml
+Allow: /assets/
+Disallow: /node_modules/
+Disallow: /.git/
 
-# Sitemaps
+# High-priority tools - allow frequent crawling
+Allow: /pages/minify/
+Allow: /pages/playground/
+Allow: /pages/clean/
+Allow: /pages/keyword/
+
+# Specify sitemap location
 Sitemap: https://jsreact.com/sitemap.xml
+
+# Specify crawl delay for better server performance
+Crawl-delay: 1

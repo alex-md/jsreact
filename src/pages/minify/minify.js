@@ -64,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
     fileTypeSelect?.addEventListener('change', toggleJsOptions);
     toggleJsOptions();
 
+    // Add input event listeners for updating byte counters
+    inputElement.addEventListener('input', updateSizes);
+    outputElement.addEventListener('input', updateSizes);
+
     async function minifyCode() {
         if (!window.Terser) return;
         const code = inputElement.value?.trim();
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let minified = '';
             if (fileTypeSelect?.value === 'html' || fileTypeSelect?.value === 'css') {
                 minified = code.replace(/<!--[\s\S]*?-->/g, '') // Remove HTML comments
-                    .replace(/\/[\*\s\S]*?\//g, '') // Remove CSS comments
+                    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove CSS comments
                     .replace(/[\s]+/g, ' ') // Collapse spaces
                     .replace(/\s*([{}>~,+:;])\s*/g, '$1') // Trim around symbols
                     .trim();
@@ -91,10 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 minified = result.code;
             }
             outputElement.value = minified;
+            updateSizes(); // Update byte counters after minification
             showToast('✨ Minification complete');
         } catch (error) {
             console.error('Minification error:', error);
             outputElement.value = `/* Minification Error */\n${error.message}\n\n/* Original Code */\n${inputElement.value}`;
+            updateSizes(); // Update byte counters even on error
             showToast('❌ Minification failed');
         } finally {
             minifyButton.innerHTML = 'Minify';
@@ -116,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearAll() {
         inputElement.value = '';
         outputElement.value = '';
+        updateSizes(); // Update byte counters after clearing
         showToast('🗑️ Cleared');
     }
 

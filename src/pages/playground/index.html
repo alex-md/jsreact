@@ -5,20 +5,53 @@
         <script type="module" src="../../components/head.js"></script>
         <script>
             createHead(
-                'Online Code Playground - Interactive HTML, CSS & JavaScript Editor',
-                'Free online code editor with live preview. Write, test, and experiment with HTML, CSS, and JavaScript in real-time. Features library imports, console output, and auto-reload.'
+                'Online Code Editor & Web Playground - Live HTML, CSS & JavaScript Editor',
+                'Free online code editor and web playground with live preview. Write, test, and debug HTML, CSS, and JavaScript code in real-time. Features library imports, console output, auto-reload, and multiple pane layouts.'
             );
         </script>
+
+        <!-- Enhanced SEO Meta Tags -->
+        <meta name="keywords"
+            content="online code editor, web playground, live code preview, html editor, css editor, javascript editor, code testing, web development tools, live coding, frontend playground">
+        <meta name="author" content="JSreact">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+        <!-- Enhanced Social Media Meta Tags -->
+        <meta property="article:tag" content="Code Editor">
+        <meta property="article:tag" content="Web Development">
+        <meta property="article:tag" content="Live Preview">
+        <meta property="article:tag" content="Frontend Tools">
+
+        <!-- JSON-LD Structured Data -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "JSreact Code Playground",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "description": "Interactive online code editor for web development with real-time preview and multiple features for testing and debugging.",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "featureList": [
+                "Live code preview",
+                "Multiple editor panes",
+                "Library imports",
+                "Console output",
+                "Auto-reload",
+                "Syntax highlighting",
+                "Code formatting"
+            ],
+            "browserRequirements": "Modern web browsers supporting ES6+",
+            "softwareVersion": "1.0"
+        }
+        </script>
+
         <!-- Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        <!-- SEO Meta Tags (These are fine as-is, but I've added a few) -->
-        <meta name="keywords"
-            content="code playground, online editor, html editor, css editor, javascript editor, live preview, code testing, web development tools, CDN import, library management, web dev, coding, frontend">
-        <meta name="author" content="JSReact Tools">
-        <meta name="robots" content="index, follow">
-        <meta name="revisit-after" content="7 days">
-        <meta name="language" content="English">
-
 
         <!-- Monaco Editor -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
