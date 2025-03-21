@@ -2,6 +2,8 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <script>
             createHead(
@@ -9,11 +11,11 @@
                 'Generate creative names for your projects using startup name generator'
             );
         </script>
-      <script type="module" crossorigin src="/assets/generator.e995526e.js"></script>
-      <link rel="modulepreload" crossorigin href="/assets/footer.b7e959e3.js">
+      <script type="module" crossorigin src="/assets/generator.60c4729b.js"></script>
+      <link rel="modulepreload" crossorigin href="/assets/footer.67768f26.js">
       <link rel="modulepreload" crossorigin href="/assets/toast.bf8b0bbc.js">
       <link rel="modulepreload" crossorigin href="/assets/vendor.8a332d8f.js">
-      <link rel="stylesheet" href="/assets/footer.9686b87b.css">
+      <link rel="stylesheet" href="/assets/footer.411c09e8.css">
     </head>
 
     <body class="bg-gray-50">
@@ -28,28 +30,29 @@
             );
         </script>
 
-        <main class="container mx-auto px-4 py-12 max-w-7xl">
-            <div class="space-y-6">
+        <main
+            class="container mx-auto px-3 py-6 sm:px-4 sm:py-8 md:py-12 max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
+            <div class="space-y-4 md:space-y-6">
                 <!-- Input Section -->
                 <div
                     class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                    <div class="p-6 space-y-6">
-                        <div class="space-y-4">
+                    <div class="p-3 sm:p-4 md:p-6 space-y-4 md:space-y-6">
+                        <div class="space-y-2 md:space-y-4">
                             <label for="input-text" class="block text-sm font-medium text-gray-700">
                                 Enter words to generate names from
                             </label>
                             <textarea id="input-text" rows="3" placeholder="Enter words or phrases..."
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900"></textarea>
+                                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900"></textarea>
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex flex-wrap gap-4">
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
                             <button id="generate-button"
-                                class="px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                class="w-full sm:w-auto px-4 py-2 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
                                 Generate Names
                             </button>
                             <button id="clear-button"
-                                class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                class="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
                                 Clear All
                             </button>
                         </div>
@@ -59,20 +62,21 @@
                 <!-- Results Section -->
                 <div
                     class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                    <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <div class="border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4 flex justify-between items-center">
                         <h2 class="text-lg font-semibold text-gray-900">Generated Names</h2>
                         <button id="copy-all-button"
-                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center gap-2">
-                            <i class="fas fa-copy text-xs"></i> Copy All
+                            class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center gap-2">
+                            <i class="fas fa-copy text-xs"></i> <span class="hidden sm:inline">Copy All</span>
                         </button>
                     </div>
-                    <div class="p-6">
-                        <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-3 sm:p-4 md:p-6">
+                        <div id="results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
                             <!-- Results will be dynamically added here -->
                         </div>
                         <div id="loading" class="hidden">
-                            <div class="flex items-center justify-center py-8">
-                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            <div class="flex items-center justify-center py-4 md:py-8">
+                                <div class="animate-spin rounded-full h-6 w-6 md:h-8 md:w-8 border-b-2 border-primary">
+                                </div>
                             </div>
                         </div>
                     </div>
