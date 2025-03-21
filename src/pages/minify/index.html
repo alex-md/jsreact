@@ -23,75 +23,49 @@
         <meta property="article:tag" content="Terser">
         <meta property="article:tag" content="Web Performance">
 
-        <!-- JSON-LD Structured Data -->
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "JSreact Code Minifier",
-            "applicationCategory": "DeveloperApplication",
-            "operatingSystem": "Any",
-            "description": "Free online tool to minify and optimize JavaScript, CSS, and HTML code with advanced compression options using Terser.",
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD"
-            },
-            "featureList": [
-                "JavaScript, CSS, and HTML minification",
-                "Terser compression",
-                "Source map generation",
-                "Multiple compression options",
-                "Real-time compression",
-                "Code optimization",
-                "File size reduction"
-            ],
-            "browserRequirements": "Requires JavaScript",
-            "softwareVersion": "1.0"
-        }
-        </script>
+        <!-- Viewport meta tag for responsiveness -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <style>
+            /* Default styles for mobile-first approach */
             .layout-container {
-                display: grid;
-                grid-template-columns: 1fr minmax(300px, 400px);
+                display: flex;
+                flex-direction: column;
                 gap: 1.5rem;
-                align-items: start;
+                align-items: stretch;
+                /* Stretch items to fill the container width */
                 min-height: calc(100vh - 300px);
             }
 
-            @media (max-width: 1024px) {
-                .layout-container {
-                    grid-template-columns: 1fr;
-                }
-
-                .options-sidebar {
-                    order: -1;
-                }
+            .options-sidebar {
+                width: 100%;
+                /* Take full width on small screens */
+                margin-bottom: 1.5rem;
+                /* Add some spacing below the options sidebar */
             }
 
             .code-section {
-                height: 100%;
+                width: 100%;
+                /* Take full width on small screens */
                 display: flex;
                 flex-direction: column;
             }
 
             .code-container {
-                flex: 1;
                 display: flex;
                 flex-direction: column;
                 gap: 1.5rem;
             }
 
             .code-box {
-                flex: 1;
                 display: flex;
                 flex-direction: column;
             }
 
             .code-box textarea {
                 flex: 1;
-                min-height: 300px;
+                min-height: 200px;
+                /* Adjust min-height for smaller screens */
                 resize: none;
             }
 
@@ -104,11 +78,6 @@
                 margin-top: 1rem;
             }
 
-            .options-sidebar {
-                position: sticky;
-                top: 1rem;
-            }
-
             .option-group {
                 transition: all 0.2s ease;
             }
@@ -116,12 +85,37 @@
             .option-group:hover {
                 transform: translateY(-1px);
             }
+
+            /* Media query for larger screens */
+            @media (min-width: 1024px) {
+                .layout-container {
+                    display: grid;
+                    grid-template-columns: 1fr minmax(300px, 400px);
+                    gap: 1.5rem;
+                    align-items: start;
+                    min-height: calc(100vh - 300px);
+                }
+
+                .options-sidebar {
+                    position: sticky;
+                    top: 1rem;
+                    width: auto;
+                    /* Revert to auto width on larger screens */
+                }
+
+                .code-section {
+                    width: auto;
+                    /* Revert to auto width on larger screens */
+                }
+            }
         </style>
     </head>
 
     <body class="bg-gray-50">
         <script type="module">
-            import { createNavbar } from '/components/navbar.js';
+            import {
+                createNavbar
+            } from '/components/navbar.js';
             createNavbar();
         </script>
 
