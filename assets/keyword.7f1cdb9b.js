@@ -1,4 +1,4 @@
-import{c as w,a as C}from"./footer.67768f26.js";import{r as h,a as k,R as T}from"./vendor.8a332d8f.js";import{u}from"./KeywordUtils.7d66aff6.js";w("Keyword Density Analyzer & SEO Content Optimization Tool","Free online keyword density analyzer and content optimization tool. Analyze keyword frequency, find keyword clusters, and optimize your content for search engines. Perfect for SEO writers and content marketers.");C();var f={exports:{}},b={};/**
+import{c as w,a as C}from"./footer.7693421a.js";import{r as h,a as k,R as T}from"./vendor.8a332d8f.js";import{u}from"./KeywordUtils.7d66aff6.js";w("Keyword Density Analyzer & SEO Content Optimization Tool","Free online keyword density analyzer and content optimization tool. Analyze keyword frequency, find keyword clusters, and optimize your content for search engines. Perfect for SEO writers and content marketers.");C();var f={exports:{}},b={};/**
  * @license React
  * react-jsx-runtime.production.min.js
  *
