@@ -20,6 +20,10 @@ class QRGenerator {
     }
 
     initializeEventListeners() {
+        console.log('Initializing event listeners'); // Add this line
+        console.log('Dropzone element:', this.dropzone); // Add this line
+        console.log('FileInput element:', this.fileInput); // Add this line
+
         // File input change handler (delegated)
         this.dropzone.addEventListener('change', (e) => {
             if (e.target === this.fileInput) {
@@ -29,11 +33,18 @@ class QRGenerator {
         });
 
         // Drag and drop handlers
-        this.dropzone.addEventListener('click', () => this.fileInput.click());
+        this.dropzone.addEventListener('click', () => {
+            console.log('Dropzone click event triggered'); // Add this line
+            this.fileInput.click();
+        });
         this.dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            this.dropzone.classList.add('border-primary');
+            this.dropzone.classList.remove('border-primary');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                this.handleFile(file);
+            }
         });
         this.dropzone.addEventListener('dragleave', () => {
             this.dropzone.classList.remove('border-primary');
