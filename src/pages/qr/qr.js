@@ -20,8 +20,13 @@ class QRGenerator {
     }
 
     initializeEventListeners() {
-        // File input change handler
-        this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+        // File input change handler (delegated)
+        this.dropzone.addEventListener('change', (e) => {
+            if (e.target === this.fileInput) {
+                console.log('File input change event triggered (delegated)');
+                this.handleFileSelect(e);
+            }
+        });
 
         // Drag and drop handlers
         this.dropzone.addEventListener('click', () => this.fileInput.click());
