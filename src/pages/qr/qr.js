@@ -37,7 +37,7 @@ class QRGenerator {
             console.log('Dropzone click event triggered'); // Add this line
             this.fileInput.click();
         });
-        this.dropzone.addEventListener('dragover', (e) => {
+        this.dropzone.addEventListener('`dragover`', (e) => {
             e.preventDefault();
             e.stopPropagation();
             this.dropzone.classList.remove('border-primary');
@@ -60,13 +60,59 @@ class QRGenerator {
         });
 
         // Paste handler
+        const self = this; // Capture the 'this' context
+
         document.addEventListener('paste', (e) => {
+            console.log('Paste event triggered');
             const items = e.clipboardData.items;
+            console.log('Clipboard items:', items);
             for (let item of items) {
+                console.log('Clipboard item:', item);
                 if (item.type.startsWith('image/')) {
                     const file = item.getAsFile();
-                    this.handleFile(file);
+                    console.log('File from clipboard:', file);
+                    if (file) {
+                        self.handleFile(file); // Use 'self' instead of 'this'
+                    } else {
+                        console.warn('Could not get file from clipboard item');
+                        showToast('Could not read image from clipboard');
+                    }
                     break;
+                } else if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    // Handle file-based image data
+                    const file = item.getAsFile();
+                    console.log('File from clipboard (file kind):', file);
+                    if (file) {
+                        self.handleFile(file);
+                    } else {
+                        console.warn('Could not get file from clipboard item (file kind)');
+                        showToast('Could not read image from clipboard');
+                    }
+                    break;
+                } else if (item.type === 'text/plain') {
+                    e.preventDefault();
+                    const text = e.clipboardData.getData('text');
+                    console.log('Text from clipboard:', text);
+                    try {
+                        new URL(text);
+                        // If the text is a valid URL, try to load the image
+                        fetch(text, { mode: 'cors' })
+                            .then(response => response.blob())
+                            .then(blob => {
+                                const file = new File([blob], 'pastedImage.png', { type: 'image/png' });
+                                self.handleFile(file);
+                            })
+                            .catch(error => {
+                                console.warn('Could not load image from URL:', text, error);
+                                showToast('Could not read image from clipboard');
+                            });
+                    } catch (error) {
+                        console.warn('Pasted text is not a URL:', text);
+                        showToast('Could not read image from clipboard');
+                    }
+                    break;
+                } else {
+                    console.log('Unsupported clipboard item type:', item.type, item.kind);
                 }
             }
         });
