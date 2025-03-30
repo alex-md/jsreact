@@ -31,44 +31,39 @@ export function createFooter() {
     if (document.querySelector("footer[data-jsreact-footer]")) return;
     let footer = document.createElement("footer");
     footer.setAttribute("data-jsreact-footer", "true");
-
-    // Updated footer styling
     footer.classList.add(
-        // "fixed",
-        // "bottom-0", // Slight spacing from bottom
-        // "w-full",
-        // "bg-white",  // Solid background
-        // "rounded-lg", // Rounded corners
-        // "border",    // Full border
-        // "border-gray-200",
-        // "py-2",     // Slightly less padding
-        // "px-4",     // Horizontal padding
-        // "shadow-lg", // More pronounced shadow
-        // "z-50"      // Keep high z-index
+        "fixed",
+        "bottom-0",
+        "w-full",
+        "z-50"
     );
 
+    // Remove debug styles
+    // footer.style.backgroundColor = "#000";
+    // footer.style.border = "2px solid red";
+
     let container = document.createElement("div");
+    container.classList.add(
+        "w-full",
+        "backdrop-blur-sm"  // Add blur effect
+    );
 
     let content = document.createElement("div");
     content.classList.add(
-        "fixed",
-        "bottom-0", // Slight spacing from bottom
-        "w-full",
-        "bg-gray-800",  // Solid background
-        "shadow-lg", // More pronounced shadow
-        "z-50",
-        "py-2",
-        "px-4",
+        "bg-gray-800",
+        "bg-opacity-30",  // More transparent
+        "bg-grid-white/[0.05]",
         "flex",
-        "mx-auto",
-        // text color white
-        "text-white",
-        // starting at bottom, make it 15px tall
-        "h-20",
-        // text centered vertically
+        "h-16",          // Reduced height
         "items-center",
-        "justify-left",
-        "text-lg",
+        "justify-between", // Changed from justify-left
+        "mx-auto",
+        "px-6",          // Increased padding
+        "py-2",
+        "shadow-lg",
+        "text-sm",       // Smaller text
+        "text-white",
+        "w-full"
     );
 
     let copyright = document.createElement("div");
@@ -76,7 +71,14 @@ export function createFooter() {
     `;
 
     let stats = document.createElement("div");
-    stats.classList.add("flex", "items-left", "justify-left", "md:order-2", "animate-slide-up", "delay-400", "border-none", "shadow-float", "flex-wrap", "gap-2"); // Adjusted classes for mobile
+    stats.classList.add(
+        "animate-slide-up",
+        "flex",
+        "flex-row", // Changed from flex-col
+        "gap-4",
+        "items-center", // Changed from items-left
+        "md:order-2"
+    );
 
     let usersIcon = `<svg class="w-4 h-4 text-muted-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
          <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
