@@ -5,7 +5,9 @@ const KeywordAnalyzer = () => {
     const [text, setText] = useState('');
     const [keywords, setKeywords] = useState([]);
     const [matchingStrategy, setMatchingStrategy] = useState('partial');
-    const [windowSize, setWindowSize] = useState(50); // Changed from windowSizePercent to windowSize
+    const [windowSize, setWindowSize] = useState(50);
+    const [displayWindowSize, setDisplayWindowSize] = useState(50);
+    const [analysisState, setAnalysisState] = useState(null);
 
     const handleKeywordsChange = useCallback((newKeywords) => {
         setKeywords(newKeywords);
@@ -16,10 +18,24 @@ const KeywordAnalyzer = () => {
     }, []);
 
     const handleWindowSizeChange = useCallback((newSize) => {
-        setWindowSize(newSize);
+        setDisplayWindowSize(newSize);
     }, []);
 
-    // No longer need getActualWindowSize as we're using direct word count now
+    const runAnalysis = useCallback(() => {
+        if (text && keywords.length > 0) {
+            // Update the actual window size when analysis is run
+            setWindowSize(displayWindowSize);
+            setAnalysisState({
+                text,
+                keywords,
+                matchingStrategy,
+                windowSize: displayWindowSize,
+                timestamp: Date.now()
+            });
+        }
+    }, [text, keywords, matchingStrategy, displayWindowSize]);
+
+    const canAnalyze = text.trim() && keywords.length > 0;
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -38,31 +54,43 @@ const KeywordAnalyzer = () => {
                         onKeywordsChange={handleKeywordsChange}
                         matchingStrategy={matchingStrategy}
                         onMatchingStrategyChange={handleMatchingStrategyChange}
-                        windowSize={windowSize}
+                        windowSize={displayWindowSize}
                         onWindowSizeChange={handleWindowSizeChange}
-                        maxWindowSize={text.trim().split(/\s+/).length || 100} // Set max based on text length or default value
+                        maxWindowSize={text.trim().split(/\s+/).length || 100}
                     />
+                    <div className="flex justify-end">
+                        <button
+                            onClick={runAnalysis}
+                            disabled={!canAnalyze}
+                            className={`px-6 py-3 rounded-lg text-sm font-medium shadow-sm transition-all duration-200
+                                ${canAnalyze
+                                    ? 'bg-primary-500 text-white hover:bg-primary-600 hover:shadow-md'
+                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                        >
+                            Analyze Text
+                        </button>
+                    </div>
                 </div>
-                {keywords.length > 0 && text && (
+                {analysisState && (
                     <div className="space-y-8">
                         <ResultsDisplay
-                            text={text}
-                            keywords={keywords}
-                            matchingStrategy={matchingStrategy}
-                            windowSize={windowSize}
+                            text={analysisState.text}
+                            keywords={analysisState.keywords}
+                            matchingStrategy={analysisState.matchingStrategy}
+                            windowSize={analysisState.windowSize}
                             utils={utils}
                         />
                         <HighestDensityClusterDisplay
-                            text={text}
-                            keywords={keywords}
-                            windowSize={windowSize}
-                            matchingStrategy={matchingStrategy}
+                            text={analysisState.text}
+                            keywords={analysisState.keywords}
+                            windowSize={analysisState.windowSize}
+                            matchingStrategy={analysisState.matchingStrategy}
                             utils={utils}
                         />
                         <TextHighlightDisplay
-                            text={text}
-                            keywords={keywords}
-                            matchingStrategy={matchingStrategy}
+                            text={analysisState.text}
+                            keywords={analysisState.keywords}
+                            matchingStrategy={analysisState.matchingStrategy}
                             utils={utils}
                         />
                     </div>
@@ -223,9 +251,18 @@ const KeywordInput = ({ keywords, onKeywordsChange, matchingStrategy, onMatching
 };
 
 const TextHighlightDisplay = ({ text, keywords, matchingStrategy, utils }) => {
-    const highlightedText = utils.highlightText(text, keywords, matchingStrategy);
-    const wordCount = text.trim().split(/\s+/).length;
-    const { totalCount, intersections } = utils.calculateMultiKeywordDensity(text, keywords, matchingStrategy);
+    // Clean the text by:
+    // 1. Replacing multiple spaces with single space
+    // 2. Replacing multiple line breaks with single line break
+    // 3. Trimming whitespace from start and end
+    const cleanText = text
+        .replace(/\s+/g, ' ')        // Replace multiple spaces/tabs/line breaks with single space
+        .replace(/\n\s*\n/g, '\n')   // Replace multiple line breaks with single line break
+        .trim();                     // Remove leading/trailing whitespace
+
+    const highlightedText = utils.highlightText(cleanText, keywords, matchingStrategy);
+    const wordCount = cleanText.trim().split(/\s+/).length;
+    const { totalCount, intersections } = utils.calculateMultiKeywordDensity(cleanText, keywords, matchingStrategy);
     const speakingTime = utils.calculateSpeakingTime(wordCount);
 
     return (
@@ -265,7 +302,7 @@ const TextHighlightDisplay = ({ text, keywords, matchingStrategy, utils }) => {
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-purple-100">
                 <div className="prose prose-sm max-w-none">
                     <div
-                        className="text-gray-900 whitespace-pre-wrap break-words leading-relaxed"
+                        className="text-gray-900 whitespace-pre-line break-words leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: highlightedText }}
                     />
                 </div>
@@ -467,7 +504,7 @@ const HighestDensityClusterDisplay = ({ text, keywords, windowSize, matchingStra
                 </div>
             ) : (
                 <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-indigo-100">
-                    <p className="text-gray-600 text-center">No keyword clusters found in the text.</p>
+                    <p className="tey-600 text-center">No keyword clusters found in the text.</p>
                 </div>
             )}
         </div>

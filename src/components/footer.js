@@ -32,15 +32,9 @@ export function createFooter() {
     let footer = document.createElement("footer");
     footer.setAttribute("data-jsreact-footer", "true");
     footer.classList.add(
-        "fixed",
-        "bottom-0",
-        "w-full",
-        "z-50"
+        "mt-auto",  // Add margin-top auto to push to bottom
+        "w-full"
     );
-
-    // Remove debug styles
-    // footer.style.backgroundColor = "#000";
-    // footer.style.border = "2px solid red";
 
     let container = document.createElement("div");
     container.classList.add(

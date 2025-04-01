@@ -5,7 +5,7 @@ if (!window.React) {
     throw new Error('React not loaded when initializing App');
 }
 
-const { Component, createElement: h } = React;
+const { Component, createElement: h, useCallback, useState, useEffect, useMemo } = React;
 
 // Error Boundary Component
 class ErrorBoundary extends Component {
@@ -35,12 +35,14 @@ class ErrorBoundary extends Component {
 
 // Define and immediately export App component
 window.App = () => {
-    const { createElement: h, useState, useCallback } = React;
+    const { createElement: h, useState, useCallback, useRef } = React;
 
     const [text, setText] = useState('');
     const [keywords, setKeywords] = useState([]);
     const [matchingStrategy, setMatchingStrategy] = useState('partial');
     const [windowSize, setWindowSize] = useState(10);
+    const [displayWindowSize, setDisplayWindowSize] = useState(10);
+    const timeoutRef = useRef(null);
 
     const handleTextChange = useCallback((e) => {
         setText(e.target.value);
@@ -53,8 +55,28 @@ window.App = () => {
     const handleWindowSizeChange = useCallback((e) => {
         const value = parseInt(e.target.value);
         if (!isNaN(value) && value > 0) {
-            setWindowSize(value);
+            // Update display immediately for smooth UI
+            setDisplayWindowSize(value);
+
+            // Clear any existing timeout
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+
+            // Set a new timeout to update the actual window size
+            timeoutRef.current = setTimeout(() => {
+                setWindowSize(value);
+            }, 300); // 300ms delay
         }
+    }, []);
+
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
     }, []);
 
     return h('div', { className: 'min-h-screen bg-[#faf9f7] py-8 px-4 sm:px-6 lg:px-8' },
@@ -108,14 +130,14 @@ window.App = () => {
                                     ),
                                     h('span', {
                                         className: 'text-sm font-bold text-primary-600'
-                                    }, `${windowSize}%`)
+                                    }, `${displayWindowSize}%`)
                                 ),
                                 // Slider
                                 h('input', {
                                     type: 'range',
                                     min: '1',
                                     max: '100',
-                                    value: windowSize,
+                                    value: displayWindowSize,
                                     onChange: handleWindowSizeChange,
                                     className: 'w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500'
                                 }),
