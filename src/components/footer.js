@@ -104,7 +104,7 @@ export function createFooter() {
     return viewCountButton.classList.add("inline-flex", "items-left", "gap-2", "text-muted-foreground", "hover:text-foreground", "transition-colors", "group", "text-xs"), // Reduced text size
         viewCountButton.id = "viewCountButton", viewCountButton.innerHTML = viewsIcon, fetchViewCount().then(count => {
             let viewCountText = document.createElement("span");
-            viewCountText.textContent = ` ${count} views`, viewCountText.classList.add("group-hover:text-foreground", "transition-colors"), viewCountButton.appendChild(viewCountText);
+            viewCountText.textContent = ` ${count} views`, viewCountText.classList.add("group-hover:text-foreground text text-blue-600 transition-colors"), viewCountButton.appendChild(viewCountText);
         }), stats.appendChild(activeUsersButton), stats.appendChild(viewCountButton), content.appendChild(copyright), content.appendChild(stats), container.appendChild(content), footer.appendChild(container), document.body ? (document.querySelectorAll("footer:not([data-jsreact-footer])").forEach(f => f.remove()), document.body.appendChild(footer)) : document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(footer);
         }), footer;
