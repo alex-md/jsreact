@@ -44,9 +44,7 @@ export function createFooter() {
 
     let content = document.createElement("div");
     content.classList.add(
-        "bg-gray-800",
-        "bg-opacity-30",  // More transparent
-        "bg-grid-white/[0.05]",
+        "bg-gray-900",
         "flex",
         "h-16",          // Reduced height
         "items-center",
@@ -54,9 +52,6 @@ export function createFooter() {
         "mx-auto",
         "px-6",          // Increased padding
         "py-2",
-        "shadow-lg",
-        "text-sm",       // Smaller text
-        "text-white",
         "w-full"
     );
 
@@ -91,7 +86,7 @@ export function createFooter() {
                 if (activeUsersText) activeUsersText.textContent = ` ${count} online`;
                 else {
                     let text = document.createElement("span");
-                    text.textContent = ` ${count} online`, text.classList.add("group-hover:text-foreground", "transition-colors"), activeUsersButton.appendChild(text);
+                    text.textContent = ` ${count} online`, text.classList.add("text-white"), activeUsersButton.appendChild(text);
                 }
             }, 100);
         },
@@ -104,7 +99,7 @@ export function createFooter() {
     return viewCountButton.classList.add("inline-flex", "items-left", "gap-2", "text-muted-foreground", "hover:text-foreground", "transition-colors", "group", "text-xs"), // Reduced text size
         viewCountButton.id = "viewCountButton", viewCountButton.innerHTML = viewsIcon, fetchViewCount().then(count => {
             let viewCountText = document.createElement("span");
-            viewCountText.textContent = ` ${count} views`, viewCountText.classList.add("group-hover:text-foreground text text-blue-600 transition-colors"), viewCountButton.appendChild(viewCountText);
+            viewCountText.textContent = ` ${count} views`, viewCountText.classList.add("fw-bold", "text-white"), viewCountButton.appendChild(viewCountText);
         }), stats.appendChild(activeUsersButton), stats.appendChild(viewCountButton), content.appendChild(copyright), content.appendChild(stats), container.appendChild(content), footer.appendChild(container), document.body ? (document.querySelectorAll("footer:not([data-jsreact-footer])").forEach(f => f.remove()), document.body.appendChild(footer)) : document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(footer);
         }), footer;

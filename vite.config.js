@@ -28,6 +28,8 @@ export default defineConfig({
                 policy: resolve(__dirname, 'src/pages/policy/index.html'),
                 speech: resolve(__dirname, 'src/pages/speech/index.html'),
                 qr: resolve(__dirname, 'src/pages/qr/index.html'),
+                insert: resolve(__dirname, 'src/pages/insert/index.html')
+
             },
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
