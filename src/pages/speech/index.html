@@ -16,10 +16,9 @@
     <body class="bg-gray-50">
         <script type="module">
             import { createNavbar } from '/components/navbar.js';
-            createNavbar();
-        </script>
+            import { createHeader } from '/components/header.js';
 
-        <script>
+            createNavbar();
             document.body.appendChild(
                 createHeader(
                     'Speech Tools',

@@ -21,12 +21,7 @@ export function createNavbar() {
     const logoImage = document.createElement("img");
     logoImage.src = "/assets/images/logo.png";
     logoImage.alt = "JSReact Logo";
-    Object.assign(logoImage.style, {
-        width: "calc(100% - 1rem)",
-        maxWidth: "150px",
-        minWidth: "80px",
-        height: "auto",
-    });
+    logoImage.className = "h-14 w-auto max-h-16 min-w-[3.5rem] object-contain";
 
     logoLink.appendChild(logoImage);
     logoSection.appendChild(logoLink);
@@ -153,19 +148,17 @@ export function createNavbar() {
 
     // Search box for desktop
     const searchBox = document.createElement("div");
-    searchBox.className = "hidden md:flex items-center relative";
+    searchBox.className = "hidden md:flex items-center relative w-full md:w-auto";
 
     const searchInput = document.createElement("input");
     searchInput.type = "search";
     searchInput.placeholder = "Search tools...";
-    searchInput.className = "px-3 py-1 rounded-md bg-background border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm w-40 transition-all duration-200 focus:w-56";
+    searchInput.className = "px-3 py-2 rounded-md bg-background border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm w-full md:w-40 transition-all duration-200 md:focus:w-56";
 
     const searchResults = document.createElement("div");
-    searchResults.className = "absolute hidden top-full left-0 mt-1 w-64 max-h-64 overflow-y-auto rounded-md bg-background border border-border shadow-lg z-50";
+    searchResults.className = "absolute hidden top-full left-0 mt-1 w-full md:w-64 max-h-64 overflow-y-auto rounded-md bg-background border border-border shadow-lg z-50";
 
     searchBox.append(searchInput, searchResults);
-
-    // Set up search for desktop
     setupSearch(searchInput, searchResults);
 
     // Desktop menu with dropdowns
@@ -224,71 +217,73 @@ export function createNavbar() {
         desktopMenu.appendChild(dropdown);
     });
 
-    // Mobile menu improvements
-    const mobileMenuButton = document.createElement("button");
-    mobileMenuButton.className = "md:hidden btn-modern variant-ghost p-2 hover:bg-accent rounded-md";
-    mobileMenuButton.setAttribute("aria-label", "Menu");
-
-    const mobileMenuIcon = document.createElement("i");
-    mobileMenuIcon.className = "fas fa-bars text-lg";
-    mobileMenuButton.appendChild(mobileMenuIcon);
-
+    // Mobile menu with categories
     const mobileMenu = document.createElement("div");
-    mobileMenu.className = "md:hidden absolute top-16 inset-x-0 bg-background border-b border-border transform -translate-y-full transition-transform duration-200 ease-in-out opacity-0";
-
-    const mobileMenuList = document.createElement("div");
-    mobileMenuList.className = "container mx-auto divide-y divide-border";
-
-    // Mobile search setup with unique variable names
-    const mobileSearchBar = searchBox.cloneNode(true);
-    mobileSearchBar.className = "flex items-center px-4 py-3 border-b border-border relative";
-    const searchInputMobile = mobileSearchBar.querySelector("input");
-    const searchResultsMobile = mobileSearchBar.querySelector("div");
-    searchInputMobile.className = "px-3 py-2 rounded-md bg-background border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm w-full";
-    searchResultsMobile.className = "absolute hidden top-full left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md bg-background border border-border shadow-lg z-50";
-    setupSearch(searchInputMobile, searchResultsMobile);
-
-    mobileMenu.append(mobileSearchBar, mobileMenuList);
+    mobileMenu.className = "md:hidden flex flex-wrap gap-2 px-4 py-2 overflow-x-auto whitespace-nowrap relative z-[100]";
 
     Object.entries(categories).forEach(([category, items]) => {
-        const section = document.createElement("div");
-        section.className = "py-2";
+        const dropdown = document.createElement("div");
+        dropdown.className = "relative inline-block align-top";
 
-        const categoryHeading = document.createElement("h3");
-        categoryHeading.className = "px-4 py-2 text-sm font-semibold text-foreground/70";
-        categoryHeading.textContent = category;
+        const trigger = document.createElement("button");
+        trigger.className = "inline-flex items-center justify-center px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
+        trigger.innerHTML = `${category} <i class=\"fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1\"></i>`;
 
-        const itemsList = document.createElement("div");
-        itemsList.className = "space-y-1 px-2";
+        // Portal dropdown menu
+        const menu = document.createElement("div");
+        menu.className = "fixed hidden rounded-md bg-gray-900 border border-border shadow-lg z-[99999] js-mobile-dropdown-menu";
+        menu.style.background = 'rgba(24, 26, 27, 0.98)';
+        menu.style.backdropFilter = 'blur(8px)';
+        menu.style.boxShadow = '0 8px 32px 0 rgba(0,0,0,0.25)';
+        menu.style.minWidth = '180px';
+        menu.style.maxWidth = '90vw';
+        menu.style.left = '0';
+        menu.style.right = 'auto';
+        menu.style.top = '0'; // Will be set dynamically
+
+        const chevron = trigger.querySelector('.fa-chevron-down');
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Hide all other menus
+            document.querySelectorAll('.js-mobile-dropdown-menu').forEach(el => {
+                if (el !== menu) el.classList.add('hidden');
+            });
+            // Position menu below the trigger, aligned left
+            const rect = trigger.getBoundingClientRect();
+            menu.style.top = `${rect.bottom + 4}px`;
+            menu.style.left = `${rect.left}px`;
+            menu.style.right = 'auto';
+            menu.style.width = `${rect.width}px`;
+            menu.classList.toggle('hidden');
+            chevron.style.transform = menu.classList.contains('hidden') ? 'rotate(0)' : 'rotate(180deg)';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+                chevron.style.transform = 'rotate(0)';
+            }
+        });
 
         items.forEach(({ text, href, icon }) => {
             const a = document.createElement("a");
             a.href = href;
-            a.className = "flex items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors";
-
+            a.className = "flex items-center px-4 py-2 text-base hover:bg-accent hover:text-accent-foreground transition-colors";
             const i = document.createElement("i");
-            i.className = `fas ${icon} mr-3 w-4`;
-
+            i.className = `fas ${icon} mr-2 w-4`;
             const span = document.createElement("span");
             span.textContent = text;
-
             a.append(i, span);
-            itemsList.appendChild(a);
+            menu.appendChild(a);
         });
 
-        section.append(categoryHeading, itemsList);
-        mobileMenuList.appendChild(section);
+        dropdown.append(trigger);
+        document.body.appendChild(menu);
+        mobileMenu.appendChild(dropdown);
     });
 
-    // Improved mobile menu interaction
-    mobileMenuButton.addEventListener("click", () => {
-        const isVisible = !mobileMenu.classList.contains("translate-y-full");
-        mobileMenu.classList.toggle("translate-y-full", !isVisible);
-        mobileMenu.classList.toggle("opacity-0", !isVisible);
-        mobileMenuIcon.className = isVisible ? "fas fa-bars text-lg" : "fas fa-times text-lg";
-    });
-
-    menuSection.append(searchBox, desktopMenu, mobileMenuButton);
+    menuSection.append(searchBox, desktopMenu);
     navContent.append(logoSection, menuSection);
     container.appendChild(navContent);
     navbar.append(container, mobileMenu);

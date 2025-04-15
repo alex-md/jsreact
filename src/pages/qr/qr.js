@@ -22,25 +22,20 @@ class QRGenerator {
     initializeEventListeners() {
         console.log('Initializing event listeners'); // Add this line
         console.log('Dropzone element:', this.dropzone); // Add this line
-        console.log('FileInput element:', this.fileInput); // Add this line
-
-        // File input change handler (delegated)
-        this.dropzone.addEventListener('change', (e) => {
-            if (e.target === this.fileInput) {
-                console.log('File input change event triggered (delegated)');
-                this.handleFileSelect(e);
-            }
+        console.log('FileInput element:', this.fileInput); // Add this line        // File input handlers
+        this.fileInput.addEventListener('change', (e) => {
+            console.log('File input change event triggered');
+            this.handleFileSelect(e);
         });
 
         // Drag and drop handlers
         this.dropzone.addEventListener('click', () => {
-            console.log('Dropzone click event triggered'); // Add this line
+            console.log('Dropzone click event triggered');
             this.fileInput.click();
-        });
-        this.dropzone.addEventListener('`dragover`', (e) => {
+        }); this.dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            this.dropzone.classList.remove('border-primary');
+            this.dropzone.classList.add('border-primary');
             const file = e.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
                 this.handleFile(file);
@@ -163,9 +158,7 @@ class QRGenerator {
 
             // Upload to Cloudflare Worker
             const formData = new FormData();
-            formData.append('file', file);
-
-            const response = await fetch(WORKER_URL + '/upload', {
+            formData.append('file', file); const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 body: formData
             });
