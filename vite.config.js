@@ -1,41 +1,54 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
+import fs from 'fs'
 import path from 'path'
 
-// https://vitejs.dev/config/
+// Dynamically generate input entries for all pages
+function getPageInputs() {
+    const pagesDir = path.resolve(__dirname, 'src/pages');
+    const entries = {};
+    if (fs.existsSync(pagesDir)) {
+        fs.readdirSync(pagesDir, { withFileTypes: true }).forEach(dirent => {
+            if (dirent.isDirectory()) {
+                const htmlPath = path.resolve(pagesDir, dirent.name, 'index.html');
+                if (fs.existsSync(htmlPath)) {
+                    entries[dirent.name] = htmlPath;
+                }
+            }
+        });
+    }
+    // Add main index.html
+    entries.main = path.resolve(__dirname, 'src/index.html');
+    return entries;
+}
+
 export default defineConfig({
     base: '/',
     plugins: [react()],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+            '@components': path.resolve(__dirname, 'src/components'),
+            '@utils': path.resolve(__dirname, 'src/utils'),
+            '@assets': path.resolve(__dirname, 'src/assets'),
+            '@styles': path.resolve(__dirname, 'src/assets/styles')
+        },
+    },
     root: 'src',
-    publicDir: '../public', // Add public directory configuration
+    publicDir: '../public',
     build: {
-        outDir: '../dist', // Changed to output to root dist directory
+        outDir: '../dist',
         emptyOutDir: true,
         sourcemap: false,
         assetsDir: 'assets',
-        copyPublicDir: true, // Ensure public directory is copied
+        copyPublicDir: true,
         rollupOptions: {
-            input: {
-                main: resolve(__dirname, 'src/index.html'),
-                clean: resolve(__dirname, 'src/pages/clean/index.html'),
-                diff: resolve(__dirname, 'src/pages/diff/index.html'),
-                expression: resolve(__dirname, 'src/pages/expression/index.html'),
-                generator: resolve(__dirname, 'src/pages/generator/index.html'),
-                keyword: resolve(__dirname, 'src/pages/keyword/index.html'),
-                minify: resolve(__dirname, 'src/pages/minify/index.html'),
-                playground: resolve(__dirname, 'src/pages/playground/index.html'),
-                policy: resolve(__dirname, 'src/pages/policy/index.html'),
-                speech: resolve(__dirname, 'src/pages/speech/index.html'),
-                qr: resolve(__dirname, 'src/pages/qr/index.html'),
-                insert: resolve(__dirname, 'src/pages/insert/index.html')
-
-            },
+            input: getPageInputs(),
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
                 chunkFileNames: 'assets/[name].[hash].js',
                 assetFileNames: ({ name }) => {
-                    // Keep images in their own directory
                     if (/\.(gif|jpe?g|png|svg|ico)$/.test(name ?? '')) {
                         return 'assets/images/[name].[hash][extname]'
                     }
@@ -54,15 +67,6 @@ export default defineConfig({
         },
         devSourcemap: true
     },
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, './src'),
-            '@components': resolve(__dirname, 'src/components'),
-            '@utils': resolve(__dirname, 'src/utils'),
-            '@assets': resolve(__dirname, 'src/assets'),
-            '@styles': resolve(__dirname, 'src/assets/styles')
-        }
-    },
     optimizeDeps: {
         include: [
             'react',
@@ -71,8 +75,8 @@ export default defineConfig({
         ]
     },
     server: {
-        port: 3000, // You can specify a port
-        open: true, // Open browser automatically
+        port: 3000,
+        open: true,
         watch: {
             ignored: ['!**/src/components/**']
         }
