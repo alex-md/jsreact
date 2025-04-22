@@ -1,0 +1,162 @@
+/* main-header.css: Custom styles for Web Tools Hub main header and tool cards */
+
+html,
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #181a1b;
+    color: #f3f4f6;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+}
+
+.main-header-logo {
+    height: clamp(3.5rem, 12vw, 6rem);
+    width: clamp(3.5rem, 12vw, 6rem);
+    margin-bottom: 0.75rem;
+}
+
+@media (max-width: 640px) {
+    .main-header-logo {
+        height: 3.5rem;
+        width: 3.5rem;
+    }
+}
+
+.main-header-title {
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.main-header-desc {
+    max-width: 90vw;
+    font-size: clamp(1rem, 4vw, 1.25rem);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tool-card {
+    min-height: 12rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+@media (max-width: 1024px) {
+    .main-header-title {
+        font-size: 2.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-header-title {
+        font-size: 1.5rem;
+    }
+
+    .main-header-desc {
+        font-size: 1rem;
+    }
+}
+
+@media (pointer:coarse) {
+
+    a,
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Animations and keyframes */
+@keyframes bounce-gentle {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(10px);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes grid-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-bounce-gentle {
+    animation: bounce-gentle 2s infinite ease-in-out;
+}
+
+.animate-float {
+    animation: float 6s infinite ease-in-out;
+}
+
+.animate-sparkle {
+    animation: sparkle 2s infinite ease-in-out;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 8s infinite ease-in-out;
+}
+
+.animate-slide-up {
+    animation: slide-up 0.8s forwards ease-out;
+}

@@ -14,15 +14,17 @@
     <body class="bg-gray-50 dark:bg-gray-900">
         <script type="module">
             import { createNavbar } from '/components/navbar.js';
-            import { createHeader } from '../../components/head.js';
-
             createNavbar();
-            document.body.appendChild(
-                createHeader(
-                    'Privacy Policy',
-                    'How we handle and protect your data'
-                )
+        </script>
+
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/head.js';
+            const header = createHeader(
+                'Privacy Policy',
+                'How we handle and protect your data'
             );
+            document.getElementById('header').appendChild(header);
         </script>
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">

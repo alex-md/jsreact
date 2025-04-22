@@ -488,13 +488,15 @@
             import { createNavbar } from '/components/navbar.js';
             createNavbar();
         </script>
-        <script>
-            document.body.appendChild(
-                createHeader(
-                    'Code Playground',
-                    'Write, test, and experiment with code in real-time'
-                )
+
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Code Playground',
+                'Interactive JavaScript code editor and debugger'
             );
+            document.getElementById('header').appendChild(header);
         </script>
 
         <main class="container">

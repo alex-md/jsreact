@@ -42,6 +42,16 @@
             createNavbar();
         </script>
 
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Keyword Analysis Tool',
+                'Analyze and extract keywords from your text'
+            );
+            document.getElementById('header').appendChild(header);
+        </script>
+
         <div id="root" class="flex-grow py-4 px-2 sm:px-6 lg:px-8">
             <!-- Loading state -->
             <div class="min-h-[60vh] flex items-center justify-center">

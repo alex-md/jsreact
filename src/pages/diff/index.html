@@ -93,13 +93,14 @@
             createNavbar();
         </script>
 
-        <script>
-            document.body.appendChild(
-                createHeader(
-                    'Diff Checker',
-                    'Compare text differences between two versions'
-                )
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Online Diff Checker',
+                'Compare text differences between two versions'
             );
+            document.getElementById('header').appendChild(header);
         </script>
 
         <main class="container mx-auto px-4 py-6 max-w-7xl">

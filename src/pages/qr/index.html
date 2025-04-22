@@ -9,18 +9,6 @@
                 'Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images. Easy to use, no registration required.'
             );
         </script>
-        <script type="module">
-            import { createNavbar } from '/components/navbar.js';
-            import { createHeader } from '/components/header.js';
-
-            createNavbar();
-            document.body.appendChild(
-                createHeader(
-                    'QR Code Generator',
-                    'Create QR codes instantly from images'
-                )
-            );
-        </script>
 
         <!-- Enhanced SEO Meta Tags -->
         <meta name="keywords"
@@ -72,6 +60,20 @@
 
     <body class="bg-background text-foreground">
 
+        <script type="module">
+            import { createNavbar } from '/components/navbar.js';
+            createNavbar();
+        </script>
+
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '/components/header.js';
+            const header = createHeader(
+                'QR Code Generator',
+                'Create QR codes instantly from images'
+            );
+            document.getElementById('header').appendChild(header);
+        </script>
 
         <main class="container mx-auto px-4 py-8 max-w-7xl">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

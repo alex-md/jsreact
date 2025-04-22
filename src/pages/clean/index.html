@@ -152,13 +152,14 @@
             createNavbar();
         </script>
 
-        <script>
-            document.body.appendChild(
-                createHeader(
-                    'Text Cleaner',
-                    'Clean and format your text with powerful tools'
-                )
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Online Text Cleaner & Formatter',
+                'Clean and format text with our advanced text processing tool'
             );
+            document.getElementById('header').appendChild(header);
         </script>
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">

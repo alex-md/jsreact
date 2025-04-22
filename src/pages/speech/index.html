@@ -16,15 +16,17 @@
     <body class="bg-gray-50">
         <script type="module">
             import { createNavbar } from '/components/navbar.js';
-            import { createHeader } from '/components/header.js';
-
             createNavbar();
-            document.body.appendChild(
-                createHeader(
-                    'Speech Tools',
-                    'Convert between speech and text using AI'
-                )
+        </script>
+
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '/components/header.js';
+            const header = createHeader(
+                'Speech Tools',
+                'Convert between speech and text using AI'
             );
+            document.getElementById('header').appendChild(header);
         </script>
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">

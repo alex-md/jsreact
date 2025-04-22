@@ -2,37 +2,80 @@
 import '../assets/styles/global.css';
 
 // Export header creation function
-export function createHeader(title, subtitle) {
+export function createHeader(title, description) {
     const header = document.createElement('header');
-    header.className = 'relative bg-background border-b border-border';
+    header.className = `
+    relative isolate overflow-hidden
+    bg-[rgba(20,22,28,0.55)] dark:bg-[rgba(0,0,0,0.5)]
+    backdrop-blur-2xl
+    py-24 md:py-32
+  `.trim();
 
-    const bgDecorator = document.createElement('div');
-    bgDecorator.className = 'absolute inset-0 pointer-events-none';
-    bgDecorator.innerHTML = `
-        <div class="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5"></div>
-        <div class="absolute inset-0 bg-grid-primary/[0.02] [mask-image:linear-gradient(0deg,transparent,black)]"></div>
-    `;
+    /* --- Aurora sweep (layer 0) --- */
+    const aurora = document.createElement('div');
+    aurora.className = `
+    pointer-events-none absolute inset-0 -z-20
+    bg-[conic-gradient(from_180deg_at_50%_50%,var(--accent)_0%,transparent_35%,var(--accent)_75%,transparent_100%)]
+    opacity-30 blur-[180px] animate-[spin_45s_linear_infinite]
+  `.trim();
+    header.appendChild(aurora);
 
+    /* --- Sparse sparkle field (layer 1) --- */
+    const sparkles = document.createElement('div');
+    sparkles.className = `
+    pointer-events-none absolute inset-0 -z-10
+    [mask-image:radial-gradient(circle,white_20%,transparent_70%)]
+    after:content-[''] after:absolute after:inset-0
+    after:bg-[url("/img/sparkles.svg")] after:bg-[size:140px]
+    after:animate-[pulse_4s_ease-in-out_infinite]
+  `.trim();
+    header.appendChild(sparkles);
+
+    /* --- Grid (layer 2) --- */
+    const grid = document.createElement('div');
+    grid.className = `
+    pointer-events-none absolute inset-0
+    bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),
+        linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]
+    dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),
+        linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)]
+    bg-[size:24px_24px]
+    mix-blend-overlay
+    animate-[fade-in_1.5s_ease-out_forwards]
+  `.trim();
+    header.appendChild(grid);
+
+    /* --- Content --- */
     const container = document.createElement('div');
-    container.className = 'container mx-auto px-4 py-12 relative z-10 max-w-7xl';
+    container.className = 'relative mx-auto max-w-6xl px-6 flex flex-col items-center gap-6 text-center';
 
-    const content = document.createElement('div');
-    content.className = 'max-w-3xl mx-auto text-center space-y-4';
+    const badge = document.createElement('span');
+    badge.className = `
+    inline-flex items-center gap-2 rounded-full
+    bg-white/10 ring-1 ring-inset ring-white/15
+    px-4 py-1.5 text-xs font-semibold tracking-wide text-white/80
+    backdrop-blur-md
+  `.trim();
+    badge.innerHTML = `<i class="fas fa-sparkles text-[var(--accent)]"></i> Developer Tools`;
 
-    const titleElement = document.createElement('h1');
-    titleElement.className = 'text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70';
-    titleElement.textContent = title;
+    const h1 = document.createElement('h1');
+    h1.className = `
+    text-4xl md:text-6xl font-extrabold leading-tight tracking-tight
+    bg-gradient-to-r from-[var(--accent)] via-white to-[var(--accent)]
+    bg-clip-text text-transparent drop-shadow-sm animate-slide-up
+  `.trim();
+    h1.textContent = title;
 
-    const subtitleElement = document.createElement('p');
-    subtitleElement.className = 'text-xl text-muted-foreground';
-    subtitleElement.textContent = subtitle;
+    const p = document.createElement('p');
+    p.className = `
+    max-w-2xl mx-auto
+    text-base md:text-xl text-white/80
+    animate-slide-up [animation-delay:200ms]
+  `.trim();
+    p.textContent = description;
 
-    content.appendChild(titleElement);
-    content.appendChild(subtitleElement);
-    container.appendChild(content);
-    header.appendChild(bgDecorator);
+    container.append(badge, h1, p);
     header.appendChild(container);
-
     return header;
 }
 

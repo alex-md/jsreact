@@ -47,8 +47,7 @@ html {
     --secondary-foreground: 0 0% 100%;
     --muted: 220 16% 90%;
     --muted-foreground: 222 20% 40%;
-    --accent: 262 83% 58%;
-    --accent-foreground: 0 0% 100%;
+    --accent: #5b8eff;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 16% 80%;
@@ -70,8 +69,7 @@ html {
     --secondary-foreground: 0 0% 100%;
     --muted: 222 47% 20%;
     --muted-foreground: 220 16% 80%;
-    --accent: 262 83% 58%;
-    --accent-foreground: 0 0% 100%;
+    --accent: #7aa0ff;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
     --border: 222 47% 20%;
@@ -188,10 +186,6 @@ pre {
     }
 }
 
-.animate-pulse {
-    animation: 2s cubic-bezier(.4, 0, .6, 1) infinite pulse;
-}
-
 @keyframes spin {
     0% {
         transform: rotate(0);
@@ -199,6 +193,34 @@ pre {
 
     100% {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: .2;
+    }
+
+    50% {
+        opacity: .4;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
 

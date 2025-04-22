@@ -19,13 +19,14 @@
             createNavbar();
         </script>
 
-        <script>
-            document.body.appendChild(
-                createHeader(
-                    'AI Name Generator',
-                    'Generate creative names for your projects'
-                )
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Password Generator',
+                'Generate secure, random passwords instantly'
             );
+            document.getElementById('header').appendChild(header);
         </script>
 
         <main

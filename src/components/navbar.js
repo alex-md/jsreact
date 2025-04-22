@@ -39,10 +39,10 @@ export function createNavbar() {
             { text: "Diff", href: "/pages/diff/", icon: "fa-code-compare" },
             { text: "Expression", href: "/pages/expression/", icon: "fa-calculator" },
             { text: "Playground", href: "/pages/playground/", icon: "fa-code" },
-        ],
-        "Utilities": [
+        ], "Utilities": [
             { text: "QR Code", href: "/pages/qr/", icon: "fa-qrcode" },
             { text: "Speech", href: "/pages/speech/", icon: "fa-microphone-alt" },
+            { text: "Domain Appraisal", href: "/pages/domain/", icon: "fa-chart-line" },
         ],
     };
 

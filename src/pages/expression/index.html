@@ -25,14 +25,16 @@
             createNavbar();
         </script>
 
-        <script>
-            document.body.appendChild(
-                createHeader(
-                    'Expression Evaluator',
-                    'Calculate complex expressions with ease'
-                )
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Regular Expression Tester',
+                'Test and validate your regular expressions in real-time'
             );
+            document.getElementById('header').appendChild(header);
         </script>
+
         <style>
             #calculator-description {
                 transition: transform 0.3s ease, opacity 0.3s ease;

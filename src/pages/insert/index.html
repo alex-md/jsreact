@@ -144,13 +144,14 @@
             createNavbar();
         </script>
 
-        <script>
-            document.body.appendChild(
-                createHeader(
-                    'Insert Tool',
-                    'Insert and manipulate text content'
-                )
+        <div id="header"></div>
+        <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Text Insert Tool',
+                'Insert text at specific line numbers or positions'
             );
+            document.getElementById('header').appendChild(header);
         </script>
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">
