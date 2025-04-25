@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { createRoot } from "react-dom/client";
-import { StrictMode } from "react";
 
 // Helper function to format currency
 const formatCurrency = (value) => {
@@ -67,29 +65,29 @@ export function DomainApp() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto space-y-10 mt-10 animate-fade-in">
-            <div className="rounded-xl shadow-lg border border-gray-100 bg-white/70 backdrop-blur p-6 relative overflow-hidden">
+        <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
+            <div className="rounded-lg shadow-md border border-gray-200 bg-white p-6 md:p-8">
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    <label className="block text-base font-semibold mb-2 text-gray-700" htmlFor="domain-input">
-                        <i className="fas fa-globe text-blue-400 mr-2"></i>
-                        Enter domain names <span className="font-normal text-gray-400">(up to 20, one per line or separated by space/comma):</span>
+                    <label className="block text-md font-medium mb-2 text-gray-700" htmlFor="domain-input">
+                        <i className="fas fa-globe text-indigo-500 mr-2"></i>
+                        Enter domain names <span className="font-normal text-sm text-gray-500">(up to 20, separated by line, space, or comma)</span>
                     </label>
                     <textarea
                         id="domain-input"
-                        className="w-full rounded-lg border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 font-mono text-base p-3 bg-white/70 shadow-inner transition-all min-h-[120px] resize-none"
+                        className="w-full rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono text-sm p-3 bg-gray-50 shadow-sm transition-all min-h-[140px] resize-none"
                         rows={6}
                         value={domainsInput}
                         onChange={(e) => setDomainsInput(e.target.value)}
                         placeholder="example.com\nexample.net"
                         aria-describedby="domain-count-help"
                     />
-                    <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
+                    <div className="flex items-center justify-between text-xs text-gray-500">
                         <span id="domain-count-help">{domainList.length} / 20 domains entered.</span>
-                        <span className="italic">60 req/min.</span>
+                        <span className="italic">API Limit: 60 req/min</span>
                     </div>
                     <button
                         type="submit"
-                        className="w-full py-2.5 rounded-lg bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold text-base shadow hover:from-blue-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-150 flex items-center justify-center gap-2"
+                        className="w-full py-3 rounded-md bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-base shadow-sm hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                         disabled={loading || submitted}
                     >
                         {loading ? (
@@ -98,40 +96,40 @@ export function DomainApp() {
                             </span>
                         ) : (
                             <>
-                                <i className="fas fa-magic mr-2"></i>Appraise Domains
+                                <i className="fas fa-magic mr-1"></i>Appraise Domains
                             </>
                         )}
                     </button>
                     {error && (
-                        <div className="mt-3 p-2 bg-red-50 border border-red-100 text-red-600 rounded text-xs shadow-sm">
-                            <i className="fas fa-exclamation-triangle mr-1"></i>{error}
+                        <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm shadow-sm">
+                            <i className="fas fa-exclamation-triangle mr-2"></i>{error}
                         </div>
                     )}
                 </form>
             </div>
 
             {results.length > 0 && (
-                <div className="rounded-xl shadow-lg border border-green-100 bg-white/80 backdrop-blur p-6 animate-fade-in-up">
-                    <h2 className="text-xl font-bold mb-4 text-green-700 flex items-center gap-2">
-                        <i className="fas fa-coins"></i> Appraisal Results
+                <div className="rounded-lg shadow-md border border-gray-200 bg-white p-6 md:p-8 animate-fade-in-up">
+                    <h2 className="text-lg font-semibold mb-5 text-gray-800 flex items-center gap-2">
+                        <i className="fas fa-coins text-green-500"></i> Appraisal Results
                     </h2>
                     <div className="overflow-x-auto">
-                        <table className="w-full text-base border-separate border-spacing-y-1">
+                        <table className="w-full text-sm border-collapse">
                             <thead>
-                                <tr>
-                                    <th className="text-left py-2 px-3 font-semibold text-gray-600">Domain</th>
-                                    <th className="text-right py-2 px-3 font-semibold text-gray-600" title="Estimated value if sold in a competitive auction setting.">Auction</th>
-                                    <th className="text-right py-2 px-3 font-semibold text-gray-600" title="Estimated value for direct sales on domain marketplaces.">Marketplace</th>
-                                    <th className="text-right py-2 px-3 font-semibold text-gray-600" title="Estimated value if sold through a domain brokerage service.">Brokerage</th>
+                                <tr className="border-b border-gray-200">
+                                    <th className="text-left py-3 px-4 font-medium text-gray-600">Domain</th>
+                                    <th className="text-right py-3 px-4 font-medium text-gray-600 whitespace-nowrap" title="Estimated value if sold in a competitive auction setting.">Auction Value</th>
+                                    <th className="text-right py-3 px-4 font-medium text-gray-600 whitespace-nowrap" title="Estimated value for direct sales on domain marketplaces.">Marketplace Value</th>
+                                    <th className="text-right py-3 px-4 font-medium text-gray-600 whitespace-nowrap" title="Estimated value if sold through a domain brokerage service.">Brokerage Value</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {results.map((val) => (
-                                    <tr key={val.domain} className="bg-green-50/40 hover:bg-green-100/60 transition-colors rounded shadow-sm">
-                                        <td className="py-2 px-3 font-mono text-blue-800 font-medium rounded-l-lg">{val.domain}</td>
-                                        <td className="py-2 px-3 text-right text-green-700 font-semibold">{formatCurrency(val.auction)}</td>
-                                        <td className="py-2 px-3 text-right text-green-700 font-semibold">{formatCurrency(val.marketplace)}</td>
-                                        <td className="py-2 px-3 text-right text-green-700 font-semibold rounded-r-lg">{formatCurrency(val.brokerage)}</td>
+                                {results.map((val, index) => (
+                                    <tr key={val.domain} className={`border-b border-gray-100 ${index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-indigo-50/50 transition-colors`}>
+                                        <td className="py-3 px-4 font-mono text-indigo-700 font-medium">{val.domain}</td>
+                                        <td className="py-3 px-4 text-right text-gray-700">{formatCurrency(val.auction)}</td>
+                                        <td className="py-3 px-4 text-right text-gray-700">{formatCurrency(val.marketplace)}</td>
+                                        <td className="py-3 px-4 text-right text-gray-700">{formatCurrency(val.brokerage)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -142,23 +140,3 @@ export function DomainApp() {
         </div>
     );
 }
-
-// Mount the React app when the DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("root");
-    if (!container) {
-        console.error("Root element #root not found in the DOM.");
-        return;
-    }
-
-    try {
-        const root = createRoot(container);
-        root.render(
-            <StrictMode>
-                <DomainApp />
-            </StrictMode>
-        );
-    } catch (error) {
-        console.error("Error mounting React app:", error);
-    }
-});

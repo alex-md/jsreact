@@ -1,12 +1,15 @@
 /* main-header.css: Custom styles for Web Tools Hub main header and tool cards */
 
-html,
-body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: #181a1b;
-    color: #f3f4f6;
-    min-height: 100vh;
-    scroll-behavior: smooth;
+/* Add styles for the header container */
+.main-header-container {
+    /* Assuming a container class like this exists */
+    background-color: hsl(var(--background));
+    padding: 1.5rem 2rem;
+    /* Adjust padding as needed */
+    border-bottom: 1px solid hsl(var(--border));
+    /* Subtle bottom border */
+    /* Optional: Add a subtle shadow for depth */
+    /* box-shadow: 0 1px 3px 0 hsl(var(--border) / 0.1), 0 1px 2px -1px hsl(var(--border) / 0.1); */
 }
 
 .main-header-logo {
@@ -68,6 +71,143 @@ body {
     }
 }
 
+/* Header banner styles with modern dark theme */
+:root {
+    --header-bg: #1a1b26;
+    --header-overlay: rgba(26, 27, 38, 0.95);
+    --accent-primary: #7aa2f7;
+    --accent-secondary: #bb9af7;
+    --text-primary: #c0caf5;
+    --text-secondary: #a9b1d6;
+    --surface-dark: #24283b;
+}
+
+.header-banner {
+    position: relative;
+    background: var(--header-bg);
+    padding: 3rem 1.5rem;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* Layered background effects */
+.header-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(60deg,
+            var(--accent-primary) 0%,
+            var(--accent-secondary) 100%);
+    opacity: 0.07;
+    z-index: -2;
+}
+
+.header-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to bottom,
+            transparent 0%,
+            var(--header-bg) 100%);
+    z-index: -1;
+}
+
+/* Animated grid overlay */
+.header-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--text-secondary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--text-secondary) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: center;
+    opacity: 0.03;
+    mask-image: linear-gradient(black, transparent);
+}
+
+/* Header content styles */
+.header-content {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.header-title {
+    color: var(--text-primary);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg,
+            var(--accent-primary) 0%,
+            var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slide-up 0.8s ease-out forwards;
+}
+
+.header-description {
+    color: var(--text-secondary);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    max-width: 36rem;
+    margin: 0 auto;
+    line-height: 1.6;
+    animation: slide-up 0.8s ease-out forwards;
+    animation-delay: 0.1s;
+}
+
+/* Floating accent elements */
+.header-accent {
+    position: absolute;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    filter: blur(80px);
+    opacity: 0.1;
+    animation: float 8s ease-in-out infinite;
+}
+
+.header-accent:nth-child(1) {
+    top: -2rem;
+    left: 15%;
+    background: var(--accent-primary);
+    animation-delay: 0s;
+}
+
+.header-accent:nth-child(2) {
+    bottom: -4rem;
+    right: 15%;
+    background: var(--accent-secondary);
+    animation-delay: -4s;
+}
+
+/* Badge styles */
+.header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface-dark);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    animation: slide-up 0.8s ease-out forwards;
+    animation-delay: 0.05s;
+}
+
+.header-badge i {
+    color: var(--accent-primary);
+}
+
 /* Animations and keyframes */
 @keyframes bounce-gentle {
 
@@ -89,7 +229,7 @@ body {
     }
 
     50% {
-        transform: translateY(-8px);
+        transform: translateY(-20px);
     }
 }
 
@@ -159,4 +299,16 @@ body {
 
 .animate-slide-up {
     animation: slide-up 0.8s forwards ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header-banner {
+        padding: 2rem 1rem;
+    }
+
+    .header-accent {
+        width: 8rem;
+        height: 8rem;
+    }
 }

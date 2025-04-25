@@ -1,7 +1,7 @@
 import QRCode from 'qrcode';
 import { showToast } from '../../components/toast.js';
 
-const WORKER_URL = 'https://image-host.vs.workers.dev';
+const WORKER_URL = 'https://image-host.vs.workers.dev/upload';
 
 class QRGenerator {
     constructor() {
@@ -158,22 +158,32 @@ class QRGenerator {
 
             // Upload to Cloudflare Worker
             const formData = new FormData();
-            formData.append('file', file); const response = await fetch(WORKER_URL, {
+            formData.append('file', file);
+
+            console.log('Attempting to upload to:', WORKER_URL);
+            const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 body: formData
             });
 
             if (!response.ok) {
-                throw new Error('Upload failed');
+                const errorText = await response.text();
+                console.error('Upload failed:', response.status, errorText);
+                throw new Error(`Upload failed: ${response.status} ${errorText}`);
             }
 
-            const { url } = await response.json();
-            await this.generateQRCode(url);
+            const data = await response.json();
+            console.log('Upload response:', data);
 
+            if (!data.url) {
+                throw new Error('No URL returned from upload');
+            }
+
+            await this.generateQRCode(data.url);
             showToast('QR code generated successfully');
         } catch (error) {
             console.error('Error uploading image:', error);
-            showToast('Error uploading image');
+            showToast(`Error uploading image: ${error.message}`);
             this.qrContainer.innerHTML = '<p class="text-destructive">Failed to generate QR code</p>';
         }
     }

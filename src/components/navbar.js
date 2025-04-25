@@ -170,11 +170,11 @@ export function createNavbar() {
         dropdown.className = "relative group";
 
         const trigger = document.createElement("button");
-        trigger.className = "group inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
+        trigger.className = "group inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
         trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
 
         const menu = document.createElement("div");
-        menu.className = "absolute opacity-0 invisible top-full left-0 mt-1 w-48 rounded-md bg-background border border-border shadow-lg transition-all duration-200 ease-out";
+        menu.className = "absolute top-full left-0 mt-1 w-48 rounded-md bg-white text-gray-900 shadow-lg transition-all duration-200 ease-out opacity-0 invisible";
 
         let hideTimeout;
         const chevron = trigger.querySelector('.fa-chevron-down');
@@ -194,7 +194,7 @@ export function createNavbar() {
                 menu.classList.remove('opacity-100', 'visible');
                 menu.classList.add('opacity-0', 'invisible');
                 chevron.style.transform = 'rotate(0)';
-                chevron.style.opacity = '0.7';
+                chevron.style.opacity = '0.3';
             }, 150); // 150ms delay before hiding
         });
 
@@ -226,12 +226,12 @@ export function createNavbar() {
         dropdown.className = "relative inline-block align-top";
 
         const trigger = document.createElement("button");
-        trigger.className = "inline-flex items-center justify-center px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
+        trigger.className = "inline-flex items-center justify-center px-3 py-2 text-base font-medium transition-colors bg-white text-black hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
         trigger.innerHTML = `${category} <i class=\"fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1\"></i>`;
 
         // Portal dropdown menu
         const menu = document.createElement("div");
-        menu.className = "fixed hidden rounded-md bg-gray-900 border border-border shadow-lg z-[99999] js-mobile-dropdown-menu";
+        menu.className = "fixed hidden rounded-md bg-gray-900 border border-border shadow-lg z-[99999] js-mobile-dropdown-menu opacity-0 invisible";
         menu.style.background = 'rgba(24, 26, 27, 0.98)';
         menu.style.backdropFilter = 'blur(8px)';
         menu.style.boxShadow = '0 8px 32px 0 rgba(0,0,0,0.25)';

@@ -1,12 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'; // Import fileURLToPath
+
+// Get the directory name in an ESM-friendly way
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Dynamically generate input entries for all pages
 function getPageInputs() {
-    const pagesDir = path.resolve(__dirname, 'src/pages');
+    const pagesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/pages');
     const entries = {};
     if (fs.existsSync(pagesDir)) {
         fs.readdirSync(pagesDir, { withFileTypes: true }).forEach(dirent => {
@@ -19,7 +23,7 @@ function getPageInputs() {
         });
     }
     // Add main index.html
-    entries.main = path.resolve(__dirname, 'src/index.html');
+    entries.main = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/index.html');
     return entries;
 }
 
@@ -28,11 +32,11 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'src'),
-            '@components': path.resolve(__dirname, 'src/components'),
-            '@utils': path.resolve(__dirname, 'src/utils'),
-            '@assets': path.resolve(__dirname, 'src/assets'),
-            '@styles': path.resolve(__dirname, 'src/assets/styles')
+            '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src'),
+            '@components': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/components'),
+            '@utils': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/utils'),
+            '@assets': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/assets'),
+            '@styles': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/assets/styles')
         },
     },
     root: 'src',
@@ -42,7 +46,6 @@ export default defineConfig({
         emptyOutDir: true,
         sourcemap: false,
         assetsDir: 'assets',
-        copyPublicDir: true,
         rollupOptions: {
             input: getPageInputs(),
             output: {

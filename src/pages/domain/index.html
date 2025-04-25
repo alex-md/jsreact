@@ -54,9 +54,8 @@
         </style>
     </head>
 
-    <body class="bg-gray-50">
-        <!-- Subtle grid overlay background, matches home page -->
-        <div class="bg-grid"></div>
+    <body class="bg-gray-50 flex flex-col min-h-screen">
+        <!-- Subtle grid overlay background removed -->
 
         <script type="module">
             import { createNavbar } from '/components/navbar.js';
@@ -73,16 +72,25 @@
             document.getElementById('header').appendChild(header);
         </script>
 
-        <main class="container mx-auto px-4 py-8">
+        <main class="container mx-auto px-4 py-8 flex-grow relative z-10">
             <div id="root"></div>
         </main>
 
-        <script type="module" src="./Domain.jsx"></script>
-        <script type="module" src="../../components/footer.js"></script>
+        <div id="footer-container" class="relative z-10"></div>
+        <script type="module">
+            import { createFooter } from '../../components/footer.js';
+            const footerContainer = document.getElementById('footer-container');
+            if (footerContainer) {
+                createFooter(footerContainer);
+            } else {
+                console.error("Footer container not found");
+            }
+        </script>
+
+        <script type="module" src="./main.jsx"></script>
         <!-- Global styles -->
         <link rel="stylesheet" href="../../assets/styles/global.css">
         <script type="module" src="../../components/toast.js"></script>
-        <script type="module" src="./index.js"></script>
     </body>
 
 </html>

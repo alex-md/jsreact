@@ -4,74 +4,28 @@ import '../assets/styles/global.css';
 // Export header creation function
 export function createHeader(title, description) {
     const header = document.createElement('header');
-    header.className = `
-    relative isolate overflow-hidden
-    bg-[rgba(20,22,28,0.55)] dark:bg-[rgba(0,0,0,0.5)]
-    backdrop-blur-2xl
-    py-24 md:py-32
-  `.trim();
 
-    /* --- Aurora sweep (layer 0) --- */
+    /* --- Aurora background effect --- */
     const aurora = document.createElement('div');
-    aurora.className = `
-    pointer-events-none absolute inset-0 -z-20
-    bg-[conic-gradient(from_180deg_at_50%_50%,var(--accent)_0%,transparent_35%,var(--accent)_75%,transparent_100%)]
-    opacity-30 blur-[180px] animate-[spin_45s_linear_infinite]
-  `.trim();
     header.appendChild(aurora);
 
-    /* --- Sparse sparkle field (layer 1) --- */
-    const sparkles = document.createElement('div');
-    sparkles.className = `
-    pointer-events-none absolute inset-0 -z-10
-    [mask-image:radial-gradient(circle,white_20%,transparent_70%)]
-    after:content-[''] after:absolute after:inset-0
-    after:bg-[url("/img/sparkles.svg")] after:bg-[size:140px]
-    after:animate-[pulse_4s_ease-in-out_infinite]
-  `.trim();
-    header.appendChild(sparkles);
-
-    /* --- Grid (layer 2) --- */
+    /* --- Grid overlay --- */
     const grid = document.createElement('div');
-    grid.className = `
-    pointer-events-none absolute inset-0
-    bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),
-        linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]
-    dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),
-        linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)]
-    bg-[size:24px_24px]
-    mix-blend-overlay
-    animate-[fade-in_1.5s_ease-out_forwards]
-  `.trim();
     header.appendChild(grid);
 
-    /* --- Content --- */
+    /* --- Content container --- */
     const container = document.createElement('div');
-    container.className = 'relative mx-auto max-w-6xl px-6 flex flex-col items-center gap-6 text-center';
 
+    /* --- Badge --- */
     const badge = document.createElement('span');
-    badge.className = `
-    inline-flex items-center gap-2 rounded-full
-    bg-white/10 ring-1 ring-inset ring-white/15
-    px-4 py-1.5 text-xs font-semibold tracking-wide text-white/80
-    backdrop-blur-md
-  `.trim();
-    badge.innerHTML = `<i class="fas fa-sparkles text-[var(--accent)]"></i> Developer Tools`;
+    badge.innerHTML = '<i class="fas fa-sparkles"></i> Developer Tools';
 
+    /* --- Title --- */
     const h1 = document.createElement('h1');
-    h1.className = `
-    text-4xl md:text-6xl font-extrabold leading-tight tracking-tight
-    bg-gradient-to-r from-[var(--accent)] via-white to-[var(--accent)]
-    bg-clip-text text-transparent drop-shadow-sm animate-slide-up
-  `.trim();
     h1.textContent = title;
 
+    /* --- Description --- */
     const p = document.createElement('p');
-    p.className = `
-    max-w-2xl mx-auto
-    text-base md:text-xl text-white/80
-    animate-slide-up [animation-delay:200ms]
-  `.trim();
     p.textContent = description;
 
     container.append(badge, h1, p);
@@ -119,6 +73,16 @@ export function createHead(title, description, options = {}) {
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
             opacity: 0;
             transition: opacity 0.3s;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slide-up 0.8s ease-out forwards;
         }
     `;
     head.insertBefore(criticalStyles, head.firstChild);
