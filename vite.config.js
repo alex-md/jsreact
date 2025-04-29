@@ -1,48 +1,48 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'; // Import fileURLToPath
+// vite.config.js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Get the directory name in an ESM-friendly way
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const rootDir = path.dirname(fileURLToPath(import.meta.url));      // project root
+const srcDir = path.resolve(rootDir, 'src');                      // src shortcut
+const pagesDir = path.resolve(srcDir, 'pages');
 
-// Dynamically generate input entries for all pages
-function getPageInputs() {
-    const pagesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/pages');
-    const entries = {};
-    if (fs.existsSync(pagesDir)) {
-        fs.readdirSync(pagesDir, { withFileTypes: true }).forEach(dirent => {
-            if (dirent.isDirectory()) {
-                const htmlPath = path.resolve(pagesDir, dirent.name, 'index.html');
-                if (fs.existsSync(htmlPath)) {
-                    entries[dirent.name] = htmlPath;
-                }
-            }
-        });
-    }
-    // Add main index.html
-    entries.main = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/index.html');
+// build an { pageName: htmlPath } map
+const getPageInputs = () => {
+    const entries = Object.fromEntries(
+        fs.existsSync(pagesDir)
+            ? fs.readdirSync(pagesDir, { withFileTypes: true })
+                .filter(d => d.isDirectory())
+                .map(d => {
+                    const htmlPath = path.resolve(pagesDir, d.name, 'index.html');
+                    return fs.existsSync(htmlPath) ? [d.name, htmlPath] : undefined;
+                })
+                .filter(Boolean)
+            : []
+    );
+
+    entries.main = path.resolve(srcDir, 'index.html');
     return entries;
-}
+};
 
 export default defineConfig({
+    root: srcDir,                 // dev server root
+    publicDir: path.resolve(rootDir, 'public'),
     base: '/',
     plugins: [react()],
     resolve: {
         alias: {
-            '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src'),
-            '@components': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/components'),
-            '@utils': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/utils'),
-            '@assets': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/assets'),
-            '@styles': path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/assets/styles')
+            '@': srcDir,
+            '@components': path.resolve(srcDir, 'components'),
+            '@utils': path.resolve(srcDir, 'utils'),
+            '@assets': path.resolve(srcDir, 'assets'),
+            '@styles': path.resolve(srcDir, 'assets/styles'),
         },
     },
-    root: 'src',
-    publicDir: '../public',
     build: {
-        outDir: '../dist',
+        outDir: path.resolve(rootDir, 'dist'),
         emptyOutDir: true,
         sourcemap: false,
         assetsDir: 'assets',
@@ -51,37 +51,29 @@ export default defineConfig({
             output: {
                 entryFileNames: 'assets/[name].[hash].js',
                 chunkFileNames: 'assets/[name].[hash].js',
-                assetFileNames: ({ name }) => {
-                    if (/\.(gif|jpe?g|png|svg|ico)$/.test(name ?? '')) {
-                        return 'assets/images/[name].[hash][extname]'
-                    }
-                    return 'assets/[name].[hash][extname]'
-                },
-                manualChunks: {
-                    vendor: ['react', 'react-dom'],
-                }
-            }
-        }
+                assetFileNames: ({ name }) =>
+                    /\.(gif|jpe?g|png|svg|ico)$/.test(name ?? '')
+                        ? 'assets/images/[name].[hash][extname]'
+                        : 'assets/[name].[hash][extname]',
+                manualChunks: { vendor: ['react', 'react-dom'] },
+            },
+        },
     },
     css: {
         modules: {
-            scopeBehavior: 'local',
-            localsConvention: 'camelCase'
+            scopeBehaviour: 'local',
+            localsConvention: 'camelCase',
         },
-        devSourcemap: true
+        devSourcemap: true,
     },
     optimizeDeps: {
-        include: [
-            'react',
-            'react-dom',
-            '@rstacruz/startup-name-generator'
-        ]
+        include: ['react', 'react-dom', '@rstacruz/startup-name-generator'],
     },
     server: {
         port: 3000,
         open: true,
         watch: {
-            ignored: ['!**/src/components/**']
-        }
-    }
-})
+            ignored: ['!**/src/components/**'], // ignore everything except components
+        },
+    },
+});

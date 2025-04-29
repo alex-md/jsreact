@@ -18,6 +18,10 @@
   "keywords": [],
   "license": "MIT",
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
     "@rstacruz/startup-name-generator": "^0.3.0",
     "@shadcn/ui": "^0.0.4",
     "clsx": "^2.1.1",

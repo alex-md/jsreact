@@ -79,5 +79,14 @@
         "icon": "fas fa-code",
         "color": "pink",
         "link": "/pages/playground"
+    },
+    {
+        "id": "osrs",
+        "title": "OSRS Flipper",
+        "description": "Get real-time, risk-managed flipping suggestions for Old School RuneScape's Grand Exchange.",
+        "icon": "fas fa-coins",
+        "color": "amber",
+        "link": "/pages/osrs/",
+        "new": true
     }
 ]

@@ -43,6 +43,7 @@ export function createNavbar() {
             { text: "QR Code", href: "/pages/qr/", icon: "fa-qrcode" },
             { text: "Speech", href: "/pages/speech/", icon: "fa-microphone-alt" },
             { text: "Domain Appraisal", href: "/pages/domain/", icon: "fa-chart-line" },
+            { text: "OSRS Flipper", href: "/pages/osrs/", icon: "fa-coins" },
         ],
     };
 
