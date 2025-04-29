@@ -2,8 +2,8 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
-        <script type="module" src="../../components/head.js"></script>
-        <script>
+        <script type="module">
+            import { createHead } from '../../components/head.js';
             createHead(
                 'Online Code Editor & Web Playground - Live HTML, CSS & JavaScript Editor',
                 'Free online code editor and web playground with live preview. Write, test, and debug HTML, CSS, and JavaScript code in real-time. Features library imports, console output, auto-reload, and multiple pane layouts.'
@@ -38,8 +38,11 @@
                 --accent-color: #0e639c;
                 --accent-hover: #1177bb;
                 --error-color: #f87171;
+                --error-color-alpha: rgba(248, 113, 113, 0.1);
                 --success-color: #4ade80;
                 --warning-color: #fbbf24;
+                --warning-color-alpha: rgba(251, 191, 36, 0.1);
+                --accent-color-alpha: rgba(14, 99, 156, 0.1);
             }
 
             body {
@@ -355,37 +358,49 @@
                 height: 200px;
                 background: var(--bg-secondary);
                 color: var(--text-primary);
-                border-top: 2px solid var(--border-color);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
                 font-family: 'Consolas', 'Monaco', monospace;
-                padding: 0.5rem;
+                padding: 1rem;
                 display: none;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 1000;
+                overflow-y: auto;
             }
 
             .console-container.visible {
                 display: block;
             }
 
+            #console-content {
+                height: 100%;
+                overflow-y: auto;
+            }
+
             .console-line {
-                padding: 0.25rem 0.5rem;
+                padding: 0.25rem;
                 font-size: 0.875rem;
+                line-height: 1.4;
                 border-bottom: 1px solid var(--border-color);
+                white-space: pre-wrap;
+                word-break: break-word;
+            }
+
+            .console-line:last-child {
+                border-bottom: none;
             }
 
             .console-line.error {
                 color: var(--error-color);
+                background-color: var(--error-color-alpha);
             }
 
             .console-line.warn {
                 color: var(--warning-color);
+                background-color: var(--warning-color-alpha);
             }
 
             .console-line.info {
                 color: var(--text-secondary);
+                background-color: var(--accent-color-alpha);
             }
 
             /* Header and Navigation */
@@ -483,7 +498,7 @@
     </head>
     <!--  modern dark jsfiddle themed -->
 
-    <body>
+    <body class="bg-background text-foreground">
         <script type="module">
             import { createNavbar } from '/components/navbar.js';
             createNavbar();
@@ -494,21 +509,24 @@
             import { createHeader } from '../../components/header.js';
             const header = createHeader(
                 'Code Playground',
-                'Interactive JavaScript code editor and debugger'
+                'A modern, interactive code editor and live preview for HTML, CSS, and JavaScript. Import libraries, debug, and share your code.'
             );
             document.getElementById('header').appendChild(header);
         </script>
 
-        <main class="container">
+        <main class="container-custom max-w-5xl mx-auto py-8">
             <!-- Tabs and Library -->
-            <div class="controls-wrapper">
-                <div class="tab-group">
-                    <button id="html-tab" class="tab-button active">HTML</button>
-                    <button id="css-tab" class="tab-button">CSS</button>
-                    <button id="js-tab" class="tab-button">JavaScript</button>
+            <div class="controls-wrapper flex flex-wrap items-center justify-between gap-4 mb-4">
+                <div class="tab-group flex gap-2">
+                    <button id="html-tab" class="tab-button active" aria-label="HTML Tab"><i
+                            class="fab fa-html5 mr-1"></i>HTML</button>
+                    <button id="css-tab" class="tab-button" aria-label="CSS Tab"><i
+                            class="fab fa-css3-alt mr-1"></i>CSS</button>
+                    <button id="js-tab" class="tab-button" aria-label="JavaScript Tab"><i
+                            class="fab fa-js-square mr-1"></i>JavaScript</button>
                 </div>
-                <div class="library-picker">
-                    <button id="library-button" class="btn" aria-label="Import Library">
+                <div class="library-picker relative">
+                    <button id="library-button" class="btn btn-secondary shadow-sm" aria-label="Import Library">
                         <i class="fas fa-puzzle-piece"></i>
                         Import Library
                     </button>
@@ -628,47 +646,40 @@
             </div>
 
             <!-- Editor and Preview -->
-            <div class="editor-container">
+            <div class="editor-container flex rounded-2xl shadow-elegant overflow-hidden border border-border bg-card">
                 <!-- Editor Pane -->
-                <div class="editor-pane">
+                <div class="editor-pane bg-background">
                     <div id="editor"></div>
                 </div>
                 <!-- Resizer -->
                 <div id="resizer" class="resizer"></div>
                 <!-- Preview Pane -->
-                <div class="preview-pane">
-                    <iframe id="preview-frame" title="Code Preview"></iframe>
+                <div class="preview-pane bg-white border-l border-border">
+                    <iframe id="preview-frame" title="Code Preview" class="rounded-none"></iframe>
                 </div>
             </div>
 
             <!-- Action Buttons and Console Toggle -->
-            <div class="controls-bottom" controls-bottom flex mx-auto py-8>
-                <div class="button-group">
-                    <button id="run-button" class="btn btn-primary">
-                        <i class="fas fa-play"></i> Run
-                    </button>
-                    <button id="copy-all-button" class="btn btn-primary">
-                        <i class="fas fa-copy"></i> Merge & Copy
-                    </button>
-                    <button id="clear-button" class="btn">
-                        <i class="fas fa-trash-alt"></i> Clear
-                    </button>
-                    <button id="toggle-console" class="btn">
-                        <i class="fas fa-terminal"></i> Console
-                    </button>
+            <div class="controls-bottom flex flex-wrap items-center justify-between gap-4 py-6">
+                <div class="button-group flex gap-2">
+                    <button id="run-button" class="btn btn-primary shadow-sm"><i class="fas fa-play"></i> Run</button>
+                    <button id="copy-all-button" class="btn btn-secondary"><i class="fas fa-copy"></i> Merge &
+                        Copy</button>
+                    <button id="clear-button" class="btn"><i class="fas fa-trash-alt"></i> Clear</button>
+                    <button id="toggle-console" class="btn"><i class="fas fa-terminal"></i> Console</button>
                 </div>
-                <div class="auto-reload-toggle">
+                <div class="auto-reload-toggle flex items-center gap-2">
                     <label class="toggle-switch" for="auto-reload">
                         <input type="checkbox" id="auto-reload" checked>
                         <span class="toggle-slider"></span>
                     </label>
                     <span class="toggle-label">Auto-reload</span>
                 </div>
-            </div>
-
-            <!-- Console Section -->
-            <div id="console" class="console-container mt-4 rounded-lg">
-                <div id="console-content" aria-live="polite"></div> <!-- Added aria-live for accessibility -->
+            </div> <!-- Console Section -->
+            <div id="console" class="console-container">
+                <div id="console-content" aria-live="polite">
+                    <div class="console-line info">Console ready. Click "Run" to execute your code.</div>
+                </div>
             </div>
         </main>
 
@@ -678,3 +689,4 @@
     </body>
 
 </html>
+```

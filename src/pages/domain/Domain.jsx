@@ -17,6 +17,8 @@ export function DomainApp() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [requestTimestamps, setRequestTimestamps] = useState([]);
+    const [requestsLeft, setRequestsLeft] = useState(60);
 
     useEffect(() => {
         const domains = domainsInput
@@ -25,6 +27,21 @@ export function DomainApp() {
             .filter(domain => domain.length > 0);
         setDomainList(domains);
     }, [domainsInput]);
+
+    // Update requestsLeft every second
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const oneMinuteAgo = now - 60000;
+            setRequestTimestamps(prev => prev.filter(ts => ts > oneMinuteAgo));
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Update requestsLeft whenever requestTimestamps changes
+    useEffect(() => {
+        setRequestsLeft(60 - requestTimestamps.length);
+    }, [requestTimestamps]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,6 +58,14 @@ export function DomainApp() {
             return;
         }
 
+        // Track this request
+        setRequestTimestamps(prev => {
+            const now = Date.now();
+            const oneMinuteAgo = now - 60000;
+            const filtered = prev.filter(ts => ts > oneMinuteAgo);
+            return [...filtered, now];
+        });
+
         setLoading(true);
         try {
             const response = await fetch("https://valuation.humbleworth.com/api/valuation", {
@@ -53,7 +78,7 @@ export function DomainApp() {
             if (!response.ok || data.error) {
                 throw new Error(data.error || "Failed to fetch domain valuations");
             } else {
-                setResults(data.results || []);
+                setResults(data.valuations || []); // <-- use 'valuations' per API docs
             }
         } catch (err) {
             console.error("Fetch Error:", err);
@@ -83,7 +108,7 @@ export function DomainApp() {
                     />
                     <div className="flex items-center justify-between text-xs text-gray-500">
                         <span id="domain-count-help">{domainList.length} / 20 domains entered.</span>
-                        <span className="italic">API Limit: 60 req/min</span>
+                        <span className="italic">Requests left this minute: {requestsLeft}</span>
                     </div>
                     <button
                         type="submit"
