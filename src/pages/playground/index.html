@@ -3,7 +3,7 @@
 
     <head>
         <script type="module">
-            import { createHead } from '../../components/head.js';
+            import { createHead } from '@components/head.js';
             createHead(
                 'Online Code Editor & Web Playground - Live HTML, CSS & JavaScript Editor',
                 'Free online code editor and web playground with live preview. Write, test, and debug HTML, CSS, and JavaScript code in real-time. Features library imports, console output, auto-reload, and multiple pane layouts.'
@@ -56,26 +56,10 @@
                 flex-direction: column;
             }
 
-            /* Override nav styles */
-            nav {
-                position: sticky !important;
-                top: 0 !important;
-                z-index: 50 !important;
-                border-bottom-width: 1px !important;
-                width: 100% !important;
-                background-color: #132743 !important;
-                backdrop-filter: blur(8px) !important;
-                color: white;
-            }
-
-            nav.nav-link {
-                color: white !important;
-            }
-
             main {
                 flex: 1;
                 padding: 1rem;
-                background-color: var(--bg-primary);
+                background-color: var(--bg-gray-800);
             }
 
             .container {
@@ -208,40 +192,60 @@
             .btn {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.5rem;
-                padding: 0.5rem 1rem;
-                border-radius: 0.375rem;
-                font-size: 0.875rem;
-                font-weight: 500;
+                justify-content: center;
+                gap: var(--space-2);
+                padding: var(--space-3) var(--space-6);
+                font-size: var(--text-base);
+                font-weight: 600;
+                line-height: var(--leading-snug);
+                border-radius: var(--radius-lg);
+                border: 1px solid transparent;
                 cursor: pointer;
-                transition: all 0.2s;
-                background: var(--bg-secondary);
-                color: var(--text-primary);
-                border: 1px solid var(--border-color);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+                background: hsl(var(--secondary));
+                color: hsl(var(--secondary-foreground));
             }
 
             .btn:hover {
-                background: var(--bg-tertiary);
+                background: hsl(var(--primary));
+                color: hsl(var(--primary-foreground));
+                transform: translateY(-1px);
             }
 
             .btn-primary {
-                background: var(--accent-color);
-                border-color: var(--accent-color);
-                color: white;
+                background: linear-gradient(135deg,
+                        hsl(var(--primary)) 0%,
+                        hsl(var(--primary-dark)) 100%);
+                color: hsl(var(--primary-foreground));
+                box-shadow:
+                    0 4px 12px -2px hsla(var(--primary) / 0.3),
+                    inset 0 0 0 1px hsla(var(--primary-foreground) / 0.1);
             }
 
             .btn-primary:hover {
-                background: var(--accent-hover);
+                transform: translateY(-1px);
+                background: linear-gradient(135deg,
+                        hsl(var(--primary-dark)) 0%,
+                        hsl(var(--primary)) 100%);
+                box-shadow:
+                    0 8px 16px -4px hsla(var(--primary) / 0.5),
+                    inset 0 0 0 1px hsla(var(--primary-foreground) / 0.2);
             }
 
             /* Editor Container */
             .editor-container {
                 height: calc(100vh - 12rem);
                 display: flex;
-                border: 1px solid var(--border-color);
-                border-radius: 0.5rem;
+                border: 1px solid hsla(var(--border) / 0.5);
+                border-radius: var(--radius-xl);
                 overflow: hidden;
-                margin: 1rem 0;
+                margin: var(--space-4) 0;
+                background: hsla(var(--card) / 0.6);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                box-shadow: var(--shadow-lg);
                 background: var(--bg-secondary);
             }
 
@@ -404,22 +408,10 @@
             }
 
             /* Header and Navigation */
-            header,
             nav {
                 background: var(--bg-secondary);
                 border-bottom: 1px solid var(--border-color);
                 padding: 1rem;
-            }
-
-            /* Links */
-            a {
-                color: var(--accent-color);
-                text-decoration: none;
-                transition: color 0.2s;
-            }
-
-            a:hover {
-                color: var(--accent-hover);
             }
 
             /* Scrollbar Styles */
@@ -500,21 +492,14 @@
 
     <body class="bg-background text-foreground">
         <script type="module">
-            import { createNavbar } from '/components/navbar.js';
+            import { createNavbar } from '@components/navbar.js';
             createNavbar();
         </script>
 
         <div id="header"></div>
-        <script type="module">
-            import { createHeader } from '../../components/header.js';
-            const header = createHeader(
-                'Code Playground',
-                'A modern, interactive code editor and live preview for HTML, CSS, and JavaScript. Import libraries, debug, and share your code.'
-            );
-            document.getElementById('header').appendChild(header);
-        </script>
 
-        <main class="container-custom max-w-5xl mx-auto py-8">
+
+        <main class="py-8">
             <!-- Tabs and Library -->
             <div class="controls-wrapper flex flex-wrap items-center justify-between gap-4 mb-4">
                 <div class="tab-group flex gap-2">
@@ -689,4 +674,3 @@
     </body>
 
 </html>
-```

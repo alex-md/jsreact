@@ -1,7 +1,7 @@
 'use strict';
 
 // Import styles and components
-import '@styles/global.css';
+import '@/assets/styles/global.css';
 import { showToast } from '@components/toast.js';
 
 // Import the diff-match-patch library using CDN

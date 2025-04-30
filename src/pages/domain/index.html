@@ -17,11 +17,9 @@
         <!-- Font Awesome 6 Free CDN for icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
             crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!-- Main header styles for consistent look -->
-        <link rel="stylesheet" href="/assets/styles/main-header.css">
 
         <script type="module">
-            import { createHead } from '../../components/head.js';
+            import { createHead } from '@components/head.js';
             createHead(
                 'Domain Appraisal',
                 'Get instant AI-powered domain name valuations for up to 20 domains.',
@@ -30,7 +28,6 @@
                     keywords: 'domain appraisal, domain valuation, domain worth, domain price, domain name value, AI domain appraisal, instant domain value, domain tool',
                     baseUrl: 'https://jsreact.com',
                     publishDate: '2025-04-22',
-                    // Optionally, you can add more Open Graph/Twitter tags or custom structured data here
                 }
             );
         </script>
@@ -58,13 +55,13 @@
         <!-- Subtle grid overlay background removed -->
 
         <script type="module">
-            import { createNavbar } from '/components/navbar.js';
+            import { createNavbar } from '@components/navbar.js';
             createNavbar();
         </script>
 
         <div id="header"></div>
         <script type="module">
-            import { createHeader } from '../../components/header.js';
+            import { createHeader } from '@components/header.js';
             const header = createHeader(
                 'Domain Appraisal',
                 'Get instant domain name valuations with AI-powered analysis'

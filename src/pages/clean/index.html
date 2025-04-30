@@ -2,11 +2,13 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
-        <script type="module" src="../../components/head.js"></script>
-        <script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="module">
+            import { createHead } from '@components/head.js';
             createHead(
-                'Online Text Cleaner & Formatter - Free Text Processing Tool',
-                'Advanced online text cleaning and formatting tool. Remove extra spaces, normalize quotes, format whitespace, and clean text content. Perfect for content editors, developers, and writers.'
+                'Online Text Cleaner & Formatter',
+                'Clean and format text with our advanced text processing tool'
             );
         </script>
 
@@ -23,12 +25,18 @@
         <meta property="article:tag" content="Text Tools">
         <style>
             .option-group {
-                background: linear-gradient(135deg, #ffffff, #f8fafc);
-                border: 1px solid rgba(59, 148, 184, 0.1);
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-                transition: all 0.3s ease;
-                padding: 1rem;
-                margin-bottom: 0.5rem;
+                background: hsla(var(--card) / 0.6);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid hsla(var(--border) / 0.5);
+                border-radius: var(--radius-lg);
+                box-shadow:
+                    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.03),
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                padding: var(--space-4);
+                margin-bottom: var(--space-2);
             }
 
             .option-group:hover {
@@ -63,15 +71,18 @@
                 left: 50%;
                 bottom: calc(100% + 0.5rem);
                 transform: translate(-50%, 0.5rem);
-                padding: 0.5rem 1rem;
-                background: #1f2937;
-                color: white;
-                font-size: 0.75rem;
+                padding: var(--space-2) var(--space-4);
+                background: hsla(var(--popover) / 0.95);
+                color: hsl(var(--popover-foreground));
+                font-size: var(--text-sm);
                 white-space: nowrap;
-                border-radius: 0.375rem;
+                border-radius: var(--radius-md);
+                border: 1px solid hsla(var(--border) / 0.1);
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(4px);
                 opacity: 0;
                 visibility: hidden;
-                transition: all 0.2s ease;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 50;
                 pointer-events: none;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -148,13 +159,13 @@
 
     <body class="bg-gray-50">
         <script type="module">
-            import { createNavbar } from '/components/navbar.js';
+            import { createNavbar } from '@components/navbar.js';
             createNavbar();
         </script>
 
         <div id="header"></div>
         <script type="module">
-            import { createHeader } from '../../components/header.js';
+            import { createHeader } from '@components/header.js';
             const header = createHeader(
                 'Online Text Cleaner & Formatter',
                 'Clean and format text with our advanced text processing tool'
@@ -411,8 +422,8 @@
             </div>
         </main>
 
-        <script type="module" src="../../components/footer.js"></script>
-        <script type="module" src="../../components/toast.js"></script>
+        <script type="module" src="@components/footer.js"></script>
+        <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
     </body>
 

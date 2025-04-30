@@ -4,8 +4,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="module" src="../../components/head.js"></script>
-        <script>
+        <script type="module">
+            import { createHead } from '@components/head.js';
             createHead(
                 'Expression Evaluator',
                 'Evaluate mathematical and logical expressions with our easy-to-use calculator'
@@ -21,13 +21,13 @@
 
     <body class="bg-gray-50">
         <script type="module">
-            import { createNavbar } from '/components/navbar.js';
+            import { createNavbar } from '@components/navbar.js';
             createNavbar();
         </script>
 
         <div id="header"></div>
         <script type="module">
-            import { createHeader } from '../../components/header.js';
+            import { createHeader } from '@components/header.js';
             const header = createHeader(
                 'Regular Expression Tester',
                 'Test and validate your regular expressions in real-time'

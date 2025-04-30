@@ -12,42 +12,52 @@
 		<!-- Font Awesome 6 Free CDN -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 			crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="/assets/styles/main-header.css">
+		<link rel="stylesheet" href="@assets/styles/main-header.css">
 		<!-- Tailwind CSS (if not already included globally) -->
 		<script src="https://cdn.tailwindcss.com"></script>
 	</head>
 
-	<body class="js-ready min-h-screen flex flex-col relative"
-		style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); color: #222">
+	<body class="js-ready min-h-screen flex flex-col relative bg-gradient-radial from-background to-background/50">
+		<script type="module">
+			import { createHead } from '@components/head.js';
+			createHead(
+				'Web Tools Hub',
+				'A collection of free developer tools to simplify your workflow',
+			);
+		</script>
 		<!-- Enhanced grid overlay background with blur effect -->
-		<div
-			class="pointer-events-none fixed inset-0 z-0 bg-[linear-gradient(to_right,#94a3b8_1px,transparent_1px),linear-gradient(to_bottom,#94a3b8_1px,transparent_1px)] bg-[size:24px_24px] opacity-30 backdrop-blur-[6px] filter blur-[1.5px]">
-		</div>
+		<div class="pointer-events-none fixed inset-0 z-0">
+			<div class="absolute inset-0 bg-grid-pattern opacity-[0.15]"></div>
+			<div class="absolute inset-0 bg-gradient-noise mix-blend-overlay opacity-25"></div>
 		</div>
 		<script type="module">
-			import { createNavbar } from './components/navbar.js';
+			import { createNavbar } from '@components/navbar.js';
 			createNavbar();
 		</script>
 		<script type="module">
-			import { createToolCards } from './components/toolCards.js';
+			import { createToolCards } from '@components/toolCards.js';
 			createToolCards();
 		</script>
+		<div id="header"></div>
 
-		<header class="header-banner">
+		<header class="isolate relative text-base">
+			<!-- Decorative background elements -->
 			<div class="header-grid"></div>
-			<div class="header-accent"></div>
-			<div class="header-accent"></div>
+			<div class="header-accent-container absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+				<div class="header-accent-primary"></div>
+				<div class="header-accent-secondary"></div>
+			</div>
 
-			<div class="header-content">
-				<div class="header-badge">
-					<i class="fas fa-sparkles"></i>
+			<div class="header-content container mx-auto relative z-10">
+				<div class="header-badge glass-badge">
+					<i class="fas fa-sparkles animate-pulse-slow text-accent-primary"></i>
 					<span>Developer Tools</span>
 				</div>
-				<h1 class="header-title relative animate-slide-up">
-					Web Tools <span class="border inline-block inline-flex mb-3 px-4">
+				<h1 class="header-title animate-slide-up">
+					Web Tools
+					<span class="relative inline-block px-6 py-2 ml-2 glass-title">
 						Hub
-						<span
-							class="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded animate-pulse-slow"></span>
+						<div class="absolute inset-x-0 -bottom-0.5 h-0.5 bg-gradient-title animate-pulse-slow"></div>
 					</span>
 				</h1>
 				<p class="header-description relative animate-slide-up" style="animation-delay: 200ms;">
