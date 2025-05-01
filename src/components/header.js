@@ -20,7 +20,7 @@ export function createHeader(title, description) {
 
   // Content container with glass effect
   const container = document.createElement('div');
-  container.className = 'header-content glass-header animate-slide-up';
+  container.className = 'animate-slide-up header-content header-grid';
 
   // Badge element
   const badge = document.createElement('span');

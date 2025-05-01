@@ -23,51 +23,109 @@ const TAX_RATE = 0.01; // 1% GE tax
 const DEFAULT_BUDGET = 1000000; // 1M gp
 const DEFAULT_RISK = 0.2; // 20% risk tolerance
 
-function getWikiLink(name) {
-    return `https://oldschool.runescape.wiki/w/Exchange:${encodeURIComponent(name.replace(/ /g, '_'))}`;
+// Trading analysis utilities
+function analyzePriceVolatility(itemId, latest, hourly) {
+    if (!latest?.[itemId] || !hourly?.[itemId]) return null;
+    const latestData = latest[itemId];
+    const hourlyData = hourly[itemId];
+
+    // Calculate price volatility using hourly data
+    const highToLowRatio = hourlyData.avgHighPrice / hourlyData.avgLowPrice;
+    return {
+        volatility: highToLowRatio - 1, // As a percentage
+        volume: hourlyData.highPriceVolume + hourlyData.lowPriceVolume,
+        trend: latestData.high > hourlyData.avgHighPrice ? 'up' : 'down'
+    };
 }
 
-function calculateProfit(item, fiveMinData, budget, risk) {
-    if (!fiveMinData) return null;
+function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData, budget, risk) {
+    if (!fiveMinData || !latestData || !hourlyData) return null;
+
+    const volatility = analyzePriceVolatility(item.id, latestData, hourlyData);
+    if (!volatility) return null;
+
     const { avgHighPrice, avgLowPrice, highPriceVolume, lowPriceVolume } = fiveMinData;
     if (!avgHighPrice || !avgLowPrice || highPriceVolume < 5 || lowPriceVolume < 5) return null;
-    const buyPrice = avgLowPrice;
-    const sellPrice = avgHighPrice;
+
+    // Use latest prices to get real-time price movements
+    const latestPriceData = latestData[item.id];
+    const hourlyPriceData = hourlyData[item.id];
+
+    // Calculate optimal buy price using weighted average
+    const weightedBuyPrice = Math.floor(
+        (avgLowPrice * 0.5) +
+        (latestPriceData.low * 0.3) +
+        (hourlyPriceData.avgLowPrice * 0.2)
+    );
+
+    // Calculate conservative sell price using weighted average
+    const weightedSellPrice = Math.floor(
+        (avgHighPrice * 0.5) +
+        (latestPriceData.high * 0.3) +
+        (hourlyPriceData.avgHighPrice * 0.2)
+    );
+
+    const buyPrice = weightedBuyPrice;
+    const sellPrice = weightedSellPrice;
     const taxedSell = Math.floor(sellPrice * (1 - TAX_RATE));
     const profitPer = taxedSell - buyPrice;
+
     if (profitPer <= 0) return null;
-    const maxQty = Math.min(item.limit, Math.floor(budget / buyPrice));
+
+    // Adjust quantity based on volatility
+    const volatilityFactor = Math.max(0.5, 1 - volatility.volatility);
+    const maxQty = Math.min(
+        item.limit,
+        Math.floor((budget * volatilityFactor) / buyPrice)
+    );
+
     const totalProfit = profitPer * maxQty;
-    // Risk filter: only show if profit margin is above risk threshold
     const margin = profitPer / buyPrice;
-    if (margin < risk) return null;
+
+    // Risk assessment incorporating volatility
+    const riskScore = margin * volatilityFactor;
+    if (riskScore < risk) return null;
+
+    // Volume health check
+    const volumeHealth = Math.min(
+        hourlyPriceData.highPriceVolume / 2,
+        maxQty
+    );
+
     return {
         ...item,
         buyPrice,
         sellPrice,
         taxedSell,
         profitPer,
-        maxQty,
+        maxQty: Math.floor(Math.min(maxQty, volumeHealth)),
         totalProfit,
         margin,
+        volatility: volatility.volatility,
+        trend: volatility.trend,
+        volumeHealth: volumeHealth / maxQty, // 0-1 score
         wiki: getWikiLink(item.name),
         highPriceVolume,
         lowPriceVolume
     };
 }
 
-// Utility: auto-optimize risk tolerance for best flips
-function getOptimalRisk(mapping, fiveMin, budget) {
-    // Try a range of risk values, pick the one that yields the highest total profit in top 10 flips
+function getOptimalRisk(mapping, fiveMin, latest, hourly, budget) {
     let bestRisk = 0.1;
     let bestProfit = 0;
+
     for (let r = 0.05; r <= 0.5; r += 0.01) {
         let suggestions = mapping
-            .map(item => calculateProfit(item, fiveMin[item.id], budget, r))
+            .map(item => calculateTradeMetrics(item, fiveMin[item.id], latest, hourly, budget, r))
             .filter(Boolean)
             .sort((a, b) => b.totalProfit - a.totalProfit)
             .slice(0, 10);
-        let total = suggestions.reduce((sum, f) => sum + f.totalProfit, 0);
+
+        // Calculate weighted profit incorporating volume health
+        let total = suggestions.reduce((sum, f) =>
+            sum + (f.totalProfit * f.volumeHealth), 0
+        );
+
         if (total > bestProfit) {
             bestProfit = total;
             bestRisk = r;
@@ -76,9 +134,25 @@ function getOptimalRisk(mapping, fiveMin, budget) {
     return bestRisk;
 }
 
+function getWikiLink(name) {
+    return `https://oldschool.runescape.wiki/w/Exchange:${encodeURIComponent(name.replace(/ /g, '_'))}`;
+}
+
+function formatTimeSince(timestamp) {
+    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    return 'over a day ago';
+}
+
 export default function OSRSFlipper() {
     const [mapping, setMapping] = useState([]);
     const [fiveMin, setFiveMin] = useState({});
+    const [latestPrices, setLatestPrices] = useState({});
+    const [hourlyPrices, setHourlyPrices] = useState({});
     const [flips, setFlips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [budget, setBudget] = useState(DEFAULT_BUDGET);
@@ -86,6 +160,7 @@ export default function OSRSFlipper() {
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState('totalProfit');
     const [autoRisk, setAutoRisk] = useState(DEFAULT_RISK);
+    const [lastUpdate, setLastUpdate] = useState(Date.now());
 
     // Create a custom theme that matches your green color scheme
     const theme = createTheme({
@@ -138,28 +213,63 @@ export default function OSRSFlipper() {
         setLoading(true);
         Promise.all([
             fetch(MAPPING_URL).then(r => r.json()),
-            fetch(FIVE_MINUTE_URL).then(r => r.json())
-        ]).then(([mappingData, fiveMinData]) => {
+            fetch(FIVE_MINUTE_URL).then(r => r.json()),
+            fetch(LATEST_PRICES_URL).then(r => r.json()),
+            fetch(HOURLY_AVG_URL).then(r => r.json())
+        ]).then(([mappingData, fiveMinData, latestData, hourlyData]) => {
             setMapping(mappingData);
             setFiveMin(fiveMinData.data);
+            setLatestPrices(latestData.data);
+            setHourlyPrices(hourlyData.data);
             setLoading(false);
+            setLastUpdate(Date.now());
         });
     }, [refreshKey]);
 
     useEffect(() => {
         if (!mapping.length || !Object.keys(fiveMin).length) return;
-        // Auto-optimize risk
-        const risk = getOptimalRisk(mapping, fiveMin, budget);
+
+        // Auto-optimize risk using enhanced metrics
+        const risk = getOptimalRisk(mapping, fiveMin, latestPrices, hourlyPrices, budget);
         setAutoRisk(risk);
+
         let suggestions = mapping
-            .map(item => calculateProfit(item, fiveMin[item.id], budget, risk))
+            .map(item => calculateTradeMetrics(
+                item,
+                fiveMin[item.id],
+                latestPrices,
+                hourlyPrices,
+                budget,
+                risk
+            ))
             .filter(Boolean);
+
         if (search.trim()) {
-            suggestions = suggestions.filter(flip => flip.name.toLowerCase().includes(search.toLowerCase()));
+            suggestions = suggestions.filter(flip =>
+                flip.name.toLowerCase().includes(search.toLowerCase())
+            );
         }
-        suggestions = suggestions.sort((a, b) => b[sortBy] - a[sortBy]).slice(0, 15); // Top 15 flips
+
+        // Sort with consideration for volume health
+        suggestions = suggestions
+            .sort((a, b) => {
+                if (sortBy === 'totalProfit') {
+                    return (b.totalProfit * b.volumeHealth) - (a.totalProfit * a.volumeHealth);
+                }
+                return b[sortBy] - a[sortBy];
+            })
+            .slice(0, 15); // Top 15 flips
+
         setFlips(suggestions);
-    }, [mapping, fiveMin, budget, search, sortBy]);
+    }, [mapping, fiveMin, latestPrices, hourlyPrices, budget, search, sortBy]);
+
+    // Update time display every minute
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setLastUpdate(prev => prev); // Force re-render
+        }, 60000); // Update every minute
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -230,6 +340,12 @@ export default function OSRSFlipper() {
                             >
                                 {loading ? 'Loading...' : 'Refresh'}
                             </button>
+                            <span className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {formatTimeSince(lastUpdate)}
+                            </span>
                         </div>
 
                     </div>
@@ -271,8 +387,7 @@ export default function OSRSFlipper() {
                                             <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 9V7a5 5 0 00-10 0v2" /><rect x="5" y="9" width="14" height="10" rx="2" /><path d="M8 13h8v4H8z" /></svg>
                                             <span className="font-medium">Margin:</span> {(flip.margin * 100).toFixed(2)}%
                                         </span>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2 mt-1 text-xs text-gray-500">
+                                    </div>                                    <div className="flex flex-wrap gap-2 mt-1 text-xs text-gray-500">
                                         <span className="flex items-center gap-1" title="Buy volume (last 5 min)">
                                             <svg className="w-3 h-3 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" /></svg>
                                             Buy Vol: <span className="text-green-700">{flip.lowPriceVolume}</span>
@@ -280,6 +395,30 @@ export default function OSRSFlipper() {
                                         <span className="flex items-center gap-1" title="Sell volume (last 5 min)">
                                             <svg className="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" /></svg>
                                             Sell Vol: <span className="text-green-700">{flip.highPriceVolume}</span>
+                                        </span>
+                                        <span className="flex items-center gap-1" title="Price volatility">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                                            </svg>
+                                            Volatility: <span className={`${flip.volatility > 0.1 ? 'text-orange-600' : 'text-green-700'}`}>
+                                                {(flip.volatility * 100).toFixed(1)}%
+                                            </span>
+                                        </span>
+                                        <span className="flex items-center gap-1" title="Volume health (higher is better)">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Health: <span className={`${flip.volumeHealth > 0.7 ? 'text-green-700' : 'text-orange-600'}`}>
+                                                {(flip.volumeHealth * 100).toFixed(0)}%
+                                            </span>
+                                        </span>
+                                        <span className="flex items-center gap-1" title="Price trend">
+                                            <svg className={`w-3 h-3 ${flip.trend === 'up' ? 'text-green-600' : 'text-red-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={flip.trend === 'up' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} />
+                                            </svg>
+                                            Trend: <span className={`${flip.trend === 'up' ? 'text-green-700' : 'text-red-600'}`}>
+                                                {flip.trend === 'up' ? 'Rising' : 'Falling'}
+                                            </span>
                                         </span>
                                     </div>
                                 </div>

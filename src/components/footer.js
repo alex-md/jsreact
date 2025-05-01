@@ -26,83 +26,102 @@ async function fetchViewCount() {
     }
 }
 
+// utils ---------------------------------------------------------
+const el = (tag, classes = [], html = '') => {
+    const node = document.createElement(tag);
+    if (classes.length) node.classList.add(...classes);
+    if (html) node.innerHTML = html;
+    return node;
+};
+
+// shared class presets ----------------------------------------
+const BTN_CLASSES = [
+    'inline-flex', 'items-left', 'gap-4',
+    'text-muted-foreground', 'hover:text-foreground', 'transition-colors'
+];
+
+const SVG = {
+    users: `
+    <svg class="w-4 h-4 text-muted-foreground/70" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12Z"/>
+      <path d="M12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z"/>
+    </svg>`,
+    views: `
+    <svg class="w-4 h-4 text-muted-foreground/70" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M5.5 18.5V4H4V20H20V18.5H5.5Z"/>
+      <path d="M10.5 17V8H12V17H10.5Z"/>
+      <path d="M7 17V12H8.5V17H7Z"/>
+      <path d="M17.5 17V10H19V17H17.5Z"/>
+      <path d="M14 17V5H15.5V17H14Z"/>
+    </svg>`
+};
+
+/* ----------------------------------------------------------------
+   createFooter 
+---------------------------------------------------------------- */
 export function createFooter() {
-    let updateTimeout;
-    if (document.querySelector("footer[data-jsreact-footer]")) return;
-    let footer = document.createElement("footer");
-    footer.setAttribute("data-jsreact-footer", "true");
-    footer.classList.add(
-        "mt-auto",  // Add margin-top auto to push to bottom
-        "w-full"
-    );
+    if (document.querySelector('footer[data-jsreact-footer]')) return; // guard
 
-    let container = document.createElement("div");
-    container.classList.add(
-        "w-full",
-        "backdrop-blur-sm"  // Add blur effect
-    );
+    /* ---- DOM skeleton ---- */
+    const footer = el('footer', ['mt-auto', 'w-full']);
+    footer.dataset.jsreactFooter = 'true';
 
-    let content = document.createElement("div");
-    content.classList.add(
-        "bg-gray-900",
-        "flex",
-        "h-16",          // Reduced height
-        "items-center",
-        "justify-between", // Changed from justify-left
-        "mx-auto",
-        "px-6",          // Increased padding
-        "py-2",
-        "w-full"
-    );
+    const container = el('div', ['w-full', 'backdrop-blur-sm']);
+    const content = el('div', [
+        'bg-gray-700', 'flex', 'items-center', 'justify-end',
+        'h-16', 'mx-auto', 'px-6', 'py-2', 'w-full'
+    ]);
+    const stats = el('div', [
+        'animate-slide-up', 'flex', 'flex-row', 'gap-4',
+        'items-center', 'md:order-2'
+    ]);
 
-    let copyright = document.createElement("div");
-    copyright.innerHTML = `
-    `;
+    /* ---- Button factory ---- */
+    const makeBtn = (id, icon) => {
+        const btn = el('button', BTN_CLASSES, icon);
+        btn.id = id;
+        return btn;
+    };
 
-    let stats = document.createElement("div");
-    stats.classList.add(
-        "animate-slide-up",
-        "flex",
-        "flex-row", // Changed from flex-col
-        "gap-4",
-        "items-center", // Changed from items-left
-        "md:order-2"
-    );
+    const activeBtn = makeBtn('activeUsersButton', SVG.users);
+    const viewsBtn = makeBtn('viewCountButton', SVG.views);
 
-    let usersIcon = `<svg class="w-4 h-4 text-muted-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
-     </svg>`,
-        viewsIcon = `<svg class="w-4 h-4 text-muted-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <path d="M5.5 18.5V4H4V20H20V18.5H5.5Z" fill="currentColor"/>
-         <path d="M10.5 17V8H12V17H10.5Z" fill="currentColor"/>
-         <path d="M7 17V12H8.5V17H7Z" fill="currentColor"/>
-         <path d="M17.5 17V10H19V17H17.5Z" fill="currentColor"/>
-         <path d="M14 17V5H15.5V17H14Z" fill="currentColor"/>
-     </svg>`,
-        updateActiveUsers = async () => {
-            updateTimeout && clearTimeout(updateTimeout), updateTimeout = setTimeout(async () => {
-                let count = await fetchActiveUsers(),
-                    activeUsersText = activeUsersButton.querySelector("span");
-                if (activeUsersText) activeUsersText.textContent = ` ${count} online`;
-                else {
-                    let text = document.createElement("span");
-                    text.textContent = ` ${count} online`, text.classList.add("text-white"), activeUsersButton.appendChild(text);
-                }
-            }, 100);
-        },
-        activeUsersButton = document.createElement("button");
-    activeUsersButton.classList.add("inline-flex", "items-left", "gap-2", "text-muted-foreground", "hover:text-foreground", "transition-colors", "group", "text-xs"); // Reduced text size
-    activeUsersButton.id = "activeUsersButton", activeUsersButton.innerHTML = usersIcon, updateActiveUsers();
-    let updateInterval = setInterval(updateActiveUsers, 6e4);
-    footer.addEventListener("remove", () => clearInterval(updateInterval));
-    let viewCountButton = document.createElement("button");
-    return viewCountButton.classList.add("inline-flex", "items-left", "gap-2", "text-muted-foreground", "hover:text-foreground", "transition-colors", "group", "text-xs"), // Reduced text size
-        viewCountButton.id = "viewCountButton", viewCountButton.innerHTML = viewsIcon, fetchViewCount().then(count => {
-            let viewCountText = document.createElement("span");
-            viewCountText.textContent = ` ${count} views`, viewCountText.classList.add("fw-bold", "text-white"), viewCountButton.appendChild(viewCountText);
-        }), stats.appendChild(activeUsersButton), stats.appendChild(viewCountButton), content.appendChild(copyright), content.appendChild(stats), container.appendChild(content), footer.appendChild(container), document.body ? (document.querySelectorAll("footer:not([data-jsreact-footer])").forEach(f => f.remove()), document.body.appendChild(footer)) : document.addEventListener("DOMContentLoaded", () => {
-            document.body.appendChild(footer);
-        }), footer;
+    /* ---- Active users logic ---- */
+    const updateActiveUsers = async () => {
+        const count = await fetchActiveUsers();
+        let span = activeBtn.querySelector('span');
+        if (!span) {
+            span = el('span', ['text-white']);
+            activeBtn.appendChild(span);
+        }
+        span.textContent = ` ${count} online`;
+    };
+
+    /* ---- Views logic ---- */
+    const loadViewCount = async () => {
+        const count = await fetchViewCount();
+        const span = el('span', ['fw-bold', 'text-white'], ` ${count} views`);
+        viewsBtn.appendChild(span);
+    };
+
+    /* ---- Assemble & mount ---- */
+    stats.append(activeBtn, viewsBtn);
+    content.append(stats);
+    container.append(content);
+    footer.append(container);
+
+    const mount = () => document.body.appendChild(footer);
+    if (document.body) mount();
+    else document.addEventListener('DOMContentLoaded', mount);
+
+    /* ---- Timers / cleanup ---- */
+    updateActiveUsers();
+    const refreshTimer = setInterval(updateActiveUsers, 60_000);
+    footer.addEventListener('remove', () => clearInterval(refreshTimer));
+
+    loadViewCount();
+    return footer;
 }
+
 
 "loading" === document.readyState ? document.addEventListener("DOMContentLoaded", createFooter) : createFooter(), window.createFooter = createFooter;
