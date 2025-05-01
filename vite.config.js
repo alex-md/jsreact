@@ -31,7 +31,12 @@ export default defineConfig({
     root: srcDir,                 // dev server root
     publicDir: path.resolve(rootDir, 'public'),
     base: '/',
-    plugins: [react()],
+    plugins: [react({
+        jsxImportSource: '@emotion/react',
+        babel: {
+            plugins: ['@emotion/babel-plugin']
+        }
+    })],
     resolve: {
         alias: {
             '@': srcDir,
@@ -55,7 +60,15 @@ export default defineConfig({
                     /\.(gif|jpe?g|png|svg|ico)$/.test(name ?? '')
                         ? 'assets/images/[name].[hash][extname]'
                         : 'assets/[name].[hash][extname]',
-                manualChunks: { vendor: ['react', 'react-dom'] },
+                manualChunks: {
+                    vendor: [
+                        'react',
+                        'react-dom',
+                        '@mui/material',
+                        '@emotion/react',
+                        '@emotion/styled'
+                    ]
+                },
             },
         },
     },
@@ -67,13 +80,21 @@ export default defineConfig({
         devSourcemap: true,
     },
     optimizeDeps: {
-        include: ['react', 'react-dom', '@rstacruz/startup-name-generator'],
+        include: [
+            'react',
+            'react-dom',
+            '@rstacruz/startup-name-generator',
+            '@mui/material',
+            '@emotion/react',
+            '@emotion/styled'
+        ],
+        exclude: [],
     },
     server: {
         port: 3000,
         open: true,
         watch: {
-            ignored: ['!**/src/components/**'], // ignore everything except components
+            usePolling: true, // Add polling for better file watching
         },
     },
 });
