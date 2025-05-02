@@ -60,6 +60,153 @@ function analyzePriceVolatility(itemId, latest, hourly) {
     };
 }
 
+// --- Advanced Statistical and Financial Analysis Functions ---
+
+// Calculate historical price variance using exponentially weighted moving average (EWMA)
+function calculatePriceVariance(priceHistory, lambda = 0.94) {
+    if (!priceHistory || priceHistory.length < 2) return null;
+
+    // Calculate returns
+    const returns = [];
+    for (let i = 1; i < priceHistory.length; i++) {
+        returns.push((priceHistory[i] - priceHistory[i - 1]) / priceHistory[i - 1]);
+    }
+
+    // Calculate EWMA variance
+    let variance = 0;
+    let weightSum = 0;
+    returns.forEach((ret, i) => {
+        const weight = Math.pow(lambda, returns.length - i - 1);
+        variance += weight * ret * ret;
+        weightSum += weight;
+    });
+
+    return variance / weightSum;
+}
+
+// Calculate modified Sharpe ratio using expected profit and variance
+function calculateModifiedSharpeRatio(expectedProfit, variance, riskFreeRate = 0.02 / 365) {
+    if (variance === null || variance === 0) return null;
+    // Using excess return over risk-free rate
+    const excessReturn = (expectedProfit / variance) - riskFreeRate;
+    return excessReturn / Math.sqrt(variance);
+}
+
+// Calculate confidence score based on multiple factors
+function calculateConfidenceScore(item, fiveMin, latest, hourly) {
+    const weights = {
+        volumeStability: 0.25,
+        priceConsistency: 0.25,
+        marketDepth: 0.20,
+        trendStrength: 0.15,
+        volatilityPenalty: 0.15
+    };
+
+    let scores = {};
+
+    // Volume stability score (coefficient of variation)
+    const volumes = [fiveMin[item.id]?.lowPriceVolume, fiveMin[item.id]?.highPriceVolume];
+    const volumeMean = volumes.reduce((a, b) => a + b, 0) / volumes.length;
+    const volumeStd = Math.sqrt(volumes.reduce((a, b) => a + Math.pow(b - volumeMean, 2), 0) / volumes.length);
+    scores.volumeStability = Math.max(0, 1 - (volumeStd / volumeMean));
+
+    // Price consistency across timeframes
+    const prices = [
+        latest[item.id]?.high,
+        latest[item.id]?.low,
+        fiveMin[item.id]?.avgHighPrice,
+        fiveMin[item.id]?.avgLowPrice,
+        hourly[item.id]?.avgHighPrice,
+        hourly[item.id]?.avgLowPrice
+    ].filter(Boolean);
+
+    const priceMean = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const priceStd = Math.sqrt(prices.reduce((a, b) => a + Math.pow(b - priceMean, 2), 0) / prices.length);
+    scores.priceConsistency = Math.max(0, 1 - (priceStd / priceMean));
+
+    // Market depth score
+    const marketDepth = Math.min(
+        fiveMin[item.id]?.lowPriceVolume / MIN_VOLUME_THRESHOLD,
+        fiveMin[item.id]?.highPriceVolume / MIN_VOLUME_THRESHOLD
+    );
+    scores.marketDepth = Math.min(1, marketDepth / 10); // Cap at 1
+
+    // Trend strength using price momentum
+    const shortTermTrend = (latest[item.id]?.high - fiveMin[item.id]?.avgHighPrice) / fiveMin[item.id]?.avgHighPrice;
+    const longTermTrend = (fiveMin[item.id]?.avgHighPrice - hourly[item.id]?.avgHighPrice) / hourly[item.id]?.avgHighPrice;
+    scores.trendStrength = Math.abs(shortTermTrend + longTermTrend) / 2;
+
+    // Volatility penalty
+    const volatility = calculatePriceVariance([
+        hourly[item.id]?.avgHighPrice,
+        fiveMin[item.id]?.avgHighPrice,
+        latest[item.id]?.high
+    ]);
+    scores.volatilityPenalty = volatility ? Math.max(0, 1 - volatility) : 0.5;
+
+    // Calculate weighted average confidence score
+    const confidenceScore = Object.keys(weights).reduce((score, factor) => {
+        return score + (scores[factor] * weights[factor]);
+    }, 0);
+
+    return {
+        confidenceScore,
+        componentScores: scores
+    };
+}
+
+// Risk-adjusted return calculation using configurable risk aversion
+function calculateRiskAdjustedReturn(expectedProfit, variance, riskAversionCoeff = 2.0) {
+    if (variance === null) return null;
+    // Using mean-variance utility function: U = E[R] - (λ/2) * σ²
+    return expectedProfit - (riskAversionCoeff / 2) * variance;
+}
+
+// Calculate comprehensive flip score using multiple weighted metrics
+function calculateFlipScore(flip) {
+    // Define weights for different metrics
+    const weights = {
+        profitScore: 0.30,      // Total profit potential
+        sharpeScore: 0.20,      // Risk-adjusted return metric
+        confidenceScore: 0.20,  // Overall confidence in the trade
+        volumeScore: 0.15,      // Trading volume stability
+        marginScore: 0.10,      // Profit margin percentage
+        varianceScore: 0.05     // Price stability
+    };
+
+    // Calculate individual component scores
+    const scores = {
+        // Profit score (logarithmic scale to prevent extreme profits from dominating)
+        profitScore: Math.log10(Math.max(flip.totalProfit, 1)) / Math.log10(1e8),
+
+        // Sharpe ratio score (higher is better)
+        sharpeScore: flip.sharpeRatio ? Math.min(flip.sharpeRatio / 2, 1) : 0,
+
+        // Use existing confidence score
+        confidenceScore: flip.confidenceScore,
+
+        // Volume score based on 5-minute volumes
+        volumeScore: Math.min(
+            (flip.fiveMinLowVolume + flip.fiveMinHighVolume) / (2 * MIN_VOLUME_THRESHOLD * 10),
+            1
+        ),
+
+        // Margin score (percentage profit)
+        marginScore: Math.min(flip.margin * 5, 1), // Cap at 20% margin
+
+        // Variance score (inverse, as lower variance is better)
+        varianceScore: flip.variance ? Math.max(0, 1 - flip.variance * 10) : 0.5
+    };
+
+    // Calculate weighted total score
+    const totalScore = Object.entries(weights).reduce((score, [metric, weight]) => {
+        return score + (scores[metric] * weight);
+    }, 0);
+
+    // Normalize to 0-100 scale
+    return Math.round(totalScore * 100);
+}
+
 // Core function to calculate trade metrics for a single item
 function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData, budget, risk) {
     // Use optional chaining and check for data presence for this specific item ID
@@ -133,6 +280,37 @@ function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData, budget
         return null;
     }
 
+    // Advanced metrics
+    const priceHistory = [
+        hourlyItemData.avgHighPrice,
+        fiveMinAvgHigh,
+        latestItemData.high
+    ];
+
+    const variance = calculatePriceVariance(priceHistory);
+    const sharpeRatio = calculateModifiedSharpeRatio(profitPer, variance);
+    const { confidenceScore, componentScores } = calculateConfidenceScore(item, fiveMinData, latestData, hourlyData);
+    const riskAdjustedReturn = calculateRiskAdjustedReturn(profitPer, variance);
+
+    // Filter out items with low confidence or poor risk-adjusted metrics
+    const CONFIDENCE_THRESHOLD = 0.6;
+    const SHARPE_RATIO_THRESHOLD = 0.5;
+
+    if (confidenceScore < CONFIDENCE_THRESHOLD || (sharpeRatio && sharpeRatio < SHARPE_RATIO_THRESHOLD)) {
+        return null;
+    }
+
+    // Calculate comprehensive flip score
+    const flipScore = calculateFlipScore({
+        totalProfit,
+        sharpeRatio,
+        confidenceScore,
+        fiveMinLowVolume,
+        fiveMinHighVolume,
+        margin,
+        variance
+    });
+
     return {
         ...item, // Include item name, id, limit, icon etc.
         wiki: getWikiLink(item.name), // Add wiki link here
@@ -146,46 +324,54 @@ function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData, budget
         volatility: volatilityAnalysis.volatility,
         trend: volatilityAnalysis.trend,
         fiveMinHighVolume, // Include 5-min volumes for display/sorting
-        fiveMinLowVolume
+        fiveMinLowVolume,
+        // New advanced metrics
+        variance,
+        sharpeRatio,
+        confidenceScore,
+        componentScores,
+        riskAdjustedReturn,
+        flipScore // Add the comprehensive score
     };
 }
 
-// Function to find the optimal risk tolerance
+// Function to find the optimal risk tolerance using a utility-maximizing economic model
 function getOptimalRisk(mapping, fiveMin, latest, hourly, budget) {
-    let bestRisk = 0.01; // Start iterating from a very low risk
-    let bestProfit = 0;
-    const risksToEvaluate = [];
+    const evaluatedRisks = [];
+    const baseRiskLevels = [];
 
-    // Generate a range of risk levels to test (e.g., 0.01 to 0.3, stepped)
-    for (let r = 0.01; r <= 0.3; r += 0.01) {
-        risksToEvaluate.push(r);
-    }
-    for (let r = 0.31; r <= 0.5; r += 0.05) { // Larger step for higher risk
-        risksToEvaluate.push(r);
-    }
+    // Use a finer grid near lower risk where changes matter more
+    for (let r = 0.01; r <= 0.1; r += 0.005) baseRiskLevels.push(r);
+    for (let r = 0.11; r <= 0.3; r += 0.01) baseRiskLevels.push(r);
+    for (let r = 0.31; r <= 0.5; r += 0.02) baseRiskLevels.push(r);
 
-
-    risksToEvaluate.forEach(r => {
-        // Calculate suggestions for the current risk level
-        let suggestions = mapping
-            .map(item => calculateTradeMetrics(item, fiveMin, latest, hourly, budget, r))
-            .filter(Boolean) // Remove null results
-            // Sort purely by totalProfit, which is now volume-capped
+    baseRiskLevels.forEach(risk => {
+        const flips = mapping
+            .map(item => calculateTradeMetrics(item, fiveMin, latest, hourly, budget, risk))
+            .filter(Boolean)
             .sort((a, b) => b.totalProfit - a.totalProfit)
-            .slice(0, Math.min(10, MAX_FLIP_SUGGESTIONS)); // Consider top N flips for optimal risk calculation
+            .slice(0, MAX_FLIP_SUGGESTIONS);
 
-        // Sum total profit directly
-        let total = suggestions.reduce((sum, f) => sum + f.totalProfit, 0);
+        const totalProfit = flips.reduce((acc, f) => acc + f.totalProfit, 0);
+        const totalQty = flips.reduce((acc, f) => acc + f.maxQty, 0);
+        const totalVolatility = flips.reduce((acc, f) => acc + f.volatility, 0);
 
-        // Find the risk level that yields the highest total profit from the top flips
-        if (total > bestProfit) {
-            bestProfit = total;
-            bestRisk = r;
+        if (totalProfit > 0) {
+            const meanVolatility = totalVolatility / flips.length;
+            const utilityScore = totalProfit / Math.sqrt(meanVolatility + 0.001); // Academic utility score: profit adjusted for volatility risk
+
+            evaluatedRisks.push({
+                risk,
+                utilityScore
+            });
         }
     });
 
-    // Return the best risk found, formatted
-    return parseFloat(bestRisk.toFixed(2));
+    if (evaluatedRisks.length === 0) return DEFAULT_RISK;
+
+    // Choose the risk with the highest utility score
+    evaluatedRisks.sort((a, b) => b.utilityScore - a.utilityScore);
+    return parseFloat(evaluatedRisks[0].risk.toFixed(2));
 }
 
 // Helper to get OSRS Wiki link
@@ -294,18 +480,43 @@ const SearchResults = ({ results, getWikiLink, formatTimeSince }) => {
 // --- FlipCard Component (New Component for clarity) ---
 const FlipCard = ({ flip }) => {
     const volatilityColor = useMemo(() => {
-        if (flip.volatility > 0.2) return 'text-red-600'; // High volatility
-        if (flip.volatility > 0.1) return 'text-orange-600'; // Medium volatility
-        return 'text-green-700'; // Low volatility
+        if (flip.volatility > 0.2) return 'text-red-600';
+        if (flip.volatility > 0.1) return 'text-orange-600';
+        return 'text-green-700';
     }, [flip.volatility]);
 
-    const volatilityTooltip = `Volatility: ${(flip.volatility * 100).toFixed(1)}% (Higher value means more price fluctuation)`;
+    const confidenceColor = useMemo(() => {
+        if (flip.confidenceScore >= 0.8) return 'text-green-700';
+        if (flip.confidenceScore >= 0.6) return 'text-yellow-600';
+        return 'text-orange-600';
+    }, [flip.confidenceScore]);
+
+    const sharpeRatioColor = useMemo(() => {
+        if (!flip.sharpeRatio) return 'text-gray-600';
+        if (flip.sharpeRatio >= 1.0) return 'text-green-700';
+        if (flip.sharpeRatio >= 0.5) return 'text-yellow-600';
+        return 'text-orange-600';
+    }, [flip.sharpeRatio]);
+
+    const flipScoreColor = useMemo(() => {
+        if (flip.flipScore >= 80) return 'text-green-700';
+        if (flip.flipScore >= 60) return 'text-blue-600';
+        if (flip.flipScore >= 40) return 'text-yellow-600';
+        return 'text-orange-600';
+    }, [flip.flipScore]);
 
     return (
-        <article
-            key={flip.id}
-            className="osrs-flip-card bg-white rounded-xl shadow-sm p-5 flex gap-4 items-start border border-gray-100 hover:shadow-md transition group"
-        >
+        <article className="osrs-flip-card bg-white rounded-xl shadow-sm p-5 flex gap-4 items-start border border-gray-100 hover:shadow-md transition group">
+            {/* Add comprehensive score at the top right */}
+            <div className="absolute top-3 right-3 bg-gray-50 rounded-full px-3 py-1">
+                <Typography variant="caption" className="text-gray-600">
+                    Score:
+                </Typography>
+                <Typography variant="body2" className={`font-bold ml-1 ${flipScoreColor}`}>
+                    {flip.flipScore}
+                </Typography>
+            </div>
+
             {/* Item Icon */}
             <img
                 src={`https://oldschool.runescape.wiki/images/${encodeURIComponent(flip.icon.replace(/ /g, '_'))}`}
@@ -375,7 +586,7 @@ const FlipCard = ({ flip }) => {
                     <span className="flex items-center gap-1" title="Sell volume (last 5 min)">
                         <span className="font-medium">Sell Vol (5m):</span> {flip.fiveMinHighVolume.toLocaleString()}
                     </span>
-                    <span className="flex items-center gap-1" title={volatilityTooltip}>
+                    <span className="flex items-center gap-1" title={`Volatility: ${(flip.volatility * 100).toFixed(1)}% (Higher value means more price fluctuation)`}>
                         <span className="font-medium">Volatility:</span> <b className={volatilityColor}>{(flip.volatility * 100).toFixed(1)}%</b>
                     </span>
                     <span className="flex items-center gap-1" title="Price trend (latest high vs hourly average high)">
@@ -388,6 +599,59 @@ const FlipCard = ({ flip }) => {
                         </svg>
                     </span>
                 </div>
+
+                {/* Advanced Metrics Section */}
+                {/* <div className="mt-4 grid grid-cols-2 gap-3 bg-gray-50 rounded-lg p-3">
+                    <div className="col-span-2">
+                        <Typography variant="subtitle2" className="text-gray-700 font-medium">
+                            Advanced Metrics
+                        </Typography>
+                    </div>
+
+                    {/* Confidence Score */}
+                {/* <div className="flex flex-col">
+                    <Typography variant="caption" className="text-gray-600">
+                        Confidence Score
+                    </Typography>
+                    <Typography variant="body2" className={`font-medium ${confidenceColor}`}>
+                        {(flip.confidenceScore * 100).toFixed(1)}%
+                    </Typography>
+                </div>
+
+                {/* Sharpe Ratio */}
+                {/* <div className="flex flex-col">
+                    <Typography variant="caption" className="text-gray-600">
+                        Sharpe Ratio
+                    </Typography>
+                    <Typography variant="body2" className={`font-medium ${sharpeRatioColor}`}>
+                        {flip.sharpeRatio ? flip.sharpeRatio.toFixed(2) : 'N/A'}
+                    </Typography>
+                </div>
+
+                {/* Risk-Adjusted Return */}
+                {/* <div className="flex flex-col">
+                    <Typography variant="caption" className="text-gray-600">
+                        Risk-Adj Return
+                    </Typography>
+                    <Typography variant="body2" className="font-medium text-blue-700">
+                        {formatGrandExchangePrice(flip.riskAdjustedReturn)}
+                    </Typography>
+                </div>
+
+
+
+                {/* Component Scores Tooltip */}
+                {/* <div className="col-span-2 mt-2">
+                        <Typography variant="caption" className="text-gray-500 block">
+                            Confidence Components:
+                        </Typography>
+                        <div className="text-xs text-gray-600 grid grid-cols-2 gap-x-2">
+                            <span>Volume Stability: {(flip.componentScores.volumeStability * 100).toFixed(0)}%</span>
+                            <span>Price Consistency: {(flip.componentScores.priceConsistency * 100).toFixed(0)}%</span>
+                            <span>Market Depth: {(flip.componentScores.marketDepth * 100).toFixed(0)}%</span>
+                            <span>Trend Strength: {(flip.componentScores.trendStrength * 100).toFixed(0)}%</span>
+                        </div>
+                    </div> */}
             </div>
         </article>
     );
@@ -603,19 +867,8 @@ export default function OSRSFlipper() {
                 let suggestions = mapping
                     .map(item => calculateTradeMetrics(item, fiveMin, latestPrices, hourlyPrices, budget, risk))
                     .filter(Boolean) // Remove null results (items that didn't meet criteria)
-                    // Sort the suggestions based on the chosen criteria
-                    .sort((a, b) => {
-                        // Sort by totalProfit descending first
-                        const profitDiff = b.totalProfit - a.totalProfit;
-                        if (profitDiff !== 0) return profitDiff;
-
-                        // If totalProfit is the same, use a secondary sort if needed (e.g., margin)
-                        if (sortBy !== 'totalProfit') {
-                            return b[sortBy] - a[sortBy];
-                        }
-
-                        return 0; // No secondary sort if sorting by totalProfit
-                    })
+                    // Sort the suggestions based on the comprehensive flip score
+                    .sort((a, b) => b.flipScore - a.flipScore)
                     .slice(0, MAX_FLIP_SUGGESTIONS); // Limit to top suggestions
 
                 setFlips(suggestions); // Update the list of suggested flips
@@ -797,9 +1050,14 @@ export default function OSRSFlipper() {
                                         flips.length === 0 ? (
                                             <p className="text-center text-gray-500 italic py-8">No profitable flips found matching criteria. Try adjusting your budget or refresh data.</p>
                                         ) : (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Reduced gap slightly */}
-                                                {flips.map(flip => (
-                                                    <FlipCard key={flip.id} flip={flip} />
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {flips.map((flip, index) => (
+                                                    <div key={flip.id} className="relative">
+                                                        <div className="absolute -top-3 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold z-10">
+                                                            {index === 0 ? "Top Pick" : `#${index + 1}`}
+                                                        </div>
+                                                        <FlipCard flip={flip} />
+                                                    </div>
                                                 ))}
                                             </div>
                                         )
