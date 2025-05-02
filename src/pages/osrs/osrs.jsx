@@ -190,6 +190,73 @@ function formatTimeSince(timestamp) {
     return 'over a day ago'; // Simple fallback for longer times
 }
 
+// SearchResults Component
+const SearchResults = ({ results, getWikiLink, formatTimeSince }) => {
+    if (!results) return null;
+
+    if (results.length === 0) {
+        return (
+            <Typography color="textSecondary" className="mb-6">
+                No items found matching your search.
+            </Typography>
+        );
+    }
+
+    return (
+        <>
+            <Typography variant="h6" gutterBottom>
+                Search Results
+            </Typography>
+            <Grid container spacing={2} className="mb-6">
+                {results.map((item) => (
+                    <Grid item xs={12} key={item.id}>
+                        <Paper elevation={1} className="p-4">
+                            <Typography variant="h6">{item.name}</Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body1" color="textSecondary">
+                                        Recommended Insta-sell Price:
+                                        <Typography component="span" color="primary" className="font-bold ml-2">
+                                            {item.weightedHighPrice.toLocaleString()} gp
+                                        </Typography>
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        Recent Trading Volume (5m): {item.highPriceVolume.toLocaleString()}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        Last Updated: {formatTimeSince(item.timestamp)}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body2" color="textSecondary">
+                                        Latest High: {item.latestHigh.toLocaleString()} gp
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        5-min Average High: {item.fiveMinHigh.toLocaleString()} gp
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        1-hour Average High: {item.hourlyHigh.toLocaleString()} gp
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant="text"
+                                        color="primary"
+                                        href={getWikiLink(item.name)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View on OSRS Wiki
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+        </>
+    );
+};
 
 // Main React Component
 export default function OSRSFlipper() {
@@ -199,6 +266,8 @@ export default function OSRSFlipper() {
     const [latestPrices, setLatestPrices] = useState({});
     const [hourlyPrices, setHourlyPrices] = useState({});
     const [flips, setFlips] = useState([]); // Array to hold suggested flips
+    const [searchQuery, setSearchQuery] = useState(''); // New state for search input
+    const [searchResults, setSearchResults] = useState(null); // New state for search results
     const [loading, setLoading] = useState(true); // Loading state
     const [budget, setBudget] = useState(DEFAULT_BUDGET); // User budget in GP
     const [budgetUnit, setBudgetUnit] = useState('M'); // Budget unit (K or M)
@@ -215,6 +284,95 @@ export default function OSRSFlipper() {
         setBudget(numValue * multiplier);
         setBudgetValue(value);
         setBudgetUnit(unit);
+    };
+
+    // New function to calculate potential insta-sell price
+    const calculateInstaSellPrice = (itemId) => {
+        if (!latestPrices?.[itemId] || !fiveMin?.[itemId] || !hourlyPrices?.[itemId]) {
+            return null;
+        }
+
+        const latest = latestPrices[itemId];
+        const fiveMinData = fiveMin[itemId];
+        const hourlyData = hourlyPrices[itemId];
+
+        // We'll use a weighted average of different price points
+        // Latest high price (most recent) - 50% weight
+        // 5-minute average high - 30% weight
+        // Hourly average high - 20% weight
+        const weightedHighPrice = Math.floor(
+            (latest.high * 0.5) +
+            (fiveMinData.avgHighPrice * 0.3) +
+            (hourlyData.avgHighPrice * 0.2)
+        );
+
+        return {
+            weightedHighPrice,
+            latestHigh: latest.high,
+            fiveMinHigh: fiveMinData.avgHighPrice,
+            hourlyHigh: hourlyData.avgHighPrice,
+            highPriceVolume: fiveMinData.highPriceVolume,
+            timestamp: latest.timestamp
+        };
+    };
+
+    // New function to handle item search
+    const handleSearch = () => {
+        try {
+            if (!searchQuery.trim()) {
+                setSearchResults(null);
+                return;
+            }
+
+            // Check if we have the required data
+            if (!mapping.length || !Object.keys(latestPrices).length || !Object.keys(fiveMin).length || !Object.keys(hourlyPrices).length) {
+                console.warn('Search attempted before data was loaded', {
+                    mappingLength: mapping.length,
+                    latestPricesKeys: Object.keys(latestPrices).length,
+                    fiveMinKeys: Object.keys(fiveMin).length,
+                    hourlyPricesKeys: Object.keys(hourlyPrices).length
+                });
+                return;
+            }
+
+            console.log('Starting search for:', searchQuery);
+
+            // Find items that match the search query
+            const matchingItems = mapping.filter(item => {
+                if (!item || !item.name) {
+                    console.warn('Invalid item in mapping:', item);
+                    return false;
+                }
+                return item.name.toLowerCase().includes(searchQuery.toLowerCase());
+            });
+
+            console.log('Found matching items:', matchingItems.length);
+
+            // Get price data for matching items
+            const itemsWithPrices = matchingItems.map(item => {
+                try {
+                    const priceData = calculateInstaSellPrice(item.id);
+                    if (!priceData) {
+                        console.log('No price data found for item:', item.name, item.id);
+                        return null;
+                    }
+
+                    return {
+                        ...item,
+                        ...priceData
+                    };
+                } catch (err) {
+                    console.error('Error processing item:', item.name, err);
+                    return null;
+                }
+            }).filter(Boolean);
+
+            console.log('Items with prices:', itemsWithPrices.length);
+            setSearchResults(itemsWithPrices);
+        } catch (error) {
+            console.error('Error during search:', error);
+            // Don't change the search results if there's an error
+        }
     };
 
     // MUI Theme (kept as is, assuming Tailwind classes are used or you might add MUI components back)
@@ -276,8 +434,13 @@ export default function OSRSFlipper() {
                     hourlyResponse.json(),
                 ]);
 
+                console.log('Mapping data:', mappingData);
+                console.log('Five min data:', fiveMinData);
+                console.log('Latest data:', latestData);
+                console.log('Hourly data:', hourlyData);
+
                 // Update state with fetched data
-                // prices.runescape.wiki returns data in { data: { itemId: {...} }, timestamp: ... }
+                // Note: mapping data is a direct array, while price endpoints return { data: { itemId: {...} }, timestamp: ... }
                 setMapping(mappingData);
                 setFiveMin(fiveMinData.data);
                 setLatestPrices(latestData.data);
@@ -340,27 +503,14 @@ export default function OSRSFlipper() {
 
     // --- JSX Rendering (kept mostly as is, using Tailwind classes) ---
     return (
-        // Use StyledEngineProvider if needed for MUI theme or styles injection
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={muiTheme}>
-                {/* Use a main tag for semantic structure */}
-                <main className="bg-white max-w-6xl mx-auto osrs-flipper p-6 shadow-lg font-inter">
-
-                    {/* Add Inter font import */}
-                    <style>{`
-                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-                        body, .font-inter {
-                            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-                        }
-                    `}</style>
-
-                    {/* Layout Container */}
-                    <div className="font-inter lg:max-w-5xl mx-auto"> {/* Added mx-auto for centering within max-w-6xl */}
-                        <h1 className="text-2xl font-bold mb-6 text-center text-green-800">OSRS Grand Exchange Flipper</h1>
-
-                        {/* Controls Section */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"> {/* Using grid for controls */}
-                            <div className="col-span-1">
+        <ThemeProvider theme={muiTheme}>
+            <StyledEngineProvider injectFirst>
+                <CssBaseline />
+                <Container maxWidth="lg" className="py-8">
+                    <Paper elevation={0} className="p-6 mb-6">
+                        <Grid container spacing={3}>
+                            {/* Existing budget input */}
+                            <Grid item xs={12} md={4}>
                                 <label htmlFor="budget-input" className="block text-sm font-medium text-gray-700">Budget</label>
                                 <div className="flex gap-2">
                                     <input
@@ -382,176 +532,156 @@ export default function OSRSFlipper() {
                                     </select>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-1">{budget.toLocaleString()} gp</p>
-                            </div>
+                            </Grid>
 
-                            <div className="col-span-1">
-                                <label htmlFor="sort-select" className="block text-sm font-medium text-gray-700">Sort by</label>
-                                <select
-                                    id="sort-select"
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-200 focus:border-green-400 bg-gray-50"
-                                >
-                                    <option value="totalProfit">Total Profit</option>
-                                    <option value="profitPer">Profit/Item</option>
-                                    <option value="margin">Margin %</option>
-                                    {/* Added volume sorts */}
-                                    <option value="lowPriceVolume">Buy Volume (5m)</option>
-                                    <option value="highPriceVolume">Sell Volume (5m)</option>
-                                    <option value="volatility">Volatility</option> {/* Can also sort by volatility */}
-                                </select>
-                            </div>
-
-                            <div className="col-span-1 flex flex-col justify-end"> {/* Align items to bottom */}
-                                <div className="flex flex-col gap-2">
-                                    <div>
-                                        <p className="text-sm flex items-center gap-1 text-gray-700">
-                                            Auto risk tolerance: {' '}
-                                            <span className="font-semibold text-green-700" title="Auto-optimized for best flips based on your budget and current market data">
-                                                {(autoRisk * 100).toFixed(1)}%
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <button
-                                            onClick={() => setRefreshKey(k => k + 1)}
-                                            disabled={loading}
-                                            className="w-full py-2 px-4 bg-emerald-600 text-white rounded-md text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                                        >
-                                            {loading ? 'Loading...' : 'Refresh Item Data'}
-                                        </button>
-                                        <span className="text-xs text-gray-500 mt-1 flex items-center gap-1 justify-center">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            Data updated: {formatTimeSince(lastUpdate)}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Results Section */}
-                        <section className="osrs-results" aria-live="polite">
-                            {loading && <p className="text-center text-gray-500 py-8">Loading flips...</p>}
-                            {!loading && flips.length === 0 && <p className="text-center text-gray-500 py-8">No profitable flips found matching criteria. Try adjusting your budget or refresh data.</p>}
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {flips.map(flip => (
-                                    <article
-                                        key={flip.id}
-                                        className="osrs-flip-card bg-white rounded-lg shadow-md p-5 flex gap-4 items-start min-h-[120px] border border-gray-100 hover:shadow-lg transition group"
+                            {/* Search section */}
+                            <Grid item xs={12}>
+                                <Typography variant="h6" gutterBottom>
+                                    Item Price Search
+                                </Typography>
+                                <div className="flex gap-2">
+                                    <TextField
+                                        fullWidth
+                                        label="Search for an item"
+                                        variant="outlined"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSearch();
+                                            }
+                                        }}
+                                        className="mb-4"
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleSearch}
+                                        className="h-14"
                                     >
-                                        {/* Item Icon */}
-                                        <img
-                                            src={`https://oldschool.runescape.wiki/images/${encodeURIComponent(flip.icon.replace(/ /g, '_'))}`}
-                                            alt={flip.name}
-                                            width={48}
-                                            height={48}
-                                            className="rounded-md bg-gray-100 border border-gray-200 flex-shrink-0"
-                                            loading="lazy"
-                                        />
+                                        Search
+                                    </Button>
+                                </div>
+                            </Grid>
 
-                                        {/* Item Details */}
-                                        <div className="flex-1 min-w-0"> {/* Use min-w-0 to prevent overflow */}
-                                            <a
-                                                href={flip.wiki}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="font-bold text-lg text-green-700 hover:underline truncate block" /* Added truncate */
-                                                title={`View ${flip.name} on OSRS Wiki`}
+                            {/* Search Results */}
+                            <Grid item xs={12}>
+                                {loading ? (
+                                    <Typography color="textSecondary" className="mb-6">
+                                        Loading item data...
+                                    </Typography>
+                                ) : (
+                                    <SearchResults
+                                        results={searchResults}
+                                        getWikiLink={getWikiLink}
+                                        formatTimeSince={formatTimeSince}
+                                    />
+                                )}
+                            </Grid>
+
+                            {/* Main flips display */}
+                            <Grid item xs={12}>
+                                <Typography variant="h6" gutterBottom>
+                                    Recommended Flips
+                                </Typography>
+                                <section className="osrs-results" aria-live="polite">
+                                    {loading && <p className="text-center text-gray-500 py-8">Loading flips...</p>}
+                                    {!loading && flips.length === 0 && <p className="text-center text-gray-500 py-8">No profitable flips found matching criteria. Try adjusting your budget or refresh data.</p>}
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {flips.map(flip => (
+                                            <article
+                                                key={flip.id}
+                                                className="osrs-flip-card bg-white rounded-lg shadow-md p-5 flex gap-4 items-start min-h-[120px] border border-gray-100 hover:shadow-lg transition group"
                                             >
-                                                {flip.name}
-                                            </a>
+                                                {/* Item Icon */}
+                                                <img
+                                                    src={`https://oldschool.runescape.wiki/images/${encodeURIComponent(flip.icon.replace(/ /g, '_'))}`}
+                                                    alt={flip.name}
+                                                    width={48}
+                                                    height={48}
+                                                    className="rounded-md bg-gray-100 border border-gray-200 flex-shrink-0"
+                                                    loading="lazy"
+                                                />
 
-                                            {/* Price and Quantity */}
-                                            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-gray-700">
-                                                <span className="flex items-center gap-1" title="The estimated price to buy this item for on the GE">
-                                                    <span className="font-medium">Buy:</span> <b>{flip.buyPrice.toLocaleString()}</b> gp
-                                                </span>
-                                                <span className="flex items-center gap-1" title="The estimated price to sell this item for on the GE">
-                                                    <span className="font-medium">Sell:</span> <b>{flip.sellPrice.toLocaleString()}</b> gp
-                                                </span>
-                                                <span className="flex items-center gap-1" title="The maximum number of this item suggested to flip based on budget, GE limit, and recent buy volume">
-                                                    <svg className="w-4 h-4 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"></circle>
-                                                        <text x="12" y="16" textAnchor="middle" fontSize="10" fill="currentColor">Qty</text>
-                                                    </svg>
-                                                    <span className="font-medium">Qty:</span> {flip.maxQty.toLocaleString()}
-                                                </span>
-                                            </div>
+                                                {/* Item Details */}
+                                                <div className="flex-1 min-w-0"> {/* Use min-w-0 to prevent overflow */}
+                                                    <a
+                                                        href={flip.wiki}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="font-bold text-lg text-green-700 hover:underline truncate block" /* Added truncate */
+                                                        title={`View ${flip.name} on OSRS Wiki`}
+                                                    >
+                                                        {flip.name}
+                                                    </a>
 
-                                            {/* Profit and Margin */}
-                                            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-gray-700">
-                                                <span className="flex items-center gap-1" title="Your estimated profit per item after GE tax">
-                                                    <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 19V5m0 0l-7 7m7-7l7 7" strokeLinecap="round" strokeLinejoin="round"></path></svg>
-                                                    <span className="font-medium">Profit/item:</span> {flip.profitPer.toLocaleString()} gp
-                                                </span>
-                                                <span className="flex items-center gap-1" title="Total estimated profit if you flip the suggested quantity">
-                                                    <svg className="w-4 h-4 text-green-700 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"></circle><path d="M8 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"></path></svg>
-                                                    <span className="font-medium">Total Profit:</span> <b className="text-green-700">{flip.totalProfit.toLocaleString()}</b> gp
-                                                </span>
-                                                <span className="flex items-center gap-1" title="Profit margin as a percentage of the buy price">
-                                                    <svg className="w-4 h-4 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 9V7a5 5 0 00-10 0v2"></path><rect x="5" y="9" width="14" height="10" rx="2"></rect><path d="M8 13h8v4H8z"></path></svg>
-                                                    <span className="font-medium">Margin:</span> {(flip.margin * 100).toFixed(2)}%
-                                                </span>
-                                            </div>
+                                                    {/* Price and Quantity */}
+                                                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-gray-700">
+                                                        <span className="flex items-center gap-1" title="The estimated price to buy this item for on the GE">
+                                                            <span className="font-medium">Buy:</span> <b>{flip.buyPrice.toLocaleString()}</b> gp
+                                                        </span>
+                                                        <span className="flex items-center gap-1" title="The estimated price to sell this item for on the GE">
+                                                            <span className="font-medium">Sell:</span> <b>{flip.sellPrice.toLocaleString()}</b> gp
+                                                        </span>
+                                                        <span className="flex items-center gap-1" title="The maximum number of this item suggested to flip based on budget, GE limit, and recent buy volume">
+                                                            <svg className="w-4 h-4 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"></circle>
+                                                                <text x="12" y="16" textAnchor="middle" fontSize="10" fill="currentColor">Qty</text>
+                                                            </svg>
+                                                            <span className="font-medium">Qty:</span> {flip.maxQty.toLocaleString()}
+                                                        </span>
+                                                    </div>
 
-                                            {/* Additional Data (Volumes, Volatility, Trend) */}
-                                            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-gray-500">
-                                                {/* **FIX:** Display 5-min volumes */}
-                                                <span className="flex items-center gap-1" title="Buy volume (last 5 min)">
-                                                    <svg className="w-3 h-3 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"></circle></svg>
-                                                    Buy Vol (5m): <span className="text-green-700">{flip.lowPriceVolume.toLocaleString()}</span>
-                                                </span>
-                                                <span className="flex items-center gap-1" title="Sell volume (last 5 min)">
-                                                    <svg className="w-3 h-3 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"></circle></svg>
-                                                    Sell Vol (5m): <span className="text-green-700">{flip.highPriceVolume.toLocaleString()}</span>
-                                                </span>
-                                                <span className="flex items-center gap-1" title="Price volatility (hourly average high vs low)">
-                                                    <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
-                                                    Volatility: <span className={`${flip.volatility > 0.05 ? (flip.volatility > 0.15 ? 'text-red-600' : 'text-orange-600') : 'text-green-700'}`}>{(flip.volatility * 100).toFixed(1)}%</span> {/* Adjusted color thresholds */}
-                                                </span>
-                                                {/* **FIX:** Removed Volume Health display as the metric was removed/redefined */}
-                                                <span className="flex items-center gap-1" title="Price trend (latest high vs hourly average high)">
-                                                    <svg className={`w-3 h-3 flex-shrink-0 ${flip.trend === 'up' ? 'text-green-600' : 'text-red-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={flip.trend === 'up' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}></path>
-                                                    </svg>
-                                                    Trend: <span className={`${flip.trend === 'up' ? 'text-green-700' : 'text-red-600'}`}>{flip.trend === 'up' ? 'Rising' : 'Falling'}</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </article>
-                                ))}
-                            </div>
-                        </section>
-                    </div>
+                                                    {/* Profit and Margin */}
+                                                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-gray-700">
+                                                        <span className="flex items-center gap-1" title="Your estimated profit per item after GE tax">
+                                                            <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 19V5m0 0l-7 7m7-7l7 7" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                                                            <span className="font-medium">Profit/item:</span> {flip.profitPer.toLocaleString()} gp
+                                                        </span>
+                                                        <span className="flex items-center gap-1" title="Total estimated profit if you flip the suggested quantity">
+                                                            <svg className="w-4 h-4 text-green-700 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"></circle><path d="M8 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                                                            <span className="font-medium">Total Profit:</span> <b className="text-green-700">{flip.totalProfit.toLocaleString()}</b> gp
+                                                        </span>
+                                                        <span className="flex items-center gap-1" title="Profit margin as a percentage of the buy price">
+                                                            <svg className="w-4 h-4 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 9V7a5 5 0 00-10 0v2"></path><rect x="5" y="9" width="14" height="10" rx="2"></rect><path d="M8 13h8v4H8z"></path></svg>
+                                                            <span className="font-medium">Margin:</span> {(flip.margin * 100).toFixed(2)}%
+                                                        </span>
+                                                    </div>
 
-                    {/* Footer Section (kept as is, using MUI components and Tailwind) */}
-                    <Paper component="footer" elevation={0} sx={{ mt: 6, py: 3, px: 2, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider' }}>
-                        <Typography variant="body2" color="text.secondary" align="center" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, flexWrap: 'wrap' }}>
-                            Data from{' '}
-                            <Typography component="a" href="https://prices.runescape.wiki/" target="_blank" rel="noopener noreferrer" variant="body2" sx={{ color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                                RuneScape Prices API
-                            </Typography>
-                            {' '}and{' '}
-                            <Typography component="a" href="https://oldschool.runescape.wiki/" target="_blank" rel="noopener noreferrer" variant="body2" sx={{ color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                                OSRS Wiki
-                            </Typography>
-                        </Typography>
+                                                    {/* Additional Data (Volumes, Volatility, Trend) */}
+                                                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-gray-500">
+                                                        {/* **FIX:** Display 5-min volumes */}
+                                                        <span className="flex items-center gap-1" title="Buy volume (last 5 min)">
+                                                            <svg className="w-3 h-3 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"></circle></svg>
+                                                            Buy Vol (5m): <span className="text-green-700">{flip.lowPriceVolume.toLocaleString()}</span>
+                                                        </span>
+                                                        <span className="flex items-center gap-1" title="Sell volume (last 5 min)">
+                                                            <svg className="w-3 h-3 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"></circle></svg>
+                                                            Sell Vol (5m): <span className="text-green-700">{flip.highPriceVolume.toLocaleString()}</span>
+                                                        </span>
+                                                        <span className="flex items-center gap-1" title="Price volatility (hourly average high vs low)">
+                                                            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+                                                            Volatility: <span className={`${flip.volatility > 0.05 ? (flip.volatility > 0.15 ? 'text-red-600' : 'text-orange-600') : 'text-green-700'}`}>{(flip.volatility * 100).toFixed(1)}%</span> {/* Adjusted color thresholds */}
+                                                        </span>
+                                                        {/* **FIX:** Removed Volume Health display as the metric was removed/redefined */}
+                                                        <span className="flex items-center gap-1" title="Price trend (latest high vs hourly average high)">
+                                                            <svg className={`w-3 h-3 flex-shrink-0 ${flip.trend === 'up' ? 'text-green-600' : 'text-red-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={flip.trend === 'up' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}></path>
+                                                            </svg>
+                                                            Trend: <span className={`${flip.trend === 'up' ? 'text-green-700' : 'text-red-600'}`}>{flip.trend === 'up' ? 'Rising' : 'Falling'}</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        ))}
+                                    </div>
+                                </section>
+                            </Grid>
+                        </Grid>
                     </Paper>
-
-                    {/* JSON-LD for SEO (kept as is) */}
-                    <script type="application/ld+json">
-                        {JSON.stringify({
-                            '@context': 'https://schema.org',
-                            '@type': 'WebPage',
-                            'name': 'OSRS Flipping Suggestions',
-                            "description": 'Find profitable Old School RuneScape Grand Exchange flips with real-time data and customizable risk controls.',
-                            'url': 'https://jsreact.com/osrs' // Replace with actual URL if different
-                        })}
-                    </script>
-
-                </main>
-            </ThemeProvider>
-        </StyledEngineProvider>
+                </Container>
+            </StyledEngineProvider>
+        </ThemeProvider>
     );
 }
