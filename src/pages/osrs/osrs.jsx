@@ -419,7 +419,7 @@ const SearchResults = ({ results, getWikiLink, formatTimeSince }) => {
     }
 
     return (
-        <div className="space-y-3"> {/* space-y for gap between cards */}
+        <div className="space-y-3">
             {results.map((item) => (
                 <a
                     key={item.id}
@@ -437,14 +437,34 @@ const SearchResults = ({ results, getWikiLink, formatTimeSince }) => {
                         </Typography>
                     </div>
 
-                    {/* Recommended Price */}
+                    {/* Recommended Price with Confidence Indicator */}
                     <div className="bg-green-50 rounded-md p-2 mb-3">
-                        <Typography variant="caption" className="text-gray-600 block">
-                            Recommended Insta-sell
-                        </Typography>
+                        <div className="flex justify-between items-center mb-1">
+                            <Typography variant="caption" className="text-gray-600 block">
+                                Recommended Insta-sell
+                            </Typography>
+                            <div className="flex items-center gap-1">
+                                <div className={`h-2 w-2 rounded-full ${item.confidence >= 0.8 ? 'bg-green-500' :
+                                        item.confidence >= 0.5 ? 'bg-yellow-500' : 'bg-orange-500'
+                                    }`} />
+                                <Typography variant="caption" className="text-gray-500">
+                                    {Math.round(item.confidence * 100)}% confidence
+                                </Typography>
+                            </div>
+                        </div>
                         <Typography variant="body1" className="font-bold text-green-800">
                             {item.weightedHighPrice.toLocaleString()} gp
                         </Typography>
+                        <div className="flex items-center gap-2 mt-1">
+                            <Typography variant="caption" className={`${item.momentum === 'rising' ? 'text-green-600' :
+                                    item.momentum === 'falling' ? 'text-red-600' : 'text-gray-600'
+                                }`}>
+                                {item.momentum === 'rising' ? '↑' : item.momentum === 'falling' ? '↓' : '→'} {item.momentum}
+                            </Typography>
+                            <Typography variant="caption" className="text-gray-600">
+                                • Margin: {(item.suggestedMargin * 100).toFixed(1)}%
+                            </Typography>
+                        </div>
                     </div>
 
                     {/* Historical Prices */}
@@ -469,9 +489,25 @@ const SearchResults = ({ results, getWikiLink, formatTimeSince }) => {
                         </div>
                     </div>
 
-                    {/* Volume */}
-                    <div className="mt-3 text-xs text-gray-600">
-                        Volume (5m High): {item.highPriceVolume.toLocaleString()}
+                    {/* Volume and Market Stability */}
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600">
+                        <div>
+                            <span className="font-medium">Buy Vol (5m):</span> {item.lowPriceVolume.toLocaleString()}
+                        </div>
+                        <div>
+                            <span className="font-medium">Sell Vol (5m):</span> {item.highPriceVolume.toLocaleString()}
+                        </div>
+                        <div className="col-span-2 mt-1">
+                            <span className="font-medium">Market Stability:</span>
+                            <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                                <div
+                                    className={`h-1.5 rounded-full ${item.marketStability >= 0.8 ? 'bg-green-500' :
+                                            item.marketStability >= 0.5 ? 'bg-yellow-500' : 'bg-orange-500'
+                                        }`}
+                                    style={{ width: `${item.marketStability * 100}%` }}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </a>
             ))}
@@ -705,15 +741,49 @@ export default function OSRSFlipper() {
             return null; // Needs essential high price data
         }
 
-        // We'll use a weighted average of different price points
-        // Latest high price (most recent) - 50% weight
-        // 5-minute average high - 30% weight
-        // Hourly average high - 20% weight
-        const weightedHighPrice = Math.floor(
-            (latest.high * 0.5) +
-            (fiveMinData.avgHighPrice * 0.3) +
-            (hourlyData.avgHighPrice * 0.2)
+        // Calculate volume ratios for weighting
+        const totalVolume = fiveMinData.highPriceVolume + fiveMinData.lowPriceVolume;
+        if (totalVolume === 0) return null; // Skip if no volume data
+
+        const buyVolumeRatio = fiveMinData.lowPriceVolume / totalVolume;
+        const sellVolumeRatio = fiveMinData.highPriceVolume / totalVolume;
+
+        // Volume-based confidence factor (higher volume = higher confidence)
+        const volumeConfidence = Math.min(1, totalVolume / (MIN_VOLUME_THRESHOLD * 4));
+
+        // Calculate price spread and volatility
+        const currentSpread = (latest.high - latest.low) / latest.low;
+        const fiveMinSpread = (fiveMinData.avgHighPrice - fiveMinData.avgLowPrice) / fiveMinData.avgLowPrice;
+        const hourlySpread = (hourlyData.avgHighPrice - hourlyData.avgLowPrice) / hourlyData.avgLowPrice;
+
+        // Average spread to assess market stability
+        const avgSpread = (currentSpread + fiveMinSpread + hourlySpread) / 3;
+        const marketStabilityFactor = Math.max(0.5, 1 - avgSpread);
+
+        // Dynamic time-based weights adjusted by market stability and volume
+        const latestWeight = 0.5 * marketStabilityFactor * volumeConfidence;
+        const fiveMinWeight = 0.3 * (1 + volumeConfidence) / 2;
+        const hourlyWeight = 1 - latestWeight - fiveMinWeight;
+
+        // Calculate volume-adjusted price based on buy/sell ratio
+        const volumeAdjustedPrice = (
+            latest.high * sellVolumeRatio +
+            latest.low * buyVolumeRatio
         );
+
+        // Weighted average calculation incorporating all factors
+        const weightedHighPrice = Math.floor(
+            volumeAdjustedPrice * latestWeight +
+            fiveMinData.avgHighPrice * fiveMinWeight +
+            hourlyData.avgHighPrice * hourlyWeight
+        );
+
+        // Market momentum indicator
+        const priceMovement = (latest.high - hourlyData.avgHighPrice) / hourlyData.avgHighPrice;
+        const momentum = priceMovement > 0 ? 'rising' : priceMovement < 0 ? 'falling' : 'stable';
+
+        // Calculate suggested margins based on market conditions
+        const suggestedMargin = Math.max(0.01, Math.min(0.05, avgSpread / 2));
 
         return {
             weightedHighPrice,
@@ -721,7 +791,12 @@ export default function OSRSFlipper() {
             fiveMinHigh: fiveMinData.avgHighPrice,
             hourlyHigh: hourlyData.avgHighPrice,
             highPriceVolume: fiveMinData.highPriceVolume,
-            timestamp: latest.timestamp // Use latest price timestamp
+            lowPriceVolume: fiveMinData.lowPriceVolume,
+            confidence: volumeConfidence,
+            marketStability: marketStabilityFactor,
+            momentum,
+            suggestedMargin,
+            timestamp: latest.timestamp
         };
     };
 
