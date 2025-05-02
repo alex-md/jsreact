@@ -121,7 +121,7 @@ export function DomainApp() {
                             </span>
                         ) : (
                             <>
-                                <i className="fas fa-magic mr-1"></i>Appraise Domains
+                                <i className="fas fa-magic mr-1"></i>Calculate Value
                             </>
                         )}
                     </button>

@@ -232,8 +232,6 @@ function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData, budget
     }
 
     // Calculate weighted prices
-    // Weights: 5m (0.5), Latest (0.3), 1h (0.2) - Note: This is a simple example, real strategies vary.
-    // Using avgLow for buy, avgHigh for sell from all sources
     const weightedBuyPrice = Math.floor(fiveMinAvgLow * 0.5 + latestItemData.low * 0.3 + hourlyItemData.avgLowPrice * 0.2);
     const weightedSellPrice = Math.floor(fiveMinAvgHigh * 0.5 + latestItemData.high * 0.3 + hourlyItemData.avgHighPrice * 0.2);
 
@@ -252,15 +250,20 @@ function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData, budget
         return null; // Only consider profitable flips
     }
 
+    // First check if a single item is within budget
+    if (buyPrice > budget) {
+        return null; // Skip if even one item is too expensive
+    }
+
     // Calculate suggested quantity based on budget, GE limit, and adjusted by volatility/volume
     // Volatility factor reduces suggested quantity for more volatile items
     const volatilityFactor = Math.max(0.1, 1 - volatilityAnalysis.volatility * 2); // Adjust volatility impact, cap at 0.1
-    const maxQtyBudgetLimit = Math.floor(budget * volatilityFactor / buyPrice);
+    const maxQtyBudgetLimit = Math.floor(budget / buyPrice); // Remove volatility factor from budget calculation
 
     // Quantity cap based on recent buy volume (5-minute low price volume)
     const volumeCapQty = fiveMinLowVolume * VOLUME_CAP_FACTOR;
 
-    // The final suggested quantity is the minimum of the budget/limit cap AND the volume cap AND the GE limit
+    // The final suggested quantity is the minimum of the budget limit AND the volume cap AND the GE limit
     const suggestedQty = Math.floor(Math.min(maxQtyBudgetLimit, volumeCapQty, item.limit));
 
     // If suggested quantity is 0 or negative after calculations, return null
@@ -312,26 +315,25 @@ function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData, budget
     });
 
     return {
-        ...item, // Include item name, id, limit, icon etc.
-        wiki: getWikiLink(item.name), // Add wiki link here
+        ...item,
+        wiki: getWikiLink(item.name),
         buyPrice,
         sellPrice,
         taxedSell,
         profitPer,
-        maxQty: suggestedQty, // Use the newly calculated, volume-capped quantity
+        maxQty: suggestedQty,
         totalProfit,
         margin,
         volatility: volatilityAnalysis.volatility,
         trend: volatilityAnalysis.trend,
-        fiveMinHighVolume, // Include 5-min volumes for display/sorting
+        fiveMinHighVolume,
         fiveMinLowVolume,
-        // New advanced metrics
         variance,
         sharpeRatio,
         confidenceScore,
         componentScores,
         riskAdjustedReturn,
-        flipScore // Add the comprehensive score
+        flipScore
     };
 }
 
