@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Disallow: /assets/
+Disallow: /components/
+Disallow: /utils/
+Disallow: /workers/
+
+# Allow all tools pages
+Allow: /pages/*/
+
+# Important files
+Allow: /sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Sitemap
+Sitemap: https://jsreact.com/sitemap.xml

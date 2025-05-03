@@ -97,6 +97,16 @@ export function createHead(title, description, options = {}) {
     const externalResources = [
         {
             type: 'link',
+            rel: 'manifest',
+            href: '/manifest.json'
+        },
+        {
+            type: 'link',
+            rel: 'manifest',
+            href: '/site.webmanifest'
+        },
+        {
+            type: 'link',
             rel: 'stylesheet',
             href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
             crossOrigin: 'anonymous',

@@ -1,0 +1,39 @@
+{
+    "name": "Web Tools Hub",
+    "short_name": "Web Tools",
+    "description": "Collection of web developer tools",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1D201F",
+    "theme_color": "#1D201F",
+    "icons": [
+        {
+            "src": "./images/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "./images/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "./images/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "permissions": [
+        "https://activeusers.vs.workers.dev"
+    ]
+}
