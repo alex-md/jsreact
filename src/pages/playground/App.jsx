@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Package, Moon, Sun } from 'lucide-react';
 import Split from 'split.js';
-import Editor from './components/Editor';
 import Preview from './components/Preview';
 import PackageManager from './components/PackageManager';
+
+// Dynamically import the Editor component
+const Editor = lazy(() => import('./components/Editor'));
 
 function App() {
     const [html, setHtml] = useState('<div class="container mt-5">\n  <h1>Hello, World!</h1>\n  <p>Start coding to see your changes in real-time.</p>\n</div>');
@@ -141,12 +143,14 @@ function App() {
                             <h2 className="text-sm font-medium">HTML</h2>
                         </div>
                         <div className="editor-content">
-                            <Editor
-                                language="html"
-                                value={html}
-                                onChange={setHtml}
-                                theme={darkMode ? 'vs-dark' : 'vs'}
-                            />
+                            <Suspense fallback={<div>Loading Editor...</div>}>
+                                <Editor
+                                    language="html"
+                                    value={html}
+                                    onChange={setHtml}
+                                    theme={darkMode ? 'vs-dark' : 'vs'}
+                                />
+                            </Suspense>
                         </div>
                     </div>
 
@@ -155,12 +159,14 @@ function App() {
                             <h2 className="text-sm font-medium">CSS</h2>
                         </div>
                         <div className="editor-content">
-                            <Editor
-                                language="css"
-                                value={css}
-                                onChange={setCss}
-                                theme={darkMode ? 'vs-dark' : 'vs'}
-                            />
+                            <Suspense fallback={<div>Loading Editor...</div>}>
+                                <Editor
+                                    language="css"
+                                    value={css}
+                                    onChange={setCss}
+                                    theme={darkMode ? 'vs-dark' : 'vs'}
+                                />
+                            </Suspense>
                         </div>
                     </div>
 
@@ -169,12 +175,14 @@ function App() {
                             <h2 className="text-sm font-medium">JavaScript</h2>
                         </div>
                         <div className="editor-content">
-                            <Editor
-                                language="javascript"
-                                value={js}
-                                onChange={setJs}
-                                theme={darkMode ? 'vs-dark' : 'vs'}
-                            />
+                            <Suspense fallback={<div>Loading Editor...</div>}>
+                                <Editor
+                                    language="javascript"
+                                    value={js}
+                                    onChange={setJs}
+                                    theme={darkMode ? 'vs-dark' : 'vs'}
+                                />
+                            </Suspense>
                         </div>
                     </div>
                 </div>
