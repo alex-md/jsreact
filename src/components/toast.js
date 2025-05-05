@@ -18,7 +18,7 @@ export function showToast(message, type = 'info') {
     // Base toast styles
     toast.className = `
         flex items-center gap-3 min-w-[320px] p-4 rounded-lg border shadow-lg
-        transform translate-y-2 opacity-0 transition-all duration-300
+        transform translate-y-2 opacity-0 toast-enter
         bg-background border-border
     `;
 
