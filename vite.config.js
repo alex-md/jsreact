@@ -67,7 +67,8 @@ export default defineConfig({
                         '@mui/material',
                         '@emotion/react',
                         '@emotion/styled'
-                    ]
+                    ],
+                    monaco: ['monaco-editor'] // Add monaco-editor here
                 },
             },
         },

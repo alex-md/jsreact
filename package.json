@@ -26,9 +26,11 @@
     "@shadcn/ui": "^0.0.4",
     "clsx": "^2.1.1",
     "gh-pages": "^5.0.0",
+    "monaco-editor": "^0.52.2",
     "qrcode": "^1.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "split.js": "^1.6.5",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7"
   },

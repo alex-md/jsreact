@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --editor-height: calc(100vh - 60px);
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Basic layout styles */
+.gutter {
+    background-color: #f0f0f0;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.dark .gutter {
+    background-color: #2d3748;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+}
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize;
+}
+
+.dark {
+    color-scheme: dark;
+}
+
+/* Editor container styles */
+.editors-container {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    /* Add this to fix flexbox height issues */
+}
+
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    /* Add this to fix flexbox height issues */
+}
+
+/* Critical Monaco editor styles */
+.editor-content {
+    flex: 1;
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    /* Add this to fix flexbox height issues */
+}
+
+.editor-content>div {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
