@@ -91,11 +91,11 @@ const Preview = ({
       }
       .dark body { background:#1a1a1a; color:#fff; }
     </style>
+    ${css ? `<style id="user-styles">${css}</style>` : ''}
   </head>
   <body>
     ${html}
     ${jsScripts}
-    ${css ? `<style>${css}</style>` : ''}
     <script>
       (function() {
         const consoleMethods = ['log','error','warn','info'];
@@ -165,10 +165,10 @@ const Preview = ({
                             aria-label={`${key.toLowerCase()} view`}
                             onClick={() => setDevice(key)}
                             className={`p-1.5 rounded-md transition-colors ${device === key
-                                    ? darkMode
-                                        ? 'bg-gray-800 text-white'
-                                        : 'bg-gray-200 text-gray-800'
-                                    : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                                ? darkMode
+                                    ? 'bg-gray-800 text-white'
+                                    : 'bg-gray-200 text-gray-800'
+                                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
                             <Icon size={16} />
@@ -181,10 +181,10 @@ const Preview = ({
                         aria-label="Toggle console"
                         onClick={() => setShowConsole(prev => !prev)}
                         className={`p-1.5 rounded-md transition-colors ${showConsole
-                                ? darkMode
-                                    ? 'bg-gray-800 text-white'
-                                    : 'bg-gray-200 text-gray-800'
-                                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                            ? darkMode
+                                ? 'bg-gray-800 text-white'
+                                : 'bg-gray-200 text-gray-800'
+                            : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                             }`}
                     >
                         <Terminal size={16} />
@@ -245,12 +245,12 @@ const Preview = ({
                             <div
                                 key={`${msg.timestamp}-${idx}`}
                                 className={`p-1 rounded ${msg.type === 'error'
-                                        ? 'text-red-500 bg-red-500/10'
-                                        : msg.type === 'warn'
-                                            ? 'text-yellow-500 bg-yellow-500/10'
-                                            : darkMode
-                                                ? 'text-gray-300'
-                                                : 'text-gray-700'
+                                    ? 'text-red-500 bg-red-500/10'
+                                    : msg.type === 'warn'
+                                        ? 'text-yellow-500 bg-yellow-500/10'
+                                        : darkMode
+                                            ? 'text-gray-300'
+                                            : 'text-gray-700'
                                     }`}
                             >
                                 <span className="opacity-50 mr-1">{msg.timestamp}</span>
