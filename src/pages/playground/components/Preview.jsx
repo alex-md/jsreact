@@ -42,11 +42,7 @@ const Preview = ({ html, css, js, packages, darkMode }) => {
             setError(null);
 
             try {
-                // Process CSS safely
-                const processedCss = css ? css.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
-
-                const fullHtml = `
-<!DOCTYPE html>
+                const fullHtml = `<!DOCTYPE html>
 <html class="${darkMode ? 'dark' : ''}">
     <head>
         <meta charset="utf-8">
@@ -55,22 +51,30 @@ const Preview = ({ html, css, js, packages, darkMode }) => {
         ${packages
                         .filter(pkg => pkg.endsWith('.css'))
                         .map(pkg => `<link rel="stylesheet" href="${pkg}" />`)
-                        .join('\n')}
+                        .join('\n        ')}
         <style>
             /* Base styles */
             :root { 
                 color-scheme: ${darkMode ? 'dark' : 'light'};
             }
-            /* User styles */
-            ${processedCss}
+            body { 
+                margin: 0; 
+                min-height: 100vh;
+                font-family: system-ui, -apple-system, sans-serif;
+            }
+            .dark body { 
+                background: #1a1a1a; 
+                color: #fff; 
+            }
         </style>
+        ${css ? `<style>${css}</style>` : ''}
     </head>
     <body>
-        ${html}
+        ${html || ''}
         ${packages
                         .filter(pkg => pkg.endsWith('.js'))
                         .map(pkg => `<script src="${pkg}"></script>`)
-                        .join('\n')}
+                        .join('\n        ')}
         <script>
             // Set up console message forwarding
             (function() {
@@ -100,8 +104,7 @@ const Preview = ({ html, css, js, packages, darkMode }) => {
             })();
 
             try {
-                // User JavaScript
-                ${js}
+                ${js || ''}
             } catch (error) {
                 console.error(error);
             }
