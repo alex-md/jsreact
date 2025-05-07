@@ -1,5 +1,6 @@
-import { StrictMode } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { StrictMode } from 'react';
 import App from './App';
 import './index.css';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
@@ -23,8 +24,30 @@ window.MonacoEnvironment = {
     }
 };
 
-createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <App />
-    </StrictMode>
-);
+// Document ready function to ensure DOM is fully loaded
+function initReactApp() {
+    const container = document.getElementById('root');
+
+    if (!container) {
+        console.error('Root element #root not found in the DOM.');
+    } else {
+        try {
+            const root = createRoot(container);
+            root.render(
+                <StrictMode>
+                    <App />
+                </StrictMode>
+            );
+            console.log('React app successfully mounted');
+        } catch (error) {
+            console.error('Error mounting React app:', error);
+        }
+    }
+}
+
+// Wait for DOM to be fully loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReactApp);
+} else {
+    initReactApp();
+}

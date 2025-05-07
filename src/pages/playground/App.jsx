@@ -1,28 +1,38 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Package, Moon, Sun } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Package, Moon, Sun, X } from 'lucide-react';
 import Split from 'split.js';
+import Editor from './components/Editor';
 import Preview from './components/Preview';
 import PackageManager from './components/PackageManager';
-
-// Dynamically import the Editor component
-const Editor = lazy(() => import('./components/Editor'));
+import { showToast } from '@components/toast.js';
 
 function App() {
     const [html, setHtml] = useState('<div class="container mt-5">\n  <h1>Hello, World!</h1>\n  <p>Start coding to see your changes in real-time.</p>\n</div>');
-    const [css, setCss] = useState(`body {\n  font-family: system-ui, -apple-system, sans-serif;\n  color: #333;\n}\n\nh1 {\n  color: #0070f3;\n}\n`);
-    const [js, setJs] = useState('// Your JavaScript code here\nconsole.log("Hello from the playground!");');
+    const [css, setCss] = useState('body {\n  font-family: system-ui, -apple-system, sans-serif;\n  color: #333;\n}\n\nh1 {\n  color: #0070f3;\n}');
+    const [js, setJs] = useState(`// Your JavaScript code here
+console.log("Hello from the playground!");
 
-    const handleCssChange = (newCssValue) => {
-        console.log('App.jsx: handleCssChange called with:', newCssValue); // DIAGNOSTIC LOG
-        setCss(newCssValue);
-    };
+// Example of JSX usage
+const ExampleComponent = () => {
+  return React.createElement('div', { className: 'example' },
+    React.createElement('h2', null, 'JSX Example'),
+    React.createElement('p', null, 'This is an example of how to use JSX-like syntax')
+  );
+};
 
+// Create an element in the DOM
+const container = document.createElement('div');
+document.body.appendChild(container);
+
+// Render the component (this only works with the React libraries added)
+// If you want to use actual JSX, add React libraries from the Package Manager
+`);
     const [packages, setPackages] = useState([
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
     ]);
-    const [darkMode, setDarkMode] = useState(false);
-    const [showPackageManager, setShowPackageManager] = useState(false);
+    const [darkMode, setDarkMode] = useState(false); const [showPackageManager, setShowPackageManager] = useState(false);
     const [activeTab, setActiveTab] = useState('html');  // Not used, but kept for potential future features
+    const [showJsxNotification, setShowJsxNotification] = useState(true);  // Show JSX notification initially
 
     const splitVerticalRef = useRef(null);
     const splitHorizontalRef = useRef(null);
@@ -77,21 +87,33 @@ function App() {
                 splitHorizontalInstance.current = null;
             }
         };
-    }, []);
-
-    // Handle dark mode
+    }, []);    // Handle dark mode
     useEffect(() => {
         document.documentElement.classList.toggle('dark', darkMode);
     }, [darkMode]);
 
-    const addPackage = (packageUrl) => {
+    // Show welcome toast when component mounts
+    useEffect(() => {
+        showToast('Welcome to the JavaScript Playground! JSX support has been enabled.', 'info');
+    }, []); const addPackage = (packageUrl) => {
         if (!packages.includes(packageUrl)) {
             setPackages([...packages, packageUrl]);
+
+            // Show success toast when package is added
+            const packageName = packageUrl.split('/').pop();
+            showToast(`Package ${packageName} added successfully!`, 'success');
+
+            // Show specific notification for React packages
+            if (packageUrl.includes('react')) {
+                showToast('React detected! You can now use full JSX features in the JavaScript editor.', 'info');
+            }
         }
     };
 
     const removePackage = (packageUrl) => {
         setPackages(packages.filter(p => p !== packageUrl));
+        const packageName = packageUrl.split('/').pop();
+        showToast(`Package ${packageName} removed.`, 'warning');
     };
 
     return (
@@ -105,6 +127,7 @@ function App() {
                             : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                             }`}
                     >
+                        HTML
                     </button>
                     <button
                         onClick={() => setActiveTab('css')}
@@ -113,6 +136,7 @@ function App() {
                             : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                             }`}
                     >
+                        CSS
                     </button>
                     <button
                         onClick={() => setActiveTab('js')}
@@ -121,6 +145,7 @@ function App() {
                             : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                             }`}
                     >
+                        JavaScript
                     </button>
                 </div>
 
@@ -149,14 +174,12 @@ function App() {
                             <h2 className="text-sm font-medium">HTML</h2>
                         </div>
                         <div className="editor-content">
-                            <Suspense fallback={<div>Loading Editor...</div>}>
-                                <Editor
-                                    language="html"
-                                    value={html}
-                                    onChange={setHtml}
-                                    theme={darkMode ? 'vs-dark' : 'vs'}
-                                />
-                            </Suspense>
+                            <Editor
+                                language="html"
+                                value={html}
+                                onChange={setHtml}
+                                theme={darkMode ? 'vs-dark' : 'vs'}
+                            />
                         </div>
                     </div>
 
@@ -165,30 +188,42 @@ function App() {
                             <h2 className="text-sm font-medium">CSS</h2>
                         </div>
                         <div className="editor-content">
-                            <Suspense fallback={<div>Loading Editor...</div>}>
-                                <Editor
-                                    language="css"
-                                    value={css}
-                                    onChange={handleCssChange} // Use the wrapper function
-                                    theme={darkMode ? 'vs-dark' : 'vs'}
-                                />
-                            </Suspense>
+                            <Editor
+                                language="css"
+                                value={css}
+                                onChange={setCss}
+                                theme={darkMode ? 'vs-dark' : 'vs'}
+                            />
                         </div>
                     </div>
 
                     <div className="js-editor editor-container">
                         <div className={`px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
                             <h2 className="text-sm font-medium">JavaScript</h2>
-                        </div>
-                        <div className="editor-content">
-                            <Suspense fallback={<div>Loading Editor...</div>}>
-                                <Editor
-                                    language="javascript"
-                                    value={js}
-                                    onChange={setJs}
-                                    theme={darkMode ? 'vs-dark' : 'vs'}
-                                />
-                            </Suspense>
+                        </div>                        <div className="editor-content">
+                            {showJsxNotification && activeTab === 'js' && (
+                                <div className={`absolute top-0 left-0 right-0 z-10 p-2 text-sm ${darkMode ? 'bg-blue-900/80 text-blue-100' : 'bg-blue-100 text-blue-800'} border-b ${darkMode ? 'border-blue-800' : 'border-blue-200'}`}>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <span className="font-medium">JSX Support:</span> Basic JSX syntax is now supported! Add React libraries from Package Manager for full React support.
+                                        </div>                                        <button
+                                            onClick={() => {
+                                                setShowJsxNotification(false);
+                                                showToast('JSX notification dismissed. You can still use JSX in your code.', 'info');
+                                            }}
+                                            className={`p-1 rounded-full ${darkMode ? 'hover:bg-blue-800' : 'hover:bg-blue-200'}`}
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                            <Editor
+                                language="javascript"
+                                value={js}
+                                onChange={setJs}
+                                theme={darkMode ? 'vs-dark' : 'vs'}
+                            />
                         </div>
                     </div>
                 </div>
