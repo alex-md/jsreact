@@ -4,7 +4,6 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 const Editor = ({ language, value, onChange, theme }) => {
     const editorRef = useRef(null);
     const monacoEditorRef = useRef(null);
-    const resizeObserverRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -40,15 +39,10 @@ const Editor = ({ language, value, onChange, theme }) => {
                 });
 
                 monacoEditorRef.current.onDidChangeModelContent(() => {
-                    onChange(monacoEditorRef.current?.getValue() || '');
+                    const currentValue = monacoEditorRef.current?.getValue();
+                    console.log(`Editor [${language}] content changed:`, currentValue); // DIAGNOSTIC LOG
+                    onChange(currentValue || '');
                 });
-
-                window.addEventListener('resize', resizeEditor);
-                resizeObserverRef.current = new ResizeObserver(resizeEditor);
-                resizeObserverRef.current.observe(editorRef.current);
-
-                monaco.editor.setTheme(theme);
-                resizeEditor(); // Initial layout adjustment
             } catch (err) {
                 console.error('Failed to initialize Monaco editor:', err);
                 setError(err instanceof Error ? err.message : 'Failed to initialize Monaco editor');
@@ -58,10 +52,6 @@ const Editor = ({ language, value, onChange, theme }) => {
         initializeEditor();
 
         return () => {
-            window.removeEventListener('resize', resizeEditor);
-            if (resizeObserverRef.current) {
-                resizeObserverRef.current.disconnect();
-            }
             if (monacoEditorRef.current) {
                 monacoEditorRef.current.dispose();
                 monacoEditorRef.current = null;
