@@ -46,79 +46,68 @@ const Preview = ({ html, css, js, packages, darkMode }) => {
                 const processedCss = css ? css.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
 
                 const fullHtml = `
-                    <!DOCTYPE html>
-                    <html class="${darkMode ? 'dark' : ''}">
-                        <head>
-                            <meta charset="utf-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1">
-                            <base target="_blank">
-                            ${packages
+<!DOCTYPE html>
+<html class="${darkMode ? 'dark' : ''}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <base target="_blank">
+        ${packages
                         .filter(pkg => pkg.endsWith('.css'))
                         .map(pkg => `<link rel="stylesheet" href="${pkg}" />`)
-                        .join('\n')
-                    }                            <style>
-                                /* Base styles */
-                                :root { 
-                                    color-scheme: ${darkMode ? 'dark' : 'light'};
-                                }
-                                body { 
-                                    margin: 0; 
-                                    min-height: 100vh;
-                                    font-family: system-ui, -apple-system, sans-serif;
-                                }
-                                .dark body { 
-                                    background: #1a1a1a; 
-                                    color: #fff; 
-                                }
-                            </style>
-                            <style type="text/css">
-                                ${processedCss || '/* No CSS content */'}
-                            </style>
-                        </head>
-                        <body>
-                            ${html}
-                            ${packages
+                        .join('\n')}
+        <style>
+            /* Base styles */
+            :root { 
+                color-scheme: ${darkMode ? 'dark' : 'light'};
+            }
+            /* User styles */
+            ${processedCss}
+        </style>
+    </head>
+    <body>
+        ${html}
+        ${packages
                         .filter(pkg => pkg.endsWith('.js'))
                         .map(pkg => `<script src="${pkg}"></script>`)
-                        .join('\n')
-                    }
-                            <script>
-                                // Set up console message forwarding
-                                (function() {
-                                    const consoleMethods = ['log', 'error', 'warn', 'info'];
-                                    consoleMethods.forEach(method => {
-                                        const original = console[method];
-                                        console[method] = (...args) => {
-                                            window.parent.postMessage({
-                                                type: 'console',
-                                                method,
-                                                args
-                                            }, '*');
-                                            original.apply(console, args);
-                                        };
-                                    });
+                        .join('\n')}
+        <script>
+            // Set up console message forwarding
+            (function() {
+                const consoleMethods = ['log', 'error', 'warn', 'info'];
+                consoleMethods.forEach(method => {
+                    const original = console[method];
+                    console[method] = (...args) => {
+                        window.parent.postMessage({
+                            type: 'console',
+                            method,
+                            args
+                        }, '*');
+                        original.apply(console, args);
+                    };
+                });
 
-                                    window.onerror = (message, source, lineno, colno, error) => {
-                                        window.parent.postMessage({
-                                            type: 'error',
-                                            message,
-                                            source,
-                                            lineno,
-                                            colno
-                                        }, '*');
-                                        return true;
-                                    };
-                                })();
+                window.onerror = (message, source, lineno, colno, error) => {
+                    window.parent.postMessage({
+                        type: 'error',
+                        message,
+                        source,
+                        lineno,
+                        colno
+                    }, '*');
+                    return true;
+                };
+            })();
 
-                                try {
-                                    ${js}
-                                } catch (error) {
-                                    console.error(error);
-                                }
-                            </script>
-                        </body>
-                    </html>
-                `;
+            try {
+                // User JavaScript
+                ${js}
+            } catch (error) {
+                console.error(error);
+            }
+        </script>
+    </body>
+</html>`;
 
                 // Use srcDoc instead of document.write
                 iframeRef.current.srcdoc = fullHtml;
