@@ -4,47 +4,45 @@
  */
 
 export function injectCriticalCSS() {
-    // For production builds, this would be replaced with actual critical CSS content
-    // Generated using a tool like critical or critters during the build process
-
-    // Load critical.css first - contains minimal styles needed for above-the-fold content
-    const criticalCSS = document.createElement('link');
-    criticalCSS.rel = 'stylesheet';
-    criticalCSS.href = '/assets/styles/critical.css';
-    document.head.appendChild(criticalCSS);
-
-    // Load main global.css with print media strategy for non-blocking
-    const globalCSS = document.createElement('link');
-    globalCSS.rel = 'stylesheet';
-    globalCSS.href = '/assets/styles/global.css';
-    globalCSS.media = 'print';
-    globalCSS.onload = () => {
-        globalCSS.media = 'all';
-    };
-    document.head.appendChild(globalCSS);
-
-    // Load additional CSS files with low priority
-    const additionalCSS = [
-        '/assets/styles/typography.css',
-        '/assets/styles/micro-interactions.css',
-        '/assets/styles/container-queries.css'
+    // Define stylesheets to load with proper paths
+    const stylesheets = [
+        { path: '/src/assets/styles/critical.css', priority: 'high' },
+        { path: '/src/assets/styles/global.css', priority: 'medium' },
+        { path: '/src/assets/styles/typography.css', priority: 'low' },
+        { path: '/src/assets/styles/micro-interactions.css', priority: 'low' },
+        { path: '/src/assets/styles/container-queries.css', priority: 'low' }
     ];
 
-    additionalCSS.forEach(href => {
+    // Create a style element for immediate critical CSS
+    const criticalStyle = document.createElement('style');
+    criticalStyle.textContent = `
+        body { opacity: 1; }
+        .js-loading { opacity: 0; }
+        .js-ready { opacity: 1; transition: opacity 0.3s; }
+    `;
+    document.head.insertBefore(criticalStyle, document.head.firstChild);
+
+    // Load all stylesheets with proper priority
+    stylesheets.forEach(({ path, priority }) => {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = href;
-        link.media = 'print';
-        link.onload = () => {
-            link.media = 'all';
-        };
+        link.href = path;
+
+        if (priority !== 'high') {
+            link.media = 'print';
+            link.onload = () => {
+                link.media = 'all';
+            };
+        }
+
+        link.setAttribute('data-priority', priority);
         document.head.appendChild(link);
     });
 
     // Add preload for our variable font
     const fontPreload = document.createElement('link');
     fontPreload.rel = 'preload';
-    fontPreload.href = '/assets/fonts/Inter-roman.var.woff2';
+    fontPreload.href = '/src/assets/fonts/Inter-roman.var.woff2';
     fontPreload.as = 'font';
     fontPreload.type = 'font/woff2';
     fontPreload.crossOrigin = 'anonymous';
