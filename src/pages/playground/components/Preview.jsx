@@ -42,6 +42,9 @@ const Preview = ({ html, css, js, packages, darkMode }) => {
             setError(null);
 
             try {
+                // Process CSS safely
+                const processedCss = css ? css.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+
                 const fullHtml = `
                     <!DOCTYPE html>
                     <html class="${darkMode ? 'dark' : ''}">
@@ -53,12 +56,23 @@ const Preview = ({ html, css, js, packages, darkMode }) => {
                         .filter(pkg => pkg.endsWith('.css'))
                         .map(pkg => `<link rel="stylesheet" href="${pkg}" />`)
                         .join('\n')
-                    }
-                            <style>
-                                :root { color-scheme: ${darkMode ? 'dark' : 'light'}; }
-                                body { margin: 0; min-height: 100vh; }
-                                .dark body { background: #1a1a1a; color: #fff; }
-                                ${css}
+                    }                            <style>
+                                /* Base styles */
+                                :root { 
+                                    color-scheme: ${darkMode ? 'dark' : 'light'};
+                                }
+                                body { 
+                                    margin: 0; 
+                                    min-height: 100vh;
+                                    font-family: system-ui, -apple-system, sans-serif;
+                                }
+                                .dark body { 
+                                    background: #1a1a1a; 
+                                    color: #fff; 
+                                }
+                            </style>
+                            <style type="text/css">
+                                ${processedCss || '/* No CSS content */'}
                             </style>
                         </head>
                         <body>
