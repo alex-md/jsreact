@@ -8,7 +8,6 @@ import PackageManager from './components/PackageManager';
 const Editor = lazy(() => import('./components/Editor'));
 
 function App() {
-    console.log("App component rendering/re-rendering. Current CSS state:", css); // DIAGNOSTIC LOG
     const [html, setHtml] = useState('<div class="container mt-5">\n  <h1>Hello, World!</h1>\n  <p>Start coding to see your changes in real-time.</p>\n</div>');
     const [css, setCss] = useState(`body {\n  font-family: system-ui, -apple-system, sans-serif;\n  color: #333;\n}\n\nh1 {\n  color: #0070f3;\n}\n`);
     const [js, setJs] = useState('// Your JavaScript code here\nconsole.log("Hello from the playground!");');
