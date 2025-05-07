@@ -9,7 +9,7 @@ const Editor = lazy(() => import('./components/Editor'));
 
 function App() {
     const [html, setHtml] = useState('<div class="container mt-5">\n  <h1>Hello, World!</h1>\n  <p>Start coding to see your changes in real-time.</p>\n</div>');
-    const [css, setCss] = useState('body {\n  font-family: system-ui, -apple-system, sans-serif;\n  color: #333;\n}\n\nh1 {\n  color: #0070f3;\n}');
+    const [css, setCss] = useState(`<style>\nbody {\n  font-family: system-ui, -apple-system, sans-serif;\n  color: #333;\n}\n\nh1 {\n  color: #0070f3;\n}\n</style>`);
     const [js, setJs] = useState('// Your JavaScript code here\nconsole.log("Hello from the playground!");');
     const [packages, setPackages] = useState([
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
@@ -162,8 +162,8 @@ function App() {
                             <Suspense fallback={<div>Loading Editor...</div>}>
                                 <Editor
                                     language="css"
-                                    value={css}
-                                    onChange={setCss}
+                                    value={css.replace(/<\/?style>/g, '').trim()}
+                                    onChange={(value) => setCss(`<style>\n${value}\n</style>`)}
                                     theme={darkMode ? 'vs-dark' : 'vs'}
                                 />
                             </Suspense>
