@@ -40,7 +40,6 @@ const Editor = ({ language, value, onChange, theme }) => {
 
                 monacoEditorRef.current.onDidChangeModelContent(() => {
                     const currentValue = monacoEditorRef.current?.getValue();
-                    console.log(`Editor [${language}] content changed:`, currentValue); // DIAGNOSTIC LOG
                     onChange(currentValue || '');
                 });
             } catch (err) {

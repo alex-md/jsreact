@@ -8,9 +8,16 @@ import PackageManager from './components/PackageManager';
 const Editor = lazy(() => import('./components/Editor'));
 
 function App() {
+    console.log("App component rendering/re-rendering. Current CSS state:", css); // DIAGNOSTIC LOG
     const [html, setHtml] = useState('<div class="container mt-5">\n  <h1>Hello, World!</h1>\n  <p>Start coding to see your changes in real-time.</p>\n</div>');
     const [css, setCss] = useState(`body {\n  font-family: system-ui, -apple-system, sans-serif;\n  color: #333;\n}\n\nh1 {\n  color: #0070f3;\n}\n`);
     const [js, setJs] = useState('// Your JavaScript code here\nconsole.log("Hello from the playground!");');
+
+    const handleCssChange = (newCssValue) => {
+        console.log('App.jsx: handleCssChange called with:', newCssValue); // DIAGNOSTIC LOG
+        setCss(newCssValue);
+    };
+
     const [packages, setPackages] = useState([
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
     ]);
@@ -163,7 +170,7 @@ function App() {
                                 <Editor
                                     language="css"
                                     value={css}
-                                    onChange={setCss}
+                                    onChange={handleCssChange} // Use the wrapper function
                                     theme={darkMode ? 'vs-dark' : 'vs'}
                                 />
                             </Suspense>
