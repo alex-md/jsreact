@@ -1,27 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-// Configure Monaco to better handle JSX
+// Configure Monaco to handle JSX in JavaScript only
 const configureMonacoJSX = () => {
-    // Add JSX support to JavaScript and TypeScript
     try {
-        const languages = ['javascript', 'typescript'];
-        if (monaco.languages.typescript) {
-            languages.forEach(lang => {
-                monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-                    jsx: monaco.languages.typescript.JsxEmit.React,
-                    jsxFactory: 'React.createElement',
-                    reactNamespace: 'React',
-                    allowNonTsExtensions: true,
-                    allowJs: true,
-                    target: monaco.languages.typescript.ScriptTarget.Latest,
-                });
-            });
-        } else {
-            console.warn('TypeScript language support not available in Monaco');
+        // Wait for monaco to be fully initialized
+        if (!monaco.languages || !monaco.languages.typescript) {
+            console.warn('Waiting for Monaco language services to initialize...');
+            return false;
         }
+
+        // Configure JavaScript defaults
+        const compilerOptions = {
+            jsx: monaco.languages.typescript.JsxEmit.React,
+            jsxFactory: 'React.createElement',
+            reactNamespace: 'React',
+            allowNonTsExtensions: true,
+            allowJs: true,
+            target: monaco.languages.typescript.ScriptTarget.Latest,
+        };
+
+        monaco.languages.typescript.javascriptDefaults.setCompilerOptions(compilerOptions);
+        return true;
     } catch (error) {
         console.error('Error configuring Monaco JSX support:', error);
+        return false;
     }
 };
 
@@ -36,16 +39,30 @@ const Editor = ({ language, value, onChange, theme }) => {
         if (monacoEditorRef.current) {
             monacoEditorRef.current.layout();
         }
-    };
-    
-    // Main initialization effect
+    };    // Main initialization effect
     useEffect(() => {
         const initializeEditor = async () => {
             if (!editorRef.current || monacoEditorRef.current) return;
 
             try {
-                // Configure JSX support for JavaScript/TypeScript
-                configureMonacoJSX();
+                setIsLoading(true);
+
+                // Retry configuration until Monaco is ready
+                let retries = 0;
+                const maxRetries = 5;
+                let configured = false;
+
+                while (!configured && retries < maxRetries) {
+                    configured = configureMonacoJSX();
+                    if (!configured) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        retries++;
+                    }
+                }
+
+                if (!configured) {
+                    throw new Error('Failed to configure Monaco editor after multiple attempts');
+                }
 
                 monacoEditorRef.current = monaco.editor.create(editorRef.current, {
                     value,
@@ -65,7 +82,7 @@ const Editor = ({ language, value, onChange, theme }) => {
                     renderWhitespace: 'none',
                     fixedOverflowWidgets: false,
                 });
-                
+
                 // Apply specific settings for JSX content if language is javascript
                 if (language === 'javascript') {
                     const model = monacoEditorRef.current.getModel();
@@ -76,33 +93,17 @@ const Editor = ({ language, value, onChange, theme }) => {
                                 noSemanticValidation: true,
                                 noSyntaxValidation: false,
                                 noSuggestionDiagnostics: true
-                            });
-                            
-                            // Add comprehensive React type definitions for better intellisense
+                            });                            // Add basic React declarations for JavaScript
                             monaco.languages.typescript.javascriptDefaults.addExtraLib(`
                                 declare namespace React {
-                                    function createElement(type: any, props?: any, ...children: any[]): any;
-                                    function useState<T>(initialState: T | (() => T)): [T, (newState: T | ((prevState: T) => T)) => void];
-                                    function useEffect(effect: () => void | (() => void), deps?: any[]): void;
-                                    function useRef<T>(initialValue: T): { current: T };
-                                    function useContext<T>(context: React.Context<T>): T;
-                                    function useCallback<T extends (...args: any[]) => any>(callback: T, deps: any[]): T;
-                                    function useMemo<T>(factory: () => T, deps: any[]): T;
-                                    const Fragment: symbol;
-                                    
-                                    // Common types
-                                    interface FunctionComponent<P = {}> {
-                                        (props: P): any;
-                                    }
-                                    type FC<P = {}> = FunctionComponent<P>;
-                                    
-                                    // Context API
-                                    interface Context<T> {
-                                        Provider: any;
-                                        Consumer: any;
-                                        displayName?: string;
-                                    }
-                                    function createContext<T>(defaultValue: T): Context<T>;
+                                    function createElement(type, props, ...children);
+                                    function useState(initialState);
+                                    function useEffect(effect, deps);
+                                    function useRef(initialValue);
+                                    function useContext(context);
+                                    function useCallback(callback, deps);
+                                    function useMemo(factory, deps);
+                                    const Fragment;
                                 }
                                 
                                 // Export React for global use
@@ -121,14 +122,16 @@ const Editor = ({ language, value, onChange, theme }) => {
                 resizeObserverRef.current.observe(editorRef.current);
 
                 monaco.editor.setTheme(theme);
-                resizeEditor(); // Initial layout adjustment
-            } catch (err) {
+                resizeEditor(); // Initial layout adjustment            } catch (err) {
                 console.error('Failed to initialize Monaco editor:', err);
                 setError(err instanceof Error ? err.message : 'Failed to initialize Monaco editor');
+            } finally {
+                setIsLoading(false);
             }
         };
 
-        initializeEditor();
+        // Add a small delay to ensure monaco is ready
+        setTimeout(initializeEditor, 100);
 
         return () => {
             window.removeEventListener('resize', resizeEditor);
