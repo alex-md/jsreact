@@ -89,22 +89,28 @@ class QRGenerator {
                     const text = e.clipboardData.getData('text');
                     console.log('Text from clipboard:', text);
                     try {
-                        new URL(text);
-                        // If the text is a valid URL, try to load the image
-                        fetch(text, { mode: 'cors' })
-                            .then(response => response.blob())
-                            .then(blob => {
-                                const file = new File([blob], 'pastedImage.png', { type: 'image/png' });
-                                self.handleFile(file);
-                            })
-                            .catch(error => {
-                                console.warn('Could not load image from URL:', text, error);
-                                showToast('Could not read image from clipboard');
-                            });
-                    } catch (error) {
-                        console.warn('Pasted text is not a URL:', text);
-                        showToast('Could not read image from clipboard');
-                    }
+                        const url = new URL(text);
+                        const allowedDomains = ['example.com', 'trusted.com']; // Define trusted domains
+                        if (!allowedDomains.includes(url.hostname)) {
+                            console.warn('URL hostname is not in the allowlist:', url.hostname);
+                            showToast('The provided URL is not allowed.');
+                            return;
+                        }
+                        // If the URL is valid and in the allowlist, try to load the image
+                       fetch(url.toString(), { mode: 'cors' })
+                           .then(response => response.blob())
+                           .then(blob => {
+                               const file = new File([blob], 'pastedImage.png', { type: 'image/png' });
+                               self.handleFile(file);
+                           })
+                           .catch(error => {
+                               console.warn('Could not load image from URL:', text, error);
+                               showToast('Could not read image from clipboard');
+                           });
+                   } catch (error) {
+                       console.warn('Pasted text is not a valid URL:', text);
+                       showToast('Could not read image from clipboard');
+                   }
                     break;
                 } else {
                     console.log('Unsupported clipboard item type:', item.type, item.kind);
