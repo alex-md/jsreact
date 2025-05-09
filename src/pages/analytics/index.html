@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+        <script type="module">
+            import { createHead } from '@components/head.js';
+            createHead(
+                'ViewTrack Analytics Dashboard',
+                'Track and analyze website traffic with real-time analytics and insights.',
+                {
+                    keywords: 'analytics dashboard, website traffic, real-time analytics, traffic tracking, web analytics',
+                    baseUrl: 'https://jsreact.com',
+                    publishDate: '2025-05-08'
+                }
+            );
+        </script>
+    </head>
+
+    <body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
+        <script type="module">
+            import { createNavbar } from '@components/navbar.js';
+            createNavbar();
+        </script>
+
+        <main class="container mx-auto px-4 py-8 flex-grow">
+            <div id="root"></div>
+        </main>
+
+        <script type="module">
+            import { createFooter } from '@components/footer.js';
+            createFooter();
+        </script>
+
+        <script type="module" src="./src/main.tsx"></script>
+    </body>
+
+</html>

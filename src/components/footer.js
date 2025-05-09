@@ -85,6 +85,10 @@ export function createFooter() {
 
     const activeBtn = makeBtn('activeUsersButton', SVG.users);
     const viewsBtn = makeBtn('viewCountButton', SVG.views);
+    viewsBtn.style.cursor = 'pointer';
+    viewsBtn.addEventListener('click', () => {
+        window.location.href = '/pages/analytics/';
+    });
 
     /* ---- Active users logic ---- */
     const updateActiveUsers = async () => {
