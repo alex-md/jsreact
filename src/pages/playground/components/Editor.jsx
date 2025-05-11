@@ -1,13 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-// Configure Monaco to handle JSX in JavaScript only
-const configureMonacoJSX = () => {
+const configureMonacoJSX = async (retryCount = 0) => {
+    if (retryCount > 10) {
+        throw new Error('Failed to configure Monaco editor after multiple attempts');
+    }
+
+    // Check if Monaco is fully loaded
+    if (!window.monaco || !monaco.languages || !monaco.languages.typescript) {
+        await new Promise(resolve => setTimeout(resolve, Math.min(100 * Math.pow(1.5, retryCount), 2000)));
+        return configureMonacoJSX(retryCount + 1);
+    }
+
     try {
-        // Wait for monaco to be fully initialized
-        if (!monaco.languages || !monaco.languages.typescript) {
-            console.warn('Waiting for Monaco language services to initialize...');
-            return false;
+        // Check if already configured
+        const existingOptions = monaco.languages.typescript.javascriptDefaults.getCompilerOptions();
+        if (existingOptions.jsx === monaco.languages.typescript.JsxEmit.React) {
+            return true;
         }
 
         // Configure JavaScript defaults
@@ -21,10 +30,29 @@ const configureMonacoJSX = () => {
         };
 
         monaco.languages.typescript.javascriptDefaults.setCompilerOptions(compilerOptions);
+
+        // Add React type definitions
+        monaco.languages.typescript.javascriptDefaults.addExtraLib(`
+            declare namespace React {
+                function createElement(type: any, props: any, ...children: any[]): any;
+                function useState<T>(initialState: T | (() => T)): [T, (newState: T | ((prevState: T) => T)) => void];
+                function useEffect(effect: () => void | (() => void), deps?: any[]): void;
+                function useRef<T>(initialValue: T): { current: T };
+                const Fragment: unique symbol;
+            }
+            declare module "react" {
+                export = React;
+            }
+        `, 'react.d.ts');
+
         return true;
     } catch (error) {
         console.error('Error configuring Monaco JSX support:', error);
-        return false;
+        if (retryCount < 10) {
+            await new Promise(resolve => setTimeout(resolve, Math.min(100 * Math.pow(1.5, retryCount), 2000)));
+            return configureMonacoJSX(retryCount + 1);
+        }
+        throw error;
     }
 };
 
@@ -32,46 +60,41 @@ const Editor = ({ language, value, onChange, theme }) => {
     const editorRef = useRef(null);
     const monacoEditorRef = useRef(null);
     const resizeObserverRef = useRef(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const resizeEditor = () => {
         if (monacoEditorRef.current) {
             monacoEditorRef.current.layout();
         }
-    };    // Main initialization effect
+    };
+
+    // Main initialization effect
     useEffect(() => {
+        let mounted = true;
+        let initAttempts = 0;
+        const maxAttempts = 10;
+
         const initializeEditor = async () => {
             if (!editorRef.current || monacoEditorRef.current) return;
+            if (initAttempts >= maxAttempts) {
+                throw new Error('Failed to initialize editor after maximum attempts');
+            }
 
             try {
-                setIsLoading(true);
+                setError(null);
+                await configureMonacoJSX();
 
-                // Retry configuration until Monaco is ready
-                let retries = 0;
-                const maxRetries = 5;
-                let configured = false;
+                if (!mounted) return;
 
-                while (!configured && retries < maxRetries) {
-                    configured = configureMonacoJSX();
-                    if (!configured) {
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        retries++;
-                    }
-                }
-
-                if (!configured) {
-                    throw new Error('Failed to configure Monaco editor after multiple attempts');
-                }
-
-                monacoEditorRef.current = monaco.editor.create(editorRef.current, {
+                const editorOptions = {
                     value,
                     language,
-                    theme,
+                    theme: theme || 'vs',
                     automaticLayout: true,
                     minimap: { enabled: false },
-                    scrollBeyondLastLine: true,
-                    fontSize: 13,
+                    scrollBeyondLastLine: false,
+                    fontSize: 14,
                     tabSize: 2,
                     wordWrap: 'on',
                     lineNumbers: 'on',
@@ -80,60 +103,53 @@ const Editor = ({ language, value, onChange, theme }) => {
                     lineDecorationsWidth: 10,
                     lineNumbersMinChars: 3,
                     renderWhitespace: 'none',
-                    fixedOverflowWidgets: false,
-                });
+                    fixedOverflowWidgets: true,
+                    'semanticHighlighting.enabled': true
+                };
 
-                // Apply specific settings for JSX content if language is javascript
+                monacoEditorRef.current = monaco.editor.create(editorRef.current, editorOptions);
+
                 if (language === 'javascript') {
-                    const model = monacoEditorRef.current.getModel();
-                    if (model) {
-                        // Better JSX support in JavaScript mode
-                        if (monaco.languages.typescript) {
-                            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-                                noSemanticValidation: true,
-                                noSyntaxValidation: false,
-                                noSuggestionDiagnostics: true
-                            });                            // Add basic React declarations for JavaScript
-                            monaco.languages.typescript.javascriptDefaults.addExtraLib(`
-                                declare namespace React {
-                                    function createElement(type, props, ...children);
-                                    function useState(initialState);
-                                    function useEffect(effect, deps);
-                                    function useRef(initialValue);
-                                    function useContext(context);
-                                    function useCallback(callback, deps);
-                                    function useMemo(factory, deps);
-                                    const Fragment;
-                                }
-                                
-                                // Export React for global use
-                                export = React;
-                            `, 'react-types.d.ts');
-                        }
-                    }
+                    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                        noSemanticValidation: true,
+                        noSyntaxValidation: false,
+                        noSuggestionDiagnostics: true
+                    });
                 }
 
                 monacoEditorRef.current.onDidChangeModelContent(() => {
-                    onChange(monacoEditorRef.current?.getValue() || '');
+                    if (mounted && onChange) {
+                        onChange(monacoEditorRef.current.getValue());
+                    }
                 });
 
-                window.addEventListener('resize', resizeEditor);
+                // Set up resize handling
                 resizeObserverRef.current = new ResizeObserver(resizeEditor);
                 resizeObserverRef.current.observe(editorRef.current);
+                window.addEventListener('resize', resizeEditor);
 
-                monaco.editor.setTheme(theme);
-                resizeEditor(); // Initial layout adjustment            } catch (err) {
-                console.error('Failed to initialize Monaco editor:', err);
-                setError(err instanceof Error ? err.message : 'Failed to initialize Monaco editor');
-            } finally {
+                // Initial layout
+                resizeEditor();
                 setIsLoading(false);
+            } catch (err) {
+                console.error('Editor initialization error:', err);
+                initAttempts++;
+
+                if (mounted && initAttempts < maxAttempts) {
+                    setTimeout(initializeEditor, Math.min(100 * Math.pow(1.5, initAttempts), 2000));
+                } else if (mounted) {
+                    setError(err instanceof Error ? err.message : 'Failed to initialize editor');
+                    setIsLoading(false);
+                }
             }
         };
 
-        // Add a small delay to ensure monaco is ready
-        setTimeout(initializeEditor, 100);
+        // Start initialization with a small delay
+        const timer = setTimeout(initializeEditor, 100);
 
         return () => {
+            mounted = false;
+            clearTimeout(timer);
             window.removeEventListener('resize', resizeEditor);
             if (resizeObserverRef.current) {
                 resizeObserverRef.current.disconnect();
@@ -145,19 +161,9 @@ const Editor = ({ language, value, onChange, theme }) => {
         };
     }, []);
 
-    // Update language
-    useEffect(() => {
-        if (monacoEditorRef.current) {
-            const model = monacoEditorRef.current.getModel();
-            if (model) {
-                monaco.editor.setModelLanguage(model, language);
-            }
-        }
-    }, [language]);
-
     // Update value
     useEffect(() => {
-        if (monacoEditorRef.current) {
+        if (monacoEditorRef.current && value !== undefined) {
             const currentValue = monacoEditorRef.current.getValue();
             if (currentValue !== value) {
                 monacoEditorRef.current.setValue(value);
@@ -165,18 +171,36 @@ const Editor = ({ language, value, onChange, theme }) => {
         }
     }, [value]);
 
+    // Update language
+    useEffect(() => {
+        if (monacoEditorRef.current && language) {
+            const model = monacoEditorRef.current.getModel();
+            if (model) {
+                monaco.editor.setModelLanguage(model, language);
+            }
+        }
+    }, [language]);
+
     // Update theme
     useEffect(() => {
-        if (monacoEditorRef.current) {
+        if (monacoEditorRef.current && theme) {
             monaco.editor.setTheme(theme);
         }
     }, [theme]);
 
     if (error) {
         return (
-            <div className="h-full w-full flex items-center justify-center flex-col gap-2 text-red-500">
-                <div>Error: {error}</div>
-                <div className="text-sm text-gray-500">Check browser console for details</div>
+            <div className="h-full w-full flex items-center justify-center flex-col gap-2 text-red-500 p-4">
+                <div>Error initializing editor: {error}</div>
+                <div className="text-sm text-gray-500">Check console for details</div>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return (
+            <div className="h-full w-full flex items-center justify-center">
+                <div className="text-sm text-gray-500">Loading editor...</div>
             </div>
         );
     }

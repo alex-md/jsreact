@@ -1,0 +1,28 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  Content-Security-Policy: upgrade-insecure-requests
+  X-Robots-Tag: index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1
+
+# Cache assets with a hash in the filename
+/*.*.js
+  Cache-Control: public, max-age=31536000, immutable
+/*.*.css
+  Cache-Control: public, max-age=31536000, immutable
+/*.*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML files and data files - no caching
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+/sitemap.xml
+  Cache-Control: public, max-age=0, must-revalidate
+/robots.txt
+  Cache-Control: public, max-age=0, must-revalidate

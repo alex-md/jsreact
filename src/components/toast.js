@@ -11,6 +11,8 @@ function createToastContainer() {
 
 export function showToast(message, type = 'info') {
     const toastContainer = createToastContainer();
+    if (!toastContainer) return; // Safety check
+
     const toast = document.createElement('div');
 
     // Base toast styles
@@ -20,7 +22,7 @@ export function showToast(message, type = 'info') {
         bg-background border-border
     `;
 
-    // Type-specific styles and icons
+    // Type-specific styles
     const typeStyles = {
         info: {
             icon: '<i class="fas fa-info-circle text-blue-500"></i>',
@@ -47,17 +49,23 @@ export function showToast(message, type = 'info') {
     toast.innerHTML = `
         ${icon}
         <p class="text-sm text-foreground flex-1">${message}</p>
-        <button class="text-muted-foreground hover:text-foreground transition-colors">
+        <button class="text-muted-foreground hover:text-foreground transition-colors" type="button">
             <i class="fas fa-times"></i>
         </button>
     `;
 
     // Add click handler for close button
     const closeButton = toast.querySelector('button');
-    closeButton.onclick = () => {
-        toast.classList.add('opacity-0', 'translate-y-2');
-        setTimeout(() => toast.remove(), 300);
-    };
+    if (closeButton) {
+        closeButton.onclick = () => {
+            toast.classList.add('opacity-0', 'translate-y-2');
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        };
+    }
 
     // Add to container and animate in
     toastContainer.appendChild(toast);
@@ -69,7 +77,11 @@ export function showToast(message, type = 'info') {
     setTimeout(() => {
         if (toast.parentElement) {
             toast.classList.add('opacity-0', 'translate-y-2');
-            setTimeout(() => toast.remove(), 300);
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
         }
     }, 5000);
 }
