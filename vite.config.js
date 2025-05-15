@@ -1,4 +1,5 @@
 // vite.config.js
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
@@ -31,12 +32,14 @@ export default defineConfig({
     root: srcDir,                 // dev server root
     publicDir: path.resolve(rootDir, 'public'),
     base: '/',
-    plugins: [react({
-        jsxImportSource: '@emotion/react',
-        babel: {
-            plugins: ['@emotion/babel-plugin']
-        }
-    })],
+    plugins: [
+        react({
+            jsxImportSource: '@emotion/react',
+            babel: {
+                plugins: ['@emotion/babel-plugin']
+            }
+        }),
+    ],
     resolve: {
         alias: {
             '@': srcDir,
@@ -87,7 +90,8 @@ export default defineConfig({
             '@rstacruz/startup-name-generator',
             '@mui/material',
             '@emotion/react',
-            '@emotion/styled'
+            '@emotion/styled',
+            'monaco-editor'
         ],
         exclude: [],
     },
@@ -97,5 +101,8 @@ export default defineConfig({
         watch: {
             usePolling: true, // Add polling for better file watching
         },
+    },
+    worker: {
+        format: 'es', // Use ES modules for workers
     },
 });

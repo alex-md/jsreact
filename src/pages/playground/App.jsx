@@ -1,3 +1,4 @@
+// filepath: /Users/alex/Documents/GitHub/jsreact/src/pages/playground/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Package, Moon, Sun, X } from 'lucide-react';
 import Split from 'split.js';
@@ -9,130 +10,150 @@ import { showToast } from '@components/toast.js';
 function App() {
     console.log("App component rendering");
     const [isSimplifiedMode, setIsSimplifiedMode] = useState(false);
-    const [html, setHtml] = useState('<style>\nbody {\n  font-family: system-ui, -apple-system, sans-serif;\n  color: #333;\n}\n\nh1 {\n  color: #0070f3;\n}\n</style>\n\n<div class="container mt-5">\n  <h1>Hello, World!</h1>\n  <p>Start coding to see your changes in real-time.</p>\n</div>');
-    const [js, setJs] = useState(`// Your JavaScript code here\nconsole.log("Hello from the playground!");\n\n// Example of JSX usage\nconst ExampleComponent = () => {\n  return React.createElement('div', { className: 'example' },\n    React.createElement('h2', null, 'JSX Example'),\n    React.createElement('p', null, 'This is an example of how to use JSX-like syntax')\n  );\n};\n\n// Create an element in the DOM\nconst container = document.createElement('div');\ndocument.body.appendChild(container);\n`);
+    const [html, setHtml] = useState('<p>Start coding to see your changes in real-time.</p>');
+    const [cssText, setCss] = useState(`/* Your CSS code here */
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h2 {
+  color: #0070f3;
+}`);
+    const [js, setJs] = useState(`// Your JavaScript code here
+console.log("Hello from the playground!");
+
+// Example: Create and add elements to the DOM
+const title = document.createElement('h2');
+title.textContent = 'JavaScript Example';
+title.style.color = '#0070f3';
+
+const paragraph = document.createElement('p');
+paragraph.textContent = 'This content was dynamically added with JavaScript!';
+
+const container = document.createElement('div');
+container.className = 'example-container';
+container.appendChild(title);
+container.appendChild(paragraph);
+
+document.body.appendChild(container);
+`);
     const [packages, setPackages] = useState([
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
     ]);
     const [darkMode, setDarkMode] = useState(false);
     const [showPackageManager, setShowPackageManager] = useState(false);
-    const [activeTab, setActiveTab] = useState('html');
-    const [showJsxNotification, setShowJsxNotification] = useState(true);
 
-    const splitVerticalRef = useRef(null);
-    const splitHorizontalRef = useRef(null);
-    const splitVerticalInstance = useRef(null);
-    const splitHorizontalInstance = useRef(null);
+    const mainSplitInstanceRef = useRef(null); // For [Editors Block] | [Preview]
+    const editorsSplitInstanceRef = useRef(null); // For [HTML] | [CSS] | [JS]
 
-    // Handle layout splitting
     useEffect(() => {
+        let mainSplitter = null;
+        let editorsSplitter = null;
+
         const initSplits = () => {
-            if (!splitVerticalRef.current || !splitHorizontalRef.current) return;
+            const editorsBlockElement = document.querySelector('.editors-block-split-target');
+            const previewPaneElement = document.querySelector('.preview-pane-split-target');
 
-            const editorsContainer = document.querySelector('.editors-container');
-            const previewPane = document.querySelector('.preview-pane');
-            const htmlEditor = document.querySelector('.html-editor');
-            const jsEditor = document.querySelector('.js-editor');
+            const htmlEditorElement = document.querySelector('.html-editor-split-target');
+            const cssEditorElement = document.querySelector('.css-editor-split-target');
+            const jsEditorElement = document.querySelector('.js-editor-split-target');
 
-            const splitOptions = {
-                sizes: [50, 50],
-                minSize: 100,
-                gutterSize: 8,
-                direction: 'horizontal',
-                elementStyle: (_, size, gutterSize) => ({
-                    'flexBasis': `calc(${size}% - ${gutterSize}px)`,
+            const commonSplitOptions = {
+                minSize: 50,
+                gutterSize: 10,
+                elementStyle: (dimension, size, gutterSize) => ({
+                    'flex-basis': `calc(${size}% - ${gutterSize}px)`,
                 }),
-                gutterStyle: (_, gutterSize) => ({
-                    'flexBasis': `${gutterSize}px`,
+                gutterStyle: (dimension, gutterSize) => ({
+                    'flex-basis': `${gutterSize}px`,
                 }),
-                // Add options to handle touch events passively
                 dragInterval: 1,
-                onDragStart: function () { },
-                onDragEnd: function () { },
-                snapOffset: 0
             };
 
-            if (editorsContainer && previewPane && !splitVerticalInstance.current) {
+            // Main split: [Editors Block] | [Preview Pane]
+            if (editorsBlockElement && previewPaneElement && !mainSplitInstanceRef.current) {
                 try {
-                    splitVerticalInstance.current = Split(['.editors-container', '.preview-pane'], {
-                        ...splitOptions,
+                    mainSplitter = Split([editorsBlockElement, previewPaneElement], {
+                        ...commonSplitOptions,
+                        sizes: [66, 34], // Example sizes: Editors block takes more space
+                        direction: 'horizontal', // Side-by-side panes, vertical gutter
                     });
+                    mainSplitInstanceRef.current = mainSplitter;
                 } catch (err) {
-                    console.error("Error initializing vertical split:", err);
+                    console.error("Error initializing main split:", err);
                 }
             }
 
-            if (htmlEditor && jsEditor && !splitHorizontalInstance.current) {
+            // Editors split: [HTML] | [CSS] | [JS] (within Editors Block)
+            if (htmlEditorElement && cssEditorElement && jsEditorElement && !editorsSplitInstanceRef.current) {
                 try {
-                    splitHorizontalInstance.current = Split(['.html-editor', '.js-editor'], {
-                        ...splitOptions,
+                    editorsSplitter = Split([htmlEditorElement, cssEditorElement, jsEditorElement], {
+                        ...commonSplitOptions,
+                        sizes: [33, 34, 33],
+                        direction: 'horizontal', // Side-by-side panes, vertical gutter
                     });
+                    editorsSplitInstanceRef.current = editorsSplitter;
                 } catch (err) {
-                    console.error("Error initializing horizontal split:", err);
+                    console.error("Error initializing editors split:", err);
                 }
             }
         };
 
-        const timer = setTimeout(initSplits, 1000);
+        const timer = setTimeout(initSplits, 100);
+
         return () => {
             clearTimeout(timer);
-            if (splitVerticalInstance.current) {
-                splitVerticalInstance.current.destroy();
-                splitVerticalInstance.current = null;
+            if (mainSplitInstanceRef.current) {
+                mainSplitInstanceRef.current.destroy();
+                mainSplitInstanceRef.current = null;
             }
-            if (splitHorizontalInstance.current) {
-                splitHorizontalInstance.current.destroy();
-                splitHorizontalInstance.current = null;
+            if (editorsSplitInstanceRef.current) {
+                editorsSplitInstanceRef.current.destroy();
+                editorsSplitInstanceRef.current = null;
             }
         };
     }, []);
 
-    // Handle dark mode
     useEffect(() => {
         document.documentElement.classList.toggle('dark', darkMode);
     }, [darkMode]);
 
-    // Add error boundary effect
     useEffect(() => {
         const handleError = (event) => {
             console.error("Global error caught:", event.error);
             event.preventDefault();
             setIsSimplifiedMode(true);
         };
-
         window.addEventListener('error', handleError);
         return () => window.removeEventListener('error', handleError);
     }, []);
 
-    // Set up a key press shortcut to toggle simplified mode
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === 'Escape' && event.shiftKey) {
                 setIsSimplifiedMode(prev => !prev);
             }
         };
-
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isSimplifiedMode]);
+    }, []);
 
-    // Show welcome toast when component mounts
     useEffect(() => {
-        // Create toast container if it doesn't exist
         const createToastContainer = () => {
-            const existingContainer = document.getElementById('toast-container');
-            if (existingContainer) return;
-
+            if (document.getElementById('toast-container')) return;
             const container = document.createElement('div');
             container.id = 'toast-container';
             document.body.appendChild(container);
         };
-
         const timer = setTimeout(() => {
             createToastContainer();
-            showToast('Welcome to the JavaScript Playground! JSX support has been enabled.', 'info');
+            showToast('Welcome to the HTML, CSS, and JavaScript Playground!', 'info');
         }, 1500);
-
         return () => clearTimeout(timer);
     }, []);
 
@@ -150,7 +171,6 @@ function App() {
         showToast(`Package ${packageName} removed.`, 'warning');
     };
 
-    // Render simplified mode if enabled
     if (isSimplifiedMode) {
         return (
             <div className="p-4">
@@ -166,16 +186,27 @@ function App() {
         );
     }
 
-    // Main render
     return (
         <div className="flex flex-col h-screen">
-            <div className="flex-1 flex min-h-0" ref={splitVerticalRef}>
-                <div className="editors-container min-h-0" ref={splitHorizontalRef}>
-                    <div className="html-editor editor-container">
+            {/* Main Split Container: lays out [Editors Block] and [Preview Pane] side-by-side */}
+            <div className="flex-1 flex flex-row min-h-0"> {/* flex-row for side-by-side children */}
+
+                {/* Editors Block: Contains HTML, CSS, JS editors. It's a target for the main split.
+                    Itself lays out its children (HTML, CSS, JS editors) side-by-side.
+                    `grow` and `min-w-0` are for its role in the main split.
+                    `flex-row` is for its internal layout.
+                    `min-h-0` for vertical flexibility if its content overflows. */}
+                <div className="editors-block-split-target flex flex-row grow min-w-0 min-h-0">
+
+                    {/* HTML Editor Pane: Target for the inner "editors split".
+                        `grow` and `min-w-0` for its role in the editors split.
+                        `flex flex-col` for its internal layout (header + editor content).
+                        `min-h-0` for vertical flexibility. */}
+                    <div className="html-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
                         <div className={`px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
-                            <h2 className="text-sm font-medium">HTML & CSS</h2>
+                            <h2 className="text-sm font-medium">HTML</h2>
                         </div>
-                        <div className="editor-content">
+                        <div className="editor-content flex-1 min-h-0">
                             <Editor
                                 language="html"
                                 value={html}
@@ -185,29 +216,27 @@ function App() {
                         </div>
                     </div>
 
-                    <div className="js-editor editor-container">
+                    {/* CSS Editor Pane: Target for the inner "editors split". */}
+                    <div className="css-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
+                        <div className={`px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
+                            <h2 className="text-sm font-medium">CSS</h2>
+                        </div>
+                        <div className="editor-content flex-1 min-h-0">
+                            <Editor
+                                language="css"
+                                value={cssText}
+                                onChange={setCss}
+                                theme={darkMode ? 'vs-dark' : 'vs'}
+                            />
+                        </div>
+                    </div>
+
+                    {/* JS Editor Pane: Target for the inner "editors split". */}
+                    <div className="js-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
                         <div className={`px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
                             <h2 className="text-sm font-medium">JavaScript</h2>
                         </div>
-                        <div className="editor-content">
-                            {showJsxNotification && (
-                                <div className={`absolute top-0 left-0 right-0 z-10 p-2 text-sm ${darkMode ? 'bg-blue-900/80 text-blue-100' : 'bg-blue-100 text-blue-800'} border-b ${darkMode ? 'border-blue-800' : 'border-blue-200'}`}>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <span className="font-medium">JSX Support:</span> Basic JSX syntax is now supported! Add React libraries from Package Manager for full React support.
-                                        </div>
-                                        <button
-                                            onClick={() => {
-                                                setShowJsxNotification(false);
-                                                showToast('JSX notification dismissed. You can still use JSX in your code.', 'info');
-                                            }}
-                                            className={`p-1 rounded-full ${darkMode ? 'hover:bg-blue-800' : 'hover:bg-blue-200'}`}
-                                        >
-                                            <X className="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
+                        <div className="editor-content flex-1 min-h-0">
                             <Editor
                                 language="javascript"
                                 value={js}
@@ -217,7 +246,12 @@ function App() {
                         </div>
                     </div>
                 </div>
-                <div className="preview-pane h-full flex flex-col min-h-0">
+
+                {/* Preview Pane: Target for the main split.
+                    `grow` and `min-w-0` for its role in the main split.
+                    `flex flex-col` for its internal layout (header + preview content).
+                    `min-h-0` for vertical flexibility. */}
+                <div className="preview-pane-split-target flex flex-col grow min-w-0 min-h-0">
                     <div className={`flex items-center justify-between px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
                         <h2 className="text-sm font-medium">Preview</h2>
                         <div className="flex items-center space-x-2">
@@ -237,8 +271,8 @@ function App() {
                             </button>
                         </div>
                     </div>
-                    <div className="flex-1 overflow-hidden">
-                        <Preview html={html} js={js} packages={packages} darkMode={darkMode} />
+                    <div className="flex-1 overflow-hidden min-h-0">
+                        <Preview html={html} cssCode={cssText} js={js} packages={packages} darkMode={darkMode} />
                     </div>
                 </div>
             </div>

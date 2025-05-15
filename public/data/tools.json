@@ -9,6 +9,15 @@
         "new": true
     },
     {
+        "id": "osrs",
+        "title": "OSRS Flipper",
+        "description": "Get real-time, risk-managed flipping suggestions for Old School RuneScape's Grand Exchange.",
+        "icon": "fas fa-coins",
+        "color": "amber",
+        "link": "/pages/osrs/index.html",
+        "new": true
+    },
+    {
         "id": "minify",
         "title": "Code Minifier",
         "description": "Minify your JavaScript, CSS, and HTML code to reduce file size",
@@ -79,14 +88,5 @@
         "icon": "fas fa-code",
         "color": "pink",
         "link": "/pages/playground/index.html"
-    },
-    {
-        "id": "osrs",
-        "title": "OSRS Flipper",
-        "description": "Get real-time, risk-managed flipping suggestions for Old School RuneScape's Grand Exchange.",
-        "icon": "fas fa-coins",
-        "color": "amber",
-        "link": "/pages/osrs/index.html/",
-        "new": true
     }
 ]

@@ -1,26 +1,35 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { StrictMode } from 'react';
 import App from './App';
 import './index.css';
+
+import * as monaco from 'monaco-editor';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
+import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-// Configure Monaco Editor worker paths
-window.MonacoEnvironment = {
-    getWorkerUrl(_, label) {
-        const workerMap = {
-            json: jsonWorker,
-            css: cssWorker,
-            html: htmlWorker,
-            javascript: editorWorker
-        };
-        const worker = workerMap[label] || editorWorker;
-        return worker.toString();
+// @ts-ignore
+self.MonacoEnvironment = {
+    getWorker(_, label) {
+        if (label === 'json') {
+            return new jsonWorker();
+        }
+        if (label === 'css' || label === 'scss' || label === 'less') {
+            return new cssWorker();
+        }
+        if (label === 'html' || label === 'handlebars' || label === 'razor') {
+            return new htmlWorker();
+        }
+        if (label === 'typescript' || label === 'javascript') {
+            return new tsWorker();
+        }
+        return new editorWorker();
     }
 };
+
+monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 
 // Document ready function to ensure DOM is fully loaded
 function initReactApp() {
@@ -78,10 +87,5 @@ function initReactApp() {
         }
     }
 }
-
-// Wait for DOM to be fully loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initReactApp);
-} else {
-    initReactApp();
-}
+// init app
+document.addEventListener('DOMContentLoaded', initReactApp);

@@ -51,22 +51,14 @@
         <!-- Navbar will be injected by navbar.js -->
         <div id="navbar"></div>
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar('/playground/');
+            import { createNavbar } from '/components/navbar.js';
+            createNavbar();
         </script>
 
-        <main class="flex-grow">
-            <div class="container mx-auto px-4 py-8">
-                <div class="mb-6 text-center">
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">JavaScript Playground</h1>
-                    <p class="text-lg text-gray-600 dark:text-gray-300">
-                        Interactive code editor with real-time preview for HTML, CSS, and JavaScript.
-                    </p>
-                </div>
-
-                <div id="root"
-                    class="w-full h-[80vh] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
-                </div>
+        <main class="flex-grow flex flex-col items-center justify-center p-4">
+            <div id="root"
+                class="w-full h-[80vh] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
+            </div>
             </div>
         </main>
 
