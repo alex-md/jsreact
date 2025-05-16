@@ -45,7 +45,6 @@ document.body.appendChild(container);
     const [packages, setPackages] = useState([
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
     ]);
-    const [darkMode, setDarkMode] = useState(false);
     const [showPackageManager, setShowPackageManager] = useState(false);
 
     const mainSplitInstanceRef = useRef(null); // For [Editors Block] | [Preview]
@@ -119,9 +118,7 @@ document.body.appendChild(container);
         };
     }, []);
 
-    useEffect(() => {
-        document.documentElement.classList.toggle('dark', darkMode);
-    }, [darkMode]);
+    // Dark mode effect removed
 
     useEffect(() => {
         const handleError = (event) => {
