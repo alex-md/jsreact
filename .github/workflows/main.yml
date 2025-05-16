@@ -25,27 +25,6 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: generate-sitemap
-      uses: cicirello/generate-sitemap@v1.10.1
-      with:
-        path-to-root: .
-        input-paths: dist
-        base-url-path: https://jsreact.com
-        include-html: true
-        include-pdf: true
-        sitemap-format: xml
-        additional-extensions: ""
-        drop-html-extension: false
-        date-only: false
-        exclude-paths: ""
-
-    - name: Output stats
-      if: steps.sitemap.outputs.sitemap-path # Only execute if sitemap generation succeeded
-      run: |
-        echo "Sitemap Path: ${{ steps.sitemap.outputs.sitemap-path }}"
-        echo "URL Count: ${{ steps.sitemap.outputs.url-count }}"
-        echo "Excluded Count: ${{ steps.sitemap.outputs.excluded-count }}"
-
     - name: Commit and push if changes
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
