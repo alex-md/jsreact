@@ -133,13 +133,20 @@ export function createHead(title, description, options = {}) {
         head.appendChild(el);
     });
 
+    // Add canonical URL
+    const canonicalLink = document.createElement('link');
+    canonicalLink.rel = 'canonical';
+    canonicalLink.href = window.location.href.split('?')[0].split('#')[0]; // Remove query params and hash
+    head.appendChild(canonicalLink);
+
     // Meta tags
     const metaTags = [
         { charset: 'UTF-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         { name: 'description', content: description },
         { name: 'theme-color', content: '#09090b' },
-        { name: 'robots', content: 'index, follow, max-image-preview:large' },
+        { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
+        { name: 'googlebot', content: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' },
         { name: 'author', content: 'JSreact' },
         { property: 'og:type', content: 'website' },
         { property: 'og:title', content: `${title} | JSreact` },
@@ -147,6 +154,8 @@ export function createHead(title, description, options = {}) {
         { property: 'og:url', content: window.location.href },
         { property: 'og:site_name', content: 'JSreact' },
         { property: 'og:image', content: getFullUrl('/assets/images/og-image.png') },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: `${title} | JSreact` },
         { name: 'twitter:description', content: description },

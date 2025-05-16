@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "postbuild": "sitemap-generator https://jsreact.com -o ./dist -b https://jsreact.com && mv ./dist/jsreact.com/sitemap.xml ./dist/sitemap.xml || mv ./sitemap.xml ./dist/sitemap.xml"
+    "generate-sitemap": "node ./scripts/generate-sitemap.js",
+    "postbuild": "npm run generate-sitemap"
   },
   "repository": {
     "type": "git",

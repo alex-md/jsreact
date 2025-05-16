@@ -1,18 +1,35 @@
 User-agent: *
 Allow: /
-Disallow: /assets/
+Allow: /*.html$
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.json$
+Disallow: /assets/styles/
 Disallow: /components/
 Disallow: /utils/
 Disallow: /workers/
 
-# Allow all tools pages
+# Allow specific paths
+Allow: /assets/images/
 Allow: /pages/*/
 
 # Important files
 Allow: /sitemap.xml
+Allow: /manifest.json
+Allow: /site.webmanifest
 
 # Crawl-delay
-Crawl-delay: 10
+Crawl-delay: 5
 
-# Sitemap
+# Sitemap (Make sure this is accessible)
 Sitemap: https://jsreact.com/sitemap.xml
+
+# Google-specific directives
+User-agent: Googlebot
+Allow: /
+Allow: /*.js$
+Allow: /*.css$
+Allow: /assets/images/
+
+User-agent: Googlebot-Image
+Allow: /assets/images/

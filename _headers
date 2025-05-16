@@ -6,6 +6,7 @@
   Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
   Content-Security-Policy: upgrade-insecure-requests
   X-Robots-Tag: index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1
+  Link: </sitemap.xml>; rel="sitemap"
 
 # Cache assets with a hash in the filename
 /*.*.js
