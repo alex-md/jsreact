@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+        <script>
+            createHead(
+                'JavaScript, CSS & HTML Minifier - Free Online Code Compression Tool',
+                'Free online tool to minify and optimize JavaScript, CSS, and HTML code. Reduce file size up to 80%, improve load times, and enhance website performance with advanced Terser compression. Best free code minifier with source map support.'
+            );
+        </script>
+
+        <!-- Enhanced SEO Meta Tags -->
+        <meta name="keywords"
+            content="javascript minifier, css minifier, html minifier, code compression, js minify, terser, code optimizer, web performance, minification tool, source map generator, code compressor">
+        <meta name="author" content="JSreact">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+        <!-- Enhanced Social Media Meta Tags -->
+        <meta property="article:tag" content="JavaScript Minifier">
+        <meta property="article:tag" content="CSS Minifier">
+        <meta property="article:tag" content="Code Optimization">
+        <meta property="article:tag" content="Terser">
+        <meta property="article:tag" content="Web Performance">
+
+        <!-- Viewport meta tag for responsiveness -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            /* Default styles for mobile-first approach */
+            .layout-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: stretch;
+                /* Stretch items to fill the container width */
+                min-height: calc(100vh - 300px);
+            }
+
+            .options-sidebar {
+                width: 100%;
+                /* Take full width on small screens */
+                margin-bottom: 1.5rem;
+                /* Add some spacing below the options sidebar */
+            }
+
+            .code-section {
+                width: 100%;
+                /* Take full width on small screens */
+                display: flex;
+                flex-direction: column;
+            }
+
+            .code-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .code-box {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .code-box textarea {
+                flex: 1;
+                min-height: 200px;
+                padding: var(--space-3) var(--space-4);
+                font-size: var(--text-base);
+                line-height: var(--leading-normal);
+                color: hsl(var(--foreground));
+                background: hsl(var(--background));
+                border: 1px solid hsl(var(--border));
+                border-radius: var(--radius-lg);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                resize: none;
+            }
+
+            textarea:hover {
+                border-color: hsl(var(--border) / 0.8);
+                background: hsl(var(--background) / 0.8);
+            }
+
+            textarea:focus {
+                outline: none;
+                border-color: hsl(var(--primary));
+                background: hsl(var(--background));
+                box-shadow:
+                    0 0 0 3px hsl(var(--primary) / 0.15),
+                    inset 0 0 0 1px hsl(var(--primary) / 0.2);
+            }
+
+            .input-card-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: var(--space-4);
+                border-top: 1px solid hsla(var(--border) / 0.5);
+                margin-top: var(--space-4);
+            }
+
+            .option-group {
+                transition: all 0.2s ease;
+            }
+
+            .option-group:hover {
+                transform: translateY(-1px);
+            }
+
+            /* Media query for larger screens */
+            @media (min-width: 1024px) {
+                .layout-container {
+                    display: grid;
+                    grid-template-columns: 1fr minmax(300px, 400px);
+                    gap: 1.5rem;
+                    align-items: start;
+                    min-height: calc(100vh - 300px);
+                }
+
+                .options-sidebar {
+                    position: sticky;
+                    top: 1rem;
+                    width: auto;
+                    /* Revert to auto width on larger screens */
+                }
+
+                .code-section {
+                    width: auto;
+                    /* Revert to auto width on larger screens */
+                }
+            }
+        </style>
+      <script type="module" crossorigin src="/assets/minify.BV1Npc6S.js"></script>
+      <link rel="modulepreload" crossorigin href="/assets/footer.CxdUKtjX.js">
+      <link rel="modulepreload" crossorigin href="/assets/head.Ciumq24I.js">
+      <link rel="modulepreload" crossorigin href="/assets/toast.yF4vTtGx.js">
+      <link rel="stylesheet" crossorigin href="/assets/head.DtTw7TIB.css">
+    </head>
+
+    <body class="bg-gray-50">
+
+        <div id="header"></div>
+        <!-- <script type="module">
+            import { createHeader } from '../../components/header.js';
+            const header = createHeader(
+                'Code Minifier',
+                'Minify JavaScript, CSS, and HTML code'
+            );
+            document.getElementById('header').appendChild(header);
+        </script> -->
+
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="layout-container">
+                <!-- Left Column: Code Input/Output -->
+                <div class="code-section">
+                    <div class="code-container">
+                        <!-- Input Box -->
+                        <div
+                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            <div class="p-6 space-y-4">
+                                <label for="input-code" class="block text-sm font-medium text-gray-700">
+                                    Input Code
+                                </label>
+                                <textarea id="input-code" placeholder="Paste your code here..."
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                <div class="input-card-footer">
+                                    <p id="input-size" class="text-sm text-gray-500">0 bytes</p>
+                                    <button id="minify-button"
+                                        class="px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                        <i class="fas fa-compress-alt mr-2"></i>
+                                        Minify Code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output Box -->
+                        <div
+                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            <div class="p-6 space-y-4">
+                                <label for="output-code" class="block text-sm font-medium text-gray-700">
+                                    Minified Code
+                                </label>
+                                <textarea id="output-code" readonly
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                <div class="flex justify-between items-center">
+                                    <p id="output-size" class="text-sm text-gray-500">0 bytes</p>
+                                    <div class="flex gap-4">
+                                        <button id="copy-button"
+                                            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                            <i class="fas fa-copy mr-2"></i>
+                                            Copy Output
+                                        </button>
+                                        <button id="clear-button"
+                                            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                            <i class="fas fa-trash-alt mr-2"></i>
+                                            Clear All
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Options -->
+                <div class="options-sidebar">
+                    <div
+                        class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                        <div class="border-b border-gray-200 px-6 py-4">
+                            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                <i class="fas fa-cog text-primary"></i>
+                                Settings
+                            </h2>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <!-- File Type Selection -->
+                            <div class="option-group space-y-3">
+                                <label class="block text-sm font-medium text-gray-700">File Type</label>
+                                <select id="file-type"
+                                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                                    <option value="js">JavaScript</option>
+                                    <option value="html">HTML</option>
+                                    <option value="css">CSS</option>
+                                </select>
+                            </div>
+
+                            <!-- JavaScript-specific Options -->
+                            <div id="js-options" class="space-y-4">
+                                <div class="option-group space-y-3">
+                                    <label class="block text-sm font-medium text-gray-700">Optimization Options</label>
+                                    <div class="space-y-3">
+                                        <label class="flex items-center gap-2 group">
+                                            <input type="checkbox" id="compress-code" checked
+                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Compress
+                                                Code</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 group">
+                                            <input type="checkbox" id="mangle-names" checked
+                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Mangle
+                                                Names</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 group">
+                                            <input type="checkbox" id="remove-comments" checked
+                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Remove
+                                                Comments</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="option-group space-y-3">
+                                    <label class="block text-sm font-medium text-gray-700">Advanced Options</label>
+                                    <div class="space-y-3">
+                                        <label class="flex items-center gap-2 group">
+                                            <input type="checkbox" id="module-type"
+                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Process as ES
+                                                Module</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 group">
+                                            <input type="checkbox" id="keep-fnames"
+                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Keep Function
+                                                Names</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 group">
+                                            <input type="checkbox" id="keep-classnames"
+                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Keep Class
+                                                Names</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="option-group space-y-3">
+                                    <label class="block text-sm font-medium text-gray-700">Target Environment</label>
+                                    <select id="ecma-version"
+                                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                                        <option value="5">ES5 (Highest Compatibility)</option>
+                                        <option value="2015">ES2015 (ES6)</option>
+                                        <option value="2020" selected>ES2020 (Modern)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Info Message -->
+                            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                                <p class="text-sm text-blue-700">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    HTML and CSS files use basic minification. JavaScript files use advanced Terser
+                                    minification.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </body>
+
+</html>

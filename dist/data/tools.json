@@ -1,0 +1,92 @@
+[
+    {
+        "id": "domain",
+        "title": "Domain Appraisal",
+        "description": "Get accurate market value estimates for domain names",
+        "icon": "fas fa-chart-line",
+        "color": "blue",
+        "link": "/pages/domain/index.html",
+        "new": true
+    },
+    {
+        "id": "osrs",
+        "title": "OSRS Flipper",
+        "description": "Get real-time, risk-managed flipping suggestions for Old School RuneScape's Grand Exchange.",
+        "icon": "fas fa-coins",
+        "color": "amber",
+        "link": "/pages/osrs/index.html",
+        "new": true
+    },
+    {
+        "id": "minify",
+        "title": "Code Minifier",
+        "description": "Minify your JavaScript, CSS, and HTML code to reduce file size",
+        "icon": "fas fa-compress-alt",
+        "color": "blue",
+        "link": "/pages/minify/index.html"
+    },
+    {
+        "id": "qr",
+        "title": "QR Code Generator",
+        "description": "Generate QR codes from uploaded or pasted images instantly",
+        "icon": "fas fa-qrcode",
+        "color": "orange",
+        "link": "/pages/qr/index.html"
+    },
+    {
+        "id": "generator",
+        "title": "AI Name Generator",
+        "description": "Generate creative and unique names for your projects using AI",
+        "icon": "fas fa-magic",
+        "color": "purple",
+        "link": "/pages/generator/index.html"
+    },
+    {
+        "id": "clean",
+        "title": "Text Cleaner",
+        "description": "Clean and format your text with powerful tools",
+        "icon": "fas fa-broom",
+        "color": "green",
+        "link": "/pages/clean/index.html"
+    },
+    {
+        "id": "diff",
+        "title": "Diff Checker",
+        "description": "Compare text differences between two versions",
+        "icon": "fas fa-code-compare",
+        "color": "red",
+        "link": "/pages/diff/index.html"
+    },
+    {
+        "id": "expression",
+        "title": "Expression Finder",
+        "description": "Find expressions using arithmetic operations and parentheses",
+        "icon": "fas fa-calculator",
+        "color": "yellow",
+        "link": "/pages/expression/index.html"
+    },
+    {
+        "id": "keyword",
+        "title": "Keyword Analyzer",
+        "description": "Analyze keyword density and extract important terms from any text",
+        "icon": "fas fa-key",
+        "color": "teal",
+        "link": "/pages/keyword/index.html"
+    },
+    {
+        "id": "speech",
+        "title": "Speech Tools",
+        "description": "Convert between speech and text using advanced AI technologies",
+        "icon": "fas fa-microphone-lines",
+        "color": "indigo",
+        "link": "/pages/speech/index.html"
+    },
+    {
+        "id": "playground",
+        "title": "Code Playground",
+        "description": "Interactive HTML, CSS, and JavaScript editor with live preview",
+        "icon": "fas fa-code",
+        "color": "pink",
+        "link": "/pages/playground/index.html"
+    }
+]

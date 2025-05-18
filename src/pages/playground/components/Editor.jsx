@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import * as monaco from 'monaco-editor';
 import 'monaco-editor/min/vs/editor/editor.main.css';
 
-const Editor = ({ language = 'javascript', value = '', onChange, theme = 'vs' }) => {
+const Editor = ({ language = 'javascript', value = '', onChange }) => {
     const containerRef = useRef(null);
     const editorRef = useRef(null);
     const resizeObserverRef = useRef(null);
@@ -15,7 +15,7 @@ const Editor = ({ language = 'javascript', value = '', onChange, theme = 'vs' })
         editorRef.current = monaco.editor.create(containerRef.current, {
             value,
             language,
-            theme,
+            theme: 'vs',
             automaticLayout: true,       // let Monaco re-layout on its own
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
@@ -67,12 +67,12 @@ const Editor = ({ language = 'javascript', value = '', onChange, theme = 'vs' })
         }
     }, [language]);
 
-    // 4) keep theme in sync
+    // Theme is now fixed to 'vs' (light theme)
     useEffect(() => {
         if (editorRef.current) {
-            monaco.editor.setTheme(theme);
+            monaco.editor.setTheme('vs');
         }
-    }, [theme]);
+    }, []);
 
     // the wrapper
     return (

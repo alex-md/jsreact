@@ -1,0 +1,1 @@
+import{c as e,a as o}from"./footer.CxdUKtjX.js";import{c as t}from"./head.Ciumq24I.js";t("JSreact - Modern Web Development Tools & Utilities","Free online web development tools and utilities for developers. Code minification, playground, text manipulation, and more. Built with modern web technologies.");e();o();

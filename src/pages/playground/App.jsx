@@ -1,6 +1,6 @@
 // filepath: /Users/alex/Documents/GitHub/jsreact/src/pages/playground/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Package, Moon, Sun, X } from 'lucide-react';
+import { Package, X } from 'lucide-react';
 import Split from 'split.js';
 import Editor from './components/Editor';
 import Preview from './components/Preview';
@@ -200,7 +200,7 @@ document.body.appendChild(container);
                         `flex flex-col` for its internal layout (header + editor content).
                         `min-h-0` for vertical flexibility. */}
                     <div className="html-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
-                        <div className={`px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
+                        <div className="px-4 py-2 border-b border-gray-200 bg-white">
                             <h2 className="text-sm font-medium">HTML</h2>
                         </div>
                         <div className="editor-content flex-1 min-h-0">
@@ -208,14 +208,14 @@ document.body.appendChild(container);
                                 language="html"
                                 value={html}
                                 onChange={setHtml}
-                                theme={darkMode ? 'vs-dark' : 'vs'}
+                                theme="vs"
                             />
                         </div>
                     </div>
 
                     {/* CSS Editor Pane: Target for the inner "editors split". */}
                     <div className="css-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
-                        <div className={`px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
+                        <div className="px-4 py-2 border-b border-gray-200 bg-white">
                             <h2 className="text-sm font-medium">CSS</h2>
                         </div>
                         <div className="editor-content flex-1 min-h-0">
@@ -223,14 +223,14 @@ document.body.appendChild(container);
                                 language="css"
                                 value={cssText}
                                 onChange={setCss}
-                                theme={darkMode ? 'vs-dark' : 'vs'}
+                                theme="vs"
                             />
                         </div>
                     </div>
 
                     {/* JS Editor Pane: Target for the inner "editors split". */}
                     <div className="js-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
-                        <div className={`px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
+                        <div className="px-4 py-2 border-b border-gray-200 bg-white">
                             <h2 className="text-sm font-medium">JavaScript</h2>
                         </div>
                         <div className="editor-content flex-1 min-h-0">
@@ -238,7 +238,7 @@ document.body.appendChild(container);
                                 language="javascript"
                                 value={js}
                                 onChange={setJs}
-                                theme={darkMode ? 'vs-dark' : 'vs'}
+                                theme="vs"
                             />
                         </div>
                     </div>
@@ -249,27 +249,20 @@ document.body.appendChild(container);
                     `flex flex-col` for its internal layout (header + preview content).
                     `min-h-0` for vertical flexibility. */}
                 <div className="preview-pane-split-target flex flex-col grow min-w-0 min-h-0">
-                    <div className={`flex items-center justify-between px-4 py-2 border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}>
+                    <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-white">
                         <h2 className="text-sm font-medium">Preview</h2>
                         <div className="flex items-center space-x-2">
                             <button
                                 onClick={() => setShowPackageManager(true)}
-                                className={`p-2 rounded-md ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+                                className="p-2 rounded-md hover:bg-gray-100"
                                 title="Manage packages"
                             >
                                 <Package className="h-5 w-5" />
                             </button>
-                            <button
-                                onClick={() => setDarkMode(!darkMode)}
-                                className={`p-2 rounded-md ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
-                                title={darkMode ? "Light mode" : "Dark mode"}
-                            >
-                                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                            </button>
                         </div>
                     </div>
                     <div className="flex-1 overflow-hidden min-h-0">
-                        <Preview html={html} cssCode={cssText} js={js} packages={packages} darkMode={darkMode} />
+                        <Preview html={html} cssCode={cssText} js={js} packages={packages} />
                     </div>
                 </div>
             </div>
@@ -280,7 +273,7 @@ document.body.appendChild(container);
                     addPackage={addPackage}
                     removePackage={removePackage}
                     onClose={() => setShowPackageManager(false)}
-                    darkMode={darkMode}
+
                 />
             )}
         </div>

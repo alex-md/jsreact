@@ -61,12 +61,12 @@ window.parent.postMessage({ type: 'ready' }, '*');
 `;
 
 // Helper function for dynamic button classes
-const getButtonClasses = (isActive, isDarkMode) => {
+const getButtonClasses = (isActive) => {
     const baseClasses = 'p-1.5 rounded-md transition-colors';
     if (isActive) {
-        return `${baseClasses} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'}`;
+        return `${baseClasses} bg-gray-200 text-gray-800`;
     }
-    return `${baseClasses} text-gray-500 hover:text-gray-700 dark:hover:text-gray-300`;
+    return `${baseClasses} text-gray-500 hover:text-gray-700`;
 };
 
 const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
@@ -117,15 +117,14 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
 
                 const fullHtml = `
                   <!DOCTYPE html>
-                  <html class="${darkMode ? 'dark' : ''}">
+                  <html>
                     <head>
                       <meta charset="utf-8">
                       <meta name="viewport" content="width=device-width, initial-scale=1">
                       ${packageStyles}
                       <style>
-                        :root { color-scheme: ${darkMode ? 'dark' : 'light'}; }
+                        :root { color-scheme: light; }
                         body { margin: 0; min-height: 100vh; font-family: sans-serif; }
-                        .dark body { background: #1a1a1a; color: #fff; }
                         ${trimmedCss}
                       </style>
                     </head>
@@ -152,11 +151,11 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
 
     const deviceStyle = React.useMemo(() => ({
         ...DevicePreview[device],
-        border: `1px solid ${darkMode ? '#374151' : '#e5e7eb'}`,
+        border: '1px solid #e5e7eb',
         borderRadius: '8px', margin: 'auto',
         transition: 'width 0.3s ease, height 0.3s ease',
         boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)'
-    }), [device, darkMode]);
+    }), [device]);
 
     const refreshPreview = React.useCallback(() => {
         if (iframeRef.current?.contentWindow) {
@@ -169,8 +168,8 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
     const iconMap = { DESKTOP: Monitor, TABLET: Tablet, MOBILE: Smartphone };
 
     return (
-        <div className={`h-full flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-            <div className={`flex items-center justify-between p-2 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className="h-full flex flex-col bg-white">
+            <div className="flex items-center justify-between p-2 border-b border-gray-200">
                 <div className="flex items-center space-x-1 sm:space-x-2">
                     {deviceOptions.map((dev) => (
                         <button
@@ -201,20 +200,20 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                     </button>
                 </div>
             </div>
-            <div className="flex-1 overflow-auto p-4 relative bg-gray-100 dark:bg-gray-800">
+            <div className="flex-1 overflow-auto p-4 relative bg-gray-100">
                 <div className="h-full flex items-center justify-center transition-colors">
                     <div
                         style={deviceStyle}
-                        className={`relative overflow-hidden ${darkMode ? 'bg-gray-950' : 'bg-white'}`}
+                        className="relative overflow-hidden bg-white"
                     >
                         {isLoading && (
-                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-opacity-50 bg-gray-500 dark:bg-opacity-50 dark:bg-gray-700">
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-opacity-50 bg-gray-500">
                                 <RefreshCw size={24} className="animate-spin text-white" />
                             </div>
                         )}
                         {error && (
-                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-opacity-80 dark:bg-opacity-80 bg-white dark:bg-gray-900">
-                                <div className="p-4 rounded-lg bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 flex items-center space-x-2 text-red-600 dark:text-red-400 max-w-md">
+                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-opacity-80 bg-white">
+                                <div className="p-4 rounded-lg bg-red-100 border border-red-300 flex items-center space-x-2 text-red-600 max-w-md">
                                     <XCircle size={20} className="flex-shrink-0" />
                                     <span className="text-sm whitespace-pre-wrap break-all">{error}</span>
                                 </div>
@@ -231,9 +230,9 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                 </div>
             </div>
             {showConsole && (
-                <div className={`h-48 overflow-y-auto border-t text-xs font-mono ${darkMode ? 'bg-gray-950 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                <div className="h-48 overflow-y-auto border-t text-xs font-mono bg-gray-50 border-gray-200">
                     {consoleMessages.length === 0 ? (
-                        <div className={`p-3 text-center ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                        <div className="p-3 text-center text-gray-400">
                             Console is empty.
                         </div>
                     ) : (
@@ -242,7 +241,7 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                                 {consoleMessages.map((msg, i) => (
                                     <div
                                         key={`${msg.type}-${i}-${msg.timestamp}`}
-                                        className={`p-1.5 rounded-sm flex items-start ${msg.type === 'error' ? 'text-red-500 dark:text-red-400 bg-red-500/10' : msg.type === 'warn' ? 'text-yellow-500 dark:text-yellow-400 bg-yellow-500/10' : darkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                                        className={`p-1.5 rounded-sm flex items-start ${msg.type === 'error' ? 'text-red-500 bg-red-500/10' : msg.type === 'warn' ? 'text-yellow-500 bg-yellow-500/10' : 'text-gray-700'}`}
                                     >
                                         <span className="opacity-60 mr-2 select-none">{msg.timestamp}</span>
                                         <span className="flex-1 whitespace-pre-wrap break-all">{msg.content}</span>
@@ -252,7 +251,7 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                             <button
                                 onClick={() => setConsoleMessages([])}
                                 title="Clear console"
-                                className={`sticky bottom-2 right-2 p-1 text-xs rounded ${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-600'} m-1 float-right`}
+                                className="sticky bottom-2 right-2 p-1 text-xs rounded bg-gray-200 hover:bg-gray-300 text-gray-600 m-1 float-right"
                             >
                                 Clear
                             </button>
