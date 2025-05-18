@@ -17,7 +17,6 @@ Thumbs.db
 .env.*.local
 
 # Build output
-/dist
 /build
 /out
 
