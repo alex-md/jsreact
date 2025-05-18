@@ -12,6 +12,3 @@
 /policy             /pages/policy             301
 /qr                 /pages/qr                 301
 /speech             /pages/speech             301
-
-# Handle 404s
-/*    /index.html   404
