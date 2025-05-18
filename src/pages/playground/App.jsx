@@ -24,23 +24,10 @@ body {
 h2 {
   color: #0070f3;
 }`);
-    const [js, setJs] = useState(`// Your JavaScript code here
+    const [js, setJs] = useState(`// Your JavaScript code or JSX here
 console.log("Hello from the playground!");
 
-// Example: Create and add elements to the DOM
-const title = document.createElement('h2');
-title.textContent = 'JavaScript Example';
-title.style.color = '#0070f3';
-
-const paragraph = document.createElement('p');
-paragraph.textContent = 'This content was dynamically added with JavaScript!';
-
-const container = document.createElement('div');
-container.className = 'example-container';
-container.appendChild(title);
-container.appendChild(paragraph);
-
-document.body.appendChild(container);
+// Add packages above, and use them in your code!
 `);
     const [packages, setPackages] = useState([
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'

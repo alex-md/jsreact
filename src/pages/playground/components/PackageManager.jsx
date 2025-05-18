@@ -8,6 +8,7 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isGeneratingUrl, setIsGeneratingUrl] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -20,10 +21,18 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
         if (searchQuery && searchResults.length > 0) {
             // If we have search results, use the first one
             const pkg = searchResults[0];
-            const url = `https://cdn.jsdelivr.net/npm/${pkg.name}@${pkg.version}/dist/${pkg.name}.min.js`;
-            addPackage(url);
-            setSearchQuery('');
-            setSearchResults([]);
+            setIsGeneratingUrl(true);
+            generateCdnUrl(pkg.name, pkg.version).then(url => {
+                if (url) {
+                    addPackage(url);
+                    setSearchQuery('');
+                    setSearchResults([]);
+                } else {
+                    setError('Could not find a suitable CDN URL for this package');
+                }
+            }).finally(() => {
+                setIsGeneratingUrl(false);
+            });
         } else if (newPackageUrl) {
             // If we have a direct URL
             try {
@@ -38,6 +47,57 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
         setNewPackageUrl('');
         setError('');
         setShowDropdown(false);
+    };
+
+    // Helper function to generate CDN URL
+    const generateCdnUrl = async (packageName, version) => {
+        try {
+            // First try to find the package on unpkg to get the main file
+            const unpkgResponse = await fetch(`https://unpkg.com/${packageName}@${version}/package.json`);
+            if (unpkgResponse.ok) {
+                const packageJson = await unpkgResponse.json();
+                const mainFile = packageJson.browser || packageJson.unpkg || packageJson.main || 'index.js';
+
+                // Check if it's a CSS file
+                if (mainFile.endsWith('.css')) {
+                    return `https://cdn.jsdelivr.net/npm/${packageName}@${version}/${mainFile}`;
+                }
+
+                // For JS files, try to get the minified version
+                const baseFile = mainFile.replace(/\.js$/, '');
+
+                // Try different common minified file patterns
+                const possiblePaths = [
+                    `dist/${baseFile}.min.js`,
+                    `dist/${packageName}.min.js`,
+                    `${baseFile}.min.js`,
+                    mainFile
+                ];
+
+                // Test each path with jsdelivr
+                for (const path of possiblePaths) {
+                    const testUrl = `https://cdn.jsdelivr.net/npm/${packageName}@${version}/${path}`;
+                    try {
+                        const response = await fetch(testUrl, { method: 'HEAD' });
+                        if (response.ok) {
+                            return testUrl;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+
+                // If no minified version found, use the main file
+                return `https://cdn.jsdelivr.net/npm/${packageName}@${version}/${mainFile}`;
+            }
+
+            // Fallback to a basic URL if package.json is not accessible
+            return `https://cdn.jsdelivr.net/npm/${packageName}@${version}`;
+
+        } catch (error) {
+            console.error('Error generating CDN URL:', error);
+            return null;
+        }
     };
 
     const searchPackages = async (query) => {
@@ -94,11 +154,18 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
     };
 
     const handleSelectPackage = (pkg) => {
-        // Try to generate a minified URL first
-        const url = `https://cdn.jsdelivr.net/npm/${pkg.name}@${pkg.version}/dist/${pkg.name}.min.js`;
-        setNewPackageUrl(url);
-        setSearchQuery('');
-        setShowDropdown(false);
+        setIsGeneratingUrl(true);
+        generateCdnUrl(pkg.name, pkg.version).then(url => {
+            if (url) {
+                setNewPackageUrl(url);
+                setSearchQuery('');
+                setShowDropdown(false);
+            } else {
+                setError('Could not find a suitable CDN URL for this package');
+            }
+        }).finally(() => {
+            setIsGeneratingUrl(false);
+        });
     };
 
     const popularPackages = [
@@ -136,6 +203,7 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                                     onChange={handleSearchChange}
                                     placeholder="Search for npm packages..."
                                     className="flex-1 px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-300"
+                                    disabled={isGeneratingUrl}
                                 />
                                 <input
                                     type="text"
@@ -143,12 +211,21 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                                     onChange={(e) => setNewPackageUrl(e.target.value)}
                                     placeholder="or enter CDN URL directly"
                                     className="flex-1 px-3 py-2 border-t border-b focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-300"
+                                    disabled={isGeneratingUrl}
                                 />
                                 <button
                                     onClick={handleAddPackage}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    disabled={isGeneratingUrl}
+                                    className={`px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[40px]`}
                                 >
-                                    <Plus className="h-5 w-5" />
+                                    {isGeneratingUrl ? (
+                                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                        </svg>
+                                    ) : (
+                                        <Plus className="h-5 w-5" />
+                                    )}
                                 </button>
                             </div>
 
@@ -164,8 +241,8 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                                             {searchResults.map((pkg) => (
                                                 <li
                                                     key={pkg.name}
-                                                    onClick={() => handleSelectPackage(pkg)}
-                                                    className="p-3 cursor-pointer hover:bg-blue-50"
+                                                    onClick={() => !isGeneratingUrl && handleSelectPackage(pkg)}
+                                                    className={`p-3 cursor-pointer hover:bg-blue-50 ${isGeneratingUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 >
                                                     <div className="font-medium">{pkg.name}</div>
                                                     <div className="text-sm text-gray-500">
@@ -184,6 +261,7 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                             )}
                         </div>
                         {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+                        {isGeneratingUrl && <p className="mt-2 text-sm text-blue-500">Generating CDN URL...</p>}
                     </div>
 
                     <div className="mb-6">

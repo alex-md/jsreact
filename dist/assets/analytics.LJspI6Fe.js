@@ -1,4 +1,4 @@
-import{c as j,a as B}from"./footer.CxdUKtjX.js";import{c as z}from"./head.Ciumq24I.js";import{j as n,a as t,c as U}from"./client.EReKE3mR.js";import{r as f}from"./vendor.DR7KfTDN.js";import{c as M}from"./createLucideIcon.CcyztC6k.js";z("ViewTrack Analytics Dashboard","Track and analyze website traffic with real-time analytics and insights.",{baseUrl:"https://jsreact.com",publishDate:"2025-05-08"});j();B();/**
+import{c as j,a as B}from"./footer.CxdUKtjX.js";import{c as z}from"./head.BhyBonaF.js";import{j as n,a as t,c as U}from"./client.EReKE3mR.js";import{r as f}from"./vendor.DR7KfTDN.js";import{c as M}from"./createLucideIcon.CcyztC6k.js";z("ViewTrack Analytics Dashboard","Track and analyze website traffic with real-time analytics and insights.",{baseUrl:"https://jsreact.com",publishDate:"2025-05-08"});j();B();/**
  * @license lucide-react v0.479.0 - ISC
  *
  * This source code is licensed under the ISC license.
