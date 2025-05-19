@@ -144,7 +144,7 @@ const LineChart: React.FC<LineChartProps> = ({
         text.setAttribute('y', (paddingTop + chartHeight + 20).toString());
         text.setAttribute('text-anchor', 'middle');
         text.setAttribute('font-size', '11');
-        text.classList.add('text-gray-500', 'dark:text-gray-400', 'font-medium');
+        text.classList.add('text-gray-500', 'font-medium');
         text.textContent = d.label;
         labelsGroup.appendChild(text);
       }
@@ -155,8 +155,8 @@ const LineChart: React.FC<LineChartProps> = ({
   }, [data, height, lineColor, fillColor]);
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700/50">
-      <h3 className="text-xl font-semibold tracking-tight text-gray-800 dark:text-gray-200 mb-6">{title}</h3>
+    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100">
+      <h3 className="text-xl font-semibold tracking-tight text-gray-800 mb-6">{title}</h3>
       <div ref={containerRef} className="relative">
         <svg
           ref={svgRef}

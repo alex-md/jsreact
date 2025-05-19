@@ -12,7 +12,6 @@ export default {
         './src/components/**/*.{js,jsx,ts,tsx}',
         './src/pages/**/*.{html,js,jsx,ts,tsx}',
     ],
-    darkMode: 'class',
     theme: {
         container: {
             center: true,

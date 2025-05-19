@@ -10,8 +10,8 @@ const WeeklyPatternChart: React.FC<WeeklyPatternChartProps> = ({ data, title }) 
   const today = new Date().getDay();
 
   return (
-    <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-500 border border-gray-100 dark:border-gray-700/50">
-      <h3 className="text-gray-700 dark:text-gray-200 text-xl font-semibold tracking-tight mb-8">{title}</h3>
+    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-500 border border-gray-100">
+      <h3 className="text-gray-700 text-xl font-semibold tracking-tight mb-8">{title}</h3>
       <div className="flex items-end justify-between h-48 gap-3">
         {data.map((item, index) => {
           const percentage = (item.avgViews / maxValue) * 100;
@@ -39,7 +39,7 @@ const WeeklyPatternChart: React.FC<WeeklyPatternChartProps> = ({ data, title }) 
                   }}
                 >
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="bg-gray-900 dark:bg-gray-700 text-white px-2 py-1 rounded-md text-sm whitespace-nowrap">
+                    <div className="bg-gray-900 text-white px-2 py-1 rounded-md text-sm whitespace-nowrap">
                       {item.avgViews.toLocaleString()} views
                     </div>
                   </div>
@@ -48,16 +48,16 @@ const WeeklyPatternChart: React.FC<WeeklyPatternChartProps> = ({ data, title }) 
               <div className={`
                 text-base font-medium mt-4 mb-1 transition-colors duration-300
                 ${isToday
-                  ? 'text-indigo-600 dark:text-indigo-400'
-                  : 'text-gray-600 dark:text-gray-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-400'}
+                  ? 'text-indigo-600'
+                  : 'text-gray-600 group-hover:text-indigo-500'}
               `}>
                 {item.day}
               </div>
               <div className={`
                 text-sm font-medium transition-colors duration-300
                 ${isToday
-                  ? 'text-indigo-500/70 dark:text-indigo-400/70'
-                  : 'text-gray-400 dark:text-gray-500'}
+                  ? 'text-indigo-500/70'
+                  : 'text-gray-400'}
               `}>
                 {item.avgViews.toLocaleString()}
               </div>

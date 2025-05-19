@@ -31,7 +31,7 @@ function generatePageUrls() {
 
         pages.forEach(pageName => {
             urls.push({
-                url: `/${pageName}/`,
+                url: `/pages/${pageName}/`,
                 priority: '0.8',
                 changefreq: 'weekly'
             });

@@ -470,12 +470,12 @@ const utils = {
 
     getKeywordColor: (keywordIndex) => {
         const colors = [
-            'bg-yellow-300 dark:bg-yellow-600', 'bg-emerald-300 dark:bg-emerald-600',
-            'bg-sky-300 dark:bg-sky-600', 'bg-pink-300 dark:bg-pink-600',
-            'bg-purple-300 dark:bg-purple-600', 'bg-orange-300 dark:bg-orange-600',
-            'bg-cyan-300 dark:bg-cyan-600', 'bg-rose-300 dark:bg-rose-600',
-            'bg-lime-300 dark:bg-lime-600', 'bg-indigo-300 dark:bg-indigo-600',
-            'bg-teal-300 dark:bg-teal-600', 'bg-fuchsia-300 dark:bg-fuchsia-600',
+            'bg-yellow-300', 'bg-emerald-300',
+            'bg-sky-300', 'bg-pink-300',
+            'bg-purple-300', 'bg-orange-300',
+            'bg-cyan-300', 'bg-rose-300',
+            'bg-lime-300', 'bg-indigo-300',
+            'bg-teal-300', 'bg-fuchsia-300',
         ];
         const safeIndex = (typeof keywordIndex === 'number' && keywordIndex >= 0) ? Math.floor(keywordIndex) : 0;
         return colors[safeIndex % colors.length];

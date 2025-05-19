@@ -10,21 +10,31 @@ const DevicePreview = {
 };
 
 // Helper to generate script tags for JS packages
-const generatePackageScripts = (packages) =>
-    packages
-        .filter((pkg) => pkg.endsWith('.js'))
-        .map((pkg) => `<script src="${pkg}"></script>`)
-        .join('\n');
+const generatePackageScripts = (packages) => {
+    const jsPackages = packages.filter((pkg) => pkg.endsWith('.js'));
+    return jsPackages.map((pkg) => `
+        <script 
+            src="${pkg}" 
+            defer
+            onerror="window.parent.postMessage({ type: 'error', message: 'Failed to load package: ${pkg}' }, '*');"
+            onload="window.parent.postMessage({ type: 'package-loaded', package: '${pkg}' }, '*');"
+        ></script>`).join('\n');
+};
 
 // Helper to generate link tags for CSS packages
-const generatePackageStyles = (packages) =>
-    packages
-        .filter((pkg) => pkg.endsWith('.css'))
-        .map((pkg) => `<link rel="stylesheet" href="${pkg}" />`)
-        .join('\n');
+const generatePackageStyles = (packages) => {
+    const cssPackages = packages.filter((pkg) => pkg.endsWith('.css'));
+    return cssPackages.map((pkg) => `
+        <link 
+            rel="stylesheet" 
+            href="${pkg}" 
+            onerror="window.parent.postMessage({ type: 'error', message: 'Failed to load stylesheet: ${pkg}' }, '*');"
+            onload="window.parent.postMessage({ type: 'package-loaded', package: '${pkg}' }, '*');"
+        />`).join('\n');
+};
 
 // Helper for the main script to be injected into the iframe
-const getIframeClientScript = (userJS) => `
+const getIframeClientScript = (userJS, packages) => `
 // Create a custom console to capture logs
 const originalConsole = console;
 const consoleProxy = {};
@@ -46,19 +56,52 @@ const consoleProxy = {};
 });
 console = consoleProxy;
 
-// Run the user script
-try {
-  (function() { ${userJS} })();
-} catch (e) {
-  window.parent.postMessage({ type: 'error', message: e.toString(), lineno: e.lineNumber }, '*');
-  if (originalConsole && originalConsole.error) { 
-    originalConsole.error('User script execution error:', e);
-  }
+// Track loaded packages
+const packagesToLoad = ${JSON.stringify(packages)};
+const loadedPackages = new Set();
+let hasError = false;
+
+// Function to handle package loading
+function handlePackageLoad(pkg) {
+    loadedPackages.add(pkg);
+    if (loadedPackages.size === packagesToLoad.length && !hasError) {
+        runUserCode();
+    }
 }
 
-// Signal that execution is complete
-window.parent.postMessage({ type: 'ready' }, '*');
-`;
+// Function to handle package errors
+function handlePackageError(pkg, error) {
+    hasError = true;
+    console.error(\`Failed to load package: \${pkg}\`, error);
+}
+
+// Function to run the user code
+function runUserCode() {
+    try {
+        // Add a small delay to ensure everything is initialized
+        setTimeout(() => {
+            (function() { ${userJS} })();
+            window.parent.postMessage({ type: 'ready' }, '*');
+        }, 50);
+    } catch (e) {
+        window.parent.postMessage({ type: 'error', message: e.toString(), lineno: e.lineNumber }, '*');
+        if (originalConsole && originalConsole.error) { 
+            originalConsole.error('User script execution error:', e);
+        }
+    }
+}
+
+// Handle messages from the parent
+window.addEventListener('message', (event) => {
+    if (event.data.type === 'package-loaded') {
+        handlePackageLoad(event.data.package);
+    }
+});
+
+// If no packages to load, run the code immediately
+if (packagesToLoad.length === 0) {
+    runUserCode();
+}`;
 
 // Helper function for dynamic button classes
 const getButtonClasses = (isActive) => {
@@ -69,7 +112,7 @@ const getButtonClasses = (isActive) => {
     return `${baseClasses} text-gray-500 hover:text-gray-700`;
 };
 
-const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
+const Preview = ({ html, cssCode = '', js, packages = [] }) => {
     const iframeRef = React.useRef(null);
     const [device, setDevice] = React.useState('DESKTOP');
     const [error, setError] = React.useState(null);
@@ -132,7 +175,7 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                       ${html || ''}
                       ${packageScripts}
                       <script>
-                        ${getIframeClientScript(js)}
+                        ${getIframeClientScript(js, packages)}
                       </script>
                     </body>
                   </html>`;
@@ -144,9 +187,7 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
             }
         }, 300);
         return () => clearTimeout(debounced);
-        // Use cssCode instead of trimmedCss as it's the source prop.
-        // trimmedCss is derived from cssCode and will be captured in the closure.
-    }, [html, cssCode, js, packages, darkMode]);
+    }, [html, cssCode, js, packages]);
     const handleIframeLoad = React.useCallback(() => setIsLoading(false), [setIsLoading]);
 
     const deviceStyle = React.useMemo(() => ({
@@ -175,7 +216,7 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                         <button
                             key={dev}
                             onClick={() => setDevice(dev)}
-                            className={getButtonClasses(device === dev, darkMode)}
+                            className={getButtonClasses(device === dev)}
                             title={`${dev.charAt(0) + dev.slice(1).toLowerCase()} view`}
                         >
                             {React.createElement(iconMap[dev], { size: 16 })}
@@ -185,7 +226,7 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                 <div className="flex items-center space-x-1 sm:space-x-2">
                     <button
                         onClick={() => setShowConsole(s => !s)}
-                        className={getButtonClasses(showConsole, darkMode)}
+                        className={getButtonClasses(showConsole)}
                         title="Toggle console"
                     >
                         <Terminal size={16} />
@@ -193,7 +234,7 @@ const Preview = ({ html, cssCode = '', js, packages = [], darkMode }) => {
                     <button
                         onClick={refreshPreview}
                         disabled={isLoading}
-                        className={`p-1.5 rounded-md text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${isLoading ? 'animate-spin' : ''}`}
+                        className={`p-1.5 rounded-md text-gray-500 hover:text-gray-700 ${isLoading ? 'animate-spin' : ''}`}
                         title="Refresh preview"
                     >
                         <RefreshCw size={16} />
