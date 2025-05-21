@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+
+        <!-- Tailwind CSS is handled by Vite/PostCSS, CDN removed -->
+        <!-- Tailwind CSS (if not already included globally) -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+        <!-- Font Awesome 6 Free CDN for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <script type="module">
+            import { createHead } from '@components/head.js';
+            createHead(
+                'Domain Appraisal',
+                'Get instant AI-powered domain name valuations for up to 20 domains.',
+                {
+                    // SEO enhancements
+                    keywords: 'domain appraisal, domain valuation, domain worth, domain price, domain name value, AI domain appraisal, instant domain value, domain tool',
+                    baseUrl: 'https://jsreact.com',
+                    publishDate: '2025-04-22',
+                }
+            );
+        </script>
+
+        <!-- Subtle grid overlay background for theme -->
+        <style>
+            body {
+                background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+                color: #222;
+            }
+
+            .bg-grid {
+                pointer-events: none;
+                position: fixed;
+                inset: 0;
+                z-index: 0;
+                background: linear-gradient(to right, #cbd5e1 1px, transparent 1px), linear-gradient(to bottom, #cbd5e1 1px, transparent 1px);
+                background-size: 24px 24px;
+                opacity: 0.60;
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-50 flex flex-col min-h-screen">
+        <!-- Subtle grid overlay background removed -->
+
+        <script type="module">
+            import { createNavbar } from '@components/navbar.js';
+            createNavbar();
+        </script>
+
+        <div id="header"></div>
+        <!-- <script type="module">
+            import { createHeader } from '@components/header.js';
+            const header = createHeader(
+                'Domain Appraisal',
+                'Get instant domain name valuations with AI-powered analysis'
+            );
+            document.getElementById('header').appendChild(header);
+        </script> -->
+
+        <main class="container mx-auto px-4 py-8 flex-grow relative z-10">
+            <div id="root"></div>
+        </main>
+
+        <div id="footer-container" class="relative z-10"></div>
+        <script type="module">
+            import { createFooter } from '@components/footer.js';
+            const footerContainer = document.getElementById('footer-container');
+            if (footerContainer) {
+                createFooter(footerContainer);
+            } else {
+                console.error("Footer container not found");
+            }
+        </script>
+
+        <script type="module" src="./main.jsx"></script>
+        <!-- Global styles -->
+        <link rel="stylesheet" href="../../assets/styles/global.css">
+        <script type="module" src="@components/toast.js"></script>
+    </body>
+
+</html>

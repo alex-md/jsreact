@@ -4,24 +4,39 @@ Allow: /*.html$
 Allow: /*.js$
 Allow: /*.css$
 Allow: /*.json$
-Disallow: /assets/styles/
-Disallow: /components/
-Disallow: /utils/
-Disallow: /workers/
 
-# Allow specific paths
+# Disallow utility directories
+Disallow: /assets/styles/
+Disallow: /src/components/
+Disallow: /src/utils/
+Disallow: /src/workers/
+Disallow: /node_modules/
+Disallow: /.git/
+
+# Allow specific paths and new URL structure
 Allow: /assets/images/
-Allow: /pages/*/
+Allow: /domain/
+Allow: /osrs/
+Allow: /minify/
+Allow: /qr/
+Allow: /generator/
+Allow: /clean/
+Allow: /diff/
+Allow: /expression/
+Allow: /keyword/
+Allow: /speech/
+Allow: /playground/
+Allow: /tools/
 
 # Important files
 Allow: /sitemap.xml
 Allow: /manifest.json
 Allow: /site.webmanifest
 
-# Crawl-delay
-Crawl-delay: 5
+# Crawl-delay commented out to allow search engines to determine optimal rate
+# Crawl-delay: 5
 
-# Sitemap (Make sure this is accessible)
+# Sitemap
 Sitemap: https://jsreact.com/sitemap.xml
 
 # Google-specific directives
@@ -31,5 +46,6 @@ Allow: /*.js$
 Allow: /*.css$
 Allow: /assets/images/
 
+# Image indexing
 User-agent: Googlebot-Image
 Allow: /assets/images/

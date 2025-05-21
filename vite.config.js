@@ -8,17 +8,28 @@ import { fileURLToPath } from 'url';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));      // project root
 const srcDir = path.resolve(rootDir, 'src');                      // src shortcut
-const pagesDir = path.resolve(srcDir, 'pages');
 
-// build an { pageName: htmlPath } map
+// List of directories that aren't pages and shouldn't be processed
+const nonPageDirs = ['components', 'assets', 'utils', 'workers'];
+
+// build an { pageName: htmlPath } map and ensure proper asset handling
 const getPageInputs = () => {
     const entries = Object.fromEntries(
-        fs.existsSync(pagesDir)
-            ? fs.readdirSync(pagesDir, { withFileTypes: true })
-                .filter(d => d.isDirectory())
+        fs.existsSync(srcDir)
+            ? fs.readdirSync(srcDir, { withFileTypes: true })
+                .filter(d => d.isDirectory() && !nonPageDirs.includes(d.name))
                 .map(d => {
-                    const htmlPath = path.resolve(pagesDir, d.name, 'index.html');
-                    return fs.existsSync(htmlPath) ? [d.name, htmlPath] : undefined;
+                    const pagePath = path.resolve(srcDir, d.name);
+                    const htmlPath = path.resolve(pagePath, 'index.html');
+
+                    if (fs.existsSync(htmlPath)) {
+                        const entryPoints = ['main.tsx', 'main.jsx', 'main.ts', 'main.js', 'index.tsx', 'index.jsx', 'index.ts', 'index.js']
+                            .map(file => path.resolve(pagePath, file))
+                            .find(file => fs.existsSync(file));
+
+                        return [d.name, entryPoints || htmlPath];
+                    }
+                    return undefined;
                 })
                 .filter(Boolean)
             : []
@@ -29,40 +40,22 @@ const getPageInputs = () => {
 };
 
 export default defineConfig({
-    root: srcDir,                 // dev server root
-    publicDir: path.resolve(rootDir, 'public'),
-    base: '/',
-    plugins: [
-        react({
-            jsxImportSource: '@emotion/react',
-            babel: {
-                plugins: ['@emotion/babel-plugin']
-            }
-        }),
-    ],
+    root: rootDir,
     resolve: {
         alias: {
             '@': srcDir,
             '@components': path.resolve(srcDir, 'components'),
             '@utils': path.resolve(srcDir, 'utils'),
-            '@assets': path.resolve(srcDir, 'assets'),
-            '@styles': path.resolve(srcDir, 'assets/styles'),
-        },
+            '@styles': path.resolve(srcDir, 'assets/styles')
+        }
     },
     build: {
-        outDir: path.resolve(rootDir, 'dist'),
-        emptyOutDir: true,
-        sourcemap: false,
+        outDir: 'dist',
         assetsDir: 'assets',
+        emptyOutDir: true,
         rollupOptions: {
             input: getPageInputs(),
             output: {
-                entryFileNames: 'assets/[name].[hash].js',
-                chunkFileNames: 'assets/[name].[hash].js',
-                assetFileNames: ({ name }) =>
-                    /\.(gif|jpe?g|png|svg|ico)$/.test(name ?? '')
-                        ? 'assets/images/[name].[hash][extname]'
-                        : 'assets/[name].[hash][extname]',
                 manualChunks: {
                     vendor: [
                         'react',
@@ -71,10 +64,10 @@ export default defineConfig({
                         '@emotion/react',
                         '@emotion/styled'
                     ],
-                    monaco: ['monaco-editor'] // Add monaco-editor here
-                },
-            },
-        },
+                    monaco: ['monaco-editor']
+                }
+            }
+        }
     },
     css: {
         modules: {
@@ -83,26 +76,5 @@ export default defineConfig({
         },
         devSourcemap: true,
     },
-    optimizeDeps: {
-        include: [
-            'react',
-            'react-dom',
-            '@rstacruz/startup-name-generator',
-            '@mui/material',
-            '@emotion/react',
-            '@emotion/styled',
-            'monaco-editor'
-        ],
-        exclude: [],
-    },
-    server: {
-        port: 3000,
-        open: true,
-        watch: {
-            usePolling: true, // Add polling for better file watching
-        },
-    },
-    worker: {
-        format: 'es', // Use ES modules for workers
-    },
+    plugins: [react()]
 });
