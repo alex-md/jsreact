@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <title>Free QR Code Generator - Create QR Codes from Images | JSreact</title>
+        <meta name="description" content="Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images. Easy to use, no registration required.">
 
-    <head>
-        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
-        <script type="module" src="@components/head.js"></script>
-        <script>
-            createHead(
-                'Free QR Code Generator - Create QR Codes from Images | JSreact',
-                'Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images. Easy to use, no registration required.'
-            );
-        </script>
+        <!-- Styles -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="/assets/styles/global.css">
+        <script src="https://cdn.tailwindcss.com"></script>
 
         <!-- Enhanced SEO Meta Tags -->
         <meta name="keywords"
@@ -59,14 +63,14 @@
         <link rel="preconnect" href="https://image-host.vs.workers.dev">
     </head>
 
-    <body class="bg-background text-foreground">
-
-        <script type="module">            import { createNavbar } from '@components/navbar.js';
+    <body class="bg-background text-foreground">        <script type="module">
+            import { createNavbar } from '../components/navbar.js';
             createNavbar();
         </script>
 
         <div id="header"></div>
-        <script type="module">            import { createHeader } from '@components/header.js';
+        <script type="module">
+            import { createHeader } from '../components/header.js';
             const header = createHeader(
                 'QR Code Generator',
                 'Create QR codes instantly from images'
@@ -121,10 +125,11 @@
                     </div>
                 </section>
             </div>
-        </main>
-
-        <script type="module" src="./index.js"></script>
-        <script type="module" src="@components/footer.js"></script>
+        </main>        <script type="module" src="./index.js"></script>
+        <script type="module">
+            import { createFooter } from '../components/footer.js';
+            createFooter();
+        </script>
     </body>
 
 </html>

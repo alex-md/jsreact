@@ -1,6 +1,3 @@
-// Import logo
-import logoUrl from '../assets/images/logo.png';
-
 // Search functionality
 function setupSearch(searchInput, searchResults) {
     const allTools = [
@@ -88,15 +85,17 @@ export function createNavbar() {
 
     const logoLink = document.createElement("a");
     logoLink.href = "/";
-    logoLink.className = "flex items-center gap-2";
-
-    const logoImage = document.createElement("img");
-    logoImage.src = logoUrl;
+    logoLink.className = "flex items-center gap-2";    const logoImage = document.createElement("img");
+    logoImage.src = "/images/logo.png";
     logoImage.alt = "JSReact Logo";
     logoImage.className = "h-14 w-auto max-h-16 min-w-[3.5rem] object-contain";
 
-    logoLink.appendChild(logoImage);
-    logoSection.appendChild(logoLink);    // Organize links into categories
+    const logoText = document.createElement("span");
+    logoText.textContent = "JSreact";
+    logoText.className = "text-lg font-semibold text-foreground";
+
+    logoLink.append(logoImage, logoText);
+    logoSection.appendChild(logoLink);// Organize links into categories
     const categories = {
         "Text Tools": [
             { text: "Minifier", href: "/minify/", icon: "fa-compress-alt" },

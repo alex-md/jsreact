@@ -1,5 +1,5 @@
-// Import logo
-import logoUrl from '../assets/images/logo.png';
+// Import logo image
+const logoUrl = '/images/logo.png';
 
 // Search functionality
 function setupSearch(searchInput, searchResults) {

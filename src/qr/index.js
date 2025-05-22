@@ -1,5 +1,5 @@
 import QRCode from 'qrcode';
-import { showToast } from '@components/toast.js';
+import { showToast } from '../components/toast.js';
 
 const WORKER_URL = 'https://image-host.vs.workers.dev/upload';
 

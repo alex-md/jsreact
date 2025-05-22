@@ -6,55 +6,76 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const rootDir = path.dirname(fileURLToPath(import.meta.url));      // project root
-const srcDir = path.resolve(rootDir, 'src');                      // src shortcut
-
-// List of directories that aren't pages and shouldn't be processed
-const nonPageDirs = ['components', 'assets', 'utils', 'workers'];
-
-// build an { pageName: htmlPath } map and ensure proper asset handling
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
+const srcDir = path.resolve(rootDir, 'src');
 const getPageInputs = () => {
-    const entries = Object.fromEntries(
-        fs.existsSync(srcDir)
-            ? fs.readdirSync(srcDir, { withFileTypes: true })
-                .filter(d => d.isDirectory() && !nonPageDirs.includes(d.name))
-                .map(d => {
-                    const pagePath = path.resolve(srcDir, d.name);
-                    const htmlPath = path.resolve(pagePath, 'index.html');
+    const entries = {};
+    
+    // Add the main entry point
+    const mainHtmlPath = path.resolve(srcDir, 'index.html');
+    if (fs.existsSync(mainHtmlPath)) {
+        entries.index = mainHtmlPath;
+    }
 
-                    if (fs.existsSync(htmlPath)) {
-                        const entryPoints = ['main.tsx', 'main.jsx', 'main.ts', 'main.js', 'index.tsx', 'index.jsx', 'index.ts', 'index.js']
-                            .map(file => path.resolve(pagePath, file))
-                            .find(file => fs.existsSync(file));
+    // Add other pages
+    if (fs.existsSync(srcDir)) {
+        fs.readdirSync(srcDir, { withFileTypes: true })
+            .filter(d => d.isDirectory() && !nonPageDirs.includes(d.name))
+            .forEach(d => {
+                const pagePath = path.resolve(srcDir, d.name);
+                const htmlPath = path.resolve(pagePath, 'index.html');
 
-                        return [d.name, entryPoints || htmlPath];
+                if (fs.existsSync(htmlPath)) {
+                    const entryPoints = ['main.tsx', 'main.jsx', 'main.ts', 'main.js', 'index.tsx', 'index.jsx', 'index.ts', 'index.js']
+                        .map(file => path.resolve(pagePath, file))
+                        .find(file => fs.existsSync(file));
+
+                    if (entryPoints) {
+                        entries[d.name] = entryPoints;
+                    } else {
+                        entries[d.name] = htmlPath;
                     }
-                    return undefined;
-                })
-                .filter(Boolean)
-            : []
-    );
+                }
+            });
+    }
 
-    entries.main = path.resolve(srcDir, 'index.html');
     return entries;
 };
 
-export default defineConfig({
-    root: rootDir,
+export default defineConfig({    root: srcDir,
+    base: '/',
+    publicDir: path.resolve(rootDir, 'public'),
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.svg'],
     resolve: {
         alias: {
             '@': srcDir,
             '@components': path.resolve(srcDir, 'components'),
             '@utils': path.resolve(srcDir, 'utils'),
             '@styles': path.resolve(srcDir, 'assets/styles')
-        }
+        },
+        extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
     },
     build: {
-        outDir: 'dist',
-        assetsDir: 'assets',
+        outDir: path.resolve(rootDir, 'dist'),
         emptyOutDir: true,
+        assetsInlineLimit: 0,
         rollupOptions: {
-            input: getPageInputs(),
+            input: {
+                main: path.resolve(srcDir, 'index.html'),
+                tools: path.resolve(srcDir, 'tools/index.html'),
+                minify: path.resolve(srcDir, 'minify/index.html'),
+                clean: path.resolve(srcDir, 'clean/index.html'),
+                insert: path.resolve(srcDir, 'insert/index.html'),
+                keyword: path.resolve(srcDir, 'keyword/index.html'),
+                generator: path.resolve(srcDir, 'generator/index.html'),
+                diff: path.resolve(srcDir, 'diff/index.html'),
+                expression: path.resolve(srcDir, 'expression/index.html'),
+                playground: path.resolve(srcDir, 'playground/index.html'),
+                qr: path.resolve(srcDir, 'qr/index.html'),
+                speech: path.resolve(srcDir, 'speech/index.html'),
+                domain: path.resolve(srcDir, 'domain/index.html'),
+                osrs: path.resolve(srcDir, 'osrs/index.html')
+            },
             output: {
                 manualChunks: {
                     vendor: [
