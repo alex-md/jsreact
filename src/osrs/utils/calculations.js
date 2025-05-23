@@ -54,19 +54,19 @@ export function calculateModifiedSharpeRatio(expectedProfit, variance, riskFreeR
 }
 
 export function calculateConfidenceScore(item, fiveMin, latest, hourly) {
+    // Restore previous improved algorithm (no extra momentum factors)
     const weights = {
-        volumeStability: 0.25,
-        priceConsistency: 0.25,
-        marketDepth: 0.20,
+        volumeStability: 0.30,
+        priceConsistency: 0.30,
+        marketDepth: 0.15,
         trendStrength: 0.15,
-        volatilityPenalty: 0.15,
+        volatilityPenalty: 0.10,
     };
     const scores = {};
 
     const fiveMinItem = fiveMin?.[item.id];
     const latestItem = latest?.[item.id];
     const hourlyItem = hourly?.[item.id];
-
     if (!fiveMinItem || !latestItem || !hourlyItem) {
         return { confidenceScore: 0, componentScores: {} };
     }
@@ -134,7 +134,6 @@ export function calculateConfidenceScore(item, fiveMin, latest, hourly) {
             totalScore += componentScore * weights[factor];
         }
     }
-
     return {
         confidenceScore: Math.max(0, Math.min(1, totalScore)),
         componentScores: scores,
@@ -148,6 +147,7 @@ export function calculateRiskAdjustedReturn(expectedProfit, variance, riskAversi
 }
 
 export function calculateFlipScore(flip) {
+    // Restore previous improved algorithm weights
     const weights = {
         profitScore: 0.30,
         sharpeScore: 0.20,
@@ -208,8 +208,15 @@ export function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData,
     if (essentialPrices.some(p => typeof p !== 'number' || p <= 0)) {
         return null;
     }
-    // Filter out low-volume items early
-    if (fiveMinHighVolume < 50 || fiveMinLowVolume < 50) {
+    // Restore previous improved algorithm (moderate filtering)
+    let adaptiveRiskThreshold = riskThreshold;
+    const marketDepth = Math.min(fiveMinHighVolume, fiveMinLowVolume);
+    const priceStability = Math.abs(fiveMinAvgHigh - fiveMinAvgLow) / fiveMinAvgLow;
+    if (marketDepth > 300 && priceStability < 0.03) {
+        adaptiveRiskThreshold = Math.max(0.01, riskThreshold - 0.01);
+    }
+    // Filter out low-volume items early (moderate)
+    if (fiveMinHighVolume < 80 || fiveMinLowVolume < 80) {
         return null;
     }
 
@@ -243,7 +250,7 @@ export function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData,
     const margin = profitPer / weightedBuyPrice;
 
     // Risk filtering: Margin adjusted by volatility must meet threshold
-    if ((margin * volatilityFactor) < riskThreshold) {
+    if ((margin * volatilityFactor) < (adaptiveRiskThreshold + 0.01)) { // Slightly stricter
         return null;
     }
 
@@ -254,9 +261,25 @@ export function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData,
     const { confidenceScore, componentScores } = calculateConfidenceScore(item, fiveMinData, latestData, hourlyData);
     const riskAdjustedReturn = calculateRiskAdjustedReturn(profitPer, variance);
 
-    // Confidence and Sharpe Ratio Filtering
+    // --- New: Consistent profit check (reward stable profit per flip) ---
+    let profitStability = 1;
+    if (priceHistory.length >= 2) {
+        const profits = priceHistory.map(p => Math.floor((p * 0.99) - weightedBuyPrice));
+        const meanProfit = profits.reduce((a, b) => a + b, 0) / profits.length;
+        const stdProfit = Math.sqrt(profits.reduce((a, b) => a + Math.pow(b - meanProfit, 2), 0) / profits.length);
+        profitStability = meanProfit !== 0 ? Math.max(0, Math.min(1, 1 - (stdProfit / Math.abs(meanProfit)))) : 1;
+    }
+
+    // Penalize thin order books (moderate)
+    if (marketDepth < 100) return null;
+
+    // Confidence and Sharpe Ratio Filtering (moderate)
     if (confidenceScore < 0.60) return null; // Minimum confidence required
     if (sharpeRatio !== null && sharpeRatio < 0.10) return null; // Minimum risk-adjusted return indicator
+
+    // Favor positive price momentum: boost flipScore if trend is 'up'
+    let trendBoost = 0;
+    if (volatilityAnalysis.trend === 'up') trendBoost = 5;
 
     // Calculate Flip Score
     const flipInput = {
@@ -278,7 +301,11 @@ export function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData,
         riskAdjustedReturn,
         componentScores // Pass this for potential detailed display later
     };
-    const flipScore = calculateFlipScore(flipInput);
+    let flipScore = calculateFlipScore(flipInput);
+    // --- New: Integrate profit stability and success likelihood ---
+    // Success likelihood: combine confidence, profit stability, and positive momentum
+    const successLikelihood = Math.max(0, Math.min(1, 0.5 * confidenceScore + 0.3 * profitStability + 0.2 * (trendBoost > 0 ? 1 : 0)));
+    flipScore = Math.min(100, flipScore + trendBoost + Math.round(successLikelihood * 5)); // Cap at 100
 
     return {
         ...item, // Spread original item properties (id, name, limit, icon)
@@ -296,7 +323,7 @@ export function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData,
         variance,
         sharpeRatio,
         confidenceScore,
-        componentScores, // Include for potential debugging/display
+        componentScores: { ...componentScores, profitStability, successLikelihood }, // Include for potential debugging/display
         riskAdjustedReturn,
         flipScore,
     };
