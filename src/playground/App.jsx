@@ -29,9 +29,17 @@ console.log("Hello from the playground!");
 
 // You can now add packages and use them in your code!
 `);
-    const [packages, setPackages] = useState([
-        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
-    ]);
+    const [packages, setPackages] = useState(() => {
+        const savedPackages = localStorage.getItem('playgroundPackages');
+        return savedPackages ? JSON.parse(savedPackages) : [
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
+        ];
+    });
+
+    // Add this useEffect to save packages when they change
+    useEffect(() => {
+        localStorage.setItem('playgroundPackages', JSON.stringify(packages));
+    }, [packages]);
     const [showPackageManager, setShowPackageManager] = useState(false);
 
     const mainSplitInstanceRef = useRef(null); // For [Editors Block] | [Preview]

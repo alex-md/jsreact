@@ -182,7 +182,8 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center relative">
+                    <div className="absolute -left-24 text-gray-400 transform -rotate-90 text-sm tracking-wider">PACKAGE MANAGER</div>
                     <h2 className="text-xl font-semibold">Package Manager</h2>
                     <button
                         onClick={onClose}
