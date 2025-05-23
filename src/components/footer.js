@@ -1,4 +1,4 @@
-// import "@styles/global.css";
+import '../assets/styles/global.css';
 
 async function fetchActiveUsers() {
     try {

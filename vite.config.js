@@ -10,7 +10,7 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(rootDir, 'src');
 const getPageInputs = () => {
     const entries = {};
-    
+
     // Add the main entry point
     const mainHtmlPath = path.resolve(srcDir, 'index.html');
     if (fs.existsSync(mainHtmlPath)) {
@@ -42,7 +42,8 @@ const getPageInputs = () => {
     return entries;
 };
 
-export default defineConfig({    root: srcDir,
+export default defineConfig({
+    root: srcDir,
     base: '/',
     publicDir: path.resolve(rootDir, 'public'),
     assetsInclude: ['**/*.png', '**/*.jpg', '**/*.svg'],

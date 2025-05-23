@@ -2,7 +2,7 @@
     "name": "Web Tools Hub",
     "short_name": "Web Tools",
     "description": "Collection of web developer tools",
-    "start_url": "/",
+    "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#1D201F",
     "theme_color": "#1D201F",

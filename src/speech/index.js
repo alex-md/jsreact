@@ -1,4 +1,4 @@
-import '@styles/global.css';
+import '../assets/styles/global.css';
 import { showToast } from '@components/toast.js';
 
 class SpeechApp {

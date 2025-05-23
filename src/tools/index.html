@@ -25,11 +25,12 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
             crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="/assets/styles/global.css">
+        <link rel="stylesheet" href="../assets/styles/global.css">
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
-    <body class="js-ready min-h-screen flex flex-col relative bg-gradient-radial from-background to-background/50">        <script type="module">
+    <body class="js-ready min-h-screen flex flex-col relative bg-gradient-radial from-background to-background/50">
+        <script type="module">
             import { createHead } from '../components/head.js';
             createHead(
                 'Web Tools Hub',
@@ -40,10 +41,12 @@
         <div class="pointer-events-none fixed inset-0 z-0">
             <div class="absolute inset-0 bg-grid-pattern opacity-[0.15]"></div>
             <div class="absolute inset-0 bg-gradient-noise mix-blend-overlay opacity-25"></div>
-        </div>        <script type="module">
+        </div>
+        <script type="module">
             import { createNavbar } from '../components/navbar.js';
             createNavbar();
-        </script>        <script type="module">
+        </script>
+        <script type="module">
             import { createToolCards } from '../components/toolCards.js';
             createToolCards();
         </script>
@@ -114,5 +117,3 @@
     </body>
 
 </html>
-
-
