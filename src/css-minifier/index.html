@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+        <script type="module" src="@components/head.js"></script>
+        <script>
+            createHead(
+                'CSS Minifier - Free Online CSS Compression Tool',
+                'Free online tool to minify and optimize CSS code. Reduce file size, improve load times, and enhance website performance with our CSS minifier.'
+            );
+        </script>
+
+        <!-- Enhanced SEO Meta Tags -->
+        <meta name="keywords"
+            content="css minifier, code compression, css minify, code optimizer, web performance, minification tool, css compressor">
+        <meta name="author" content="JSreact">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+        <!-- Enhanced Social Media Meta Tags -->
+        <meta property="article:tag" content="CSS Minifier">
+        <meta property="article:tag" content="Code Optimization">
+        <meta property="article:tag" content="Web Performance">
+
+        <!-- Viewport meta tag for responsiveness -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            /* Default styles for mobile-first approach */
+            .layout-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: stretch;
+                /* Stretch items to fill the container width */
+                min-height: calc(100vh - 300px);
+            }
+
+            .code-section {
+                width: 100%;
+                /* Take full width on small screens */
+                display: flex;
+                flex-direction: column;
+            }
+
+            .code-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .code-box {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .code-box textarea {
+                flex: 1;
+                min-height: 200px;
+                padding: var(--space-3) var(--space-4);
+                font-size: var(--text-base);
+                line-height: var(--leading-normal);
+                color: hsl(var(--foreground));
+                background: hsl(var(--background));
+                border: 1px solid hsl(var(--border));
+                border-radius: var(--radius-lg);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                resize: none;
+            }
+
+            textarea:hover {
+                border-color: hsl(var(--border) / 0.8);
+                background: hsl(var(--background) / 0.8);
+            }
+
+            textarea:focus {
+                outline: none;
+                border-color: hsl(var(--primary));
+                background: hsl(var(--background));
+                box-shadow:
+                    0 0 0 3px hsl(var(--primary) / 0.15),
+                    inset 0 0 0 1px hsl(var(--primary) / 0.2);
+            }
+
+            .input-card-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: var(--space-4);
+                border-top: 1px solid hsla(var(--border) / 0.5);
+                margin-top: var(--space-4);
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-50">
+        <script type="module">
+            import { createNavbar } from '@components/navbar.js';
+            createNavbar();
+        </script>
+
+        <div id="header"></div>
+
+        <main class="container mx-auto px-4 py-12 max-w-7xl">
+            <div class="layout-container">
+                <!-- Code Input/Output -->
+                <div class="code-section">
+                    <div class="code-container">
+                        <!-- Input Box -->
+                        <div
+                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            <div class="p-6 space-y-4">
+                                <label for="input-code" class="block text-sm font-medium text-gray-700">
+                                    Input CSS Code
+                                </label>
+                                <textarea id="input-code" placeholder="Paste your CSS code here..."
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                <div class="input-card-footer">
+                                    <p id="input-size" class="text-sm text-gray-500">0 bytes</p>
+                                    <button id="minify-button"
+                                        class="px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                        <i class="fas fa-compress-alt mr-2"></i>
+                                        Minify CSS
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output Box -->
+                        <div
+                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            <div class="p-6 space-y-4">
+                                <label for="output-code" class="block text-sm font-medium text-gray-700">
+                                    Minified CSS Code
+                                </label>
+                                <textarea id="output-code" readonly
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                <div class="flex justify-between items-center">
+                                    <p id="output-size" class="text-sm text-gray-500">0 bytes</p>
+                                    <div class="flex gap-4">
+                                        <button id="copy-button"
+                                            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                            <i class="fas fa-copy mr-2"></i>
+                                            Copy Output
+                                        </button>
+                                        <button id="clear-button"
+                                            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                            <i class="fas fa-trash-alt mr-2"></i>
+                                            Clear All
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script type="module" src="@components/footer.js"></script>
+        <script type="module" src="@components/toast.js"></script>
+        <script type="module" src="./index.js"></script>
+    </body>
+
+</html>
