@@ -1,5 +1,14 @@
 [
     {
+        "id": "css-minifier",
+        "title": "CSS Minifier",
+        "description": "Minify your CSS code to reduce file size using an online API",
+        "icon": "fab fa-css3-alt",
+        "color": "blue",
+        "link": "/css-minifier/",
+        "new": true
+    },
+    {
         "id": "domain",
         "title": "Domain Appraisal",
         "description": "Get accurate market value estimates for domain names",
