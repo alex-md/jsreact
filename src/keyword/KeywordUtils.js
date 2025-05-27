@@ -26,15 +26,11 @@ const escapeRegExp = (string) => {
 const _getTokens = (text, forMatchingPurposes = true) => {
     if (!text || typeof text !== 'string') return [];
     if (forMatchingPurposes) {
-        // Aggressively tokenize: lowercase, split by common delimiters, filter empty strings
-        // Example: "apple-pie." -> ["apple", "pie"]
         return text
             .toLowerCase()
             .split(/[\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+/)
             .filter(Boolean);
     } else {
-        // Less aggressive: split by whitespace, keep original casing and internal punctuation
-        // Example: "apple-pie." -> ["apple-pie."]
         return text.split(/\s+/).filter(Boolean);
     }
 };
@@ -47,7 +43,6 @@ const utils = {
             return { count: 0, density: 0 };
         }
 
-        // Uses aggressive tokenization for overall density calculation
         const processedWords = _getTokens(text, true);
         const totalWords = processedWords.length;
         if (totalWords === 0) return { count: 0, density: 0 };
@@ -84,7 +79,6 @@ const utils = {
                     break;
                 case 'word':
                     try {
-                        // Word boundary regex on the already tokenized word
                         const regex = new RegExp(`\\b${escapedLowerKeyword}\\b`, 'i');
                         isMatch = regex.test(word);
                     } catch (e) {
@@ -125,11 +119,13 @@ const utils = {
             return null;
         }
 
-        // Get words preserving original form for window slicing and highlighting
         const originalWordsForWindowing = _getTokens(text, false);
         const numValidWords = originalWordsForWindowing.length;
 
         if (numValidWords === 0) return null;
+        if (windowSize > numValidWords) windowSize = numValidWords;
+        if (windowSize <= 0) return null;
+
 
         // --- Pre-process keywords (original strings from input) ---
         const processedKeywords = keywords.map((kw, index) => ({
@@ -149,68 +145,51 @@ const utils = {
             originalIndex: index // Store the original index from the input `keywords` array
         }));
 
-        // --- Calculate window boundaries helpers for centering ---
-        const halfWindowBefore = Math.floor((windowSize - 1) / 2);
-        const halfWindowAfter = Math.ceil((windowSize - 1) / 2);
 
         // --- Find Individual Best Clusters ---
         const individualClusters = processedKeywords.map((pk) => {
             let maxScore = -1;
             let bestCluster = null;
 
-            // Loop through each word as a potential center of the window
-            for (let centerIdx = 0; centerIdx < numValidWords; centerIdx++) {
-                // Determine window boundaries based on centerIdx
-                const windowStart = Math.max(0, centerIdx - halfWindowBefore);
-                const windowEnd = Math.min(numValidWords - 1, centerIdx + halfWindowAfter);
-
-                const windowOriginalWords = originalWordsForWindowing.slice(windowStart, windowEnd + 1);
-                const effectiveWindowSize = windowOriginalWords.length;
-
-                if (effectiveWindowSize === 0) continue; // Should not happen if numValidWords > 0
-
+            for (let i = 0; i <= numValidWords - windowSize; i++) {
+                const windowOriginalWords = originalWordsForWindowing.slice(i, i + windowSize);
                 const windowText = windowOriginalWords.join(' ');
 
-                let currentKeywordCountInWindow = 0; // Total matches for *this single* keyword within the window
-
+                // Calculate density for this *single* keyword (pk.original) in this window
+                // We use a simplified internal count for this specific keyword within this window
+                let currentKeywordCountInWindow = 0;
                 windowOriginalWords.forEach(originalWordInWindow => {
-                    // **Accuracy Enhancement**: Aggressively tokenize each word from the window for matching consistency
-                    // This ensures that "fox-dog" is treated as "fox" and "dog" for matching purposes.
-                    const subTokens = _getTokens(originalWordInWindow, true);
-                    subTokens.forEach(subToken => {
-                        if (!subToken) return;
-
-                        let isMatch = false;
-                        switch (matchingStrategy) {
-                            case 'exact': isMatch = subToken === pk.lower; break;
-                            case 'partial': isMatch = subToken.includes(pk.lower); break;
-                            case 'word':
-                                try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(subToken); } catch (e) { }
-                                break;
-                            case 'regex':
-                                if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(subToken); }
-                                break;
-                            default: isMatch = subToken === pk.lower;
-                        }
-                        if (isMatch) currentKeywordCountInWindow++;
-                    });
+                    const normalizedWordInWindow = originalWordInWindow.toLowerCase().replace(/^[.,!?;:"“”()]+|[.,!?;:"“”()]+$/g, '');
+                    if (!normalizedWordInWindow) return;
+                    let isMatch = false;
+                    switch (matchingStrategy) {
+                        case 'exact': isMatch = normalizedWordInWindow === pk.lower; break;
+                        case 'partial': isMatch = normalizedWordInWindow.includes(pk.lower); break;
+                        case 'word':
+                            try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(originalWordInWindow); } catch (e) { }
+                            break;
+                        case 'regex':
+                            if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(originalWordInWindow); }
+                            break;
+                        default: isMatch = normalizedWordInWindow === pk.lower;
+                    }
+                    if (isMatch) currentKeywordCountInWindow++;
                 });
 
 
                 if (currentKeywordCountInWindow > 0) {
-                    const score = currentKeywordCountInWindow / effectiveWindowSize;
+                    const score = currentKeywordCountInWindow / windowSize;
                     if (score > maxScore) {
                         maxScore = score;
                         bestCluster = {
                             text: windowText,
                             highlightedText: utils.highlightText(windowText, [pk.original], matchingStrategy, [pk.originalIndex]),
-                            startWordIndex: windowStart,
-                            endWordIndex: windowEnd,
-                            centerWordIndex: centerIdx,
+                            startWordIndex: i,
+                            endWordIndex: i + windowSize - 1,
                             keyword: pk.original,
                             count: currentKeywordCountInWindow,
                             density: score * 100,
-                            wordCount: effectiveWindowSize,
+                            wordCount: windowSize,
                         };
                     }
                 }
@@ -223,69 +202,53 @@ const utils = {
         let highestDensityCluster = null;
         let maxCombinedScore = -1;
 
-        // Loop through each word as a potential center of the window
-        for (let centerIdx = 0; centerIdx < numValidWords; centerIdx++) {
-            // Determine window boundaries based on centerIdx
-            const windowStart = Math.max(0, centerIdx - halfWindowBefore);
-            const windowEnd = Math.min(numValidWords - 1, centerIdx + halfWindowAfter);
-
-            const windowOriginalWords = originalWordsForWindowing.slice(windowStart, windowEnd + 1);
-            const effectiveWindowSize = windowOriginalWords.length;
-
-            if (effectiveWindowSize === 0) continue;
-
+        for (let i = 0; i <= numValidWords - windowSize; i++) {
+            const windowOriginalWords = originalWordsForWindowing.slice(i, i + windowSize);
             const windowText = windowOriginalWords.join(' ');
 
-            let totalMatchesInWindow = 0; // Total raw matches (e.g., if "apple-pie" is 1 original word, and "apple" is a keyword, count is 1)
-            let intersectionsInWindow = 0; // Count of original words that matched >1 unique keywords
-
-            const keywordCountsInWindow = {}; // { originalKeywordString: count }
+            let totalMatchesInWindow = 0;
+            let intersectionsInWindow = 0;
+            const keywordCountsInWindow = {};
             keywords.forEach(kw => keywordCountsInWindow[kw] = 0);
-            const matchedKeywordsInWindow = new Set(); // Stores *unique* original keyword strings found in the window
+            const matchedKeywordsInWindow = new Set();
 
             windowOriginalWords.forEach((originalWord) => {
-                // For intersection calculation, we need to know which unique keywords matched *this specific original word*
-                const uniqueKeywordsMatchedByThisOriginalWord = new Set();
+                const normalizedWord = originalWord.toLowerCase().replace(/^[.,!?;:"“”()]+|[.,!?;:"“”()]+$/g, '');
+                if (!normalizedWord) return;
 
-                // **Accuracy Enhancement**: Aggressively tokenize this original word for precise matching
-                const subTokens = _getTokens(originalWord, true);
+                let matchesForThisWordCount = 0;
 
-                subTokens.forEach(subToken => {
-                    if (!subToken) return;
+                processedKeywords.forEach(pk => {
+                    let isMatch = false;
+                    switch (matchingStrategy) {
+                        case 'exact': isMatch = normalizedWord === pk.lower; break;
+                        case 'partial': isMatch = normalizedWord.includes(pk.lower); break;
+                        case 'word':
+                            try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(originalWord); } catch (e) { }
+                            break;
+                        case 'regex':
+                            if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(originalWord); }
+                            break;
+                        default: isMatch = normalizedWord === pk.lower;
+                    }
 
-                    processedKeywords.forEach(pk => {
-                        let isMatch = false;
-                        switch (matchingStrategy) {
-                            case 'exact': isMatch = subToken === pk.lower; break;
-                            case 'partial': isMatch = subToken.includes(pk.lower); break;
-                            case 'word':
-                                try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(subToken); } catch (e) { }
-                                break;
-                            case 'regex':
-                                if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(subToken); }
-                                break;
-                            default: isMatch = subToken === pk.lower;
-                        }
-
-                        if (isMatch) {
-                            keywordCountsInWindow[pk.original]++;
-                            totalMatchesInWindow++;
-                            matchedKeywordsInWindow.add(pk.original); // For completeness score
-                            uniqueKeywordsMatchedByThisOriginalWord.add(pk.original); // For intersection count
-                        }
-                    });
+                    if (isMatch) {
+                        keywordCountsInWindow[pk.original]++;
+                        totalMatchesInWindow++;
+                        matchedKeywordsInWindow.add(pk.original);
+                        matchesForThisWordCount++;
+                    }
                 });
 
-                // An intersection occurs if this original word (via its sub-tokens) matched multiple distinct keywords
-                if (uniqueKeywordsMatchedByThisOriginalWord.size > 1) {
+                if (matchesForThisWordCount > 1) {
                     intersectionsInWindow++;
                 }
             });
 
             if (totalMatchesInWindow > 0) {
                 const numKeywords = keywords.length;
-                const densityValue = totalMatchesInWindow / effectiveWindowSize; // Uses effective window size
-                const intersectionValue = intersectionsInWindow / effectiveWindowSize; // Uses effective window size
+                const densityValue = totalMatchesInWindow / windowSize;
+                const intersectionValue = intersectionsInWindow / windowSize;
 
                 let distributionScore = 0;
                 if (numKeywords > 1) {
@@ -296,10 +259,10 @@ const utils = {
                         const stdDev = Math.sqrt(variance);
                         distributionScore = Math.max(0, 1 - (stdDev / avgCount));
                     } else if (counts.every(c => c === 0)) {
-                        distributionScore = 1; // If no keywords matched, distribution is considered perfect (vacuously true)
+                        distributionScore = 1;
                     }
                 } else if (numKeywords === 1) {
-                    distributionScore = 1; // A single keyword is always perfectly distributed relative to itself
+                    distributionScore = 1;
                 }
 
                 const completenessScore = matchedKeywordsInWindow.size / numKeywords;
@@ -315,19 +278,19 @@ const utils = {
                     highestDensityCluster = {
                         text: windowText,
                         originalWindowWords: windowOriginalWords,
+                        // Highlight all original keywords with their respective original indices for coloring
                         highlightedText: utils.highlightText(windowText, keywords, matchingStrategy, keywords.map((_, idx) => idx)),
                         matchCount: totalMatchesInWindow,
                         intersections: intersectionsInWindow,
                         density: densityValue * 100,
-                        wordCount: effectiveWindowSize,
+                        wordCount: windowSize,
                         score: combinedScore,
                         distribution: distributionScore * 100,
                         completeness: completenessScore * 100,
-                        keywordCounts: keywordCountsInWindow,
-                        startWordIndex: windowStart,
-                        endWordIndex: windowEnd,
-                        centerWordIndex: centerIdx,
-                        individualClusters: individualClusters,
+                        keywordCounts: keywordCountsInWindow, // { originalKeywordString: count }
+                        startWordIndex: i,
+                        endWordIndex: i + windowSize - 1,
+                        individualClusters: individualClusters, // Include the pre-calculated individual bests
                     };
                 }
             }
@@ -337,7 +300,7 @@ const utils = {
 
     analyzeKeywords: (text, keywords, matchingStrategy = 'exact') => {
         if (!text || !keywords || !keywords.length || typeof text !== 'string') return [];
-        const totalWords = _getTokens(text, true).length; // This uses aggressive tokenization for consistency
+        const totalWords = _getTokens(text, true).length;
 
         return keywords.map(keyword => {
             if (typeof keyword !== 'string') return { keyword: String(keyword), count: 0, density: 0 };
@@ -355,13 +318,12 @@ const utils = {
             return { totalMatchCount: 0, density: 0, intersectionCount: 0, uniqueWordsMatched: 0 };
         }
 
-        const originalWords = _getTokens(text, false); // Get original words for iterating
+        const originalWords = _getTokens(text, false);
         const totalOriginalWordTokens = originalWords.length;
         if (totalOriginalWordTokens === 0) return { totalMatchCount: 0, density: 0, intersectionCount: 0, uniqueWordsMatched: 0 };
 
-        let totalMatchCount = 0; // Total matches based on sub-tokens
-        let intersectionCount = 0; // Count of original words that matched >1 unique keywords
-        // This keeps track of unique keyword indices matched by each *original word* (not subToken)
+        let totalMatchCount = 0;
+        let intersectionCount = 0;
         const wordMatchDetails = Array(totalOriginalWordTokens).fill(null).map(() => new Set());
 
         const processedKeywords = keywords.map((kw, index) => ({
@@ -382,42 +344,35 @@ const utils = {
         }));
 
         originalWords.forEach((originalWord, wordIndex) => {
-            // **Accuracy Enhancement**: Aggressively tokenize this original word for matching
-            const subTokens = _getTokens(originalWord, true);
-            
-            subTokens.forEach(subToken => {
-                if (!subToken) return;
+            const normalizedWord = originalWord.toLowerCase().replace(/^[.,!?;:"“”()]+|[.,!?;:"“”()]+$/g, '');
+            if (!normalizedWord) return;
 
-                processedKeywords.forEach(pk => {
-                    let isMatch = false;
-                    switch (matchingStrategy) {
-                        case 'exact': isMatch = subToken === pk.lower; break;
-                        case 'partial': isMatch = subToken.includes(pk.lower); break;
-                        case 'word':
-                            try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(subToken); } catch (e) { }
-                            break;
-                        case 'regex':
-                            if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(subToken); }
-                            break;
-                        default: isMatch = subToken === pk.lower;
-                    }
+            processedKeywords.forEach(pk => {
+                let isMatch = false;
+                switch (matchingStrategy) {
+                    case 'exact': isMatch = normalizedWord === pk.lower; break;
+                    case 'partial': isMatch = normalizedWord.includes(pk.lower); break;
+                    case 'word':
+                        try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(originalWord); } catch (e) { }
+                        break;
+                    case 'regex':
+                        if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(originalWord); }
+                        break;
+                    default: isMatch = normalizedWord === pk.lower;
+                }
 
-                    if (isMatch) {
-                        totalMatchCount++;
-                        wordMatchDetails[wordIndex].add(pk.index); // Add original keyword index to the original word's set
-                    }
-                });
+                if (isMatch) {
+                    totalMatchCount++;
+                    wordMatchDetails[wordIndex].add(pk.index);
+                }
             });
 
-            // Intersection count is based on the original word (wordMatchDetails[wordIndex])
             if (wordMatchDetails[wordIndex].size > 1) {
                 intersectionCount++;
             }
         });
 
-        // uniqueWordsMatched: Number of *original words* that matched at least one keyword
         const uniqueWordsMatchedCount = wordMatchDetails.filter(s => s.size > 0).length;
-        // totalNormalizedWords: total words in the text using aggressive tokenization for overall density denominator
         const totalNormalizedWords = _getTokens(text, true).length;
 
         return {
@@ -431,6 +386,10 @@ const utils = {
     highlightText: (text, keywordsToHighlight, matchingStrategy = 'exact', keywordIndicesForColors = null) => {
         if (!text || typeof text !== 'string' || !keywordsToHighlight || keywordsToHighlight.length === 0) return text;
 
+        // If keywordIndicesForColors is null, assume keywordsToHighlight maps 1:1 for coloring
+        // and their indices within keywordsToHighlight are used.
+        // If keywordIndicesForColors is provided, it's an array of the *original* indices that
+        // correspond to each keyword in keywordsToHighlight.
         const getEffectiveColorIndex = (localIndexInKeywordsToHighlight) => {
             if (keywordIndicesForColors && Array.isArray(keywordIndicesForColors) && localIndexInKeywordsToHighlight < keywordIndicesForColors.length && typeof keywordIndicesForColors[localIndexInKeywordsToHighlight] === 'number') {
                 return keywordIndicesForColors[localIndexInKeywordsToHighlight];
@@ -461,53 +420,42 @@ const utils = {
 
         if (processedKeywords.length === 0) return text;
 
-        // Split by whitespace and common punctuation, but keep delimiters as separate segments
-        // This is important for highlighting: "word." should be "word" + "."
         const segments = text.split(/(\s+|[.,!?;:"“”()[\]{}]+)/);
         let highlightedOutput = "";
 
         segments.forEach(segment => {
             if (!segment) return;
-            // If the segment is just whitespace or punctuation, append it directly
             if (/^\s+$|^[.,!?;:"“”()[\]{}]+$/.test(segment)) {
                 highlightedOutput += segment;
                 return;
             }
 
             const originalSegmentWord = segment;
-            // **Accuracy Enhancement**: Aggressively tokenize the segment for matching. This is key for highlighting.
-            // Example: "apple-pie" segment will be split into ["apple", "pie"] for matching.
-            const subTokens = _getTokens(originalSegmentWord, true);
+            const lightNormalizedSegment = segment.toLowerCase().replace(/^[.,!?;:"“”()]+|[.,!?;:"“”()]+$/g, '');
+            const normalizedSegmentWordForPartial = segment.toLowerCase();
 
-            let matchedPKeywords = new Set(); // Set of processed keywords that matched ANY subToken in this segment
 
-            subTokens.forEach(subToken => {
-                if (!subToken) return;
+            let matchedPKeywords = new Set();
 
-                processedKeywords.forEach(pk => {
-                    let isMatch = false;
-                    switch (matchingStrategy) {
-                        case 'exact': isMatch = subToken === pk.lower; break;
-                        case 'partial': isMatch = subToken.includes(pk.lower); break;
-                        case 'word':
-                            // For 'word' boundary, apply regex to the subToken itself.
-                            // E.g., if original was "fox-dog", subToken is "fox". `\bfox\b` on "fox" is correct.
-                            try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(subToken); } catch (e) { }
-                            break;
-                        case 'regex':
-                            // For 'regex', apply regex to the subToken itself.
-                            if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(subToken); }
-                            break;
-                        default: isMatch = subToken === pk.lower;
-                    }
-                    if (isMatch) {
-                        matchedPKeywords.add(pk);
-                    }
-                });
+            processedKeywords.forEach(pk => {
+                let isMatch = false;
+                switch (matchingStrategy) {
+                    case 'exact': isMatch = lightNormalizedSegment === pk.lower; break;
+                    case 'partial': isMatch = normalizedSegmentWordForPartial.includes(pk.lower); break;
+                    case 'word':
+                        try { isMatch = new RegExp(`\\b${pk.escapedLower}\\b`, 'i').test(originalSegmentWord); } catch (e) { }
+                        break;
+                    case 'regex':
+                        if (pk.regex) { pk.regex.lastIndex = 0; isMatch = pk.regex.test(originalSegmentWord); }
+                        break;
+                    default: isMatch = lightNormalizedSegment === pk.lower;
+                }
+                if (isMatch) {
+                    matchedPKeywords.add(pk);
+                }
             });
 
             if (matchedPKeywords.size > 0) {
-                // If any keyword matched any sub-token within this original segment, highlight the whole segment.
                 const uniqueColorClasses = [...new Set(Array.from(matchedPKeywords).map(pk => pk.colorClass))].join(' ');
                 const opacity = matchedPKeywords.size > 1 ? 'bg-opacity-75' : 'bg-opacity-50';
                 const border = matchedPKeywords.size > 1 ? 'ring-1 ring-slate-400 dark:ring-slate-600 ring-offset-1' : '';
