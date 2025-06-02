@@ -166,7 +166,7 @@ const LineChart: React.FC<LineChartProps> = ({
         />
         {tooltip && (
           <div
-            className="absolute pointer-events-none bg-gray-900 dark:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm transform -translate-x-1/2 -translate-y-full"
+            className="absolute pointer-events-none bg-gray-900  text-white px-3 py-2 rounded-lg text-sm transform -translate-x-1/2 -translate-y-full"
             style={{
               left: tooltip.x,
               top: tooltip.y - 8,
@@ -176,7 +176,7 @@ const LineChart: React.FC<LineChartProps> = ({
             <div className="font-medium">{tooltip.value.toLocaleString()}</div>
             <div className="text-xs text-gray-300">{tooltip.label}</div>
             <div
-              className="absolute bottom-0 left-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-700 transform rotate-45 translate-y-1/2 -translate-x-1/2"
+              className="absolute bottom-0 left-1/2 w-2 h-2 bg-gray-900  transform rotate-45 translate-y-1/2 -translate-x-1/2"
             />
           </div>
         )}

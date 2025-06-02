@@ -63,6 +63,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: path.resolve(srcDir, 'index.html'),
+                analytics: path.resolve(srcDir, 'analytics/index.html'),
                 tools: path.resolve(srcDir, 'tools/index.html'),
                 minify: path.resolve(srcDir, 'minify/index.html'),
                 clean: path.resolve(srcDir, 'clean/index.html'),

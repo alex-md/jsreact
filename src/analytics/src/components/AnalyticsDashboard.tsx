@@ -45,13 +45,13 @@ const AnalyticsDashboard: React.FC = () => {
   const weeklyPatternData = data.weeklyPattern;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-card">
       <Header title="Realtime Analytics" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Overview Cards */}
         <section className="mb-12 space-y-6">
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-800 dark:text-gray-100">Overview</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-gray-800 ">Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <CounterCard
               title="Total Views"
@@ -82,7 +82,7 @@ const AnalyticsDashboard: React.FC = () => {
 
         {/* Charts */}
         <section className="mb-12 space-y-6">
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-800 dark:text-gray-100">Performance</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-gray-800 ">Performance</h2>
           <div className="grid grid-cols-1 gap-6">
             <div className="col-span-1">
               <LineChart
@@ -98,37 +98,7 @@ const AnalyticsDashboard: React.FC = () => {
           </div>
         </section>
 
-        {/* Insights */}
-        <section className="space-y-6">
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-800 dark:text-gray-100">Insights</h2>
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700/50">
-            <h3 className="text-xl font-semibold tracking-tight text-gray-800 dark:text-gray-200 mb-6">Key Findings</h3>
-            <ul className="dark:text-gray-300 flex grid-cols-3 items-baseline space-y-4 text-gray-600">
-              <li className="flex items-start gap-3 p-4 rounded-xl bg-gray-50/50 dark:bg-gray-700/30 transition-colors hover:bg-gray-100/50 dark:hover:bg-gray-700/50">
-                <span className="text-indigo-500 dark:text-indigo-400">•</span>
-                {data.today.percentChange > 0 ?
-                  <span>Today's traffic is <span className="font-medium text-emerald-500">{Math.abs(data.today.percentChange).toFixed(1)}% higher</span> than yesterday.</span> :
-                  <span>Today's traffic is <span className="font-medium text-rose-500">{Math.abs(data.today.percentChange).toFixed(1)}% lower</span> than yesterday.</span>
-                }
-              </li>
-              <li className="flex items-start gap-3 p-4 rounded-xl bg-gray-50/50 dark:bg-gray-700/30 transition-colors hover:bg-gray-100/50 dark:hover:bg-gray-700/50">
-                <span className="text-indigo-500 dark:text-indigo-400">•</span>
-                {Math.max(...weeklyPatternData.map(d => d.avgViews)) === weeklyPatternData[new Date().getDay()].avgViews ?
-                  <span>Today is typically your <span className="font-medium text-emerald-500">highest traffic day</span> of the week.</span> :
-                  <span>Your highest traffic day is typically <span className="font-medium text-indigo-500 dark:text-indigo-400">{weeklyPatternData.reduce((prev, current) =>
-                    (prev.avgViews > current.avgViews) ? prev : current).day}</span>.</span>
-                }
-              </li>
-              <li className="flex items-start gap-3 p-4 rounded-xl bg-gray-50/50 dark:bg-gray-700/30 transition-colors hover:bg-gray-100/50 dark:hover:bg-gray-700/50">
-                <span className="text-indigo-500 dark:text-indigo-400">•</span>
-                {data.last7Days.percentChange > 0 ?
-                  <span>Weekly views are <span className="font-medium text-emerald-500">up {Math.abs(data.last7Days.percentChange).toFixed(1)}%</span> compared to the previous week.</span> :
-                  <span>Weekly views are <span className="font-medium text-rose-500">down {Math.abs(data.last7Days.percentChange).toFixed(1)}%</span> compared to the previous week.</span>
-                }
-              </li>
-            </ul>
-          </div>
-        </section>
+
       </main>
     </div>
   );

@@ -175,7 +175,7 @@ window.App = () => {
                         h('textarea', {
                             value: text,
                             onChange: handleTextChange,
-                            className: 'w-full rounded-lg border-white-200 dark:border-gray-700 shadow-sm focus:bg-zinc-200 focus:ring-primary-500 dark:bg-light-muted-600 dark:text-light-100 h-48 resize-y p-4 bg-gray-200 text-white-700',
+                            className: 'w-full rounded-lg border-white-200 dark:border-gray-700 shadow-sm focus:bg-zinc-200 focus:ring-primary-500  dark:text-light-100 h-48 resize-y p-4 bg-gray-200 text-white-700',
                             placeholder: 'Enter or paste your text here...'
                         })
                     ),

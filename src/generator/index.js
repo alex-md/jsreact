@@ -51,7 +51,7 @@ function generateNames() {
         // Create result cards
         names.forEach(name => {
             const card = document.createElement('div');
-            card.className = 'group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary/20 dark:hover:border-primary/20 relative overflow-hidden';
+            card.className = 'group bg-white  p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary/20 dark:hover:border-primary/20 relative overflow-hidden';
 
             // Background decoration
             const decoration = document.createElement('div');
@@ -64,7 +64,7 @@ function generateNames() {
 
             // Name display
             const nameText = document.createElement('h3');
-            nameText.className = 'text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary transition-colors duration-300';
+            nameText.className = 'text-2xl font-bold text-gray-900  mb-3 group-hover:text-primary transition-colors duration-300';
             nameText.textContent = name;
 
             // Domain suggestions
@@ -97,7 +97,7 @@ function generateNames() {
 
             // Copy button
             const copyButton = document.createElement('button');
-            copyButton.className = 'mt-4 w-full py-2 px-4 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium flex items-center justify-center gap-2';
+            copyButton.className = 'mt-4 w-full py-2 px-4 bg-gray-50  text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium flex items-center justify-center gap-2';
             copyButton.innerHTML = '<i class="fas fa-copy text-xs"></i> Copy name';
             copyButton.onclick = () => copyText(name, copyButton);
 
