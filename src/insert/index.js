@@ -1,4 +1,4 @@
-import '../assets/styles/global.css';
+import '@styles/global.css';
 const textInput = document.getElementById("text-input");
 const keywordInput = document.getElementById("keyword-input");
 const processButton = document.getElementById("process-button");

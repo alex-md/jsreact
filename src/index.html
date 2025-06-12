@@ -1,119 +1,119 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="smooth-scroll">
 
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="icon" type="image/x-icon" href="/favicon.ico">
-		<title>JSreact - Modern Web Development Tools & Utilities</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-		<!-- Styles -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-			crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="../assets/styles/global.css">
-		<script src="https://cdn.tailwindcss.com"></script>
+        <!-- Enhanced SEO Meta Tags -->
+        <meta name="keywords"
+            content="web development tools, online tools, developer utilities, code tools, programming utilities, web tools hub">
+        <meta name="description"
+            content="Browse our comprehensive collection of free web development tools. Find everything you need for coding, debugging, and optimizing your web projects.">
+        <meta name="author" content="JSreact">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 
-		<!-- Enhanced SEO Meta Tags -->
-		<meta name="keywords"
-			content="web development tools, online code editor, javascript tools, css tools, developer utilities, code playground, minification tools, text tools">
-		<meta name="author" content="JSreact">
-		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <!-- Enhanced Social Media Meta Tags -->
+        <meta property="article:tag" content="Development Tools">
+        <meta property="article:tag" content="Web Utilities">
+        <meta property="article:tag" content="Online Tools">
 
-		<!-- Enhanced Social Media Meta Tags -->
-		<meta property="article:tag" content="Web Development">
-		<meta property="article:tag" content="Developer Tools">
-		<meta property="article:tag" content="Code Editor">
-		<meta property="article:tag" content="Frontend Tools">
-	</head>
+        <!-- Styles -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="/assets/styles/global.css">
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
 
-	<body class="js-ready min-h-screen flex flex-col relative bg-gradient-radial from-background to-background/50">
-		<script type="module">
-			import { createNavbar } from './components/navbar.js';
-			createNavbar();
-		</script>
+    <body class="js-ready min-h-screen flex flex-col relative bg-gradient-radial from-background to-background/50">
+        <script type="module">
+            import { createHead } from './components/head.js';
+            createHead(
+                'Web Tools Hub',
+                'A collection of free developer tools to simplify your workflow',
+            );
+        </script>
+        <!-- Enhanced grid overlay background with blur effect -->
+        <div class="pointer-events-none fixed inset-0 z-0">
+            <div class="absolute inset-0 bg-grid-pattern opacity-[0.15]"></div>
+            <div class="absolute inset-0 bg-gradient-noise mix-blend-overlay opacity-25"></div>
+        </div>
+        <script type="module">
+            import { createNavbar } from './components/navbar.js';
+            createNavbar();
+        </script>
+        <script type="module">
+            import { createToolCards } from './components/toolCards.js';
+            createToolCards();
+        </script>
+        <div id="header"></div>
 
-		<!-- Enhanced grid overlay background with blur effect -->
-		<div class="pointer-events-none fixed inset-0 z-0">
-			<div class="absolute inset-0 bg-grid-pattern opacity-[0.15]"></div>
-			<div class="absolute inset-0 bg-gradient-noise mix-blend-overlay opacity-25"></div>
-		</div>
+        <header class="isolate relative text-base">
+            <!-- Decorative background elements -->
+            <div class="header-grid"></div>
+            <div class="header-accent-container absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+                <div class="header-accent-primary"></div>
+                <div class="header-accent-secondary"></div>
+            </div>
 
-		<!-- Hero Section -->
-		<main class="flex-1 flex items-center">
-			<header class="w-full">
-				<div class="header-accent-container absolute inset-0 -z-10 pointer-events-none overflow-hidden">
-					<div
-						class="absolute inset-0 bg-gradient-radial from-primary/20 via-transparent to-transparent opacity-80">
-					</div>
-					<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-						<div
-							class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary to-secondary opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]">
-						</div>
-					</div>
-				</div>
+            <div class="container grid header-banner mx-auto">
+                <div class="header-badge glass-badge">
+                    <i class="fas fa-sparkles animate-pulse-slow text-accent-primary"></i>
+                    <span></span>
+                </div>
+                <h1 class="header-title animate-slide-up mx-auto">
+                    Web Tools
+                    <span class="relative inline-block px-6 py-2 ml-2 glass-title">
+                        Hub
+                        <div class="absolute inset-x-0 -bottom-0.5 h-0.5 bg-gradient-title animate-pulse-slow"></div>
+                    </span>
+                </h1>
+                <p class="header-description relative animate-slide-up" style="animation-delay: 200ms;">
+                    A collection of <span class="font-semibold text-blue-500">free developer tools</span> to
+                    <span class="relative inline-block">
+                        simplify your workflow
+                        <i class="fas fa-sparkles text-xs text-yellow-400 absolute -top-2 -right-2 animate-sparkle"></i>
+                    </span>
+                    and boost productivity
+                </p>
+                <div class="mt-4 flex justify-center gap-2 animate-slide-up" style="animation-delay: 300ms;">
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <i class="fas fa-bolt mr-1"></i> Fast
+                    </span>
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-check mr-1"></i> Free
+                    </span>
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        <i class="fas fa-lock mr-1"></i> Secure
+                    </span>
+                </div>
+                </p>
+            </div>
+        </header>
 
-				<div class="mx-auto max-w-7xl px-6 lg:px-8">
-					<div class="mx-auto max-w-3xl text-center">
+        <main role="main" class="w-full relative z-10" style="background: transparent;">
+            <div class="container max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-16">
+                <nav id="tool-cards-container" role="navigation" aria-label="Tools navigation"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                    <!-- Tool Cards will be loaded here dynamically -->
+                </nav>
+            </div>
+        </main>
 
+        <footer>
+            <script type="module">
+                import { createFooter } from '@components/footer.js';
+                createFooter();
+            </script>
+        </footer>
 
-						<h1 class="text-4xl font-bold text-foreground sm:text-6xl animate-slide-up">
-							Developer Web Tools
-
-							<div class="absolute inset-x-0 -bottom-0.5 h-0.5 bg-gradient-title animate-pulse-slow">
-							</div>
-							</span>
-						</h1>
-
-						<p class="mt-6 text-lg leading-8 text-muted-foreground animate-slide-up"
-							style="animation-delay: 200ms;">
-							A comprehensive suite of <span class="font-bold">free tools</span> designed
-							to
-							<span class="relative inline-block">streamline your workflow
-								<i
-									class="fas fa-sparkles text-xs text-yellow-400 absolute -top-2 -right-2 animate-sparkle"></i>
-							</span>
-							and boost productivity.
-						</p>
-						<div class="mt-12 flex flex-col sm:flex-row justify-center items-center gap-4 animate-slide-up"
-							style="animation-delay: 400ms;"> <a href="/tools/"
-								class="w-full sm:w-auto btn-primary rounded-full px-8 py-4 text-lg">
-								<i class="fas fa-tools mr-2"></i>
-								Explore All Tools
-							</a>
-							<a href="/playground/"
-								class="w-full sm:w-auto btn-secondary rounded-full px-8 py-4 text-lg">
-								<i class="fas fa-code mr-2"></i>
-								Try Code Playground
-							</a>
-						</div>
-						<!-- made with love by alex-md github -->
-						<div class="mt-8 flex justify-center items-center gap-2 animate-slide-up"
-							style="animation-delay: 600ms;">
-							<!-- github icon -->
-							<a href="https://github.com/alex-md" class="text-blue-600 hover:text-blue-800 underline">
-								<i class="fab fa-github"></i>
-							</a>
-							<span class="text-sm text-muted-foreground">Made with <i
-									class="fas fa-heart text-red-500"></i> by
-								<a href="https://github.com/alex-md"
-									class="text-blue-600 hover:text-blue-800 underline">alex-md</a>
-
-						</div>
-					</div>
-				</div>
-				</div>
-			</header>
-		</main>
-
-		<footer>
-			<script type="module">
-				import { createFooter } from '@components/footer.js';
-				createFooter();
-			</script>
-		</footer>
-	</body>
+    </body>
 
 </html>
