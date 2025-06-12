@@ -1,5 +1,5 @@
 // Import styles and components
-import '../assets/styles/global.css';
+import '@styles/global.css';
 import { showToast } from '@/components/toast.js';
 import generator from '@rstacruz/startup-name-generator';
 

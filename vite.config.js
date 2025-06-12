@@ -52,7 +52,7 @@ export default defineConfig({
             '@': srcDir,
             '@components': path.resolve(srcDir, 'components'),
             '@utils': path.resolve(srcDir, 'utils'),
-            '@styles': path.resolve(srcDir, 'assets/styles')
+            '@styles': path.resolve(rootDir, 'public/assets/styles')
         },
         extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
     },
@@ -64,7 +64,6 @@ export default defineConfig({
             input: {
                 main: path.resolve(srcDir, 'index.html'),
                 analytics: path.resolve(srcDir, 'analytics/index.html'),
-                tools: path.resolve(srcDir, 'tools/index.html'),
                 minify: path.resolve(srcDir, 'minify/index.html'),
                 clean: path.resolve(srcDir, 'clean/index.html'),
                 insert: path.resolve(srcDir, 'insert/index.html'),

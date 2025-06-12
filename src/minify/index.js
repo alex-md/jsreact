@@ -1,5 +1,5 @@
 // Import styles
-import '../assets/styles/global.css';
+import '@styles/global.css';
 
 // Import components
 import { showToast } from '@components/toast.js';

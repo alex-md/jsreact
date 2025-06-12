@@ -1,5 +1,5 @@
 // Import styles
-import '../assets/styles/global.css';
+import '@styles/global.css';
 
 // Export header creation function
 export function createHeader(title, description) {
