@@ -88,5 +88,13 @@
         "icon": "fas fa-code",
         "color": "pink",
         "link": "/playground/"
+    },
+    {
+        "id": "elevation",
+        "title": "Elevation Finder",
+        "description": "Look up elevation from coordinates or addresses",
+        "icon": "fas fa-mountain",
+        "color": "gray",
+        "link": "/elevation/"
     }
 ]

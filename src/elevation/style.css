@@ -1,0 +1,23 @@
+body {
+    font-family: var(--font-sans, sans-serif);
+}
+
+.map-container {
+    height: 500px;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+}
+
+input, button {
+    font-size: 1rem;
+}
+
+button {
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .controls {
+        flex-direction: column;
+    }
+}

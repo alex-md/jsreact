@@ -13,6 +13,7 @@ function setupSearch(searchInput, searchResults) {
         { name: "Speech Tools", href: "/speech/", description: "Text to speech conversion" },
         { name: "Domain Appraisal", href: "/domain/", description: "Value domain names" },
         { name: "OSRS Flipper", href: "/osrs/", description: "OSRS item price checker" },
+        { name: "Elevation Finder", href: "/elevation/", description: "Lookup elevation using map or address" },
     ];
 
     let searchTimeout;
@@ -113,7 +114,8 @@ export function createNavbar() {
             { text: "QR Code", href: "/qr/", icon: "fa-qrcode" },
             { text: "Speech", href: "/speech/", icon: "fa-microphone-alt" },
             { text: "Domain Appraisal", href: "/domain/", icon: "fa-chart-line" },
-            { text: "OSRS Flipper", href: "/osrs/", icon: "fa-coins" }
+            { text: "OSRS Flipper", href: "/osrs/", icon: "fa-coins" },
+            { text: "Elevation", href: "/elevation/", icon: "fa-mountain" }
         ]
     };
 
