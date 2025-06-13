@@ -1,11 +1,11 @@
 [
     {
-        "id": "domain",
-        "title": "Domain Appraisal",
-        "description": "Get accurate market value estimates for domain names",
-        "icon": "fas fa-chart-line",
-        "color": "blue",
-        "link": "/domain/",
+        "id": "elevation",
+        "title": "Elevation Finder",
+        "description": "Look up elevation from coordinates or addresses",
+        "icon": "fas fa-mountain",
+        "color": "green",
+        "link": "/elevation/",
         "new": true
     },
     {
@@ -16,6 +16,14 @@
         "color": "amber",
         "link": "/osrs/",
         "new": true
+    },
+    {
+        "id": "domain",
+        "title": "Domain Appraisal",
+        "description": "Get accurate market value estimates for domain names",
+        "icon": "fas fa-chart-line",
+        "color": "blue",
+        "link": "/domain/"
     },
     {
         "id": "minify",
@@ -46,7 +54,7 @@
         "title": "Text Cleaner",
         "description": "Clean and format your text with powerful tools",
         "icon": "fas fa-broom",
-        "color": "green",
+        "color": "cyan",
         "link": "/clean/"
     },
     {

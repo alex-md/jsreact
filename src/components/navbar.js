@@ -13,6 +13,7 @@ function setupSearch(searchInput, searchResults) {
         { name: "Speech Tools", href: "/speech/", description: "Text to speech conversion" },
         { name: "Domain Appraisal", href: "/domain/", description: "Value domain names" },
         { name: "OSRS Flipper", href: "/osrs/", description: "OSRS item price checker" },
+        { name: "Elevation Finder", href: "/elevation/", description: "Find elevation data for any location" },
     ];
 
     let searchTimeout;
@@ -85,7 +86,7 @@ export function createNavbar() {
 
     const logoLink = document.createElement("a");
     logoLink.href = "/";
-    logoLink.className = "flex items-center gap-2";    const logoImage = document.createElement("img");
+    logoLink.className = "flex items-center gap-2"; const logoImage = document.createElement("img");
     logoImage.src = "/images/logo.png";
     logoImage.alt = "JSReact Logo";
     logoImage.className = "h-14 w-auto max-h-16 min-w-[3.5rem] object-contain";
@@ -117,178 +118,178 @@ export function createNavbar() {
         ]
     };
 
-const menuSection = document.createElement("div");
-menuSection.className = "flex items-center gap-4";
+    const menuSection = document.createElement("div");
+    menuSection.className = "flex items-center gap-4";
 
-// Search functionality
-const searchBox = document.createElement("div");
-searchBox.className = "hidden md:flex items-center relative w-full md:w-auto";
+    // Search functionality
+    const searchBox = document.createElement("div");
+    searchBox.className = "hidden md:flex items-center relative w-full md:w-auto";
 
-const searchInput = document.createElement("input");
-searchInput.type = "search";
-searchInput.placeholder = "Search tools...";
-searchInput.className = "px-3 py-2 rounded-md bg-background border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm w-full md:w-40 transition-all duration-200 md:focus:w-56";
+    const searchInput = document.createElement("input");
+    searchInput.type = "search";
+    searchInput.placeholder = "Search tools...";
+    searchInput.className = "px-3 py-2 rounded-md bg-background border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm w-full md:w-40 transition-all duration-200 md:focus:w-56";
 
-const searchResults = document.createElement("div");
-searchResults.className = "absolute hidden top-full left-0 mt-1 w-full md:w-64 max-h-64 overflow-y-auto rounded-md bg-background border border-border shadow-lg z-50";
+    const searchResults = document.createElement("div");
+    searchResults.className = "absolute hidden top-full left-0 mt-1 w-full md:w-64 max-h-64 overflow-y-auto rounded-md bg-background border border-border shadow-lg z-50";
 
-searchBox.append(searchInput, searchResults);
-setupSearch(searchInput, searchResults);
+    searchBox.append(searchInput, searchResults);
+    setupSearch(searchInput, searchResults);
 
-// Desktop menu with dropdowns
-const desktopMenu = document.createElement("div");
-desktopMenu.className = "hidden md:flex items-center gap-2"; Object.entries(categories).forEach(([category, items]) => {
-    const dropdown = document.createElement("div");
-    dropdown.className = "relative";
+    // Desktop menu with dropdowns
+    const desktopMenu = document.createElement("div");
+    desktopMenu.className = "hidden md:flex items-center gap-2"; Object.entries(categories).forEach(([category, items]) => {
+        const dropdown = document.createElement("div");
+        dropdown.className = "relative";
 
-    const trigger = document.createElement("button");
-    trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
-    trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
+        const trigger = document.createElement("button");
+        trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
+        trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
 
-    const menu = document.createElement("div");
-    menu.className = "absolute top-full left-0 mt-1 w-48 rounded-md bg-background border border-border shadow-lg opacity-0 invisible transition-all duration-200 z-50";
+        const menu = document.createElement("div");
+        menu.className = "absolute top-full left-0 mt-1 w-48 rounded-md bg-background border border-border shadow-lg opacity-0 invisible transition-all duration-200 z-50";
 
-    let isDropdownOpen = false;
-    let timeoutId = null;
+        let isDropdownOpen = false;
+        let timeoutId = null;
 
-    const showMenu = () => {
-        clearTimeout(timeoutId);
-        menu.classList.remove('opacity-0', 'invisible');
-        menu.classList.add('opacity-100', 'visible');
-        isDropdownOpen = true;
-    };
-
-    const hideMenu = () => {
-        timeoutId = setTimeout(() => {
-            menu.classList.remove('opacity-100', 'visible');
-            menu.classList.add('opacity-0', 'invisible');
-            isDropdownOpen = false;
-        }, 100);
-    };
-
-    trigger.addEventListener('mouseenter', showMenu);
-    trigger.addEventListener('mouseleave', hideMenu);
-    menu.addEventListener('mouseenter', showMenu);
-    menu.addEventListener('mouseleave', hideMenu);
-
-    items.forEach(({ text, href, icon }) => {
-        const a = document.createElement("a");
-        a.href = href;
-        a.className = "flex items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors";
-
-        const i = document.createElement("i");
-        i.className = `fas ${icon} mr-2 w-4`;
-
-        const span = document.createElement("span");
-        span.textContent = text;
-
-        a.append(i, span);
-        menu.appendChild(a);
-    });
-
-    dropdown.append(trigger, menu);
-    desktopMenu.appendChild(dropdown);
-});
-
-// Mobile menu
-const mobileMenu = document.createElement("div");
-mobileMenu.className = "md:hidden flex flex-wrap gap-2 px-4 py-2 bg-background/95 backdrop-blur border-t border-border overflow-x-auto whitespace-nowrap";
-
-// Mobile menu dropdown container
-const mobileDropdownContainer = document.createElement("div");
-mobileDropdownContainer.className = "fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] hidden";
-document.body.appendChild(mobileDropdownContainer);
-
-mobileDropdownContainer.addEventListener('click', (e) => {
-    if (e.target === mobileDropdownContainer) {
-        mobileDropdownContainer.classList.add('hidden');
-        document.querySelectorAll('.mobile-dropdown-menu').forEach(menu => {
-            menu.classList.remove('opacity-100', 'visible');
-            menu.classList.add('opacity-0', 'invisible');
-        });
-    }
-});
-
-Object.entries(categories).forEach(([category, items]) => {
-    const dropdown = document.createElement("div");
-    dropdown.className = "relative inline-block align-top";
-
-    const trigger = document.createElement("button");
-    trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors bg-background hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
-    trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
-
-    const menu = document.createElement("div");
-    menu.className = "fixed left-4 right-4 top-1/4 -translate-y-1/2 bg-background border border-border rounded-lg shadow-xl z-[1000] p-4 opacity-0 invisible transition-all duration-200 mobile-dropdown-menu max-h-[60vh] overflow-y-auto";
-
-    const menuHeader = document.createElement("div");
-    menuHeader.className = "flex items-center justify-between mb-4 pb-2 border-b border-border";
-
-    const menuTitle = document.createElement("h3");
-    menuTitle.className = "text-lg font-semibold";
-    menuTitle.textContent = category;
-
-    const closeButton = document.createElement("button");
-    closeButton.className = "p-1 hover:bg-accent hover:text-accent-foreground rounded-md";
-    closeButton.innerHTML = '<i class="fas fa-times"></i>';
-
-    menuHeader.append(menuTitle, closeButton);
-    menu.appendChild(menuHeader);
-
-    items.forEach(({ text, href, icon }) => {
-        const a = document.createElement("a");
-        a.href = href;
-        a.className = "flex items-center px-4 py-3 text-base hover:bg-accent hover:text-accent-foreground transition-colors rounded-md";
-
-        const i = document.createElement("i");
-        i.className = `fas ${icon} mr-3 w-5`;
-
-        const span = document.createElement("span");
-        span.textContent = text;
-
-        a.append(i, span);
-        menu.appendChild(a);
-    });
-
-    // Mobile menu click handler
-    trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isVisible = !menu.classList.contains('opacity-0');
-
-        // Hide all other menus
-        document.querySelectorAll('.mobile-dropdown-menu').forEach(m => {
-            if (m !== menu) {
-                m.classList.remove('opacity-100', 'visible');
-                m.classList.add('opacity-0', 'invisible');
-            }
-        });
-
-        if (!isVisible) {
-            mobileDropdownContainer.classList.remove('hidden');
+        const showMenu = () => {
+            clearTimeout(timeoutId);
             menu.classList.remove('opacity-0', 'invisible');
             menu.classList.add('opacity-100', 'visible');
-        } else {
+            isDropdownOpen = true;
+        };
+
+        const hideMenu = () => {
+            timeoutId = setTimeout(() => {
+                menu.classList.remove('opacity-100', 'visible');
+                menu.classList.add('opacity-0', 'invisible');
+                isDropdownOpen = false;
+            }, 100);
+        };
+
+        trigger.addEventListener('mouseenter', showMenu);
+        trigger.addEventListener('mouseleave', hideMenu);
+        menu.addEventListener('mouseenter', showMenu);
+        menu.addEventListener('mouseleave', hideMenu);
+
+        items.forEach(({ text, href, icon }) => {
+            const a = document.createElement("a");
+            a.href = href;
+            a.className = "flex items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors";
+
+            const i = document.createElement("i");
+            i.className = `fas ${icon} mr-2 w-4`;
+
+            const span = document.createElement("span");
+            span.textContent = text;
+
+            a.append(i, span);
+            menu.appendChild(a);
+        });
+
+        dropdown.append(trigger, menu);
+        desktopMenu.appendChild(dropdown);
+    });
+
+    // Mobile menu
+    const mobileMenu = document.createElement("div");
+    mobileMenu.className = "md:hidden flex flex-wrap gap-2 px-4 py-2 bg-background/95 backdrop-blur border-t border-border overflow-x-auto whitespace-nowrap";
+
+    // Mobile menu dropdown container
+    const mobileDropdownContainer = document.createElement("div");
+    mobileDropdownContainer.className = "fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] hidden";
+    document.body.appendChild(mobileDropdownContainer);
+
+    mobileDropdownContainer.addEventListener('click', (e) => {
+        if (e.target === mobileDropdownContainer) {
             mobileDropdownContainer.classList.add('hidden');
-            menu.classList.remove('opacity-100', 'visible');
-            menu.classList.add('opacity-0', 'invisible');
+            document.querySelectorAll('.mobile-dropdown-menu').forEach(menu => {
+                menu.classList.remove('opacity-100', 'visible');
+                menu.classList.add('opacity-0', 'invisible');
+            });
         }
     });
 
-    closeButton.addEventListener('click', () => {
-        mobileDropdownContainer.classList.add('hidden');
-        menu.classList.remove('opacity-100', 'visible');
-        menu.classList.add('opacity-0', 'invisible');
+    Object.entries(categories).forEach(([category, items]) => {
+        const dropdown = document.createElement("div");
+        dropdown.className = "relative inline-block align-top";
+
+        const trigger = document.createElement("button");
+        trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors bg-background hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
+        trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
+
+        const menu = document.createElement("div");
+        menu.className = "fixed left-4 right-4 top-1/4 -translate-y-1/2 bg-background border border-border rounded-lg shadow-xl z-[1000] p-4 opacity-0 invisible transition-all duration-200 mobile-dropdown-menu max-h-[60vh] overflow-y-auto";
+
+        const menuHeader = document.createElement("div");
+        menuHeader.className = "flex items-center justify-between mb-4 pb-2 border-b border-border";
+
+        const menuTitle = document.createElement("h3");
+        menuTitle.className = "text-lg font-semibold";
+        menuTitle.textContent = category;
+
+        const closeButton = document.createElement("button");
+        closeButton.className = "p-1 hover:bg-accent hover:text-accent-foreground rounded-md";
+        closeButton.innerHTML = '<i class="fas fa-times"></i>';
+
+        menuHeader.append(menuTitle, closeButton);
+        menu.appendChild(menuHeader);
+
+        items.forEach(({ text, href, icon }) => {
+            const a = document.createElement("a");
+            a.href = href;
+            a.className = "flex items-center px-4 py-3 text-base hover:bg-accent hover:text-accent-foreground transition-colors rounded-md";
+
+            const i = document.createElement("i");
+            i.className = `fas ${icon} mr-3 w-5`;
+
+            const span = document.createElement("span");
+            span.textContent = text;
+
+            a.append(i, span);
+            menu.appendChild(a);
+        });
+
+        // Mobile menu click handler
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = !menu.classList.contains('opacity-0');
+
+            // Hide all other menus
+            document.querySelectorAll('.mobile-dropdown-menu').forEach(m => {
+                if (m !== menu) {
+                    m.classList.remove('opacity-100', 'visible');
+                    m.classList.add('opacity-0', 'invisible');
+                }
+            });
+
+            if (!isVisible) {
+                mobileDropdownContainer.classList.remove('hidden');
+                menu.classList.remove('opacity-0', 'invisible');
+                menu.classList.add('opacity-100', 'visible');
+            } else {
+                mobileDropdownContainer.classList.add('hidden');
+                menu.classList.remove('opacity-100', 'visible');
+                menu.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        closeButton.addEventListener('click', () => {
+            mobileDropdownContainer.classList.add('hidden');
+            menu.classList.remove('opacity-100', 'visible');
+            menu.classList.add('opacity-0', 'invisible');
+        });
+
+        dropdown.append(trigger);
+        document.body.appendChild(menu);
+        mobileMenu.appendChild(dropdown);
     });
 
-    dropdown.append(trigger);
-    document.body.appendChild(menu);
-    mobileMenu.appendChild(dropdown);
-});
-
-menuSection.append(searchBox, desktopMenu);
-navContent.append(logoSection, menuSection);
-container.appendChild(navContent);
-navbar.append(container, mobileMenu);
-document.body.prepend(navbar);
+    menuSection.append(searchBox, desktopMenu);
+    navContent.append(logoSection, menuSection);
+    container.appendChild(navContent);
+    navbar.append(container, mobileMenu);
+    document.body.prepend(navbar);
 }
 
 // Remove the automatic initialization

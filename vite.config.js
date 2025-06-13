@@ -8,6 +8,10 @@ import { fileURLToPath } from 'url';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(rootDir, 'src');
+
+// Define directories that should not be treated as pages
+const nonPageDirs = ['components', 'utils', 'assets'];
+
 const getPageInputs = () => {
     const entries = {};
 
@@ -75,7 +79,8 @@ export default defineConfig({
                 qr: path.resolve(srcDir, 'qr/index.html'),
                 speech: path.resolve(srcDir, 'speech/index.html'),
                 domain: path.resolve(srcDir, 'domain/index.html'),
-                osrs: path.resolve(srcDir, 'osrs/index.html')
+                osrs: path.resolve(srcDir, 'osrs/index.html'),
+                elevation: path.resolve(srcDir, 'elevation/index.html')
             },
             output: {
                 manualChunks: {

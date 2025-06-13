@@ -1,28 +1,30 @@
 export async function createToolCards() {
-    const container = document.getElementById('tool-cards-container');
-    if (!container) {
-        console.error('Tool cards container not found!');
-        return;
+  const container = document.getElementById('tool-cards-container');
+  if (!container) {
+    console.error('Tool cards container not found!');
+    return;
+  }
+
+  let tools = [];
+
+  try {
+    // Updated fetch path to public/data/tools.json
+    const response = await fetch('/data/tools.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    tools = await response.json();
 
-    try {
-        // Updated fetch path to public/data/tools.json
-        const response = await fetch('/data/tools.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const tools = await response.json();
+    tools.forEach(tool => {
+      const card = document.createElement('article');
+      card.className = 'tool-card group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 transition-all hover:shadow-lg hover:-translate-y-1';
 
-        tools.forEach(tool => {
-            const card = document.createElement('article');
-            card.className = 'tool-card group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 transition-all hover:shadow-lg hover:-translate-y-1';
-
-            const newBadge = tool.new ? `
+      const newBadge = tool.new ? `
         <div class="absolute -right-2 -top-2 z-10">
-          <span class="inline-flex items-center rounded-full bg-primary/90 px-2.5 py-0.5 text-xs font-medium text-white">New</span>
+          <span class="bg-blue-500 font-medium inline-flex items-center px-2.5 py-0.5 rounded-full shadow-md text-lg text-white">New</span>
         </div>` : '';
 
-            card.innerHTML = `
+      card.innerHTML = `
         <div class="relative">
           ${newBadge}
           <div class="flex items-center gap-3 mb-4">
@@ -43,11 +45,13 @@ export async function createToolCards() {
           </a>
         </div>
       `;
-            container.appendChild(card);
-        });
+      container.appendChild(card);
+    });
 
-    } catch (error) {
-        console.error('Error fetching or processing tool data:', error);
-        container.innerHTML = '<p class="text-red-500">Error loading tools. Please try again later.</p>';
-    }
+    console.log('Loaded tools:', tools);
+
+  } catch (error) {
+    console.error('Error fetching or processing tool data:', error);
+    container.innerHTML = '<p class="text-red-500">Error loading tools. Please try again later.</p>';
+  }
 }
