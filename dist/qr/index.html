@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <title>Free QR Code Generator - Create QR Codes from Images | JSreact</title>
+        <meta name="description"
+            content="Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images. Easy to use, no registration required.">
+
+        <!-- Styles -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="/assets/styles/global.css">
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Enhanced SEO Meta Tags -->
+        <meta name="keywords"
+            content="qr code generator, image to qr code, free qr code maker, online qr code generator, qr code from image">
+        <meta name="author" content="JSreact">
+        <meta name="robots" content="index, follow">
+
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Free QR Code Generator - Create QR Codes from Images">
+        <meta property="og:description"
+            content="Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images.">
+        <meta property="og:site_name" content="JSreact">
+
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Free QR Code Generator - Create QR Codes from Images">
+        <meta name="twitter:description"
+            content="Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images.">
+
+        <!-- JSON-LD Structured Data -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "JSreact QR Code Generator",
+            "applicationCategory": "UtilityApplication",
+            "operatingSystem": "Any",
+            "description": "Free online tool for generating QR codes from uploaded or pasted images. Easy to use with instant QR code generation.",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "featureList": [
+                "Image to QR code conversion",
+                "Drag and drop support",
+                "Clipboard paste support",
+                "Instant QR code generation",
+                "Download QR codes",
+                "Multiple image format support"
+            ]
+        }
+        </script>
+
+        <!-- Preload Resources -->
+        <link rel="preconnect" href="https://image-host.vs.workers.dev">
+      <script type="module" crossorigin src="/assets/qr-h0sWCwRW.js"></script>
+      <link rel="modulepreload" crossorigin href="/assets/footer-G77DEKXn.js">
+      <link rel="modulepreload" crossorigin href="/assets/header-BNHvIcTK.js">
+      <link rel="modulepreload" crossorigin href="/assets/vendor-Cx1yjxTP.js">
+      <link rel="modulepreload" crossorigin href="/assets/toast-yF4vTtGx.js">
+      <link rel="stylesheet" crossorigin href="/assets/footer-DjYx831I.css">
+    </head>
+
+    <body class="bg-background text-foreground">
+
+        <div id="header"></div>
+
+        <main class="container mx-auto px-4 py-8 max-w-7xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Upload/Paste Section -->
+                <section
+                    class="bg-card text-card-foreground rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
+                    <div class="p-6 space-y-4">
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-image text-primary"></i>
+                            Upload Image
+                        </h2>
+                        <div id="dropzone"
+                            class="flex flex-col items-center justify-center p-6 bg-muted border-2 border-dashed border-border rounded-lg hover:border-primary/30 transition-colors duration-200">
+                            <input type="file" id="fileInput" accept="image/*" class="hidden">
+                            <div class="text-center space-y-2">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-muted-foreground"></i>
+                                <p class="text-muted-foreground">Drop an image here or click to upload</p>
+                                <p class="text-sm text-muted-foreground/80">You can also paste an image directly</p>
+                            </div>
+                        </div>
+                        <div id="imagePreview" class="hidden">
+                            <img id="preview" class="w-full h-48 object-contain rounded-lg">
+                            <button id="removeImage"
+                                class="mt-2 w-full py-2 px-4 bg-destructive/10 text-destructive rounded-lg hover:bg-destructive/20 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                                <i class="fas fa-trash text-xs"></i> Remove Image
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- QR Code Result Section -->
+                <section
+                    class="bg-card text-card-foreground rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
+                    <div class="p-6 space-y-4">
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-qrcode text-primary"></i>
+                            QR Code
+                        </h2>
+                        <div id="qrContainer" class="flex flex-col items-center justify-center min-h-[200px]">
+                            <p class="text-muted-foreground">Upload or paste an image to generate a QR code</p>
+                        </div>
+                        <button id="downloadQR"
+                            class="hidden w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                            <i class="fas fa-download text-xs"></i> Download QR Code
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </body>
+
+</html>

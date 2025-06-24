@@ -87,7 +87,7 @@ export function createNavbar() {
     const logoLink = document.createElement("a");
     logoLink.href = "/";
     logoLink.className = "flex items-center gap-2"; const logoImage = document.createElement("img");
-    logoImage.src = "/images/logo.png";
+    logoImage.src = "/assets/images/logo.png";
     logoImage.alt = "JSReact Logo";
     logoImage.className = "h-14 w-auto max-h-16 min-w-[3.5rem] object-contain";
 
@@ -114,7 +114,8 @@ export function createNavbar() {
             { text: "QR Code", href: "/qr/", icon: "fa-qrcode" },
             { text: "Speech", href: "/speech/", icon: "fa-microphone-alt" },
             { text: "Domain Appraisal", href: "/domain/", icon: "fa-chart-line" },
-            { text: "OSRS Flipper", href: "/osrs/", icon: "fa-coins" }
+            { text: "OSRS Flipper", href: "/osrs/", icon: "fa-coins" },
+            { text: "Elevation Finder", href: "/elevation/", icon: "fa-mountain" }
         ]
     };
 

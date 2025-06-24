@@ -84,8 +84,11 @@
             </div>
         </main>
         <script type="module" src="@components/footer.js"></script>
-        <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
+        <script type="module">
+            import { createFooter } from '@components/footer.js';
+            createFooter();
+        </script>
     </body>
 
 </html>
