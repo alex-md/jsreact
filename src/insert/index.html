@@ -2,7 +2,14 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
-        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Natural Keyword Inserter</title>
+        <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
+
+        <!-- Tailwind CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+
         <script type="module" src="@components/head.js"></script>
         <script>
             createHead(
@@ -11,185 +18,100 @@
             );
         </script>
 
-        <!-- Enhanced SEO Meta Tags -->
-        <meta name="keywords" content="text insert, text manipulation, text processing, content insertion, text tools">
-        <meta name="author" content="JSreact">
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-
-
-        <style>
-            h1 {
-                text-align: center;
-                color: #2c3e50;
-                margin-bottom: 20px;
-            }
-
-            label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: bold;
-                color: #34495e;
-            }
-
-            textarea,
-            input[type="text"] {
-                width: 100%;
-                padding: 10px;
-                margin-bottom: 20px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                box-sizing: border-box;
-                /* Include padding in width */
-                font-size: 1rem;
-            }
-
-            textarea {
-                min-height: 150px;
-                resize: vertical;
-            }
-
-            /* Slider Styles */
-            .slider-container {
-                margin-bottom: 25px;
-            }
-
-            .slider-label {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 10px;
-                /* Increased space */
-            }
-
-            input[type="range"] {
-                width: 100%;
-                cursor: pointer;
-                margin-top: 5px;
-                /* Space between label and slider */
-            }
-
-            #frequency-value {
-                font-weight: bold;
-                color: #3498db;
-                min-width: 20px;
-                /* Ensure space for two digits */
-                text-align: right;
-            }
-
-            /* End Slider Styles */
-
-
-            button:hover {
-                background-color: #2980b9;
-            }
-
-            button:disabled {
-                background-color: #bdc3c7;
-                cursor: not-allowed;
-            }
-
-            #output-area {
-                margin-top: 30px;
-                border-top: 1px solid #eee;
-                padding-top: 20px;
-            }
-
-            #output-area h2 {
-                margin-bottom: 10px;
-                color: #2c3e50;
-            }
-
-            #result-text {
-                background-color: #ecf0f1;
-                padding: 15px;
-                border-radius: 4px;
-                white-space: pre-wrap;
-                /* Preserve line breaks and spaces */
-                word-wrap: break-word;
-                /* Break long words */
-                border: 1px solid #bdc3c7;
-                font-family: monospace;
-                /* Often better for seeing exact text */
-                min-height: 50px;
-            }
-
-            #insertion-count {
-                margin-top: 15px;
-                font-weight: bold;
-                color: #27ae60;
-            }
-
-            .error-message {
-                color: #e74c3c;
-                font-weight: bold;
-                margin-bottom: 15px;
-                min-height: 1.2em;
-                /* Prevent layout shift */
-            }
-
-            #process-button {
-                background-color: #336bb8;
-                color: white;
-                box-shadow: 0px 0px 3px #ccc;
-                border: 1px solid #336bb8;
-                display: flex;
-                padding: 10px 20px;
-                font-size: 1rem;
-            }
-        </style>
+        <!-- SEO Meta Tags -->
+        <meta name="keywords"
+            content="text insert, text manipulation, text processing, content insertion, text tools" />
+        <meta name="author" content="JSreact" />
+        <meta name="robots" content="index, follow" />
     </head>
 
-    <body class="bg-gray-50">
+    <body class="bg-gray-50 text-gray-800 antialiased pt-20 md:pt-16">
+        <!--
+    sticky navbar is ~4rem tall;
+    on mobile, extra menu adds ~1rem,
+    so pt-20 (5rem) mobile → md:pt-16 (4rem) desktop
+  -->
         <script type="module">
             import { createNavbar } from '@components/navbar.js';
             createNavbar();
         </script>
 
-        <div id="header"></div>
-        <!-- <script type="module">
-            import { createHeader } from '@components/header.js';
-            const header = createHeader(
-                'Text Insert Tool',
-                'Insert text at specific line numbers or positions'
-            );
-            document.getElementById('header').appendChild(header);
-        </script> -->
+        <main class="flex items-center justify-center max-h">
+            <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8 space-y-6">
+                <!-- Title -->
+                <h1 class="text-4xl font-extrabold text-center text-gray-900">
+                    Natural Keyword Inserter
+                </h1>
 
-        <main class="container mx-auto px-4 py-12 max-w-7xl">
+                <!-- Error Message -->
+                <div id="error-display" class="min-h-[1.5rem] text-red-600 font-medium"></div>
 
-            <div class="container">
-                <h1>Natural Keyword Inserter</h1>
-
-                <div id="error-display" class="error-message"></div>
-
-                <label for="text-input">Enter your text:</label>
-                <textarea id="text-input" placeholder="Paste or type your text here..."></textarea>
-
-                <label for="keyword-input">Enter keyword (must end in 'ing'):</label>
-                <input type="text" id="keyword-input" placeholder="e.g., running, thinking, developing">
-
-                <div class="slider-container">
-                    <div class="slider-label">
-                        <label for="frequency-slider">Insertion Frequency (1=Few, 10=Many):</label>
-                        <span id="frequency-value">5</span>
+                <!-- Form -->
+                <div class="space-y-6">
+                    <!-- Text Input -->
+                    <div>
+                        <label for="text-input" class="block text-sm font-medium text-gray-700">Enter your text</label>
+                        <textarea id="text-input" rows="6" placeholder="Paste or type your text here…"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"></textarea>
                     </div>
-                    <input type="range" id="frequency-slider" min="1" max="10" value="5">
+
+                    <!-- Keyword Input -->
+                    <div>
+                        <label for="keyword-input" class="block text-sm font-medium text-gray-700">Enter keyword (must
+                            end in 'ing')</label>
+                        <input type="text" id="keyword-input" placeholder="e.g., running, thinking, developing"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Frequency Slider -->
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <label for="frequency-slider" class="text-sm font-medium text-gray-700">
+                                Insertion Frequency
+                                <span class="text-xs text-gray-500">(1 = Few, 10 = Many)</span>
+                            </label>
+                            <span id="frequency-value" class="text-sm font-semibold text-blue-600">5</span>
+                        </div>
+                        <input type="range" id="frequency-slider" min="1" max="10" value="5"
+                            class="w-full mt-2 accent-blue-600" />
+                    </div>
                 </div>
 
-                <button id="process-button" class="btn-modern bg-primary text-primary-foreground hover:bg-accent">Insert
-                    Keyword</button>
+                <!-- Action Button -->
+                <button id="process-button"
+                    class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-colors">
+                    Insert Keyword
+                </button>
 
-                <div id="output-area">
-                    <h2>Modified Text:</h2>
-                    <p id="insertion-count">Keywords inserted: 0</p>
-                    <div id="result-text"></div>
+                <!-- Output -->
+                <div id="output-area" class="mt-8 bg-gray-100 rounded-lg p-6 border border-gray-200 space-y-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Modified Text</h2>
+                    <p id="insertion-count" class="font-medium text-green-600">
+                        Keywords inserted: 0
+                    </p>
+                    <div id="result-text"
+                        class="bg-white p-4 rounded-md border border-gray-300 font-mono whitespace-pre-wrap min-h-[4rem]">
+                    </div>
                 </div>
             </div>
-
         </main>
+
         <script type="module" src="@components/footer.js"></script>
         <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
+
+        <div id="footer-container" class="relative z-10"></div>
+        <script type="module">
+            import { createFooter } from '@components/footer.js';
+            const footerContainer = document.getElementById('footer-container');
+            if (footerContainer) {
+                createFooter(footerContainer);
+            } else {
+                console.error("Footer container not found");
+            }
+        </script>
+
     </body>
+
 
 </html>
