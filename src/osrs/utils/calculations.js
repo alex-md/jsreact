@@ -448,78 +448,44 @@ export function calculateInstaSellPrice(itemId, latestPrices, fiveMin, hourlyPri
 
     const {
         latest, fiveMinData, hourlyData,
-        latestWeight, fiveMinWeight, hourlyWeight,
         sellVolumeRatio, buyVolumeRatio,
         volumeConfidence, marketStabilityFactor,
         volatility,
         highPriceVolume, lowPriceVolume, timestamp
     } = baseData;
+    const spread = Math.max(0, (latest.high ?? 0) - (latest.low ?? 0));
+    if (spread <= 0) return null;
 
-    // Recent price points for analysis
-    const recentPrices = {
-        latest: latest.high,
-        fiveMin: fiveMinData.avgHighPrice,
-        hourly: hourlyData.avgHighPrice,
-        latestLow: latest.low,
-        fiveMinLow: fiveMinData.avgLowPrice,
-        hourlyLow: hourlyData.avgLowPrice
-    };
+    const baseBuyPrice = Math.floor(
+        (latest.low ?? 0) * 0.5 +
+        (fiveMinData.avgLowPrice ?? 0) * 0.3 +
+        (hourlyData.avgLowPrice ?? 0) * 0.2
+    );
 
-    // Calculate the range of recent trading activity
-    const priceRange = {
-        min: Math.min(latest.low, fiveMinData.avgLowPrice, hourlyData.avgLowPrice),
-        max: Math.max(latest.high, fiveMinData.avgHighPrice, hourlyData.avgHighPrice),
-        current: latest.high
-    };
+    // Demand strength: >1 means more buyers than sellers
+    const demandStrength = buyVolumeRatio / Math.max(1, sellVolumeRatio);
 
-    // Calculate sell pressure (-1 = downward, 1 = upward)
+    // Sell pressure (-1 = downward, 1 = upward)
     const sellPressure = (
         ((latest.high < fiveMinData.avgHighPrice) ? -1 : 1) * 0.5 +
         ((fiveMinData.avgHighPrice < hourlyData.avgHighPrice) ? -1 : 1) * 0.3 +
-        ((buyVolumeRatio > sellVolumeRatio) ? 1 : -1) * 0.2  // More buying than selling is good for sellers
+        ((buyVolumeRatio > sellVolumeRatio) ? 1 : -1) * 0.2
     );
 
-    // Activity level affects how much we need to discount from maximum
     const activityLevel = Math.min(1, (highPriceVolume + lowPriceVolume) / 500);
-
-    // Market competition factor - higher when there's more buying than selling
     const competitionFactor = Math.max(0.2, Math.min(1, sellVolumeRatio / buyVolumeRatio));
 
-    // Base price calculation considering recent trades
-    const basePrice = Math.floor(
-        latest.high * 0.4 +
-        fiveMinData.avgHighPrice * 0.4 +
-        hourlyData.avgHighPrice * 0.2
-    );
+    let aggressiveness = 0.5;
+    aggressiveness += 0.2 * Math.max(0, demandStrength - 1);
+    aggressiveness += 0.1 * sellPressure;
+    aggressiveness += 0.1 * activityLevel;
+    aggressiveness += 0.1 * marketStabilityFactor;
+    aggressiveness -= 0.1 * volatility;
+    aggressiveness = Math.min(Math.max(aggressiveness, 0.05), 0.95);
 
-    // Price adjustment based on market conditions (negative adjustments for instant-sell)
-    const priceAdjustment = (
-        -(activityLevel * 0.03) + // More activity = slightly lower price to ensure quick sale
-        (sellPressure * 0.02) + // Price trend influence
-        -(competitionFactor * 0.04) + // More competition = lower price
-        (volumeConfidence * 0.01) + // Small volume confidence boost
-        (marketStabilityFactor * 0.01) // Small stability boost
-    );
-
-    // Calculate the suggested price with dynamic adjustments
-    const suggestedPrice = Math.floor(
-        Math.min(
-            basePrice,
-            priceRange.max * (1 + priceAdjustment), // Maximum price minus adjustments
-            latest.high // Never go above current highest
-        )
-    );
-
-    // Final safety check: don't go below recent trading range
-    const minAllowedPrice = Math.max(
-        priceRange.min,
-        Math.min(
-            priceRange.max * 0.9, // Min 90% of maximum
-            latest.low * 0.95 // Min 95% of latest low
-        )
-    );
-
-    const finalPrice = Math.max(suggestedPrice, minAllowedPrice);
+    let finalPrice = baseBuyPrice + Math.floor(spread * aggressiveness);
+    finalPrice = Math.min(finalPrice, (latest.high ?? finalPrice) - 1);
+    finalPrice = Math.max(finalPrice, baseBuyPrice + 1);
 
     // Calculate confidence in this price recommendation
     const priceConfidence = Math.min(1,
@@ -536,12 +502,18 @@ export function calculateInstaSellPrice(itemId, latestPrices, fiveMin, hourlyPri
         else if (priceMovement < -0.01) momentum = 'falling';
     }
 
-    // Calculate potential GE tax
-    const taxedPrice = Math.floor(finalPrice * 0.99); // 1% GE tax
+    // Calculate potential GE tax (2%) and margin relative to base buy
+    const geTax = Math.floor(finalPrice * 0.02);
+    const taxedPrice = finalPrice - geTax;
+    const netProfit = taxedPrice - baseBuyPrice;
+    const margin = netProfit / baseBuyPrice;
 
     return {
         weightedHighPrice: finalPrice,
         taxedSellPrice: taxedPrice,
+        instantBuyPrice: baseBuyPrice,
+        suggestedMargin: margin,
+        netProfit,
         latestHigh: latest.high,
         fiveMinHigh: fiveMinData.avgHighPrice,
         hourlyHigh: hourlyData.avgHighPrice,
@@ -562,78 +534,45 @@ export function calculateInstaBuyPrice(itemId, latestPrices, fiveMin, hourlyPric
 
     const {
         latest, fiveMinData, hourlyData,
-        latestWeight, fiveMinWeight, hourlyWeight,
         buyVolumeRatio, sellVolumeRatio,
         volumeConfidence, marketStabilityFactor,
         volatility,
         highPriceVolume, lowPriceVolume, timestamp
     } = baseData;
 
-    // Recent price points for analysis
-    const recentPrices = {
-        latest: latest.low,
-        fiveMin: fiveMinData.avgLowPrice,
-        hourly: hourlyData.avgLowPrice,
-        latestHigh: latest.high,
-        fiveMinHigh: fiveMinData.avgHighPrice,
-        hourlyHigh: hourlyData.avgHighPrice
-    };
+    const spread = Math.max(0, (latest.high ?? 0) - (latest.low ?? 0));
+    if (spread <= 0) return null;
 
-    // Calculate the range of recent trading activity
-    const priceRange = {
-        min: Math.min(latest.low, fiveMinData.avgLowPrice, hourlyData.avgLowPrice),
-        max: Math.max(latest.high, fiveMinData.avgHighPrice, hourlyData.avgHighPrice),
-        current: latest.low
-    };
+    const baseSellPrice = Math.floor(
+        (latest.high ?? 0) * 0.5 +
+        (fiveMinData.avgHighPrice ?? 0) * 0.3 +
+        (hourlyData.avgHighPrice ?? 0) * 0.2
+    );
 
-    // Calculate price pressure (1 = upward, -1 = downward)
+    // Supply strength: >1 means more sellers than buyers
+    const supplyStrength = sellVolumeRatio / Math.max(1, buyVolumeRatio);
+
+    // Price pressure (1 = upward, -1 = downward)
     const pricePressure = (
         ((latest.low > fiveMinData.avgLowPrice) ? 1 : -1) * 0.5 +
         ((fiveMinData.avgLowPrice > hourlyData.avgLowPrice) ? 1 : -1) * 0.3 +
         ((sellVolumeRatio > buyVolumeRatio) ? 1 : -1) * 0.2
     );
 
-    // Activity level affects how much we need to pay above the minimum
     const activityLevel = Math.min(1, (highPriceVolume + lowPriceVolume) / 500);
-
-    // Market competition factor - higher when there's more selling than buying
     const competitionFactor = Math.max(0.2, Math.min(1, buyVolumeRatio / sellVolumeRatio));
 
-    // Base price calculation considering recent trades
-    const basePrice = Math.floor(
-        latest.low * 0.4 +
-        fiveMinData.avgLowPrice * 0.4 +
-        hourlyData.avgLowPrice * 0.2
-    );
+    let aggressiveness = 0.5;
+    aggressiveness += 0.2 * Math.max(0, supplyStrength - 1);
+    aggressiveness -= 0.1 * pricePressure;
+    aggressiveness += 0.1 * activityLevel;
+    aggressiveness += 0.1 * marketStabilityFactor;
+    aggressiveness -= 0.1 * volatility;
+    aggressiveness = Math.min(Math.max(aggressiveness, 0.05), 0.95);
 
-    // Price adjustment based on market conditions
-    const priceAdjustment = (
-        (activityLevel * 0.03) + // More activity = slightly higher price
-        (pricePressure * 0.02) + // Price trend influence
-        ((1 - competitionFactor) * 0.04) + // More competition = higher price
-        (volumeConfidence * 0.02) + // Volume confidence boost
-        (marketStabilityFactor * 0.02) // Stability boost
-    );
-
-    // Calculate the suggested price with dynamic adjustments
-    const suggestedPrice = Math.floor(
-        Math.max(
-            basePrice,
-            priceRange.min * (1 + priceAdjustment), // Minimum price plus adjustments
-            latest.low // Never go below current lowest
-        )
-    );
-
-    // Final safety check: don't exceed recent trading range
-    const maxAllowedPrice = Math.min(
-        priceRange.max,
-        Math.max(
-            priceRange.min * 1.1, // Max 10% above minimum
-            latest.high * 1.05 // Max 5% above latest high
-        )
-    );
-
-    const finalPrice = Math.min(suggestedPrice, maxAllowedPrice);
+    let finalPrice = baseSellPrice - Math.floor(spread * aggressiveness);
+    finalPrice = Math.max(finalPrice, (latest.low ?? finalPrice) + 1);
+    finalPrice = Math.min(finalPrice, baseSellPrice - 1);
 
     // Calculate confidence in this price recommendation
     const priceConfidence = Math.min(1,
@@ -650,6 +589,11 @@ export function calculateInstaBuyPrice(itemId, latestPrices, fiveMin, hourlyPric
         else if (priceMovement < -0.01) buyMomentum = 'falling';
     }
 
+    const expectedSellPrice = baseSellPrice;
+    const taxedSell = Math.floor(expectedSellPrice * 0.98);
+    const netProfit = taxedSell - finalPrice;
+    const margin = netProfit / finalPrice;
+
     return {
         weightedLowPrice: finalPrice,
         latestLow: latest.low,
@@ -663,6 +607,9 @@ export function calculateInstaBuyPrice(itemId, latestPrices, fiveMin, hourlyPric
         volatility,
         pricePressure,
         competitionFactor,
+        expectedSellPrice,
+        suggestedMargin: margin,
+        expectedNetProfit: netProfit,
         timestamp,
     };
 }

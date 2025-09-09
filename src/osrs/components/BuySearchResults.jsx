@@ -35,12 +35,20 @@ const BuySearchResultItem = ({ item, getWikiLink, formatTimeSince, formatPrice }
             <Typography variant="body1" className="font-bold text-blue-800">
                 {formatPrice(item.weightedLowPrice)} gp
             </Typography>
-            {/* Buy Momentum & Volatility */}
+            {/* Buy Momentum, Volatility & Margin */}
             <div className="flex items-center gap-2 mt-1">
                 <Typography variant="caption" className={`${item.buyMomentum === 'rising' ? 'text-green-600' : item.buyMomentum === 'falling' ? 'text-red-600' : 'text-gray-600'}`}>
                     {item.buyMomentum === 'rising' ? '↑ Rising' : item.buyMomentum === 'falling' ? '↓ Falling' : '→ Stable'} (Buy Trend)
                 </Typography>
                 <Typography variant="caption" className="text-gray-600">• Volatility: {(item.volatility * 100).toFixed(1)}%</Typography>
+                {typeof item.suggestedMargin === 'number' && (
+                    <>
+                        <Typography variant="caption" className="text-gray-600">• Margin: {(item.suggestedMargin * 100).toFixed(1)}%</Typography>
+                        {typeof item.expectedNetProfit === 'number' && (
+                            <Typography variant="caption" className="text-gray-600">• Profit: {formatPrice(item.expectedNetProfit)}</Typography>
+                        )}
+                    </>
+                )}
             </div>
         </div>
 

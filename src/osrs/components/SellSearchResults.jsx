@@ -35,12 +35,15 @@ const SellSearchResultItem = ({ item, getWikiLink, formatTimeSince, formatPrice 
             <Typography variant="body1" className="font-bold text-green-800">
                 {formatPrice(item.weightedHighPrice)} gp
             </Typography>
-            {/* Momentum & Margin */}
+            {/* Momentum, Margin & Profit */}
             <div className="flex items-center gap-2 mt-1">
-                <Typography variant="caption" className={`${item.momentum === 'rising' ? 'text-green-600' : item.momentum === 'falling' ? 'text-red-600' : 'text-gray-600'}`}>
+                <Typography variant="caption" className={`${item.momentum === 'rising' ? 'text-green-600' : item.momentum === 'falling' ? 'text-red-600' : 'text-gray-600'}`}> 
                     {item.momentum === 'rising' ? '↑ Rising' : item.momentum === 'falling' ? '↓ Falling' : '→ Stable'}
                 </Typography>
                 <Typography variant="caption" className="text-gray-600">• Margin: {(item.suggestedMargin * 100).toFixed(1)}%</Typography>
+                {typeof item.netProfit === 'number' && (
+                    <Typography variant="caption" className="text-gray-600">• Profit: {formatPrice(item.netProfit)}</Typography>
+                )}
             </div>
         </div>
 
