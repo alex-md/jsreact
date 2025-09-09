@@ -4,3 +4,4 @@ export const MAPPING_URL = `${API_BASE}/mapping`;
 export const LATEST_PRICES_URL = `${API_BASE}/latest`;
 export const HOURLY_AVG_URL = `${API_BASE}/1h`;
 export const FIVE_MINUTE_URL = `${API_BASE}/5m`;
+export const TIMESERIES_URL = (id) => `${API_BASE}/timeseries?id=${id}&timestep=1h`;

@@ -49,7 +49,6 @@ export default function OSRSFlipper() {
     const {
         flips,
         calculatingFlips,
-        autoRisk,
         hasData, // Flag indicating if data is ready for calculation
     } = useFlipCalculation(mapping, fiveMin, latestPrices, hourlyPrices, budget, dataLoading);
 
@@ -224,17 +223,14 @@ export default function OSRSFlipper() {
 
                             {/* Right Column: Flip Suggestions */}
                             <div className="lg:w-2/3 space-y-6">
-                                {/* Risk & Refresh Info */}
+                                {/* Refresh Info */}
                                 <Paper elevation={0} className="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                     <div>
                                         <Typography variant="h6" sx={{ color: 'text.primary' }}>
-                                            Optimal Risk Level
-                                        </Typography>
-                                        <Typography variant="body1" sx={{ color: 'text.secondary', mt: 0.5 }}>
-                                            Calculated Risk: <span className="font-bold text-green-700">{autoRisk.toFixed(3)}</span>
+                                            Flip Suggestions
                                         </Typography>
                                         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-                                            Automatically adjusted based on budget & market data.
+                                            Ranked by profit velocity.
                                         </Typography>
                                     </div>
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 flex-shrink-0 mt-2 sm:mt-0">
@@ -245,7 +241,7 @@ export default function OSRSFlipper() {
                                             variant="contained"
                                             color="primary"
                                             onClick={refreshData}
-                                            disabled={dataLoading} // Only disable during data fetch
+                                            disabled={dataLoading}
                                             startIcon={dataLoading ? <CircularProgress size={16} color="inherit" /> : null}
                                             size="small"
                                         >

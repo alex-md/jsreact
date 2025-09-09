@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getOptimalRisk, calculateTradeMetrics } from '../utils/calculations';
+import { getStableFlipSuggestions } from '../utils/stableFlipper';
 
 export const useFlipCalculation = (
     mapping,
@@ -11,7 +11,6 @@ export const useFlipCalculation = (
 ) => {
     const [flips, setFlips] = useState([]);
     const [calculatingFlips, setCalculatingFlips] = useState(false);
-    const [autoRisk, setAutoRisk] = useState(0.2); // Default risk
 
     const hasData = useMemo(() =>
         !isDataLoading &&
@@ -24,7 +23,6 @@ export const useFlipCalculation = (
 
     useEffect(() => {
         if (!hasData) {
-            // Ensure flips are cleared if data becomes unavailable or is loading
             setFlips([]);
             setCalculatingFlips(false);
             return;
@@ -32,40 +30,27 @@ export const useFlipCalculation = (
 
         setCalculatingFlips(true);
 
-        // Use setTimeout to allow UI to update before potentially heavy calculation
-        const calculationTimeout = setTimeout(() => {
-            try {
-                // 1. Calculate Optimal Risk
-                const optimalRisk = getOptimalRisk(mapping, fiveMin, latestPrices, hourlyPrices, budget);
-                setAutoRisk(optimalRisk);
+        const params = {
+            total_cash_stack: budget,
+            max_item_allocation_pct: 0.25,
+            min_roi_threshold: 0.005,
+            min_daily_volume: 50000,
+        };
 
-                // 2. Calculate Flips based on optimal risk
-                const suggestions = mapping
-                    .map(item => calculateTradeMetrics(item, fiveMin, latestPrices, hourlyPrices, budget, optimalRisk))
-                    .filter(Boolean) // Remove nulls
-                    .sort((a, b) => (b.flipScore ?? 0) - (a.flipScore ?? 0)) // Sort by score
-                    .slice(0, 20); // Limit to top N
+        getStableFlipSuggestions(mapping, fiveMin, latestPrices, hourlyPrices, params)
+            .then(setFlips)
+            .catch(err => {
+                console.error('Error calculating flips:', err);
+                setFlips([]);
+            })
+            .finally(() => setCalculatingFlips(false));
 
-                setFlips(suggestions);
-
-            } catch (error) {
-                console.error("Error calculating flips:", error);
-                setFlips([]); // Clear flips on error
-            } finally {
-                setCalculatingFlips(false);
-            }
-        }, 50); // Small delay (50ms)
-
-        // Cleanup function to clear timeout if dependencies change before it runs
-        return () => clearTimeout(calculationTimeout);
-
-    }, [hasData, mapping, fiveMin, latestPrices, hourlyPrices, budget]); // Rerun when data or budget changes
+    }, [hasData, mapping, fiveMin, latestPrices, hourlyPrices, budget]);
 
     return {
         flips,
         calculatingFlips,
-        autoRisk,
-        hasData // Expose hasData flag for conditional rendering in parent
+        hasData
     };
 };
 
