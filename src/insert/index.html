@@ -5,13 +5,14 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Natural Keyword Inserter</title>
-        <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
         <!-- Tailwind CSS -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
 
-        <script type="module" src="@components/head.js"></script>
-        <script>
+        <script type="module">
+            import { createHead } from '@components/head.js';
+
             createHead(
                 'Insert Tool - Text Insertion and Manipulation',
                 'Insert and manipulate text with powerful tools. Format, process, and modify text content easily.'
