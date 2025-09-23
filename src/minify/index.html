@@ -2,9 +2,10 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
-        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
-        <script type="module" src="@components/head.js"></script>
-        <script>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <script type="module">
+            import { createHead } from '@components/head.js';
+
             createHead(
                 'JavaScript, CSS & HTML Minifier - Free Online Code Compression Tool',
                 'Free online tool to minify and optimize JavaScript, CSS, and HTML code. Reduce file size up to 80%, improve load times, and enhance website performance with advanced Terser compression. Best free code minifier with source map support.'

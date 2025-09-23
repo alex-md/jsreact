@@ -48,7 +48,7 @@ export function createHead(title, description, options = {}) {
         return null;
     }
 
-    const head = document.getElementsByTagName('head')[0];
+    const head = document.head;
     if (!head) {
         console.error('Head element not found');
         return null;
@@ -56,90 +56,148 @@ export function createHead(title, description, options = {}) {
 
     const {
         gaTrackingId = 'G-ZEFG04PXR7',
-        baseUrl = window.location.origin,
-        publishDate = new Date().toISOString().split('T')[0]
+        baseUrl: providedBaseUrl,
+        publishDate = new Date().toISOString().split('T')[0],
+        canonicalPath
     } = options;
 
-    // Utility for safe URL construction
+    const defaultBaseUrl = providedBaseUrl ||
+        (['localhost', '127.0.0.1'].includes(window.location.hostname)
+            ? 'https://jsreact.com'
+            : window.location.origin);
+
     const getFullUrl = (path) => {
         try {
-            return new URL(path, baseUrl).toString();
+            return new URL(path, defaultBaseUrl).toString();
         } catch (e) {
             console.error(`Invalid URL construction: ${path}`, e);
-            return `${baseUrl}${path}`;
+            return `${defaultBaseUrl}${path}`;
+        }
+    };
+
+    const ensureCriticalStyles = () => {
+        if (head.querySelector('style[data-jsreact-critical="true"]')) {
+            return;
+        }
+
+        const criticalStyles = document.createElement('style');
+        criticalStyles.dataset.jsreactCritical = 'true';
+        criticalStyles.textContent = `
+            .js-loading { opacity: 0; }
+            .js-ready { opacity: 1; transition: opacity 0.3s; }
+            body {
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            @keyframes spin { to { transform: rotate(360deg); } }
+            @keyframes slide-up {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-slide-up { animation: slide-up 0.8s ease-out forwards; }
+        `;
+        head.insertBefore(criticalStyles, head.firstChild);
+    };
+
+    const appendExternalResource = (resource) => {
+        const { type, rel, href, src } = resource;
+        const selector = type === 'link'
+            ? `link[rel="${rel}"][href="${href}"]`
+            : type === 'script'
+                ? `script[src="${src}"]`
+                : '';
+
+        if (selector && head.querySelector(selector)) {
+            return;
+        }
+
+        const el = document.createElement(type);
+        Object.entries(resource).forEach(([key, value]) => {
+            if (key !== 'type' && value !== undefined) {
+                el.setAttribute(key, value);
+            }
+        });
+        head.appendChild(el);
+    };
+
+    const setMetaTag = (attributes) => {
+        const { name, property, charset, httpEquiv, content } = attributes;
+        let selector = '';
+
+        if (charset) {
+            selector = 'meta[charset]';
+        } else if (name) {
+            selector = `meta[name="${name}"]`;
+        } else if (property) {
+            selector = `meta[property="${property}"]`;
+        } else if (httpEquiv) {
+            selector = `meta[http-equiv="${httpEquiv}"]`;
+        }
+
+        let tag = selector ? head.querySelector(selector) : null;
+
+        if (!tag) {
+            tag = document.createElement('meta');
+            if (charset && head.firstChild) {
+                head.insertBefore(tag, head.firstChild);
+            } else {
+                head.appendChild(tag);
+            }
+        }
+
+        if (charset) {
+            tag.setAttribute('charset', charset);
+            return;
+        }
+
+        if (name) {
+            tag.setAttribute('name', name);
+        }
+        if (property) {
+            tag.setAttribute('property', property);
+        }
+        if (httpEquiv) {
+            tag.setAttribute('http-equiv', httpEquiv);
+        }
+        if (content !== undefined) {
+            tag.setAttribute('content', content);
         }
     };
 
     // Set document title
     document.title = `${title} | JSreact`;
 
-    // Critical styles for performance
-    const criticalStyles = document.createElement('style');
-    criticalStyles.textContent = `
-        .js-loading { opacity: 0; }
-        .js-ready { opacity: 1; transition: opacity 0.3s; }
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes slide-up {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-slide-up { animation: slide-up 0.8s ease-out forwards; }
-    `;
-    head.insertBefore(criticalStyles, head.firstChild);
+    ensureCriticalStyles();
 
-    // Load external resources
-    const externalResources = [
-        {
-            type: 'link',
-            rel: 'manifest',
-            href: '/manifest.json'
-        },
-        {
-            type: 'link',
-            rel: 'manifest',
-            href: '/site.webmanifest'
-        },
+    [
+        { type: 'link', rel: 'manifest', href: '/manifest.json' },
+        { type: 'link', rel: 'manifest', href: '/site.webmanifest' },
         {
             type: 'link',
             rel: 'stylesheet',
             href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-            crossOrigin: 'anonymous',
-            referrerPolicy: 'no-referrer'
+            crossorigin: 'anonymous',
+            referrerpolicy: 'no-referrer'
         },
-        {
-            type: 'link',
-            rel: 'preconnect',
-            href: 'https://fonts.googleapis.com'
-        },
-        {
-            type: 'link',
-            rel: 'preconnect',
-            href: 'https://fonts.gstatic.com',
-            crossOrigin: 'anonymous'
-        }
-    ];
+        { type: 'link', rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { type: 'link', rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' }
+    ].forEach(appendExternalResource);
 
-    externalResources.forEach(resource => {
-        const el = document.createElement(resource.type);
-        Object.entries(resource).forEach(([key, value]) => {
-            if (key !== 'type') el.setAttribute(key, value);
-        });
-        head.appendChild(el);
-    });
+    const currentUrl = new URL(window.location.href);
+    let canonicalTarget = canonicalPath || currentUrl.pathname;
+    if (!canonicalTarget.endsWith('/') && !canonicalTarget.includes('.')) {
+        canonicalTarget += '/';
+    }
+    const canonicalUrl = getFullUrl(canonicalTarget);
 
-    // Add canonical URL
+    head.querySelectorAll('link[rel="canonical"]').forEach(link => link.remove());
     const canonicalLink = document.createElement('link');
     canonicalLink.rel = 'canonical';
-    canonicalLink.href = window.location.href.split('?')[0].split('#')[0]; // Remove query params and hash
+    canonicalLink.href = canonicalUrl;
     head.appendChild(canonicalLink);
 
-    // Meta tags
     const metaTags = [
         { charset: 'UTF-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
@@ -151,7 +209,7 @@ export function createHead(title, description, options = {}) {
         { property: 'og:type', content: 'website' },
         { property: 'og:title', content: `${title} | JSreact` },
         { property: 'og:description', content: description },
-        { property: 'og:url', content: window.location.href },
+        { property: 'og:url', content: canonicalUrl },
         { property: 'og:site_name', content: 'JSreact' },
         { property: 'og:image', content: getFullUrl('/assets/images/og-image.png') },
         { property: 'og:image:width', content: '1200' },
@@ -162,30 +220,16 @@ export function createHead(title, description, options = {}) {
         { name: 'twitter:image', content: getFullUrl('/assets/images/og-image.png') }
     ];
 
-    // Clear existing meta tags
-    head.querySelectorAll('meta').forEach(meta => meta.remove());
+    metaTags.forEach(setMetaTag);
 
-    // Add meta tags
-    metaTags.forEach(meta => {
-        const tag = document.createElement('meta');
-        Object.entries(meta).forEach(([key, value]) => tag.setAttribute(key, value));
-        head.appendChild(tag);
-    });
-
-    // Set canonical URL
-    const canonical = document.createElement('link');
-    canonical.rel = 'canonical';
-    canonical.href = window.location.href;
-    head.appendChild(canonical);
-
-    // Add Google Analytics if enabled
-    if (gaTrackingId) {
+    if (gaTrackingId && !head.querySelector(`script[src*="gtag/js?id=${gaTrackingId}"]`)) {
         const gaScript = document.createElement('script');
         gaScript.async = true;
         gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`;
         head.appendChild(gaScript);
 
         const gaInit = document.createElement('script');
+        gaInit.dataset.jsreactGtag = 'true';
         gaInit.textContent = `
             window.dataLayer = window.dataLayer || [];
             function gtag() { dataLayer.push(arguments); }
@@ -195,20 +239,19 @@ export function createHead(title, description, options = {}) {
         head.appendChild(gaInit);
     }
 
-    // Structured data
     const structuredData = {
         '@context': 'https://schema.org',
         '@type': 'WebApplication',
         name: 'JSreact',
         headline: title,
         description: description,
-        url: window.location.href,
+        url: canonicalUrl,
         applicationCategory: 'DeveloperApplication',
         operatingSystem: 'Any',
         author: {
             '@type': 'Organization',
             name: 'JSreact',
-            url: baseUrl,
+            url: defaultBaseUrl,
             logo: {
                 '@type': 'ImageObject',
                 url: getFullUrl('/assets/images/icon.png')
@@ -218,13 +261,31 @@ export function createHead(title, description, options = {}) {
         dateModified: new Date().toISOString()
     };
 
+    head.querySelectorAll('script[type="application/ld+json"][data-jsreact-structured]')
+        .forEach(script => script.remove());
+
     const scriptLD = document.createElement('script');
     scriptLD.type = 'application/ld+json';
+    scriptLD.dataset.jsreactStructured = 'true';
     scriptLD.textContent = JSON.stringify(structuredData);
     head.appendChild(scriptLD);
 
-    // Show content when styles are loaded
-    document.body.classList.add('js-ready');
+    const markBodyReady = () => {
+        if (document.body) {
+            document.body.classList.add('js-ready');
+        }
+    };
 
-    return { title, description };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', markBodyReady, { once: true });
+    } else {
+        markBodyReady();
+    }
+
+    return { title, description, canonicalUrl };
+}
+
+if (typeof window !== 'undefined') {
+    window.createHead = createHead;
+    window.createHeader = createHeader;
 }

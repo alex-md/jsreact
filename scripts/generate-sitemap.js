@@ -101,7 +101,7 @@ function generateSitemapXml(urls) {
         xml += '  </url>\n';
     });
 
-    xml += '</urlset>';
+    xml += '</urlset>\n';
     return xml;
 }
 
@@ -116,13 +116,21 @@ function main() {
 
     // Generate sitemap content
     const urls = generatePageUrls();
+
+    // Sort URLs alphabetically for deterministic output
+    urls.sort((a, b) => a.url.localeCompare(b.url));
+
     const sitemapContent = generateSitemapXml(urls);
 
     // Write sitemap to dist directory
     const sitemapPath = path.join(distDir, 'sitemap.xml');
     fs.writeFileSync(sitemapPath, sitemapContent);
-
     console.log(`Sitemap generated at ${sitemapPath}`);
+
+    // Also write to project root so the canonical sitemap stays in sync
+    const rootSitemapPath = path.join(rootDir, 'sitemap.xml');
+    fs.writeFileSync(rootSitemapPath, sitemapContent);
+    console.log(`Sitemap synced at ${rootSitemapPath}`);
 }
 
 main();
