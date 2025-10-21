@@ -1,0 +1,207 @@
+:root {
+    --numigma-primary: 79 70 229;
+    --numigma-muted: 148 163 184;
+    --numigma-dark: 15 23 42;
+}
+
+.numigma-input {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(var(--numigma-muted), 0.4);
+    background: #f8fafc;
+    color: rgb(var(--numigma-dark));
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.numigma-input:focus {
+    outline: none;
+    border-color: rgba(var(--numigma-primary), 0.65);
+    box-shadow: 0 0 0 3px rgba(var(--numigma-primary), 0.18);
+    background-color: #fff;
+}
+
+.numigma-pack {
+    position: relative;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(var(--numigma-muted), 0.35);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.95));
+    padding: 1.15rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.numigma-pack:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--numigma-primary), 0.45);
+    box-shadow: 0 12px 30px -18px rgba(var(--numigma-primary), 0.8);
+}
+
+.numigma-pack input[type='checkbox'] {
+    margin-top: 0.25rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: rgb(var(--numigma-primary));
+}
+
+.numigma-pack .pack-heading {
+    font-weight: 600;
+    color: rgb(var(--numigma-dark));
+    font-size: 0.95rem;
+}
+
+.numigma-pack .pack-description {
+    color: rgba(var(--numigma-dark), 0.64);
+    font-size: 0.8rem;
+    line-height: 1.35;
+}
+
+#clue-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.clue-card {
+    position: relative;
+    border-radius: 1.25rem;
+    padding: 1rem 1.1rem 1.1rem;
+    background: radial-gradient(circle at top left, rgba(var(--numigma-primary), 0.08), transparent 60%),
+        #ffffff;
+    border: 1px solid rgba(var(--numigma-muted), 0.28);
+    box-shadow: 0 10px 28px -18px rgba(var(--numigma-primary), 0.8);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.clue-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, rgba(var(--numigma-primary), 0.18), transparent) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.clue-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--numigma-primary), 0.5);
+    box-shadow: 0 22px 45px -26px rgba(var(--numigma-primary), 0.9);
+}
+
+.clue-card:hover::after {
+    opacity: 1;
+}
+
+.clue-card .clue-pack {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(var(--numigma-primary), 0.12);
+    color: rgb(var(--numigma-primary));
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.clue-card .clue-body {
+    margin-top: 0.65rem;
+    color: rgba(var(--numigma-dark), 0.82);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.clue-card .clue-meta {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.74rem;
+    color: rgba(var(--numigma-dark), 0.55);
+}
+
+.clue-card .clue-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 999px;
+    border: 1px dashed rgba(var(--numigma-muted), 0.4);
+    background: rgba(241, 245, 249, 0.75);
+}
+
+.diagnostics-grid {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.diagnostics-grid .diagnostic-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 0.75rem;
+    background: rgba(241, 245, 249, 0.85);
+    border-radius: 0.9rem;
+    border: 1px solid rgba(var(--numigma-muted), 0.2);
+}
+
+.diagnostics-grid .diagnostic-row strong {
+    color: rgb(var(--numigma-dark));
+    font-weight: 600;
+}
+
+#candidate-details .step-row {
+    border-radius: 0.85rem;
+    padding: 0.75rem 0.9rem;
+    background: rgba(237, 242, 255, 0.75);
+    border: 1px solid rgba(var(--numigma-primary), 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+#candidate-details .step-row strong {
+    color: rgb(var(--numigma-primary));
+    font-weight: 600;
+}
+
+#candidate-details .step-row .step-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: rgba(var(--numigma-dark), 0.6);
+}
+
+#solution-card.revealed {
+    background: radial-gradient(circle at top, rgba(var(--numigma-primary), 0.18), transparent 50%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.92));
+    box-shadow: 0 20px 40px -24px rgba(var(--numigma-primary), 0.65);
+}
+
+#solution-card .solution-value {
+    font-size: 2.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #fff;
+}
+
+@media (max-width: 640px) {
+    .numigma-pack {
+        border-radius: 1rem;
+        padding: 1rem;
+    }
+
+    .clue-card {
+        border-radius: 1rem;
+        padding: 0.85rem 0.95rem;
+    }
+}
