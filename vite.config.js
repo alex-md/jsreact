@@ -80,7 +80,8 @@ export default defineConfig({
                 speech: path.resolve(srcDir, 'speech/index.html'),
                 domain: path.resolve(srcDir, 'domain/index.html'),
                 osrs: path.resolve(srcDir, 'osrs/index.html'),
-                elevation: path.resolve(srcDir, 'elevation/index.html')
+                elevation: path.resolve(srcDir, 'elevation/index.html'),
+                numigma: path.resolve(srcDir, 'numigma/index.html')
             },
             output: {
                 manualChunks: {

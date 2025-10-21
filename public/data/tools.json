@@ -18,6 +18,15 @@
         "new": true
     },
     {
+        "id": "numigma",
+        "title": "Numigma Puzzle Generator",
+        "description": "Assemble deterministic reverse-number logic puzzles with configurable clue packs.",
+        "icon": "fas fa-puzzle-piece",
+        "color": "violet",
+        "link": "/numigma/",
+        "new": true
+    },
+    {
         "id": "domain",
         "title": "Domain Appraisal",
         "description": "Get accurate market value estimates for domain names",

@@ -14,6 +14,7 @@ function setupSearch(searchInput, searchResults) {
         { name: "Domain Appraisal", href: "/domain/", description: "Value domain names" },
         { name: "OSRS Flipper", href: "/osrs/", description: "OSRS item price checker" },
         { name: "Elevation Finder", href: "/elevation/", description: "Find elevation data for any location" },
+        { name: "Numigma", href: "/numigma/", description: "Build deterministic reverse-number puzzles" },
     ];
 
     let searchTimeout;
@@ -115,7 +116,8 @@ export function createNavbar() {
             { text: "Speech", href: "/speech/", icon: "fa-microphone-alt" },
             { text: "Domain Appraisal", href: "/domain/", icon: "fa-chart-line" },
             { text: "OSRS Flipper", href: "/osrs/", icon: "fa-coins" },
-            { text: "Elevation Finder", href: "/elevation/", icon: "fa-mountain" }
+            { text: "Elevation Finder", href: "/elevation/", icon: "fa-mountain" },
+            { text: "Numigma", href: "/numigma/", icon: "fa-puzzle-piece" }
         ]
     };
 
