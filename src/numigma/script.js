@@ -702,6 +702,21 @@ const elements = {
     toggleSolution: document.getElementById('toggle-solution')
 };
 
+// Simple HTML escape to prevent XSS in diagnostic output
+function escapeHTML(str) {
+    if (typeof str !== 'string') return str;
+    return str.replace(/[&<>"']/g, function (char) {
+        const esc = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+        return esc[char];
+    });
+}
+
 const checkboxMap = new Map();
 
 function renderCluePacks() {
@@ -1255,7 +1270,7 @@ function renderDiagnostics(result, settings) {
     diagnostics.innerHTML = `
         <div class="diagnostic-row"><span>Range</span><strong>${settings.min} – ${settings.max}</strong></div>
         <div class="diagnostic-row"><span>Difficulty</span><strong>${difficultySettings[settings.difficulty].label}</strong></div>
-        <div class="diagnostic-row"><span>Target seed</span><strong>${settings.seed}</strong></div>
+        <div class="diagnostic-row"><span>Target seed</span><strong>${escapeHTML(settings.seed)}</strong></div>
         <div class="diagnostic-row"><span>Total candidates</span><strong>${result.totalCandidates.toLocaleString()}</strong></div>
         <div class="diagnostic-row"><span>Clue library size</span><strong>${result.librarySize}</strong></div>
         <div class="diagnostic-row"><span>Search attempts</span><strong>${result.attempts}</strong></div>
