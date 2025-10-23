@@ -55,11 +55,11 @@ function memoize(key, compute) {
 }
 function xmur3(str) {
     let h = 1779033703 ^ str.length;
-    for(let i = 0; i < str.length; i += 1){
+    for (let i = 0; i < str.length; i += 1) {
         h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
         h = h << 13 | h >>> 19;
     }
-    return function() {
+    return function () {
         h = Math.imul(h ^ h >>> 16, 2246822507);
         h = Math.imul(h ^ h >>> 13, 3266489909);
         h ^= h >>> 16;
@@ -67,7 +67,7 @@ function xmur3(str) {
     };
 }
 function mulberry32(a) {
-    return function() {
+    return function () {
         let t = a += 0x6d2b79f5;
         t = Math.imul(t ^ t >>> 15, t | 1);
         t ^= t + Math.imul(t ^ t >>> 7, t | 61);
@@ -86,7 +86,7 @@ function randomInt(rng, min, max) {
 }
 function shuffle(array, rng) {
     const copy = array.slice();
-    for(let i = copy.length - 1; i > 0; i -= 1){
+    for (let i = copy.length - 1; i > 0; i -= 1) {
         const j = Math.floor(rng() * (i + 1));
         [copy[i], copy[j]] = [
             copy[j],
@@ -96,24 +96,24 @@ function shuffle(array, rng) {
     return copy;
 }
 function digitsOf(n) {
-    return memoize(`digits:${n}`, ()=>n.toString().split('').map(Number));
+    return memoize(`digits:${n}`, () => n.toString().split('').map(Number));
 }
 function digitSum(n) {
-    return memoize(`digit-sum:${n}`, ()=>digitsOf(n).reduce((acc, d)=>acc + d, 0));
+    return memoize(`digit-sum:${n}`, () => digitsOf(n).reduce((acc, d) => acc + d, 0));
 }
 function digitProduct(n) {
-    return memoize(`digit-product:${n}`, ()=>digitsOf(n).reduce((acc, d)=>acc * d, 1));
+    return memoize(`digit-product:${n}`, () => digitsOf(n).reduce((acc, d) => acc * d, 1));
 }
 function isPalindrome(n, base = 10) {
-    return memoize(`pal:${base}:${n}`, ()=>{
+    return memoize(`pal:${base}:${n}`, () => {
         const repr = n.toString(base);
         return repr === repr.split('').reverse().join('');
     });
 }
 function isDigitsNonDecreasing(n) {
-    return memoize(`digits-nondecrease:${n}`, ()=>{
+    return memoize(`digits-nondecrease:${n}`, () => {
         const digits = digitsOf(n);
-        for(let i = 1; i < digits.length; i += 1){
+        for (let i = 1; i < digits.length; i += 1) {
             if (digits[i] < digits[i - 1]) {
                 return false;
             }
@@ -124,7 +124,7 @@ function isDigitsNonDecreasing(n) {
 function gcd(a, b) {
     let x = Math.abs(a);
     let y = Math.abs(b);
-    while(y){
+    while (y) {
         [x, y] = [
             y,
             x % y
@@ -137,16 +137,16 @@ function lcm(a, b) {
     return Math.abs(a / gcd(a, b) * b);
 }
 function primeFactors(n) {
-    return memoize(`prime-factors:${n}`, ()=>{
+    return memoize(`prime-factors:${n}`, () => {
         const factors = new Map();
         let value = n;
-        while(value % 2 === 0){
+        while (value % 2 === 0) {
             factors.set(2, (factors.get(2) || 0) + 1);
             value /= 2;
         }
         let divisor = 3;
-        while(divisor * divisor <= value){
-            while(value % divisor === 0){
+        while (divisor * divisor <= value) {
+            while (value % divisor === 0) {
                 factors.set(divisor, (factors.get(divisor) || 0) + 1);
                 value /= divisor;
             }
@@ -160,44 +160,44 @@ function primeFactors(n) {
 }
 function isPrime(n) {
     if (n < 2) return false;
-    return memoize(`prime:${n}`, ()=>{
+    return memoize(`prime:${n}`, () => {
         if (n === 2) return true;
         if (n % 2 === 0) return false;
-        for(let i = 3; i * i <= n; i += 2){
+        for (let i = 3; i * i <= n; i += 2) {
             if (n % i === 0) return false;
         }
         return true;
     });
 }
 function divisorCount(n) {
-    return memoize(`divcount:${n}`, ()=>{
+    return memoize(`divcount:${n}`, () => {
         let count = 1;
-        primeFactors(n).forEach((exp)=>{
+        primeFactors(n).forEach((exp) => {
             count *= exp + 1;
         });
         return count;
     });
 }
 function sumOfDivisors(n) {
-    return memoize(`sumdiv:${n}`, ()=>{
+    return memoize(`sumdiv:${n}`, () => {
         let total = 1;
-        primeFactors(n).forEach((exp, prime)=>{
+        primeFactors(n).forEach((exp, prime) => {
             total *= (prime ** (exp + 1) - 1) / (prime - 1);
         });
         return total;
     });
 }
 function eulerTotient(n) {
-    return memoize(`totient:${n}`, ()=>{
+    return memoize(`totient:${n}`, () => {
         let result = n;
-        primeFactors(n).forEach((_, prime)=>{
+        primeFactors(n).forEach((_, prime) => {
             result = result * (1 - 1 / prime);
         });
         return Math.round(result);
     });
 }
 function isAbundant(n) {
-    return memoize(`abundant:${n}`, ()=>sumOfDivisors(n) - n > n);
+    return memoize(`abundant:${n}`, () => sumOfDivisors(n) - n > n);
 }
 function isPerfectSquare(n) {
     const r = Math.round(Math.sqrt(n));
@@ -216,14 +216,14 @@ function isPowerOfTwo(n) {
     return (n & n - 1) === 0;
 }
 function isTriangular(n) {
-    return memoize(`triangular:${n}`, ()=>{
+    return memoize(`triangular:${n}`, () => {
         const d = 8 * n + 1;
         const sqrt = Math.sqrt(d);
         return Number.isInteger(sqrt) && (sqrt - 1) % 2 === 0;
     });
 }
 function isFibonacci(n) {
-    return memoize(`fibonacci:${n}`, ()=>isPerfectSquare(5 * n * n + 4) || isPerfectSquare(5 * n * n - 4));
+    return memoize(`fibonacci:${n}`, () => isPerfectSquare(5 * n * n + 4) || isPerfectSquare(5 * n * n - 4));
 }
 function describeBaseNumber(n) {
     if (isPerfectSquare(n)) return 'a perfect square';
@@ -239,35 +239,35 @@ function describeDeltaAmount(n) {
         {
             matches: isPowerOfTwo,
             text: 'a power of two',
-            predicate: (value)=>isPowerOfTwo(value)
+            predicate: (value) => isPowerOfTwo(value)
         },
         {
             matches: isPerfectSquare,
             text: 'a perfect square',
-            predicate: (value)=>isPerfectSquare(value)
+            predicate: (value) => isPerfectSquare(value)
         },
         {
             matches: isPerfectCube,
             text: 'a perfect cube',
-            predicate: (value)=>isPerfectCube(value)
+            predicate: (value) => isPerfectCube(value)
         },
         {
             matches: isTriangular,
             text: 'a triangular number',
-            predicate: (value)=>isTriangular(value)
+            predicate: (value) => isTriangular(value)
         },
         {
             matches: isFibonacci,
             text: 'a Fibonacci number',
-            predicate: (value)=>isFibonacci(value)
+            predicate: (value) => isFibonacci(value)
         },
         {
             matches: isPrime,
             text: 'a prime number',
-            predicate: (value)=>isPrime(value)
+            predicate: (value) => isPrime(value)
         }
     ];
-    for (const descriptor of descriptors){
+    for (const descriptor of descriptors) {
         if (descriptor.matches(n)) {
             return {
                 text: descriptor.text,
@@ -278,20 +278,20 @@ function describeDeltaAmount(n) {
     if (n % 2 === 0) {
         return {
             text: 'an even number',
-            predicate: (value)=>value % 2 === 0
+            predicate: (value) => value % 2 === 0
         };
     }
     return {
         text: 'an odd number',
-        predicate: (value)=>value % 2 === 1
+        predicate: (value) => value % 2 === 1
     };
 }
 function factorialNumbersUpTo(limit) {
-    return memoize(`factorials:${limit}`, ()=>{
+    return memoize(`factorials:${limit}`, () => {
         const values = new Set();
         let value = 1;
         let i = 1;
-        while(value <= limit){
+        while (value <= limit) {
             values.add(value);
             i += 1;
             value *= i;
@@ -300,13 +300,13 @@ function factorialNumbersUpTo(limit) {
     });
 }
 function catalanNumbersUpTo(limit) {
-    return memoize(`catalan:${limit}`, ()=>{
+    return memoize(`catalan:${limit}`, () => {
         const values = new Set([
             1
         ]);
         let n = 1;
         let value = 1;
-        while(value <= limit){
+        while (value <= limit) {
             value = value * 2 * (2 * n - 1) / (n + 1);
             values.add(Math.round(value));
             n += 1;
@@ -316,16 +316,16 @@ function catalanNumbersUpTo(limit) {
     });
 }
 function bellNumbersUpTo(limit) {
-    return memoize(`bell:${limit}`, ()=>{
+    return memoize(`bell:${limit}`, () => {
         const bells = [
             1
         ];
         let n = 1;
-        while(true){
+        while (true) {
             const row = [
                 bells[n - 1]
             ];
-            for(let k = 1; k <= n; k += 1){
+            for (let k = 1; k <= n; k += 1) {
                 const value = row[k - 1] + (bells[k - 1] ?? 0);
                 row.push(value);
             }
@@ -338,10 +338,10 @@ function bellNumbersUpTo(limit) {
     });
 }
 function isHappyNumber(n) {
-    return memoize(`happy:${n}`, ()=>{
+    return memoize(`happy:${n}`, () => {
         const seen = new Set();
         let value = n;
-        while(value !== 1 && !seen.has(value)){
+        while (value !== 1 && !seen.has(value)) {
             seen.add(value);
             value = digitSum(value ** 2);
         }
@@ -349,17 +349,37 @@ function isHappyNumber(n) {
     });
 }
 function isNarcissistic(n) {
-    return memoize(`narcissistic:${n}`, ()=>{
+    return memoize(`narcissistic:${n}`, () => {
         const digits = digitsOf(n);
         const power = digits.length;
-        const total = digits.reduce((sum, d)=>sum + d ** power, 0);
+        const total = digits.reduce((sum, d) => sum + d ** power, 0);
         return total === n;
     });
 }
+const highlyCompositeCache = new Set();
+function computeHighlyCompositeUpTo(limit) {
+    let maxDivisors = 0;
+    for (let i = 1; i <= limit; i++) {
+        const divs = divisorCount(i);
+        if (divs > maxDivisors) {
+            highlyCompositeCache.add(i);
+            maxDivisors = divs;
+        }
+    }
+}
 function isHighlyComposite(n) {
-    return memoize(`highly-composite:${n}`, ()=>{
+    // Precompute up to a reasonable limit if not already done
+    const LIMIT = 10000;
+    if (highlyCompositeCache.size === 0) {
+        computeHighlyCompositeUpTo(LIMIT);
+    }
+    if (n <= LIMIT) {
+        return highlyCompositeCache.has(n);
+    }
+    // Fallback to slow method for very large n
+    return memoize(`highly-composite:${n}`, () => {
         const current = divisorCount(n);
-        for(let i = 1; i < n; i += 1){
+        for (let i = 1; i < n; i += 1) {
             if (divisorCount(i) >= current) {
                 return false;
             }
@@ -368,26 +388,26 @@ function isHighlyComposite(n) {
     });
 }
 function binaryDigitCount(n) {
-    return memoize(`binary-count:${n}`, ()=>n.toString(2).split('').filter((bit)=>bit === '1').length);
+    return memoize(`binary-count:${n}`, () => n.toString(2).split('').filter((bit) => bit === '1').length);
 }
 function quadraticResidueRemainders(modulus) {
-    return memoize(`quadratic-residues:${modulus}`, ()=>{
+    return memoize(`quadratic-residues:${modulus}`, () => {
         const residues = new Set();
-        for(let i = 0; i < modulus; i += 1){
+        for (let i = 0; i < modulus; i += 1) {
             residues.add(i * i % modulus);
         }
         return residues;
     });
 }
 function sumDigitsInBase(n, base) {
-    return memoize(`digit-sum-base:${base}:${n}`, ()=>n.toString(base).split('').reduce((acc, char)=>acc + parseInt(char, base), 0));
+    return memoize(`digit-sum-base:${base}:${n}`, () => n.toString(base).split('').reduce((acc, char) => acc + parseInt(char, base), 0));
 }
 function binaryLength(n) {
-    return memoize(`binary-length:${n}`, ()=>n.toString(2).length);
+    return memoize(`binary-length:${n}`, () => n.toString(2).length);
 }
 function generateCandidateRange(min, max) {
     const range = [];
-    for(let i = min; i <= max; i += 1){
+    for (let i = min; i <= max; i += 1) {
         range.push(i);
     }
     return range;
@@ -411,34 +431,34 @@ const cluePackDefinitions = [
         icon: 'fa-balance-scale',
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 if (ctx.target <= ctx.min + 1) return null;
                 const delta = Math.max(1, Math.floor((ctx.target - ctx.min) * (0.25 + ctx.rng() * 0.5)));
                 const threshold = Math.min(ctx.target - 1, ctx.target - delta);
                 if (threshold < ctx.min) return null;
                 const text = `The number is greater than ${threshold}.`;
-                return createClue('basic', 'Basic', 1, text, (n)=>n > threshold, {
+                return createClue('basic', 'Basic', 1, text, (n) => n > threshold, {
                     key: `gt-${threshold}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (ctx.target >= ctx.max - 1) return null;
                 const delta = Math.max(1, Math.floor((ctx.max - ctx.target) * (0.25 + ctx.rng() * 0.5)));
                 const threshold = Math.max(ctx.target + 1, ctx.target + delta);
                 if (threshold > ctx.max) return null;
                 const text = `The number is less than ${threshold}.`;
-                return createClue('basic', 'Basic', 1, text, (n)=>n < threshold, {
+                return createClue('basic', 'Basic', 1, text, (n) => n < threshold, {
                     key: `lt-${threshold}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const parity = ctx.target % 2 === 0 ? 'even' : 'odd';
                 const text = `The number is ${parity}.`;
-                return createClue('basic', 'Basic', 1, text, (n)=>n % 2 === 0 === (ctx.target % 2 === 0), {
+                return createClue('basic', 'Basic', 1, text, (n) => n % 2 === 0 === (ctx.target % 2 === 0), {
                     key: `parity-${parity}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const moduli = [
                     3,
                     4,
@@ -454,7 +474,7 @@ const cluePackDefinitions = [
                 const modulus = moduli[Math.floor(ctx.rng() * moduli.length)];
                 const remainder = ctx.target % modulus;
                 const text = `It is congruent to ${remainder} modulo ${modulus}.`;
-                return createClue('basic', 'Basic', 2, text, (n)=>n % modulus === remainder, {
+                return createClue('basic', 'Basic', 2, text, (n) => n % modulus === remainder, {
                     key: `mod-${modulus}-${remainder}`
                 });
             }
@@ -467,7 +487,7 @@ const cluePackDefinitions = [
         icon: 'fa-divide',
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 const options = [
                     3,
                     4,
@@ -482,11 +502,11 @@ const cluePackDefinitions = [
                 const divisor = options[Math.floor(ctx.rng() * options.length)];
                 if (ctx.target % divisor !== 0) return null;
                 const text = `The number is divisible by ${divisor}.`;
-                return createClue('divisibility', 'Divisibility', 2, text, (n)=>n % divisor === 0, {
+                return createClue('divisibility', 'Divisibility', 2, text, (n) => n % divisor === 0, {
                     key: `div-${divisor}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const exclude = [
                     3,
                     4,
@@ -500,14 +520,14 @@ const cluePackDefinitions = [
                 const divisor = exclude[Math.floor(ctx.rng() * exclude.length)];
                 if (ctx.target % divisor === 0) return null;
                 const text = `It is not a multiple of ${divisor}.`;
-                return createClue('divisibility', 'Divisibility', 2, text, (n)=>n % divisor !== 0, {
+                return createClue('divisibility', 'Divisibility', 2, text, (n) => n % divisor !== 0, {
                     key: `not-multi-${divisor}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const factorCount = primeFactors(ctx.target).size;
                 const text = `It has ${factorCount} distinct prime factor${factorCount === 1 ? '' : 's'}.`;
-                return createClue('divisibility', 'Divisibility', 3, text, (n)=>primeFactors(n).size === factorCount, {
+                return createClue('divisibility', 'Divisibility', 3, text, (n) => primeFactors(n).size === factorCount, {
                     key: `prime-factor-count-${factorCount}`
                 });
             }
@@ -520,32 +540,32 @@ const cluePackDefinitions = [
         icon: 'fa-grip-lines',
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 const sum = digitSum(ctx.target);
                 const text = `The sum of its digits is ${sum}.`;
-                return createClue('digits', 'Digit Properties', 2, text, (n)=>digitSum(n) === sum, {
+                return createClue('digits', 'Digit Properties', 2, text, (n) => digitSum(n) === sum, {
                     key: `digit-sum-${sum}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isPalindrome(ctx.target)) return null;
                 const text = 'It reads the same forwards and backwards.';
-                return createClue('digits', 'Digit Properties', 3, text, (n)=>isPalindrome(n), {
+                return createClue('digits', 'Digit Properties', 3, text, (n) => isPalindrome(n), {
                     key: 'palindrome'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isDigitsNonDecreasing(ctx.target)) return null;
                 const text = 'Its digits never decrease from left to right.';
-                return createClue('digits', 'Digit Properties', 3, text, (n)=>isDigitsNonDecreasing(n), {
+                return createClue('digits', 'Digit Properties', 3, text, (n) => isDigitsNonDecreasing(n), {
                     key: 'nondecreasing'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const product = digitProduct(ctx.target);
                 if (product === 0 || product > 1000) return null;
                 const text = `The product of its digits is ${product}.`;
-                return createClue('digits', 'Digit Properties', 3, text, (n)=>digitProduct(n) === product, {
+                return createClue('digits', 'Digit Properties', 3, text, (n) => digitProduct(n) === product, {
                     key: `digit-product-${product}`
                 });
             }
@@ -558,29 +578,29 @@ const cluePackDefinitions = [
         icon: 'fa-atom',
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 if (!isPrime(ctx.target)) {
                     const text = 'The number is composite.';
-                    return createClue('primes', 'Primes & Factorization', 2, text, (n)=>!isPrime(n), {
+                    return createClue('primes', 'Primes & Factorization', 2, text, (n) => !isPrime(n), {
                         key: 'composite'
                     });
                 }
                 const text = 'The number is prime.';
-                return createClue('primes', 'Primes & Factorization', 3, text, (n)=>isPrime(n), {
+                return createClue('primes', 'Primes & Factorization', 3, text, (n) => isPrime(n), {
                     key: 'prime'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const totalDivisors = divisorCount(ctx.target);
                 const text = `It has ${totalDivisors} total divisors.`;
-                return createClue('primes', 'Primes & Factorization', 3, text, (n)=>divisorCount(n) === totalDivisors, {
+                return createClue('primes', 'Primes & Factorization', 3, text, (n) => divisorCount(n) === totalDivisors, {
                     key: `div-count-${totalDivisors}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isAbundant(ctx.target)) return null;
                 const text = 'It is an abundant number (sum of proper divisors exceeds the number).';
-                return createClue('primes', 'Primes & Factorization', 4, text, (n)=>isAbundant(n), {
+                return createClue('primes', 'Primes & Factorization', 4, text, (n) => isAbundant(n), {
                     key: 'abundant'
                 });
             }
@@ -593,25 +613,25 @@ const cluePackDefinitions = [
         icon: 'fa-shapes',
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 if (!isPerfectSquare(ctx.target)) return null;
                 const root = Math.round(Math.sqrt(ctx.target));
                 const text = `It is a perfect square (${root}²).`;
-                return createClue('figurate', 'Figurate & Sequences', 2, text, (n)=>isPerfectSquare(n), {
+                return createClue('figurate', 'Figurate & Sequences', 2, text, (n) => isPerfectSquare(n), {
                     key: 'perfect-square'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isTriangular(ctx.target)) return null;
                 const text = 'It is a triangular number.';
-                return createClue('figurate', 'Figurate & Sequences', 3, text, (n)=>isTriangular(n), {
+                return createClue('figurate', 'Figurate & Sequences', 3, text, (n) => isTriangular(n), {
                     key: 'triangular'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isFibonacci(ctx.target)) return null;
                 const text = 'It belongs to the Fibonacci sequence.';
-                return createClue('figurate', 'Figurate & Sequences', 3, text, (n)=>isFibonacci(n), {
+                return createClue('figurate', 'Figurate & Sequences', 3, text, (n) => isFibonacci(n), {
                     key: 'fibonacci'
                 });
             }
@@ -624,24 +644,24 @@ const cluePackDefinitions = [
         icon: 'fa-microchip',
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 const ones = binaryDigitCount(ctx.target);
                 const text = `Its binary representation has ${ones} one${ones === 1 ? '' : 's'}.`;
-                return createClue('binary', 'Binary & Bits', 3, text, (n)=>binaryDigitCount(n) === ones, {
+                return createClue('binary', 'Binary & Bits', 3, text, (n) => binaryDigitCount(n) === ones, {
                     key: `ones-${ones}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const length = binaryLength(ctx.target);
                 const text = `It needs ${length} bit${length === 1 ? '' : 's'} in binary.`;
-                return createClue('binary', 'Binary & Bits', 2, text, (n)=>binaryLength(n) === length, {
+                return createClue('binary', 'Binary & Bits', 2, text, (n) => binaryLength(n) === length, {
                     key: `bin-length-${length}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if ((ctx.target & ctx.target - 1) !== 0) return null;
                 const text = 'It is a power of two.';
-                return createClue('binary', 'Binary & Bits', 3, text, (n)=>(n & n - 1) === 0, {
+                return createClue('binary', 'Binary & Bits', 3, text, (n) => (n & n - 1) === 0, {
                     key: 'power-of-two'
                 });
             }
@@ -654,7 +674,7 @@ const cluePackDefinitions = [
         icon: 'fa-project-diagram',
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 const anchors = [
                     6,
                     8,
@@ -671,11 +691,11 @@ const cluePackDefinitions = [
                 const value = gcd(ctx.target, anchor);
                 if (value === 1 && ctx.target % anchor === 0) return null;
                 const text = `The gcd with ${anchor} is ${value}.`;
-                return createClue('gcd', 'GCD & Residues', 3, text, (n)=>gcd(n, anchor) === value, {
+                return createClue('gcd', 'GCD & Residues', 3, text, (n) => gcd(n, anchor) === value, {
                     key: `gcd-${anchor}-${value}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const moduli = [
                     7,
                     9,
@@ -688,7 +708,7 @@ const cluePackDefinitions = [
                 const residue = ctx.target % modulus;
                 if (!quadraticResidueRemainders(modulus).has(residue)) return null;
                 const text = `It is a quadratic residue modulo ${modulus}.`;
-                return createClue('gcd', 'GCD & Residues', 4, text, (n)=>quadraticResidueRemainders(modulus).has(n % modulus), {
+                return createClue('gcd', 'GCD & Residues', 4, text, (n) => quadraticResidueRemainders(modulus).has(n % modulus), {
                     key: `qr-${modulus}-${residue}`
                 });
             }
@@ -701,30 +721,30 @@ const cluePackDefinitions = [
         icon: "fa-superscript",
         default: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 if (!isPerfectCube(ctx.target)) return null;
                 const root = Math.round(Math.cbrt(ctx.target));
                 const text = `It is a perfect cube (${root}³).`;
-                return createClue('polynomial', 'Polynomial & Algebraic', 3, text, (n)=>isPerfectCube(n), {
+                return createClue('polynomial', 'Polynomial & Algebraic', 3, text, (n) => isPerfectCube(n), {
                     key: 'cube'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isPerfectFourthPower(ctx.target)) return null;
                 const root = Math.round(Math.pow(ctx.target, 0.25));
                 const text = `It is a perfect fourth power (${root}⁴).`;
-                return createClue('polynomial', 'Polynomial & Algebraic', 4, text, (n)=>isPerfectFourthPower(n), {
+                return createClue('polynomial', 'Polynomial & Algebraic', 4, text, (n) => isPerfectFourthPower(n), {
                     key: 'fourth-power'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const base = Math.max(ctx.min, ctx.target - randomInt(ctx.rng, 5, 20));
                 const delta = ctx.target - base;
                 if (delta <= 0) return null;
                 const baseDescriptor = describeBaseNumber(base);
                 const deltaDescriptor = describeDeltaAmount(delta);
                 const text = `It exceeds ${base}, ${baseDescriptor}, by ${deltaDescriptor.text}.`;
-                return createClue('polynomial', 'Polynomial & Algebraic', 2, text, (n)=>n > base && deltaDescriptor.predicate(n - base), {
+                return createClue('polynomial', 'Polynomial & Algebraic', 2, text, (n) => n > base && deltaDescriptor.predicate(n - base), {
                     key: `affine-${base}-${delta}`
                 });
             }
@@ -738,7 +758,7 @@ const cluePackDefinitions = [
         default: true,
         expensive: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 const base = [
                     2,
                     3,
@@ -746,24 +766,24 @@ const cluePackDefinitions = [
                 ][Math.floor(ctx.rng() * 3)];
                 if (!isPalindrome(ctx.target, base)) return null;
                 const text = `It is a palindrome in base ${base}.`;
-                return createClue('bases', 'Base Conversions', 4, text, (n)=>isPalindrome(n, base), {
+                return createClue('bases', 'Base Conversions', 4, text, (n) => isPalindrome(n, base), {
                     key: `pal-base-${base}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const base = 8;
                 const sum = sumDigitsInBase(ctx.target, base);
                 const text = `Its digits sum to ${sum} in base ${base}.`;
-                return createClue('bases', 'Base Conversions', 4, text, (n)=>sumDigitsInBase(n, base) === sum, {
+                return createClue('bases', 'Base Conversions', 4, text, (n) => sumDigitsInBase(n, base) === sum, {
                     key: `sum-base8-${sum}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 const base = 6;
                 const representation = ctx.target.toString(base);
                 const last = representation[representation.length - 1];
                 const text = `In base ${base}, it ends with digit ${last}.`;
-                return createClue('bases', 'Base Conversions', 3, text, (n)=>n.toString(base).endsWith(last), {
+                return createClue('bases', 'Base Conversions', 3, text, (n) => n.toString(base).endsWith(last), {
                     key: `base${base}-end-${last}`
                 });
             }
@@ -777,24 +797,24 @@ const cluePackDefinitions = [
         default: true,
         expensive: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 if (!factorialNumbersUpTo(ctx.max).has(ctx.target)) return null;
                 const text = 'It is a factorial number (n!).';
-                return createClue('combinatorial', 'Combinatorial Numbers', 4, text, (n)=>factorialNumbersUpTo(ctx.max).has(n), {
+                return createClue('combinatorial', 'Combinatorial Numbers', 4, text, (n) => factorialNumbersUpTo(ctx.max).has(n), {
                     key: 'factorial'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!catalanNumbersUpTo(ctx.max).has(ctx.target)) return null;
                 const text = 'It appears in the Catalan number sequence.';
-                return createClue('combinatorial', 'Combinatorial Numbers', 4, text, (n)=>catalanNumbersUpTo(ctx.max).has(n), {
+                return createClue('combinatorial', 'Combinatorial Numbers', 4, text, (n) => catalanNumbersUpTo(ctx.max).has(n), {
                     key: 'catalan'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!bellNumbersUpTo(ctx.max).has(ctx.target)) return null;
                 const text = 'It is one of the Bell numbers.';
-                return createClue('combinatorial', 'Combinatorial Numbers', 5, text, (n)=>bellNumbersUpTo(ctx.max).has(n), {
+                return createClue('combinatorial', 'Combinatorial Numbers', 5, text, (n) => bellNumbersUpTo(ctx.max).has(n), {
                     key: 'bell'
                 });
             }
@@ -808,41 +828,41 @@ const cluePackDefinitions = [
         default: true,
         expensive: true,
         factories: [
-            (ctx)=>{
+            (ctx) => {
                 const tot = eulerTotient(ctx.target);
                 const text = `Its Euler totient φ(n) equals ${tot}.`;
-                return createClue('advanced', 'Advanced Number Theory', 5, text, (n)=>eulerTotient(n) === tot, {
+                return createClue('advanced', 'Advanced Number Theory', 5, text, (n) => eulerTotient(n) === tot, {
                     key: `totient-${tot}`
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isHappyNumber(ctx.target)) return null;
                 const text = 'It is a happy number.';
-                return createClue('advanced', 'Advanced Number Theory', 4, text, (n)=>isHappyNumber(n), {
+                return createClue('advanced', 'Advanced Number Theory', 4, text, (n) => isHappyNumber(n), {
                     key: 'happy'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isNarcissistic(ctx.target)) return null;
                 const text = 'It is a narcissistic (Armstrong) number.';
-                return createClue('advanced', 'Advanced Number Theory', 5, text, (n)=>isNarcissistic(n), {
+                return createClue('advanced', 'Advanced Number Theory', 5, text, (n) => isNarcissistic(n), {
                     key: 'narcissistic'
                 });
             },
-            (ctx)=>{
+            (ctx) => {
                 if (!isHighlyComposite(ctx.target)) return null;
                 const text = 'It is a highly composite number.';
-                return createClue('advanced', 'Advanced Number Theory', 5, text, (n)=>isHighlyComposite(n), {
+                return createClue('advanced', 'Advanced Number Theory', 5, text, (n) => isHighlyComposite(n), {
                     key: 'highly-composite'
                 });
             }
         ]
     }
 ];
-const cluePackMap = new Map(cluePackDefinitions.map((pack)=>[
-        pack.id,
-        pack
-    ]));
+const cluePackMap = new Map(cluePackDefinitions.map((pack) => [
+    pack.id,
+    pack
+]));
 const elements = {
     min: document.getElementById('min-value'),
     max: document.getElementById('max-value'),
@@ -850,12 +870,14 @@ const elements = {
     difficulty: document.getElementById('difficulty'),
     generate: document.getElementById('generate-button'),
     share: document.getElementById('copy-share-link'),
+    deepen: document.getElementById('deepen-button'),
     rangeStats: document.getElementById('range-stats'),
     cluePackList: document.getElementById('clue-pack-list'),
     selectAll: document.getElementById('select-all-packs'),
     clearAll: document.getElementById('clear-all-packs'),
     clueList: document.getElementById('clue-list'),
     clueCount: document.getElementById('clue-count'),
+    copyClues: document.getElementById('copy-clues-button'),
     diagnostics: document.getElementById('diagnostics-panel'),
     status: document.getElementById('status-badge'),
     candidateDetails: document.getElementById('candidate-details'),
@@ -871,7 +893,13 @@ const defaultLoadingMarkup = `
     </span>
 `;
 const generateButtons = [];
+const MAX_DEEPENING_LEVEL = 3;
 let lastGeneratedSettings = null;
+let lastGenerationOptions = {
+    depthLevel: 0
+};
+let lastResult = null;
+let lastClueCopyText = '';
 if (elements.generate) {
     registerGenerateButton(elements.generate, {
         loadingClasses: 'opacity-80 cursor-wait'
@@ -882,6 +910,15 @@ if (elements.generateFloating) {
     registerGenerateButton(elements.generateFloating, {
         loadingClasses: 'is-loading'
     });
+}
+if (elements.deepen) {
+    registerGenerateButton(elements.deepen, {
+        loadingMarkup: defaultLoadingMarkup,
+        loadingClasses: 'opacity-80 cursor-wait'
+    });
+    elements.deepen.classList.add('hidden');
+    elements.deepen.setAttribute('aria-hidden', 'true');
+    elements.deepen.disabled = true;
 }
 setShareAvailability(false);
 function registerGenerateButton(button, options = {}) {
@@ -904,6 +941,52 @@ function setShareAvailability(enabled) {
         elements.share.title = 'Generate a puzzle first';
     }
 }
+function updateClueCopyState(text) {
+    lastClueCopyText = text;
+    if (!elements.copyClues) return;
+    const hasText = Boolean(text);
+    elements.copyClues.disabled = !hasText;
+    elements.copyClues.setAttribute('aria-disabled', hasText ? 'false' : 'true');
+    elements.copyClues.title = hasText ? 'Copy all clues to the clipboard' : 'Generate a puzzle first';
+}
+function getDifficultyProfile(difficultyKey, depthLevel = 0) {
+    const base = difficultySettings[difficultyKey] || difficultySettings.medium;
+    if (!depthLevel) {
+        return base;
+    }
+    const profile = {
+        ...base
+    };
+    profile.depthLevel = depthLevel;
+    profile.maxClues = base.maxClues + depthLevel * 2;
+    profile.searchIterations = Math.round(base.searchIterations * (1 + 0.75 * depthLevel));
+    profile.maxComplexity = Math.min(6, base.maxComplexity + depthLevel);
+    elements.deepen.innerHTML = markup;
+}
+function updateDeepenButton(result, depthLevel = 0) {
+    if (!elements.deepen) return;
+    const shouldOffer = result && !result.error && !result.success && result.remainingCount > 1 && depthLevel < MAX_DEEPENING_LEVEL;
+    if (!shouldOffer) {
+        elements.deepen.classList.add('hidden');
+        elements.deepen.setAttribute('aria-hidden', 'true');
+        elements.deepen.disabled = true;
+        return;
+    }
+    const remaining = result.remainingCount;
+    const attemptsLeft = MAX_DEEPENING_LEVEL - depthLevel;
+    const label = attemptsLeft > 1 ? `Go deeper (${remaining.toLocaleString()} remain)` : `Final pass (${remaining.toLocaleString()} remain)`;
+    const markup = `<i class="fas fa-magnifying-glass-plus"></i><span>${label}</span>`;
+    elements.deepen.dataset.defaultContent = markup;
+    if (!elements.deepen.classList.contains('hidden')) {
+        elements.deepen.innerHTML = markup;
+    } else {
+        elements.deepen.innerHTML = markup;
+    }
+    elements.deepen.classList.remove('hidden');
+    elements.deepen.removeAttribute('aria-hidden');
+    elements.deepen.disabled = false;
+}
+let initialDepthLevel = 0;
 function createFloatingGenerateButton(anchor) {
     if (typeof document === 'undefined') return null;
     const button = document.createElement('button');
@@ -915,8 +998,8 @@ function createFloatingGenerateButton(anchor) {
     document.body.appendChild(button);
     button.setAttribute('aria-hidden', 'true');
     if (typeof IntersectionObserver !== 'undefined' && anchor) {
-        const observer = new IntersectionObserver((entries)=>{
-            entries.forEach((entry)=>{
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     button.classList.remove('is-visible');
                     button.setAttribute('aria-hidden', 'true');
@@ -937,7 +1020,7 @@ function createFloatingGenerateButton(anchor) {
 }
 function escapeHTML(str) {
     if (typeof str !== 'string') return str;
-    return str.replace(/[&<>"']/g, function(char) {
+    return str.replace(/[&<>"']/g, function (char) {
         const esc = {
             '&': '&amp;',
             '<': '&lt;',
@@ -951,7 +1034,7 @@ function escapeHTML(str) {
 const checkboxMap = new Map();
 function renderCluePacks() {
     elements.cluePackList.innerHTML = '';
-    cluePackDefinitions.forEach((pack)=>{
+    cluePackDefinitions.forEach((pack) => {
         const wrapper = document.createElement('label');
         wrapper.className = 'numigma-pack';
         wrapper.dataset.packId = pack.id;
@@ -978,7 +1061,7 @@ function renderCluePacks() {
 }
 renderCluePacks();
 function getSelectedPacks() {
-    return Array.from(checkboxMap.entries()).filter(([, checkbox])=>checkbox.checked).map(([packId])=>packId);
+    return Array.from(checkboxMap.entries()).filter(([, checkbox]) => checkbox.checked).map(([packId]) => packId);
 }
 function updateRangeStats() {
     const min = Number(elements.min.value) || 1;
@@ -987,13 +1070,18 @@ function updateRangeStats() {
     elements.rangeStats.querySelector('span').textContent = `Range size: ${rangeSize.toLocaleString()}`;
     return rangeSize;
 }
-function createShareUrl(settings) {
+function createShareUrl(settings, options = {}) {
     const url = new URL(window.location.href);
     url.searchParams.set('min', settings.min);
     url.searchParams.set('max', settings.max);
     url.searchParams.set('seed', settings.seed);
     url.searchParams.set('difficulty', settings.difficulty);
     url.searchParams.set('packs', settings.packs.join(','));
+    if (options.depthLevel && options.depthLevel > 0) {
+        url.searchParams.set('depth', options.depthLevel);
+    } else {
+        url.searchParams.delete('depth');
+    }
     return url.toString();
 }
 function randomSeedString() {
@@ -1002,11 +1090,11 @@ function randomSeedString() {
     if (window.crypto && window.crypto.getRandomValues) {
         window.crypto.getRandomValues(array);
     } else {
-        for(let i = 0; i < array.length; i += 1){
+        for (let i = 0; i < array.length; i += 1) {
             array[i] = Math.floor(Math.random() * alphabet.length);
         }
     }
-    return Array.from(array, (value)=>alphabet[value % alphabet.length]).join('');
+    return Array.from(array, (value) => alphabet[value % alphabet.length]).join('');
 }
 function setStatus(status, message) {
     const baseClasses = 'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold';
@@ -1025,9 +1113,9 @@ function setStatus(status, message) {
     }
 }
 function setLoading(isLoading) {
-    generateButtons.forEach((button)=>{
+    generateButtons.forEach((button) => {
         if (!button) return;
-        const loadingClasses = (button.dataset.loadingClasses || '').split(' ').map((token)=>token.trim()).filter(Boolean);
+        const loadingClasses = (button.dataset.loadingClasses || '').split(' ').map((token) => token.trim()).filter(Boolean);
         if (isLoading) {
             button.disabled = true;
             if (loadingClasses.length) {
@@ -1055,7 +1143,7 @@ function showWarning(message) {
     elements.warningText.textContent = message;
 }
 function evaluatePerformanceWarnings(rangeSize, packs) {
-    if (rangeSize > 8000 && packs.some((id)=>cluePackMap.get(id)?.expensive)) {
+    if (rangeSize > 8000 && packs.some((id) => cluePackMap.get(id)?.expensive)) {
         showWarning('Large ranges with advanced clue packs may take several seconds. Consider narrowing the range or lowering the difficulty.');
     } else if (rangeSize > 20000) {
         showWarning('Ranges above 20,000 can produce long search times. Try reducing the range for faster generation.');
@@ -1082,29 +1170,35 @@ function parseQueryParameters() {
     }
     if (params.has('packs')) {
         const packIds = params.get('packs').split(',').filter(Boolean);
-        checkboxMap.forEach((checkbox, id)=>{
+        checkboxMap.forEach((checkbox, id) => {
             checkbox.checked = packIds.includes(id);
         });
+    }
+    if (params.has('depth')) {
+        const depth = Number(params.get('depth'));
+        if (!Number.isNaN(depth) && depth > 0) {
+            initialDepthLevel = Math.min(MAX_DEEPENING_LEVEL, Math.floor(depth));
+        }
     }
 }
 parseQueryParameters();
 updateRangeStats();
-elements.min.addEventListener('change', ()=>{
+elements.min.addEventListener('change', () => {
     const rangeSize = updateRangeStats();
     evaluatePerformanceWarnings(rangeSize, getSelectedPacks());
 });
-elements.max.addEventListener('change', ()=>{
+elements.max.addEventListener('change', () => {
     const rangeSize = updateRangeStats();
     evaluatePerformanceWarnings(rangeSize, getSelectedPacks());
 });
-elements.min.addEventListener('blur', ()=>{
+elements.min.addEventListener('blur', () => {
     if (Number(elements.min.value) >= Number(elements.max.value)) {
         elements.max.value = Number(elements.min.value) + 9;
     }
     const rangeSize = updateRangeStats();
     evaluatePerformanceWarnings(rangeSize, getSelectedPacks());
 });
-elements.max.addEventListener('blur', ()=>{
+elements.max.addEventListener('blur', () => {
     if (Number(elements.max.value) <= Number(elements.min.value)) {
         elements.max.value = Number(elements.min.value) + 9;
     }
@@ -1112,14 +1206,14 @@ elements.max.addEventListener('blur', ()=>{
     evaluatePerformanceWarnings(rangeSize, getSelectedPacks());
 });
 if (elements.share) {
-    elements.share.addEventListener('click', async (event)=>{
+    elements.share.addEventListener('click', async (event) => {
         event.preventDefault();
         if (!lastGeneratedSettings) {
             showToast('Generate a puzzle first.');
             return;
         }
         try {
-            await navigator.clipboard.writeText(createShareUrl(lastGeneratedSettings));
+            await navigator.clipboard.writeText(createShareUrl(lastGeneratedSettings, lastGenerationOptions));
             showToast('Sharable link copied to clipboard!');
         } catch (error) {
             console.error(error);
@@ -1127,22 +1221,43 @@ if (elements.share) {
         }
     });
 }
-elements.selectAll.addEventListener('click', (event)=>{
+if (elements.copyClues) {
+    updateClueCopyState('');
+    elements.copyClues.addEventListener('click', async () => {
+        if (!lastClueCopyText) {
+            showToast('Generate a puzzle first.');
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(lastClueCopyText);
+            showToast('Clues copied to clipboard!');
+        } catch (error) {
+            console.error(error);
+            showToast('Unable to copy clues to clipboard.');
+        }
+    });
+}
+elements.selectAll.addEventListener('click', (event) => {
     event.preventDefault();
-    checkboxMap.forEach((checkbox)=>{
+    checkboxMap.forEach((checkbox) => {
         checkbox.checked = true;
     });
     evaluatePerformanceWarnings(updateRangeStats(), getSelectedPacks());
     showToast('All clue packs enabled.');
 });
-elements.clearAll.addEventListener('click', (event)=>{
+elements.clearAll.addEventListener('click', (event) => {
     event.preventDefault();
-    checkboxMap.forEach((checkbox)=>{
+    checkboxMap.forEach((checkbox) => {
         checkbox.checked = false;
     });
     evaluatePerformanceWarnings(updateRangeStats(), getSelectedPacks());
     showToast('Clue packs cleared. Enable at least one to generate.');
 });
+if (elements.deepen) {
+    elements.deepen.addEventListener('click', () => {
+        handleDeepen();
+    });
+}
 let lastSolution = null;
 let solutionRevealed = false;
 function collectSettings(options = {}) {
@@ -1173,7 +1288,7 @@ function collectSettings(options = {}) {
         seed
     };
 }
-elements.toggleSolution.addEventListener('click', ()=>{
+elements.toggleSolution.addEventListener('click', () => {
     if (!lastSolution) {
         showToast('Generate a puzzle first.');
         return;
@@ -1197,17 +1312,17 @@ function buildClueLibrary(settings, target) {
         max: settings.max,
         target,
         rng,
-        randomInt: (min, max)=>randomInt(rng, min, max)
+        randomInt: (min, max) => randomInt(rng, min, max)
     };
     const clues = [];
-    settings.packs.forEach((packId)=>{
+    settings.packs.forEach((packId) => {
         const pack = cluePackMap.get(packId);
         if (!pack) return;
-        pack.factories.forEach((factory)=>{
+        pack.factories.forEach((factory) => {
             try {
                 const result = factory(context);
                 if (Array.isArray(result)) {
-                    result.filter(Boolean).forEach((clue)=>clues.push(clue));
+                    result.filter(Boolean).forEach((clue) => clues.push(clue));
                 } else if (result) {
                     clues.push(result);
                 }
@@ -1228,7 +1343,7 @@ function scoreClueApplication(clue, currentCandidates, filteredCandidates, diffi
 }
 function applyClue(clue, candidates) {
     const filtered = [];
-    for(let i = 0; i < candidates.length; i += 1){
+    for (let i = 0; i < candidates.length; i += 1) {
         const value = candidates[i];
         if (clue.predicate(value)) {
             filtered.push(value);
@@ -1236,20 +1351,19 @@ function applyClue(clue, candidates) {
     }
     return filtered;
 }
-function attemptPuzzle(settings, target, library, attemptIndex) {
-    const difficulty = difficultySettings[settings.difficulty];
+function attemptPuzzle(settings, target, library, attemptIndex, difficulty) {
     const attemptSeed = deriveSeed(settings.seed, `attempt:${attemptIndex}`);
     const rng = createRng(attemptSeed);
     let candidates = generateCandidateRange(settings.min, settings.max);
-    let available = shuffle(library.filter((clue)=>clue.complexity <= difficulty.maxComplexity), rng);
+    let available = shuffle(library.filter((clue) => clue.complexity <= difficulty.maxComplexity), rng);
     const steps = [];
     let stagnation = 0;
-    while(candidates.length > 1 && steps.length < difficulty.maxClues && available.length){
+    while (candidates.length > 1 && steps.length < difficulty.maxClues && available.length) {
         let bestChoice = null;
         let bestFiltered = null;
         let bestIndex = -1;
         let bestScore = -Infinity;
-        for(let i = 0; i < available.length; i += 1){
+        for (let i = 0; i < available.length; i += 1) {
             const clue = available[i];
             const filtered = applyClue(clue, candidates);
             if (!filtered.length || !filtered.includes(target)) {
@@ -1296,7 +1410,7 @@ function attemptPuzzle(settings, target, library, attemptIndex) {
     }
     if (difficulty.aggressive && candidates.length > 1 && steps.length < difficulty.maxClues) {
         const remaining = available.slice(0, 6);
-        for(let i = 0; i < remaining.length && steps.length < difficulty.maxClues; i += 1){
+        for (let i = 0; i < remaining.length && steps.length < difficulty.maxClues; i += 1) {
             const clue = remaining[i];
             const filtered = applyClue(clue, candidates);
             if (!filtered.includes(target)) continue;
@@ -1337,7 +1451,9 @@ function chooseBestAttempt(currentBest, candidate) {
     }
     return currentBest;
 }
-function generatePuzzle(settings) {
+function generatePuzzle(settings, options = {}) {
+    const depthLevel = options.depthLevel ? Math.min(MAX_DEEPENING_LEVEL, Math.max(0, Math.floor(options.depthLevel))) : 0;
+    const difficultyProfile = getDifficultyProfile(settings.difficulty, depthLevel);
     const targetSeed = deriveSeed(settings.seed, 'target');
     const rng = createRng(targetSeed);
     const target = randomInt(rng, settings.min, settings.max);
@@ -1353,15 +1469,18 @@ function generatePuzzle(settings) {
             remainingCount: settings.max - settings.min + 1,
             librarySize: 0,
             usedClues: 0,
-            success: false
+            totalCandidates: settings.max - settings.min + 1,
+            success: false,
+            settings,
+            difficultyProfile,
+            depthLevel
         };
     }
-    const difficulty = difficultySettings[settings.difficulty];
     let bestAttempt = null;
     let attempts = 0;
-    for(let attempt = 0; attempt < difficulty.searchIterations; attempt += 1){
+    for (let attempt = 0; attempt < difficultyProfile.searchIterations; attempt += 1) {
         attempts += 1;
-        const result = attemptPuzzle(settings, target, library, attempt);
+        const result = attemptPuzzle(settings, target, library, attempt, difficultyProfile);
         bestAttempt = chooseBestAttempt(bestAttempt, result);
         if (bestAttempt && bestAttempt.success) {
             break;
@@ -1372,7 +1491,9 @@ function generatePuzzle(settings) {
         target,
         attempts,
         librarySize: library.length,
-        settings
+        settings,
+        difficultyProfile,
+        depthLevel
     };
 }
 function formatCandidatePreview(list) {
@@ -1383,9 +1504,10 @@ function formatCandidatePreview(list) {
     const head = list.slice(0, 5).join(', ');
     return `${head}, … (${list.length} remaining)`;
 }
-function renderClueCards(result, settings) {
+function renderClueCards(result) {
     elements.clueList.innerHTML = '';
     if (!result.steps.length) {
+        updateClueCopyState('');
         const message = document.createElement('p');
         message.className = 'text-sm text-gray-500';
         message.textContent = 'No usable clues were assembled. Try widening the range or enabling additional packs.';
@@ -1394,7 +1516,7 @@ function renderClueCards(result, settings) {
         return;
     }
     const fragment = document.createDocumentFragment();
-    result.steps.forEach((step, index)=>{
+    result.steps.forEach((step, index) => {
         const card = document.createElement('article');
         card.className = 'clue-card';
         const badge = document.createElement('span');
@@ -1417,8 +1539,11 @@ function renderClueCards(result, settings) {
         fragment.appendChild(card);
     });
     elements.clueList.appendChild(fragment);
-    const difficulty = difficultySettings[settings.difficulty];
-    elements.clueCount.textContent = `${result.steps.length} clue${result.steps.length === 1 ? '' : 's'} (max ${difficulty.maxClues})`;
+    updateClueCopyState(result.steps.map((step, index) => `Clue ${index + 1}: ${step.clue.text}`).join('\n'));
+    const profile = result.difficultyProfile || (result.settings ? difficultySettings[result.settings.difficulty] : null);
+    const clueCap = profile?.maxClues ?? result.steps.length;
+    const depthSuffix = result.depthLevel ? ` • deep +${result.depthLevel}` : '';
+    elements.clueCount.textContent = `${result.steps.length} clue${result.steps.length === 1 ? '' : 's'} (max ${clueCap}${depthSuffix})`;
 }
 function renderCandidateTimeline(result) {
     elements.candidateDetails.innerHTML = '';
@@ -1428,7 +1553,7 @@ function renderCandidateTimeline(result) {
     }
     const fragment = document.createDocumentFragment();
     let previous = result.totalCandidates;
-    result.steps.forEach((step, index)=>{
+    result.steps.forEach((step, index) => {
         const row = document.createElement('div');
         row.className = 'step-row';
         row.innerHTML = `
@@ -1458,23 +1583,40 @@ function renderCandidateTimeline(result) {
     }
     elements.candidateDetails.appendChild(fragment);
 }
-function renderDiagnostics(result, settings) {
+function renderDiagnostics(result) {
+    const settings = result.settings || lastGeneratedSettings;
+    const baseDifficulty = settings ? difficultySettings[settings.difficulty] : null;
+    const profile = result.difficultyProfile || baseDifficulty;
+    const rows = [];
+    if (settings) {
+        rows.push(`<div class="diagnostic-row"><span>Range</span><strong>${settings.min} – ${settings.max}</strong></div>`);
+        if (baseDifficulty) {
+            rows.push(`<div class="diagnostic-row"><span>Difficulty</span><strong>${baseDifficulty.label}</strong></div>`);
+        }
+    }
+    rows.push(`<div class="diagnostic-row"><span>Total candidates</span><strong>${result.totalCandidates.toLocaleString()}</strong></div>`);
+    rows.push(`<div class="diagnostic-row"><span>Clue library size</span><strong>${result.librarySize}</strong></div>`);
+    rows.push(`<div class="diagnostic-row"><span>Search attempts</span><strong>${result.attempts}</strong></div>`);
+    rows.push(`<div class="diagnostic-row"><span>Remaining candidates</span><strong>${result.remainingCount}</strong></div>`);
+    if (profile) {
+        rows.push(`<div class="diagnostic-row"><span>Clue budget</span><strong>${profile.maxClues}</strong></div>`);
+        if (profile.depthLevel) {
+            rows.push(`<div class="diagnostic-row"><span>Search depth</span><strong>Deep +${profile.depthLevel}</strong></div>`);
+        }
+    }
     const diagnostics = document.createElement('div');
     diagnostics.className = 'diagnostics-grid';
-    diagnostics.innerHTML = `
-        <div class="diagnostic-row"><span>Range</span><strong>${settings.min} – ${settings.max}</strong></div>
-        <div class="diagnostic-row"><span>Difficulty</span><strong>${difficultySettings[settings.difficulty].label}</strong></div>
-        <div class="diagnostic-row"><span>Total candidates</span><strong>${result.totalCandidates.toLocaleString()}</strong></div>
-        <div class="diagnostic-row"><span>Clue library size</span><strong>${result.librarySize}</strong></div>
-        <div class="diagnostic-row"><span>Search attempts</span><strong>${result.attempts}</strong></div>
-        <div class="diagnostic-row"><span>Remaining candidates</span><strong>${result.remainingCount}</strong></div>
-    `;
+    diagnostics.innerHTML = rows.join('');
     elements.diagnostics.innerHTML = '';
     elements.diagnostics.appendChild(diagnostics);
     if (!result.success) {
         const note = document.createElement('p');
         note.className = 'text-xs text-amber-600';
-        note.textContent = 'No unique solution was located. Consider adjusting the difficulty, expanding the clue pool, or narrowing the range.';
+        if ((result.depthLevel || 0) < MAX_DEEPENING_LEVEL) {
+            note.textContent = 'No unique solution was located yet. Consider expanding the clue pool, narrowing the range, or using "Go deeper" to add more clues.';
+        } else {
+            note.textContent = 'No unique solution was located. Consider adjusting the difficulty, expanding the clue pool, or narrowing the range.';
+        }
         elements.diagnostics.appendChild(note);
     }
 }
@@ -1485,36 +1627,48 @@ function renderSolution(result) {
     elements.solutionCard.innerHTML = '<p class="text-sm text-slate-300">Solution hidden. Click reveal to view the secret number.</p>';
     elements.toggleSolution.textContent = 'Reveal';
 }
-function renderPuzzle(result, settings) {
+function renderPuzzle(result) {
     if (result.error) {
         setStatus('error', 'Generation failed');
         elements.clueList.innerHTML = `<p class="text-sm text-rose-600">${result.error}</p>`;
         elements.candidateDetails.innerHTML = '<p>Unable to compute candidate reductions.</p>';
         elements.diagnostics.innerHTML = '<p class="text-sm text-gray-500">No diagnostics available.</p>';
         lastSolution = null;
+        lastResult = null;
+        updateClueCopyState('');
+        updateDeepenButton(null, 0);
         return;
     }
-    renderClueCards(result, settings);
+    lastResult = result;
+    const depthLevel = result.depthLevel || 0;
+    renderClueCards(result);
     renderCandidateTimeline(result);
-    renderDiagnostics(result, settings);
+    renderDiagnostics(result);
     renderSolution(result);
     if (result.success) {
-        setStatus('success', 'Unique solution located');
+        const successLabel = depthLevel ? 'Unique solution locked with deep search' : 'Unique solution located';
+        setStatus('success', successLabel);
     } else if (result.remainingCount <= 5) {
         setStatus('warning', 'Near-unique solution');
     } else {
         setStatus('warning', 'Multiple candidates remain');
     }
+    updateDeepenButton(result, depthLevel);
 }
 async function handleGenerate(options = {}) {
-    const { autoSeed = false } = options;
+    const { autoSeed = false, depthLevel = 0, silent = false } = options;
     const settings = collectSettings({
         autoSeed
     });
     if (!settings) return;
+    lastGenerationOptions = {
+        depthLevel
+    };
     setLoading(true);
-    await new Promise((resolve)=>requestAnimationFrame(resolve));
-    const result = generatePuzzle(settings);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const result = generatePuzzle(settings, {
+        depthLevel
+    });
     if (!result.error) {
         lastGeneratedSettings = {
             ...settings,
@@ -1522,15 +1676,76 @@ async function handleGenerate(options = {}) {
                 ...settings.packs
             ]
         };
+        lastGenerationOptions = {
+            depthLevel
+        };
         setShareAvailability(true);
     } else if (!lastGeneratedSettings) {
         setShareAvailability(false);
     }
-    renderPuzzle(result, settings);
+    renderPuzzle(result);
+    if (!silent && depthLevel > 0 && !result.error) {
+        if (result.success) {
+            showToast('Deep search found a unique solution.');
+        } else {
+            showToast('Added more clues, but multiple candidates remain.');
+        }
+    }
     setLoading(false);
 }
-generateButtons.forEach((button)=>{
-    button.addEventListener('click', ()=>{
+async function handleDeepen() {
+    if (!lastGeneratedSettings || !lastResult) {
+        showToast('Generate a puzzle first.');
+        return;
+    }
+    const currentDepth = lastGenerationOptions?.depthLevel || 0;
+    if (currentDepth >= MAX_DEEPENING_LEVEL) {
+        showToast('Deep search already reached its limit.');
+        return;
+    }
+    const settings = {
+        ...lastGeneratedSettings,
+        packs: [
+            ...lastGeneratedSettings.packs
+        ]
+    };
+    elements.seed.value = settings.seed;
+    setLoading(true);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const nextDepthLevel = currentDepth + 1;
+    const result = generatePuzzle(settings, {
+        depthLevel: nextDepthLevel
+    });
+    if (!result.error) {
+        lastGeneratedSettings = {
+            ...settings,
+            packs: [
+                ...settings.packs
+            ]
+        };
+        lastGenerationOptions = {
+            depthLevel: nextDepthLevel
+        };
+        setShareAvailability(true);
+    } else if (!lastGeneratedSettings) {
+        setShareAvailability(false);
+    }
+    renderPuzzle(result);
+    if (!result.error) {
+        if (result.success) {
+            showToast('Additional clues secured a unique solution.');
+        } else if (nextDepthLevel >= MAX_DEEPENING_LEVEL) {
+            showToast('Deep search exhausted without finding a unique solution. Try adjusting the configuration.');
+        } else {
+            showToast('Added more clues, but multiple candidates remain.');
+        }
+    } else {
+        showToast('Deep search could not refine this puzzle.');
+    }
+    setLoading(false);
+}
+generateButtons.forEach((button) => {
+    button.addEventListener('click', () => {
         handleGenerate({
             autoSeed: true
         });
@@ -1539,9 +1754,11 @@ generateButtons.forEach((button)=>{
 evaluatePerformanceWarnings(updateRangeStats(), getSelectedPacks());
 const autoParams = new URLSearchParams(window.location.search);
 if (autoParams.has('seed') && autoParams.get('autoplay') !== '0') {
-    setTimeout(()=>{
+    setTimeout(() => {
         handleGenerate({
-            autoSeed: false
+            autoSeed: false,
+            depthLevel: initialDepthLevel,
+            silent: true
         });
     }, 120);
 }
