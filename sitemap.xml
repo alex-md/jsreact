@@ -2,103 +2,121 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://jsreact.com/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://jsreact.com/analytics/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/clean/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/diff/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/domain/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/elevation/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/expression/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/generator/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/insert/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/keyword/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/minify/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/numigma/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jsreact.com/osrs-flip-finder/</loc>
+    <lastmod>2025-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jsreact.com/osrs-flipping-tool/</loc>
+    <lastmod>2025-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jsreact.com/osrs-flipping-tools/</loc>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/osrs/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/playground/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/policy/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/qr/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://jsreact.com/speech/</loc>
-    <lastmod>2025-10-21</lastmod>
+    <lastmod>2025-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

@@ -1,6 +1,30 @@
 // Import styles
 import '@styles/global.css';
 
+const redirectMap = Object.freeze({
+    '/osrs-flip-finder': '/osrs/',
+    '/osrs-flip-finder/': '/osrs/',
+    '/osrs-flipping-tool': '/osrs/',
+    '/osrs-flipping-tool/': '/osrs/',
+    '/osrs-flipping-tools': '/osrs/',
+    '/osrs-flipping-tools/': '/osrs/'
+});
+
+const hasFileExtension = (pathname) => /\.[a-zA-Z0-9]{2,}$/.test(pathname);
+
+const ensureLeadingSlash = (path) => {
+    if (!path) return '/';
+    return path.startsWith('/') ? path : `/${path}`;
+};
+
+const ensureTrailingSlash = (pathname) => {
+    if (!pathname || pathname === '/') return '/';
+    if (pathname.endsWith('/') || hasFileExtension(pathname)) {
+        return pathname;
+    }
+    return `${pathname}/`;
+};
+
 // Export header creation function
 export function createHeader(title, description) {
     const header = document.createElement('header');
@@ -54,11 +78,19 @@ export function createHead(title, description, options = {}) {
         return null;
     }
 
+    const currentUrl = new URL(window.location.href);
+
     const {
         gaTrackingId = 'G-ZEFG04PXR7',
         baseUrl: providedBaseUrl,
         publishDate = new Date().toISOString().split('T')[0],
-        canonicalPath
+        canonicalPath,
+        canonicalUrl: canonicalUrlOverride,
+        redirectToCanonical = true,
+        manualRedirects = true,
+        keywords,
+        additionalMeta = [],
+        structuredData: structuredDataOverride
     } = options;
 
     const defaultBaseUrl = providedBaseUrl ||
@@ -74,6 +106,22 @@ export function createHead(title, description, options = {}) {
             return `${defaultBaseUrl}${path}`;
         }
     };
+
+    const normalizedCurrentPath = ensureTrailingSlash(currentUrl.pathname);
+
+    if (manualRedirects) {
+        const redirectTarget = redirectMap[currentUrl.pathname] || redirectMap[normalizedCurrentPath];
+        if (redirectTarget) {
+            const targetUrl = redirectTarget.startsWith('http')
+                ? redirectTarget
+                : getFullUrl(redirectTarget);
+
+            if (targetUrl !== currentUrl.toString()) {
+                window.location.replace(targetUrl);
+                return null;
+            }
+        }
+    }
 
     const ensureCriticalStyles = () => {
         if (head.querySelector('style[data-jsreact-critical="true"]')) {
@@ -185,18 +233,47 @@ export function createHead(title, description, options = {}) {
         { type: 'link', rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' }
     ].forEach(appendExternalResource);
 
-    const currentUrl = new URL(window.location.href);
-    let canonicalTarget = canonicalPath || currentUrl.pathname;
-    if (!canonicalTarget.endsWith('/') && !canonicalTarget.includes('.')) {
-        canonicalTarget += '/';
-    }
-    const canonicalUrl = getFullUrl(canonicalTarget);
+    const resolveCanonicalUrl = () => {
+        if (canonicalUrlOverride) {
+            try {
+                return new URL(canonicalUrlOverride, defaultBaseUrl).toString();
+            } catch (e) {
+                console.error('Invalid canonicalUrl override provided', e);
+            }
+        }
+
+        let canonicalTarget = canonicalPath ? ensureLeadingSlash(canonicalPath) : currentUrl.pathname;
+        canonicalTarget = ensureTrailingSlash(canonicalTarget);
+        return getFullUrl(canonicalTarget);
+    };
+
+    const canonicalUrl = resolveCanonicalUrl();
 
     head.querySelectorAll('link[rel="canonical"]').forEach(link => link.remove());
     const canonicalLink = document.createElement('link');
     canonicalLink.rel = 'canonical';
     canonicalLink.href = canonicalUrl;
     head.appendChild(canonicalLink);
+
+    if (redirectToCanonical) {
+        try {
+            const canonical = new URL(canonicalUrl);
+            if (canonical.origin === currentUrl.origin) {
+                const canonicalPathname = ensureTrailingSlash(canonical.pathname);
+                if (normalizedCurrentPath !== canonicalPathname) {
+                    const nextUrl = `${canonicalPathname}${currentUrl.search}${currentUrl.hash}`;
+                    if (window.history && window.history.replaceState) {
+                        window.history.replaceState(null, '', nextUrl);
+                    } else if (nextUrl !== currentUrl.pathname) {
+                        window.location.replace(nextUrl);
+                        return { title, description, canonicalUrl };
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Failed to normalize canonical URL', error);
+        }
+    }
 
     const metaTags = [
         { charset: 'UTF-8' },
@@ -220,6 +297,17 @@ export function createHead(title, description, options = {}) {
         { name: 'twitter:image', content: getFullUrl('/assets/images/og-image.png') }
     ];
 
+    if (keywords) {
+        const keywordContent = Array.isArray(keywords) ? keywords.join(', ') : keywords;
+        if (keywordContent) {
+            metaTags.push({ name: 'keywords', content: keywordContent });
+        }
+    }
+
+    if (Array.isArray(additionalMeta)) {
+        additionalMeta.filter(Boolean).forEach(meta => metaTags.push(meta));
+    }
+
     metaTags.forEach(setMetaTag);
 
     if (gaTrackingId && !head.querySelector(`script[src*="gtag/js?id=${gaTrackingId}"]`)) {
@@ -239,7 +327,7 @@ export function createHead(title, description, options = {}) {
         head.appendChild(gaInit);
     }
 
-    const structuredData = {
+    const baseStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'WebApplication',
         name: 'JSreact',
@@ -261,14 +349,22 @@ export function createHead(title, description, options = {}) {
         dateModified: new Date().toISOString()
     };
 
+    const structuredData = structuredDataOverride === null
+        ? null
+        : structuredDataOverride
+            ? { ...baseStructuredData, ...structuredDataOverride }
+            : baseStructuredData;
+
     head.querySelectorAll('script[type="application/ld+json"][data-jsreact-structured]')
         .forEach(script => script.remove());
 
-    const scriptLD = document.createElement('script');
-    scriptLD.type = 'application/ld+json';
-    scriptLD.dataset.jsreactStructured = 'true';
-    scriptLD.textContent = JSON.stringify(structuredData);
-    head.appendChild(scriptLD);
+    if (structuredData) {
+        const scriptLD = document.createElement('script');
+        scriptLD.type = 'application/ld+json';
+        scriptLD.dataset.jsreactStructured = 'true';
+        scriptLD.textContent = JSON.stringify(structuredData);
+        head.appendChild(scriptLD);
+    }
 
     const markBodyReady = () => {
         if (document.body) {
