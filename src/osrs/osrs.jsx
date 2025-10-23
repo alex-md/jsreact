@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import {
     Paper, TextField, Typography, FormControl, InputLabel, Select, MenuItem,
-    Button, ThemeProvider, Box, Container, CssBaseline, CircularProgress, Divider
+    Button, ThemeProvider, Box, Container, CssBaseline, CircularProgress, Divider,
+    Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 
@@ -101,7 +102,35 @@ export default function OSRSFlipper() {
 
 
     // === Derived State / Flags ===
-    const isLoading = dataLoading || calculatingFlips;
+    const accordionClassName = 'rounded-xl border border-slate-200/80 bg-slate-50/80 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/40';
+    const accordionSummarySx = {
+        px: { xs: 1.5, sm: 2 },
+        py: 1.5,
+        '& .MuiAccordionSummary-content': { margin: 0 },
+        '& .MuiAccordionSummary-expandIconWrapper': { transition: 'transform 0.2s ease' },
+        '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': { transform: 'rotate(90deg)' },
+    };
+    const accordionDetailsSx = { px: { xs: 1.5, sm: 2 }, pt: 0, pb: 2 };
+    const renderAccordionExpandIcon = () => (
+        <Box
+            component="span"
+            sx={{
+                width: 28,
+                height: 28,
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: 'divider',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                color: 'text.secondary',
+            }}
+        >
+            ›
+        </Box>
+    );
 
 
     // === Render ===
@@ -192,6 +221,21 @@ export default function OSRSFlipper() {
                                     </div>
                                     <Typography variant="body2" sx={{ color: 'primary.dark', fontWeight: 500, mt: 2 }}>
                                         Current Budget: {budget.toLocaleString()} gp
+                                    </Typography>
+                                </Paper>
+
+                                <Paper elevation={0} className="p-5 border-l-4 border-primary/50 bg-primary/5 dark:border-primary/60 dark:bg-primary/10">
+                                    <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                        Instant price scout
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                                        <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>Insta Buy</Box> highlights the offer that is clearing immediately so you can place competitive bids without overpaying.
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                                        <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>Insta Sell</Box> reveals where impatient merchants are exiting right now, helping you lock profits without chasing the market down.
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1.5 }}>
+                                        Pair the two searches to confirm a safe spread before locking in your quantity.
                                     </Typography>
                                 </Paper>
 
