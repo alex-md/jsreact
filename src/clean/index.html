@@ -9,7 +9,11 @@
             import { createHead } from '@components/head.js';
             createHead(
                 'Online Text Cleaner & Formatter',
-                'Clean and format text with our advanced text processing tool'
+                'Clean and format text with our advanced text processing tool',
+                {
+                    canonicalPath: '/clean/',
+                    keywords: 'text cleaner, text formatter, whitespace cleanup, string normalizer, content cleaner, text processing tool, remove extra spaces, clean text online, format text tool, text editor'
+                }
             );
         </script>
 
@@ -421,6 +425,85 @@
                     </section>
                 </div>
             </div>
+
+            <section class="mt-12 space-y-8">
+                <article class="bg-white border border-gray-200 rounded-2xl shadow-md p-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+                        Why our text cleaner beats copy-paste fixes
+                    </h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Copying text from documents, emails, or PDFs usually drags in messy formatting. Our clean text tool
+                        removes invisible characters, tames whitespace, and normalizes punctuation so your content is ready for
+                        CMS editors, newsletters, and code repositories. Instead of manually cleaning copy-pasted text, toggle the
+                        options you need and watch the output update instantly.
+                    </p>
+                    <ul class="mt-5 grid gap-3 sm:grid-cols-2 list-disc list-inside text-gray-600">
+                        <li>One-click removal of stray spaces, tabs, and extra line breaks</li>
+                        <li>Optional smart punctuation fixes for quotes, dashes, and ellipses</li>
+                        <li>Regex powered find-and-replace for surgical content edits</li>
+                        <li>Presets for writers, developers, and marketing teams</li>
+                    </ul>
+                </article>
+
+                <article class="bg-white border border-gray-200 rounded-2xl shadow-md p-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+                        How to clean copy-pasted text before publishing
+                    </h2>
+                    <div class="grid gap-6 lg:grid-cols-2">
+                        <div class="space-y-3 text-gray-600">
+                            <p>
+                                Paste your content into the input panel, enable the cleaning steps you want, and click
+                                <span class="font-medium text-gray-900">Clean Text</span>. The output panel keeps formatting you
+                                intentionally applied while stripping the junk. Use the live counters to verify how many matches were
+                                replaced so you know every instance was handled.
+                            </p>
+                            <p>
+                                Working with Markdown or HTML? Keep punctuation normalization on, but disable punctuation removal so
+                                important characters remain untouched. The tool remembers your choices, making repetitive clean-ups
+                                effortless.
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 space-y-4 text-gray-700">
+                            <h3 class="text-lg font-semibold text-gray-900">Popular use cases</h3>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Preparing email newsletters copied from Word or Google Docs</li>
+                                <li>Cleaning blog posts before pasting into CMS editors</li>
+                                <li>Normalizing user generated content or support ticket text</li>
+                                <li>Fixing spacing issues in JSON, YAML, or configuration snippets</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white border border-gray-200 rounded-2xl shadow-md p-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Frequently asked questions</h2>
+                    <div class="space-y-6 text-gray-600">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Can I keep intentional spacing and indentation?</h3>
+                            <p>
+                                Yes. Disable the <span class="font-medium text-gray-900">Remove Extra Spaces</span> option to preserve
+                                indentation while still trimming stray whitespace at the ends of lines. Developers often pair this with
+                                punctuation normalization for clean, readable snippets.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Does the cleaner support accented characters?</h3>
+                            <p>
+                                All operations run on Unicode-safe utilities, so characters from non-English languages, emojis, and
+                                mathematical symbols remain intact while the tool removes only the unwanted formatting noise.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">How is this different from basic text editors?</h3>
+                            <p>
+                                Editors like Notepad can strip formatting, but they do not normalize quotes, whitespace, or hyphen types.
+                                JSreact's cleaner bundles these adjustments, offers instant previews, and lets you copy the cleaned text
+                                back to your clipboard in a single click.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </section>
         </main>
 
         <script type="module" src="@components/footer.js"></script>

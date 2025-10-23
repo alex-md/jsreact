@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     Paper, TextField, Typography, FormControl, InputLabel, Select, MenuItem,
-    Button, ThemeProvider, Box, Container, CssBaseline, CircularProgress, Divider
+    Button, ThemeProvider, Box, Container, CssBaseline, CircularProgress, Divider,
+    Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 
@@ -101,7 +102,35 @@ export default function OSRSFlipper() {
 
 
     // === Derived State / Flags ===
-    const isLoading = dataLoading || calculatingFlips;
+    const accordionClassName = 'rounded-xl border border-slate-200/80 bg-slate-50/80 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/40';
+    const accordionSummarySx = {
+        px: { xs: 1.5, sm: 2 },
+        py: 1.5,
+        '& .MuiAccordionSummary-content': { margin: 0 },
+        '& .MuiAccordionSummary-expandIconWrapper': { transition: 'transform 0.2s ease' },
+        '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': { transform: 'rotate(90deg)' },
+    };
+    const accordionDetailsSx = { px: { xs: 1.5, sm: 2 }, pt: 0, pb: 2 };
+    const renderAccordionExpandIcon = () => (
+        <Box
+            component="span"
+            sx={{
+                width: 28,
+                height: 28,
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: 'divider',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                color: 'text.secondary',
+            }}
+        >
+            ›
+        </Box>
+    );
 
 
     // === Render ===
@@ -112,6 +141,67 @@ export default function OSRSFlipper() {
                 <OsrsGlobalStyles /> {/* Add global styles */}
                 <div className="min-h-screen py-8 px-4 lg:px-8"> {/* Background handled by theme/global styles */}
                     <Container maxWidth="xl" disableGutters>
+                        <Box
+                            component="header"
+                            className="bg-white/80 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-700 rounded-2xl p-6 shadow-sm mb-10"
+                        >
+                            <Typography
+                                variant="overline"
+                                sx={{ letterSpacing: 2, color: 'primary.main', fontWeight: 600 }}
+                            >
+                                OSRS Flip Finder
+                            </Typography>
+                            <Typography
+                                variant="h3"
+                                component="h1"
+                                sx={{ mt: 1, color: 'text.primary', fontWeight: 700, fontSize: { xs: '2rem', md: '2.75rem' } }}
+                            >
+                                Real-time Grand Exchange profits tailored to your risk profile
+                            </Typography>
+                            <Typography variant="body1" sx={{ mt: 2, color: 'text.secondary', maxWidth: '65ch' }}>
+                                Use live GE price feeds, volatility checks, and confidence scoring to spot consistent flips before the market
+                                moves. This OSRS flipping tool surfaces deals that align with your budget and trading style so you can scale
+                                profits with fewer risky bets.
+                            </Typography>
+                            <Box className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                                <Box className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-50 px-4 py-2 text-emerald-700 shadow-sm dark:border-emerald-400/30 dark:bg-emerald-500/10 dark:text-emerald-200">
+                                    <span className="text-xs font-semibold uppercase tracking-widest">100% free</span>
+                                    <span className="text-sm font-medium">Hobby-built for the flipping community</span>
+                                </Box>
+                                <Typography variant="body2" sx={{ color: 'text.secondary', maxWidth: '60ch' }}>
+                                    Everything here is supported by open data and weekend tinkering—no paywalls, logins, or add-on upsells.
+                                </Typography>
+                            </Box>
+                            <Box className="mt-5 grid gap-3 md:grid-cols-3">
+                                <Box className="rounded-xl border border-primary/20 bg-primary/5 p-4 dark:border-primary/30 dark:bg-primary/10">
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                                        Profit velocity &amp; stability scoring
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                                        Each flip receives a score that blends total profit, execution speed, and risk so you can prioritise the
+                                        most reliable margins first.
+                                    </Typography>
+                                </Box>
+                                <Box className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                                        Searchable buy &amp; sell price intelligence
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                                        Look up instant buy or sell suggestions for any item and track recent updates to stay ahead of sudden GE
+                                        swings.
+                                    </Typography>
+                                </Box>
+                                <Box className="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm dark:border-amber-500/40 dark:bg-amber-500/10">
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'warning.dark' }}>
+                                        Instant buy &amp; sell explained
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                                        The Insta Buy check surfaces a safe entry offer based on recent fills, while Insta Sell shows the price most
+                                        likely to clear immediately—perfect for validating spreads before you commit your stack.
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Box>
                         <div className="flex flex-col lg:flex-row gap-6">
 
                             {/* Left Column: Controls & Search */}
@@ -149,6 +239,21 @@ export default function OSRSFlipper() {
                                     </div>
                                     <Typography variant="body2" sx={{ color: 'primary.dark', fontWeight: 500, mt: 2 }}>
                                         Current Budget: {budget.toLocaleString()} gp
+                                    </Typography>
+                                </Paper>
+
+                                <Paper elevation={0} className="p-5 border-l-4 border-primary/50 bg-primary/5 dark:border-primary/60 dark:bg-primary/10">
+                                    <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                        Instant price scout
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                                        <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>Insta Buy</Box> highlights the offer that is clearing immediately so you can place competitive bids without overpaying.
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                                        <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>Insta Sell</Box> reveals where impatient merchants are exiting right now, helping you lock profits without chasing the market down.
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1.5 }}>
+                                        Pair the two searches to confirm a safe spread before locking in your quantity.
                                     </Typography>
                                 </Paper>
 
@@ -299,6 +404,155 @@ export default function OSRSFlipper() {
                             </div> {/* End Right Column */}
 
                         </div> {/* End Main Flex Container */}
+                        <Box component="section" className="mt-12 space-y-8">
+                            <Paper
+                                elevation={0}
+                                className="p-6 rounded-2xl border border-slate-200/70 bg-white/90 dark:border-slate-700 dark:bg-slate-900/60 space-y-3"
+                            >
+                                <Typography variant="h5" component="h2" sx={{ color: 'text.primary', fontWeight: 700 }}>
+                                    What makes this OSRS flip finder different?
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: '72ch' }}>
+                                    Instead of static price tables, this OSRS flipping tool analyses buy limits, trade volumes, volatility, and
+                                    recent GE shifts to rank items by profit velocity. That means you focus on reliable spreads instead of chasing
+                                    outdated margins.
+                                </Typography>
+                                <Box component="ul" className="grid gap-2 sm:grid-cols-2 list-disc list-inside">
+                                    <Typography component="li" variant="body2" sx={{ color: 'text.secondary' }}>
+                                        Dynamic scoring rewards consistent spreads and penalises unstable items
+                                    </Typography>
+                                    <Typography component="li" variant="body2" sx={{ color: 'text.secondary' }}>
+                                        Risk tiers help new merchants avoid tying up gold in thin markets
+                                    </Typography>
+                                    <Typography component="li" variant="body2" sx={{ color: 'text.secondary' }}>
+                                        Confidence percentages blend momentum, margin health, and liquidity signals
+                                    </Typography>
+                                    <Typography component="li" variant="body2" sx={{ color: 'text.secondary' }}>
+                                        Budget controls convert between thousands and millions for every account size
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                            <Paper
+                                elevation={0}
+                                className="p-6 rounded-2xl border border-slate-200/70 bg-white/90 dark:border-slate-700 dark:bg-slate-900/60 space-y-4"
+                            >
+                                <Typography variant="h5" component="h2" sx={{ color: 'text.primary', fontWeight: 700 }}>
+                                    Strategy tips for sustainable GE flipping
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                                    Use the search widgets to confirm instant buy and sell prices before placing offers. Combine that insight with
+                                    the profit score and recommended quantity to spread risk across multiple items while keeping your gold in motion.
+                                </Typography>
+                                <Divider sx={{ borderColor: 'divider' }} />
+                                <Box className="grid gap-3 md:grid-cols-2">
+                                    <Box className="space-y-1.5">
+                                        <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                            Daily routine
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                            Check the top flip suggestions, queue medium-risk alternatives, and rotate items every 30-45 minutes to
+                                            avoid hitting GE buy limits.
+                                        </Typography>
+                                    </Box>
+                                    <Box className="space-y-1.5">
+                                        <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                            When to refresh data
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                            Re-run the calculations after game updates, clan events, or whenever profit velocity drops below your
+                                            target gp/hour.
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Paper>
+                            <Paper
+                                elevation={0}
+                                className="p-6 rounded-2xl border border-slate-200/70 bg-white/90 dark:border-slate-700 dark:bg-slate-900/60 space-y-5"
+                            >
+                                <Box className="space-y-2">
+                                    <Typography variant="h5" component="h2" sx={{ color: 'text.primary', fontWeight: 700 }}>
+                                        OSRS flipping FAQ
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: '72ch' }}>
+                                        Quick answers for the questions flippers ask most often. Tap a card to reveal the details.
+                                    </Typography>
+                                </Box>
+                                <Box className="space-y-2">
+                                    <Accordion
+                                        disableGutters
+                                        square={false}
+                                        className={accordionClassName}
+                                        sx={{ '&:before': { display: 'none' } }}
+                                    >
+                                        <AccordionSummary expandIcon={renderAccordionExpandIcon()} sx={accordionSummarySx}>
+                                            <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                                Is this flip finder really free?
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails sx={accordionDetailsSx}>
+                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                Yes—this project is built as a passion hobby, so you can use every feature without accounts, paywalls, or
+                                                hidden fees. Share feedback and it will go straight onto the weekend tinkering list.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion
+                                        disableGutters
+                                        square={false}
+                                        className={accordionClassName}
+                                        sx={{ '&:before': { display: 'none' } }}
+                                    >
+                                        <AccordionSummary expandIcon={renderAccordionExpandIcon()} sx={accordionSummarySx}>
+                                            <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                                How often is the data refreshed?
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails sx={accordionDetailsSx}>
+                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                The dataset updates repeatedly throughout the day. Hit the refresh button whenever spreads shrink or a new
+                                                game update lands to pull the latest mapping, volumes, and confidence signals.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion
+                                        disableGutters
+                                        square={false}
+                                        className={accordionClassName}
+                                        sx={{ '&:before': { display: 'none' } }}
+                                    >
+                                        <AccordionSummary expandIcon={renderAccordionExpandIcon()} sx={accordionSummarySx}>
+                                            <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                                Can I filter for low-risk flips?
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails sx={accordionDetailsSx}>
+                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                Definitely. Dial down your budget and prioritise flips with stronger confidence ratings. Those items typically
+                                                move faster with tighter spreads, making them perfect for rebuilding a bank without heavy exposure.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion
+                                        disableGutters
+                                        square={false}
+                                        className={accordionClassName}
+                                        sx={{ '&:before': { display: 'none' } }}
+                                    >
+                                        <AccordionSummary expandIcon={renderAccordionExpandIcon()} sx={accordionSummarySx}>
+                                            <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                                What if a flip stops being profitable?
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails sx={accordionDetailsSx}>
+                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                Remove it from your queue and refresh suggestions. The flip finder recalculates rankings instantly so you can
+                                                pivot to quicker opportunities before stale offers tie up your gold.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Box>
+                            </Paper>
+                        </Box>
                     </Container>
                 </div>
             </StyledEngineProvider>
