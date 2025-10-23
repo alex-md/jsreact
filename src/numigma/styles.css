@@ -75,6 +75,12 @@
     font-size: 0.9rem;
 }
 
+.share-link-button[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .numigma-loading {
     display: inline-flex;
     align-items: center;

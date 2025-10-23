@@ -91,10 +91,6 @@
                                 <input type="number" id="max-value" min="10" value="9999"
                                     class="numigma-input" />
                             </label>
-                            <label class="block space-y-2 sm:col-span-2 lg:col-span-1">
-                                <span class="text-sm font-medium text-gray-700">Seed</span>
-                                <input type="text" id="seed" placeholder="Leave blank for random" class="numigma-input" />
-                            </label>
                             <label class="block space-y-2 lg:col-span-1">
                                 <span class="text-sm font-medium text-gray-700">Difficulty</span>
                                 <select id="difficulty" class="numigma-input">
@@ -105,17 +101,14 @@
                                 </select>
                             </label>
                         </div>
+                        <input type="hidden" id="seed" />
 
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-sm">
                             <div class="flex items-center gap-3">
-                                <button id="randomize-seed" class="inline-flex items-center gap-2 text-indigo-600 font-semibold">
-                                    <i class="fas fa-random"></i>
-                                    Randomize seed
-                                </button>
                                 <button id="copy-share-link"
-                                    class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
+                                    class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 share-link-button">
                                     <i class="fas fa-link"></i>
-                                    Copy shareable link
+                                    Copy link to current puzzle
                                 </button>
                             </div>
                             <div class="flex items-center gap-2 text-gray-500" id="range-stats">

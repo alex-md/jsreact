@@ -849,7 +849,6 @@ const elements = {
     seed: document.getElementById('seed'),
     difficulty: document.getElementById('difficulty'),
     generate: document.getElementById('generate-button'),
-    randomSeed: document.getElementById('randomize-seed'),
     share: document.getElementById('copy-share-link'),
     rangeStats: document.getElementById('range-stats'),
     cluePackList: document.getElementById('clue-pack-list'),
@@ -872,6 +871,7 @@ const defaultLoadingMarkup = `
     </span>
 `;
 const generateButtons = [];
+let lastGeneratedSettings = null;
 if (elements.generate) {
     registerGenerateButton(elements.generate, {
         loadingClasses: 'opacity-80 cursor-wait'
@@ -883,6 +883,7 @@ if (elements.generateFloating) {
         loadingClasses: 'is-loading'
     });
 }
+setShareAvailability(false);
 function registerGenerateButton(button, options = {}) {
     if (!button) return;
     const { loadingMarkup = defaultLoadingMarkup, loadingClasses = '' } = options;
@@ -890,6 +891,18 @@ function registerGenerateButton(button, options = {}) {
     button.dataset.loadingContent = loadingMarkup;
     button.dataset.loadingClasses = loadingClasses;
     generateButtons.push(button);
+}
+function setShareAvailability(enabled) {
+    if (!elements.share) return;
+    if (enabled) {
+        elements.share.removeAttribute('disabled');
+        elements.share.setAttribute('aria-disabled', 'false');
+        elements.share.title = 'Copy a link to this puzzle';
+    } else {
+        elements.share.setAttribute('disabled', 'disabled');
+        elements.share.setAttribute('aria-disabled', 'true');
+        elements.share.title = 'Generate a puzzle first';
+    }
 }
 function createFloatingGenerateButton(anchor) {
     if (typeof document === 'undefined') return null;
@@ -1098,24 +1111,22 @@ elements.max.addEventListener('blur', ()=>{
     const rangeSize = updateRangeStats();
     evaluatePerformanceWarnings(rangeSize, getSelectedPacks());
 });
-elements.randomSeed.addEventListener('click', (event)=>{
-    event.preventDefault();
-    const seed = randomSeedString();
-    elements.seed.value = seed;
-    showToast('Seed randomized.');
-});
-elements.share.addEventListener('click', async (event)=>{
-    event.preventDefault();
-    const settings = collectSettings();
-    if (!settings) return;
-    try {
-        await navigator.clipboard.writeText(createShareUrl(settings));
-        showToast('Sharable link copied to clipboard!');
-    } catch (error) {
-        console.error(error);
-        showToast('Unable to copy link to clipboard.');
-    }
-});
+if (elements.share) {
+    elements.share.addEventListener('click', async (event)=>{
+        event.preventDefault();
+        if (!lastGeneratedSettings) {
+            showToast('Generate a puzzle first.');
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(createShareUrl(lastGeneratedSettings));
+            showToast('Sharable link copied to clipboard!');
+        } catch (error) {
+            console.error(error);
+            showToast('Unable to copy link to clipboard.');
+        }
+    });
+}
 elements.selectAll.addEventListener('click', (event)=>{
     event.preventDefault();
     checkboxMap.forEach((checkbox)=>{
@@ -1134,6 +1145,34 @@ elements.clearAll.addEventListener('click', (event)=>{
 });
 let lastSolution = null;
 let solutionRevealed = false;
+function collectSettings(options = {}) {
+    const { autoSeed = false } = options;
+    const min = Number(elements.min.value) || 1;
+    const max = Number(elements.max.value) || 9999;
+    if (min >= max) {
+        showToast('Minimum must be less than maximum.');
+        return null;
+    }
+    const packs = getSelectedPacks();
+    if (!packs.length) {
+        showToast('Enable at least one clue pack.');
+        return null;
+    }
+    const difficulty = elements.difficulty.value;
+    let seed = elements.seed.value.trim();
+    if (autoSeed || !seed) {
+        seed = randomSeedString();
+    }
+    elements.seed.value = seed;
+    evaluatePerformanceWarnings(max - min + 1, packs);
+    return {
+        min,
+        max,
+        packs,
+        difficulty,
+        seed
+    };
+}
 elements.toggleSolution.addEventListener('click', ()=>{
     if (!lastSolution) {
         showToast('Generate a puzzle first.');
@@ -1150,30 +1189,6 @@ elements.toggleSolution.addEventListener('click', ()=>{
         elements.toggleSolution.textContent = 'Reveal';
     }
 });
-function collectSettings() {
-    const min = Number(elements.min.value) || 1;
-    const max = Number(elements.max.value) || 9999;
-    if (min >= max) {
-        showToast('Minimum must be less than maximum.');
-        return null;
-    }
-    const packs = getSelectedPacks();
-    if (!packs.length) {
-        showToast('Enable at least one clue pack.');
-        return null;
-    }
-    const difficulty = elements.difficulty.value;
-    const seed = elements.seed.value.trim() || randomSeedString();
-    elements.seed.value = seed;
-    evaluatePerformanceWarnings(max - min + 1, packs);
-    return {
-        min,
-        max,
-        packs,
-        difficulty,
-        seed
-    };
-}
 function buildClueLibrary(settings, target) {
     const librarySeed = deriveSeed(settings.seed, 'library');
     const rng = createRng(librarySeed);
@@ -1449,7 +1464,6 @@ function renderDiagnostics(result, settings) {
     diagnostics.innerHTML = `
         <div class="diagnostic-row"><span>Range</span><strong>${settings.min} – ${settings.max}</strong></div>
         <div class="diagnostic-row"><span>Difficulty</span><strong>${difficultySettings[settings.difficulty].label}</strong></div>
-        <div class="diagnostic-row"><span>Target seed</span><strong>${escapeHTML(settings.seed)}</strong></div>
         <div class="diagnostic-row"><span>Total candidates</span><strong>${result.totalCandidates.toLocaleString()}</strong></div>
         <div class="diagnostic-row"><span>Clue library size</span><strong>${result.librarySize}</strong></div>
         <div class="diagnostic-row"><span>Search attempts</span><strong>${result.attempts}</strong></div>
@@ -1492,24 +1506,42 @@ function renderPuzzle(result, settings) {
         setStatus('warning', 'Multiple candidates remain');
     }
 }
-async function handleGenerate() {
-    const settings = collectSettings();
+async function handleGenerate(options = {}) {
+    const { autoSeed = false } = options;
+    const settings = collectSettings({
+        autoSeed
+    });
     if (!settings) return;
     setLoading(true);
     await new Promise((resolve)=>requestAnimationFrame(resolve));
     const result = generatePuzzle(settings);
+    if (!result.error) {
+        lastGeneratedSettings = {
+            ...settings,
+            packs: [
+                ...settings.packs
+            ]
+        };
+        setShareAvailability(true);
+    } else if (!lastGeneratedSettings) {
+        setShareAvailability(false);
+    }
     renderPuzzle(result, settings);
     setLoading(false);
 }
 generateButtons.forEach((button)=>{
     button.addEventListener('click', ()=>{
-        handleGenerate();
+        handleGenerate({
+            autoSeed: true
+        });
     });
 });
 evaluatePerformanceWarnings(updateRangeStats(), getSelectedPacks());
 const autoParams = new URLSearchParams(window.location.search);
 if (autoParams.has('seed') && autoParams.get('autoplay') !== '0') {
     setTimeout(()=>{
-        handleGenerate();
+        handleGenerate({
+            autoSeed: false
+        });
     }, 120);
 }
