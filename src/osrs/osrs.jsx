@@ -156,7 +156,7 @@ export default function OSRSFlipper() {
                                 component="h1"
                                 sx={{ mt: 1, color: 'text.primary', fontWeight: 700, fontSize: { xs: '2rem', md: '2.75rem' } }}
                             >
-                                Real-time Grand Exchange profits tailored to your risk profile
+                                Real-time Grand Exchange flip finder
                             </Typography>
                             <Typography variant="body1" sx={{ mt: 2, color: 'text.secondary', maxWidth: '65ch' }}>
                                 Use live GE price feeds, volatility checks, and confidence scoring to spot consistent flips before the market
