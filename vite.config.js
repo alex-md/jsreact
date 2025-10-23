@@ -80,6 +80,9 @@ export default defineConfig({
                 speech: path.resolve(srcDir, 'speech/index.html'),
                 domain: path.resolve(srcDir, 'domain/index.html'),
                 osrs: path.resolve(srcDir, 'osrs/index.html'),
+                'osrs-flip-finder': path.resolve(srcDir, 'osrs-flip-finder/index.html'),
+                'osrs-flipping-tool': path.resolve(srcDir, 'osrs-flipping-tool/index.html'),
+                'osrs-flipping-tools': path.resolve(srcDir, 'osrs-flipping-tools/index.html'),
                 elevation: path.resolve(srcDir, 'elevation/index.html'),
                 numigma: path.resolve(srcDir, 'numigma/index.html')
             },
