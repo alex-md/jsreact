@@ -231,6 +231,11 @@ function isPerfectFourthPower(n) {
     return r ** 4 === n;
 }
 
+function isPowerOfTwo(n) {
+    if (n <= 0) return false;
+    return (n & (n - 1)) === 0;
+}
+
 function isTriangular(n) {
     return memoize(`triangular:${n}`, () => {
         const d = 8 * n + 1;
@@ -241,6 +246,39 @@ function isTriangular(n) {
 
 function isFibonacci(n) {
     return memoize(`fibonacci:${n}`, () => isPerfectSquare(5 * n * n + 4) || isPerfectSquare(5 * n * n - 4));
+}
+
+function describeBaseNumber(n) {
+    if (isPerfectSquare(n)) return 'a perfect square';
+    if (isPerfectCube(n)) return 'a perfect cube';
+    if (isTriangular(n)) return 'a triangular number';
+    if (isFibonacci(n)) return 'a Fibonacci number';
+    if (isPrime(n)) return 'a prime number';
+    if (n % 2 === 0) return 'an even number';
+    return 'an odd number';
+}
+
+function describeDeltaAmount(n) {
+    const descriptors = [
+        { matches: isPowerOfTwo, text: 'a power of two', predicate: value => isPowerOfTwo(value) },
+        { matches: isPerfectSquare, text: 'a perfect square', predicate: value => isPerfectSquare(value) },
+        { matches: isPerfectCube, text: 'a perfect cube', predicate: value => isPerfectCube(value) },
+        { matches: isTriangular, text: 'a triangular number', predicate: value => isTriangular(value) },
+        { matches: isFibonacci, text: 'a Fibonacci number', predicate: value => isFibonacci(value) },
+        { matches: isPrime, text: 'a prime number', predicate: value => isPrime(value) }
+    ];
+
+    for (const descriptor of descriptors) {
+        if (descriptor.matches(n)) {
+            return { text: descriptor.text, predicate: descriptor.predicate };
+        }
+    }
+
+    if (n % 2 === 0) {
+        return { text: 'an even number', predicate: value => value % 2 === 0 };
+    }
+
+    return { text: 'an odd number', predicate: value => value % 2 === 1 };
 }
 
 function factorialNumbersUpTo(limit) {
@@ -586,8 +624,17 @@ const cluePackDefinitions = [
                 const base = Math.max(ctx.min, ctx.target - randomInt(ctx.rng, 5, 20));
                 const delta = ctx.target - base;
                 if (delta <= 0) return null;
-                const text = `It can be written as ${base} plus ${delta}.`;
-                return createClue('polynomial', 'Polynomial & Algebraic', 2, text, n => n - base === delta, { key: `affine-${base}-${delta}` });
+                const baseDescriptor = describeBaseNumber(base);
+                const deltaDescriptor = describeDeltaAmount(delta);
+                const text = `It exceeds ${base}, ${baseDescriptor}, by ${deltaDescriptor.text}.`;
+                return createClue(
+                    'polynomial',
+                    'Polynomial & Algebraic',
+                    2,
+                    text,
+                    n => n > base && deltaDescriptor.predicate(n - base),
+                    { key: `affine-${base}-${delta}` }
+                );
             }
         ]
     },
@@ -702,6 +749,73 @@ const elements = {
     toggleSolution: document.getElementById('toggle-solution')
 };
 
+const defaultLoadingMarkup = `
+    <span class="numigma-loading">
+        <span class="numigma-loading__spinner" aria-hidden="true"></span>
+        <span>Generating…</span>
+    </span>
+`;
+
+const generateButtons = [];
+
+if (elements.generate) {
+    registerGenerateButton(elements.generate, {
+        loadingClasses: 'opacity-80 cursor-wait'
+    });
+}
+
+elements.generateFloating = createFloatingGenerateButton(elements.generate);
+
+if (elements.generateFloating) {
+    registerGenerateButton(elements.generateFloating, {
+        loadingClasses: 'is-loading'
+    });
+}
+
+function registerGenerateButton(button, options = {}) {
+    if (!button) return;
+    const { loadingMarkup = defaultLoadingMarkup, loadingClasses = '' } = options;
+    button.dataset.defaultContent = button.innerHTML;
+    button.dataset.loadingContent = loadingMarkup;
+    button.dataset.loadingClasses = loadingClasses;
+    generateButtons.push(button);
+}
+
+function createFloatingGenerateButton(anchor) {
+    if (typeof document === 'undefined') return null;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'floating-generate-button';
+    button.className = 'floating-generate-button';
+    button.setAttribute('aria-label', 'Generate new puzzle');
+    button.innerHTML = '<i class="fas fa-dice"></i><span class="floating-generate-button__label">Generate puzzle</span>';
+    document.body.appendChild(button);
+    button.setAttribute('aria-hidden', 'true');
+
+    if (typeof IntersectionObserver !== 'undefined' && anchor) {
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        button.classList.remove('is-visible');
+                        button.setAttribute('aria-hidden', 'true');
+                    } else {
+                        button.classList.add('is-visible');
+                        button.removeAttribute('aria-hidden');
+                    }
+                });
+            },
+            { threshold: 0.6 }
+        );
+        observer.observe(anchor);
+    } else {
+        button.classList.add('is-visible');
+        button.removeAttribute('aria-hidden');
+    }
+
+    return button;
+}
+
 // Simple HTML escape to prevent XSS in diagnostic output
 function escapeHTML(str) {
     if (typeof str !== 'string') return str;
@@ -809,15 +923,28 @@ function setStatus(status, message) {
 }
 
 function setLoading(isLoading) {
-    if (isLoading) {
-        elements.generate.disabled = true;
-        elements.generate.classList.add('opacity-80', 'cursor-wait');
-        elements.generate.innerHTML = '<span class="flex items-center gap-2"><span class="h-4 w-4 border-2 border-white/40 border-t-white/80 rounded-full animate-spin"></span>Generating...</span>';
-    } else {
-        elements.generate.disabled = false;
-        elements.generate.classList.remove('opacity-80', 'cursor-wait');
-        elements.generate.innerHTML = '<i class="fas fa-dice"></i> Generate puzzle';
-    }
+    generateButtons.forEach(button => {
+        if (!button) return;
+        const loadingClasses = (button.dataset.loadingClasses || '')
+            .split(' ')
+            .map(token => token.trim())
+            .filter(Boolean);
+        if (isLoading) {
+            button.disabled = true;
+            if (loadingClasses.length) {
+                button.classList.add(...loadingClasses);
+            }
+            button.innerHTML = button.dataset.loadingContent || defaultLoadingMarkup;
+        } else {
+            button.disabled = false;
+            if (loadingClasses.length) {
+                button.classList.remove(...loadingClasses);
+            }
+            if (button.dataset.defaultContent) {
+                button.innerHTML = button.dataset.defaultContent;
+            }
+        }
+    });
 }
 
 function showWarning(message) {
@@ -1329,8 +1456,10 @@ async function handleGenerate() {
     setLoading(false);
 }
 
-elements.generate.addEventListener('click', () => {
-    handleGenerate();
+generateButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        handleGenerate();
+    });
 });
 
 evaluatePerformanceWarnings(updateRangeStats(), getSelectedPacks());
