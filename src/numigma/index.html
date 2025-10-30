@@ -51,7 +51,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <i class="fas fa-sliders-h"></i>
-                                        <span>11 mix-and-match clue packs</span>
+                                        <span>13 mix-and-match clue packs</span>
                                     </div>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                 </section>
 
                 <section
-                    class="bg-white rounded-3xl shadow-lg border border-gray-200 overflow-hidden divide-y divide-gray-100">
+                    class="bg-white numigma-surface overflow-hidden divide-y divide-gray-100">
                     <div class="p-5 sm:p-6 lg:p-8 space-y-6">
                         <div class="space-y-4">
                             <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -106,12 +106,12 @@
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-sm">
                             <div class="flex items-center gap-3">
                                 <button id="copy-share-link"
-                                    class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 share-link-button">
+                                    class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 share-link-button numigma-inline-button">
                                     <i class="fas fa-link"></i>
                                     Copy link to current puzzle
                                 </button>
                             </div>
-                            <div class="flex items-center gap-2 text-gray-500" id="range-stats">
+                            <div class="numigma-info-chip text-sm" id="range-stats">
                                 <i class="fas fa-chart-area"></i>
                                 <span>Range size: 0</span>
                             </div>
@@ -120,17 +120,23 @@
 
                     <div class="p-5 sm:p-6 lg:p-8 space-y-5" id="clue-pack-container">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div>
+                            <div class="space-y-2">
                                 <h3 class="text-lg font-semibold text-gray-900">Clue packs</h3>
                                 <p class="text-sm text-gray-600">Toggle mathematical themes to shape the flavor of the
                                     generated puzzle.</p>
+                                <div id="pack-count-indicator" class="numigma-info-chip text-sm" data-variant="accent">
+                                    <i class="fas fa-boxes-stacked"></i>
+                                    <span>0 of 0 packs enabled</span>
+                                </div>
                             </div>
                             <div class="flex items-center gap-3 text-sm">
-                                <button id="select-all-packs" class="inline-flex items-center gap-2 text-indigo-600 font-semibold">
+                                <button id="select-all-packs"
+                                    class="inline-flex items-center gap-2 text-indigo-600 font-semibold numigma-inline-button">
                                     <i class="fas fa-check-double"></i>
                                     Select all
                                 </button>
-                                <button id="clear-all-packs" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
+                                <button id="clear-all-packs"
+                                    class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 numigma-inline-button">
                                     <i class="fas fa-eraser"></i>
                                     Clear
                                 </button>
@@ -141,7 +147,7 @@
                 </section>
 
                 <div id="warning-banner"
-                    class="hidden rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 shadow-sm">
+                    class="hidden numigma-callout border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                     <div class="flex items-start gap-3">
                         <i class="fas fa-exclamation-triangle mt-1"></i>
                         <div>
@@ -153,7 +159,7 @@
 
                 <section class="grid gap-6 lg:grid-cols-5">
                     <div class="lg:col-span-3 space-y-6">
-                        <div class="bg-white rounded-3xl shadow-lg border border-gray-200">
+                        <div class="bg-white numigma-surface">
                             <div
                                 class="border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between gap-3">
                                 <h3 class="text-lg font-semibold text-gray-900">Active clues</h3>
@@ -170,7 +176,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-3xl shadow-lg border border-gray-200">
+                        <div class="bg-white numigma-surface">
                             <div class="border-b border-gray-100 px-5 py-4 sm:px-6">
                                 <h3 class="text-lg font-semibold text-gray-900">Candidate inspector</h3>
                             </div>
@@ -181,7 +187,7 @@
                     </div>
 
                     <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-white rounded-3xl shadow-lg border border-gray-200">
+                        <div class="bg-white numigma-surface">
                             <div
                                 class="border-b border-gray-100 px-5 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
                                 <h3 class="text-lg font-semibold text-gray-900">Puzzle diagnostics</h3>
@@ -204,7 +210,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-3xl shadow-lg border border-gray-200">
+                        <div class="bg-white numigma-surface">
                             <div class="border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between">
                                 <h3 class="text-lg font-semibold text-gray-900">Solution reveal</h3>
                                 <button id="toggle-solution"

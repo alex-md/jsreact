@@ -337,6 +337,109 @@ function bellNumbersUpTo(limit) {
         return new Set(bells);
     });
 }
+function sumOfProperDivisors(n) {
+    return sumOfDivisors(n) - n;
+}
+function isPerfectNumber(n) {
+    return memoize(`perfect:${n}`, () => sumOfProperDivisors(n) === n);
+}
+function isSphenic(n) {
+    return memoize(`sphenic:${n}`, () => {
+        const factors = primeFactors(n);
+        if (factors.size !== 3) return false;
+        for (const exp of factors.values()) {
+            if (exp !== 1) {
+                return false;
+            }
+        }
+        return true;
+    });
+}
+function isSquareFree(n) {
+    return memoize(`square-free:${n}`, () => {
+        const factors = primeFactors(n);
+        for (const exp of factors.values()) {
+            if (exp > 1) {
+                return false;
+            }
+        }
+        return true;
+    });
+}
+function mobius(n) {
+    return memoize(`mobius:${n}`, () => {
+        if (n === 1) return 1;
+        const factors = primeFactors(n);
+        for (const exp of factors.values()) {
+            if (exp > 1) {
+                return 0;
+            }
+        }
+        return factors.size % 2 === 0 ? 1 : -1;
+    });
+}
+function describeMobius(mu) {
+    if (mu === 0) {
+        return '0 (not square-free)';
+    }
+    if (mu === 1) {
+        return '1 (square-free with an even number of prime factors)';
+    }
+    if (mu === -1) {
+        return '-1 (square-free with an odd number of prime factors)';
+    }
+    return `${mu}`;
+}
+function largestPrimeFactor(n) {
+    return memoize(`largest-prime-factor:${n}`, () => {
+        let largest = 1;
+        primeFactors(n).forEach((_, prime) => {
+            if (prime > largest) {
+                largest = prime;
+            }
+        });
+        return largest;
+    });
+}
+function reverseNumber(n) {
+    return memoize(`reverse:${n}`, () => Number(n.toString().split('').reverse().join('')));
+}
+function isBinaryPalindrome(n) {
+    return memoize(`binary-pal:${n}`, () => {
+        const representation = n.toString(2);
+        return representation === representation.split('').reverse().join('');
+    });
+}
+const digitFactorials = [
+    1,
+    1,
+    2,
+    6,
+    24,
+    120,
+    720,
+    5040,
+    40320,
+    362880
+];
+function sumOfDigitFactorials(n) {
+    return memoize(`digit-factorials:${n}`, () => digitsOf(n).reduce((acc, digit) => acc + digitFactorials[digit], 0));
+}
+function digitsArithmeticProgressionStep(n) {
+    return memoize(`digit-ap-step:${n}`, () => {
+        const digits = digitsOf(n);
+        if (digits.length < 3) {
+            return null;
+        }
+        const step = digits[1] - digits[0];
+        for (let i = 2; i < digits.length; i += 1) {
+            if (digits[i] - digits[i - 1] !== step) {
+                return null;
+            }
+        }
+        return step;
+    });
+}
 function isHappyNumber(n) {
     return memoize(`happy:${n}`, () => {
         const seen = new Set();
@@ -530,6 +633,28 @@ const cluePackDefinitions = [
                 return createClue('divisibility', 'Divisibility', 3, text, (n) => primeFactors(n).size === factorCount, {
                     key: `prime-factor-count-${factorCount}`
                 });
+            },
+            (ctx) => {
+                const anchors = [
+                    6,
+                    8,
+                    9,
+                    10,
+                    12,
+                    15,
+                    18,
+                    20,
+                    24,
+                    30,
+                    36
+                ];
+                const anchor = anchors[Math.floor(ctx.rng() * anchors.length)];
+                const value = lcm(ctx.target, anchor);
+                if (value === ctx.target) return null;
+                const text = `The lcm with ${anchor} equals ${value}.`;
+                return createClue('divisibility', 'Divisibility', 4, text, (n) => lcm(n, anchor) === value, {
+                    key: `lcm-${anchor}-${value}`
+                });
             }
         ]
     },
@@ -598,6 +723,14 @@ const cluePackDefinitions = [
                 });
             },
             (ctx) => {
+                if (isPrime(ctx.target)) return null;
+                const largest = largestPrimeFactor(ctx.target);
+                const text = `Its largest prime factor is ${largest}.`;
+                return createClue('primes', 'Primes & Factorization', 4, text, (n) => largestPrimeFactor(n) === largest, {
+                    key: `largest-prime-${largest}`
+                });
+            },
+            (ctx) => {
                 if (!isAbundant(ctx.target)) return null;
                 const text = 'It is an abundant number (sum of proper divisors exceeds the number).';
                 return createClue('primes', 'Primes & Factorization', 4, text, (n) => isAbundant(n), {
@@ -656,6 +789,13 @@ const cluePackDefinitions = [
                 const text = `It needs ${length} bit${length === 1 ? '' : 's'} in binary.`;
                 return createClue('binary', 'Binary & Bits', 2, text, (n) => binaryLength(n) === length, {
                     key: `bin-length-${length}`
+                });
+            },
+            (ctx) => {
+                if (!isBinaryPalindrome(ctx.target)) return null;
+                const text = 'Its binary representation is a palindrome.';
+                return createClue('binary', 'Binary & Bits', 4, text, (n) => isBinaryPalindrome(n), {
+                    key: 'binary-palindrome'
                 });
             },
             (ctx) => {
@@ -790,6 +930,42 @@ const cluePackDefinitions = [
         ]
     },
     {
+        id: 'transformations',
+        label: 'Transformations & Patterns',
+        description: 'Digit reversals, factorial sums, and arithmetic progressions.',
+        icon: 'fa-wand-magic-sparkles',
+        default: true,
+        factories: [
+            (ctx) => {
+                const reversed = reverseNumber(ctx.target);
+                if (!isPrime(reversed)) return null;
+                const text = `Reversing its digits yields the prime ${reversed}.`;
+                return createClue('transformations', 'Transformations & Patterns', 4, text, (n) => {
+                    const reversedValue = reverseNumber(n);
+                    return reversedValue === reversed && isPrime(reversedValue);
+                }, {
+                    key: `reverse-prime-${reversed}`
+                });
+            },
+            (ctx) => {
+                const step = digitsArithmeticProgressionStep(ctx.target);
+                if (step === null) return null;
+                const text = `Its digits form an arithmetic progression with step ${step}.`;
+                return createClue('transformations', 'Transformations & Patterns', 4, text, (n) => digitsArithmeticProgressionStep(n) === step, {
+                    key: `digit-ap-${step}`
+                });
+            },
+            (ctx) => {
+                const total = sumOfDigitFactorials(ctx.target);
+                if (total > 2000000) return null;
+                const text = `The sum of the factorials of its digits is ${total}.`;
+                return createClue('transformations', 'Transformations & Patterns', 5, text, (n) => sumOfDigitFactorials(n) === total, {
+                    key: `digit-factorials-${total}`
+                });
+            }
+        ]
+    },
+    {
         id: 'combinatorial',
         label: 'Combinatorial Numbers',
         description: 'Factorials, Catalan numbers, Bell numbers.',
@@ -821,6 +997,37 @@ const cluePackDefinitions = [
         ]
     },
     {
+        id: 'rarities',
+        label: 'Rare Phenomena',
+        description: 'Perfect numbers, square-free values, and sphenic structure.',
+        icon: 'fa-gem',
+        default: true,
+        expensive: true,
+        factories: [
+            (ctx) => {
+                if (!isPerfectNumber(ctx.target)) return null;
+                const text = 'It is a perfect number (equals the sum of its proper divisors).';
+                return createClue('rarities', 'Rare Phenomena', 5, text, (n) => isPerfectNumber(n), {
+                    key: 'perfect-number'
+                });
+            },
+            (ctx) => {
+                if (!isSphenic(ctx.target)) return null;
+                const text = 'It is the product of exactly three distinct primes.';
+                return createClue('rarities', 'Rare Phenomena', 4, text, (n) => isSphenic(n), {
+                    key: 'sphenic'
+                });
+            },
+            (ctx) => {
+                if (!isSquareFree(ctx.target)) return null;
+                const text = 'It is square-free (no prime factor appears more than once).';
+                return createClue('rarities', 'Rare Phenomena', 4, text, (n) => isSquareFree(n), {
+                    key: 'square-free'
+                });
+            }
+        ]
+    },
+    {
         id: 'advanced',
         label: 'Advanced Number Theory',
         description: 'Totients, happy numbers, narcissistic and highly composite numbers.',
@@ -833,6 +1040,14 @@ const cluePackDefinitions = [
                 const text = `Its Euler totient φ(n) equals ${tot}.`;
                 return createClue('advanced', 'Advanced Number Theory', 5, text, (n) => eulerTotient(n) === tot, {
                     key: `totient-${tot}`
+                });
+            },
+            (ctx) => {
+                const value = mobius(ctx.target);
+                const description = describeMobius(value);
+                const text = `Its Möbius function μ(n) is ${description}.`;
+                return createClue('advanced', 'Advanced Number Theory', 5, text, (n) => describeMobius(mobius(n)) === description, {
+                    key: `mobius-${value}`
                 });
             },
             (ctx) => {
@@ -875,6 +1090,7 @@ const elements = {
     cluePackList: document.getElementById('clue-pack-list'),
     selectAll: document.getElementById('select-all-packs'),
     clearAll: document.getElementById('clear-all-packs'),
+    packCountIndicator: document.getElementById('pack-count-indicator'),
     clueList: document.getElementById('clue-list'),
     clueCount: document.getElementById('clue-count'),
     copyClues: document.getElementById('copy-clues-button'),
@@ -1032,8 +1248,11 @@ function escapeHTML(str) {
     });
 }
 const checkboxMap = new Map();
+const packCardMap = new Map();
 function renderCluePacks() {
     elements.cluePackList.innerHTML = '';
+    checkboxMap.clear();
+    packCardMap.clear();
     cluePackDefinitions.forEach((pack) => {
         const wrapper = document.createElement('label');
         wrapper.className = 'numigma-pack';
@@ -1048,8 +1267,18 @@ function renderCluePacks() {
         const content = document.createElement('div');
         content.className = 'space-y-1';
         const heading = document.createElement('div');
-        heading.className = 'pack-heading flex items-center gap-2';
-        heading.innerHTML = `<i class="fas ${pack.icon} text-indigo-500"></i> ${pack.label}`;
+        heading.className = 'pack-heading flex items-center gap-2 flex-wrap';
+        const icon = document.createElement('i');
+        icon.className = `fas ${pack.icon} text-indigo-500`;
+        const title = document.createElement('span');
+        title.textContent = pack.label;
+        heading.append(icon, title);
+        if (pack.expensive) {
+            const badge = document.createElement('span');
+            badge.className = 'pack-badge';
+            badge.textContent = 'Advanced';
+            heading.append(badge);
+        }
         const description = document.createElement('p');
         description.className = "pack-description";
         description.textContent = pack.description;
@@ -1057,9 +1286,34 @@ function renderCluePacks() {
         wrapper.append(checkbox, content);
         elements.cluePackList.appendChild(wrapper);
         checkboxMap.set(pack.id, checkbox);
+        packCardMap.set(pack.id, wrapper);
+        wrapper.classList.toggle('is-active', checkbox.checked);
+        checkbox.addEventListener('change', () => {
+            wrapper.classList.toggle('is-active', checkbox.checked);
+            updatePackCountIndicator();
+            const rangeSize = updateRangeStats();
+            evaluatePerformanceWarnings(rangeSize, getSelectedPacks());
+        });
     });
+    updatePackCountIndicator();
 }
 renderCluePacks();
+syncPackSelectionStyles();
+function syncPackSelectionStyles() {
+    packCardMap.forEach((wrapper, id) => {
+        const checkbox = checkboxMap.get(id);
+        if (!checkbox) return;
+        wrapper.classList.toggle('is-active', checkbox.checked);
+    });
+}
+function updatePackCountIndicator() {
+    if (!elements.packCountIndicator) return;
+    const label = elements.packCountIndicator.querySelector('span');
+    if (!label) return;
+    const total = cluePackDefinitions.length;
+    const selected = getSelectedPacks().length;
+    label.textContent = `${selected} of ${total} packs enabled`;
+}
 function getSelectedPacks() {
     return Array.from(checkboxMap.entries()).filter(([, checkbox]) => checkbox.checked).map(([packId]) => packId);
 }
@@ -1173,6 +1427,8 @@ function parseQueryParameters() {
         checkboxMap.forEach((checkbox, id) => {
             checkbox.checked = packIds.includes(id);
         });
+        syncPackSelectionStyles();
+        updatePackCountIndicator();
     }
     if (params.has('depth')) {
         const depth = Number(params.get('depth'));
@@ -1242,6 +1498,8 @@ elements.selectAll.addEventListener('click', (event) => {
     checkboxMap.forEach((checkbox) => {
         checkbox.checked = true;
     });
+    syncPackSelectionStyles();
+    updatePackCountIndicator();
     evaluatePerformanceWarnings(updateRangeStats(), getSelectedPacks());
     showToast('All clue packs enabled.');
 });
@@ -1250,6 +1508,8 @@ elements.clearAll.addEventListener('click', (event) => {
     checkboxMap.forEach((checkbox) => {
         checkbox.checked = false;
     });
+    syncPackSelectionStyles();
+    updatePackCountIndicator();
     evaluatePerformanceWarnings(updateRangeStats(), getSelectedPacks());
     showToast('Clue packs cleared. Enable at least one to generate.');
 });
