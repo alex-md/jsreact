@@ -62,16 +62,25 @@ export async function getStableFlipSuggestions(mapping, fiveMin, latest, hourly,
         const basePrice = latestItem.low ?? hourlyItem.avgLowPrice;
         if (typeof basePrice !== 'number') continue;
 
-        const estDailyVol = ((fiveItem.highPriceVolume ?? 0) + (fiveItem.lowPriceVolume ?? 0)) / 2 * 288;
+        const combinedFiveMinVolume = (fiveItem.highPriceVolume ?? 0) + (fiveItem.lowPriceVolume ?? 0);
+        if (combinedFiveMinVolume <= 0) continue;
+
+        const estDailyVol = (combinedFiveMinVolume / 2) * 288;
         if (estDailyVol < min_daily_volume) continue;
         if (basePrice > maxCapitalPerItem / 10) continue;
         if (basePrice < 100) continue;
 
-        preCandidates.push({ item, latestItem, fiveItem, hourlyItem, estDailyVol });
+        const liquidityBias = Math.log10(estDailyVol + 1);
+        preCandidates.push({ item, latestItem, fiveItem, hourlyItem, estDailyVol, liquidityBias });
     }
 
-    // Prioritize high volume items and cap history fetches
-    preCandidates.sort((a, b) => b.estDailyVol - a.estDailyVol);
+    // Prioritize high volume (liquidity) candidates before fetching expensive history
+    preCandidates.sort((a, b) => {
+        if (b.liquidityBias !== a.liquidityBias) {
+            return b.liquidityBias - a.liquidityBias;
+        }
+        return b.estDailyVol - a.estDailyVol;
+    });
     const limitedCandidates = preCandidates.slice(0, 50);
 
     const flips = [];
@@ -101,12 +110,21 @@ export async function getStableFlipSuggestions(mapping, fiveMin, latest, hourly,
             const roi = profitPer / buyPrice;
             if (profitPer <= 0 || roi < min_roi_threshold) return null;
 
-            const qty = Math.min(Math.floor(maxCapitalPerItem / buyPrice), c.item.limit || Infinity);
+            const avgHourlyVol = ((c.fiveItem.highPriceVolume ?? 0) + (c.fiveItem.lowPriceVolume ?? 0)) / 2 * 12;
+            const liquidityCap = Math.max(Math.floor(avgHourlyVol * 3), 1); // trade within ~3 hours of volume
+            const qty = Math.min(
+                Math.floor(maxCapitalPerItem / buyPrice),
+                c.item.limit || Infinity,
+                liquidityCap || Infinity
+            );
             if (qty <= 0) return null;
 
             const totalProfit = profitPer * qty;
-            const avgHourlyVol = ((c.fiveItem.highPriceVolume ?? 0) + (c.fiveItem.lowPriceVolume ?? 0)) / 2 * 12;
             const pvs = profitPer * avgHourlyVol;
+            const estimatedDailyVolume = avgHourlyVol * 24;
+            const turnover24h = estimatedDailyVolume * buyPrice;
+            const buyPressure = (c.fiveItem.lowPriceVolume ?? 0) / Math.max(c.fiveItem.highPriceVolume ?? 1, 1);
+            const spreadPct = profitPer / buyPrice;
 
             return {
                 id: c.item.id,
@@ -125,6 +143,11 @@ export async function getStableFlipSuggestions(mapping, fiveMin, latest, hourly,
                 fiveMinHighVolume: c.fiveItem.highPriceVolume ?? 0,
                 fiveMinLowVolume: c.fiveItem.lowPriceVolume ?? 0,
                 pvs,
+                estimatedDailyVolume,
+                turnover24h,
+                avgHourlyVolume: avgHourlyVol,
+                buyPressure,
+                spreadPct,
                 wiki: getWikiLink(c.item.name),
             };
         }));
@@ -134,11 +157,41 @@ export async function getStableFlipSuggestions(mapping, fiveMin, latest, hourly,
         }
     }
 
+    if (!flips.length) {
+        return [];
+    }
+
     const maxPvs = Math.max(...flips.map(f => f.pvs), 1);
+    const maxDailyVolume = Math.max(...flips.map(f => f.estimatedDailyVolume), 1);
+    const maxTurnover = Math.max(...flips.map(f => f.turnover24h), 1);
+
     flips.forEach(f => {
-        f.flipScore = Math.round((f.pvs / maxPvs) * 100);
+        const liquidityComponent = Math.log10(f.estimatedDailyVolume + 1) / Math.log10(maxDailyVolume + 1);
+        const turnoverComponent = maxTurnover > 0 ? f.turnover24h / maxTurnover : 0;
+        const roiComponent = Math.min(Math.max(f.margin, 0), 0.1) / 0.1;
+        const stabilityComponent = 1 - Math.min(f.volatility, 0.1) / 0.1;
+        const velocityComponent = maxPvs > 0 ? f.pvs / maxPvs : 0;
+
+        const weightedScore = (
+            liquidityComponent * 0.5 +
+            turnoverComponent * 0.2 +
+            roiComponent * 0.15 +
+            stabilityComponent * 0.1 +
+            velocityComponent * 0.05
+        );
+
+        f.flipScore = Math.round(Math.max(0, Math.min(weightedScore, 1)) * 100);
     });
-    flips.sort((a, b) => b.pvs - a.pvs);
+
+    flips.sort((a, b) => {
+        if (b.flipScore !== a.flipScore) {
+            return b.flipScore - a.flipScore;
+        }
+        if (b.estimatedDailyVolume !== a.estimatedDailyVolume) {
+            return b.estimatedDailyVolume - a.estimatedDailyVolume;
+        }
+        return b.pvs - a.pvs;
+    });
     return flips.slice(0, 10);
 }
 

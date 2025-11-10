@@ -38,6 +38,13 @@ const FlipCard = ({ flip }) => {
 
     const formatPrice = formatGrandExchangePrice; // Alias for clarity
 
+    const buyPressureDisplay = useMemo(() => {
+        if (flip.buyPressure == null || !isFinite(flip.buyPressure)) {
+            return '—';
+        }
+        return `${flip.buyPressure.toFixed(2)}x`;
+    }, [flip.buyPressure]);
+
     // Image loading/error handling
     const handleImageError = (e) => {
         // Hide the image container or replace with a placeholder
@@ -138,6 +145,15 @@ const FlipCard = ({ flip }) => {
                         >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={flip.trend === 'up' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} />
                         </svg>
+                    </span>
+                    <span className="flex items-center gap-1" title="Estimated total units traded in the last 24 hours">
+                        <span className="font-medium">Est. Daily Vol:</span> {formatPrice(flip.estimatedDailyVolume)}
+                    </span>
+                    <span className="flex items-center gap-1" title="Estimated gp traded in the last 24 hours">
+                        <span className="font-medium">Daily Turnover:</span> {formatPrice(flip.turnover24h)} gp
+                    </span>
+                    <span className="flex items-center gap-1" title="Buy vs sell pressure ratio (values above 1 indicate stronger demand)">
+                        <span className="font-medium">Buy/Sell:</span> {buyPressureDisplay}
                     </span>
                     {/* Optional: Display Confidence/Sharpe if needed */}
                     {/*
