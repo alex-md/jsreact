@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Initialize the Leaflet map
 function initializeMap() {
-    // Create map centered on Denver, Colorado (used in the API documentation)
-    map = L.map('map').setView([39.7471, -104.9963], 8);
+    // Create map centered on Phoenix, Arizona (used in the API documentation)
+    map = L.map('map').setView([33.4484, -112.0740], 8); // The 4 is the zoom level, the higher the number, the closer the zoom
 
     // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -45,7 +45,7 @@ function initializeMap() {
     map.on('click', onMapClick);
 
     // Add initial marker
-    currentMarker = L.marker([39.7471, -104.9963])
+    currentMarker = L.marker([33.4484, -112.0740])
         .addTo(map)
         .bindPopup('Click anywhere on the map to get elevation data');
 }

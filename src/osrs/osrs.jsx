@@ -224,21 +224,6 @@ export default function OSRSFlipper() {
                                     </Typography>
                                 </Paper>
 
-                                <Paper elevation={0} className="p-5 border-l-4 border-primary/50 bg-primary/5 dark:border-primary/60 dark:bg-primary/10">
-                                    <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 600 }}>
-                                        Instant price scout
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-                                        <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>Insta Buy</Box> highlights the offer that is clearing immediately so you can place competitive bids without overpaying.
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-                                        <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>Insta Sell</Box> reveals where impatient merchants are exiting right now, helping you lock profits without chasing the market down.
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1.5 }}>
-                                        Pair the two searches to confirm a safe spread before locking in your quantity.
-                                    </Typography>
-                                </Paper>
-
                                 {/* Search Forms */}
                                 <SearchForms
                                     sellSearchQuery={sellSearchQuery}
