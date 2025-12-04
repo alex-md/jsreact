@@ -31,7 +31,7 @@
 
     <body class="js-ready min-h-screen flex flex-col relative bg-gradient-radial from-background to-background/50">
         <script type="module">
-            import { createHead } from './components/head.js';
+            import { createHead } from '@components/head.js';
             createHead(
                 'Web Tools Hub',
                 'A collection of free developer tools to simplify your workflow',
@@ -47,11 +47,11 @@
             <div class="absolute inset-0 bg-gradient-noise mix-blend-overlay opacity-25"></div>
         </div>
         <script type="module">
-            import { createNavbar } from './components/navbar.js';
+            import { createNavbar } from '@components/navbar.js';
             createNavbar();
         </script>
         <script type="module">
-            import { createToolCards } from './components/toolCards.js';
+            import { createToolCards } from '@components/toolCards.js';
             createToolCards();
         </script>
         <div id="header"></div>

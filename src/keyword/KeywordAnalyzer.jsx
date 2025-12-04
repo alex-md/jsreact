@@ -1,6 +1,6 @@
 // KeywordAnalyzer.js
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { utils } from './KeywordUtils'; // Assuming KeywordUtils.js is in the same directory
+import utils from '@utils/textAnalysis';
 
 const KeywordAnalyzer = () => {
     const [text, setText] = useState('');
