@@ -64,6 +64,14 @@ function setupSearch(searchInput, searchResults) {
             searchInput.blur();
         }
     });
+
+    // Global keyboard shortcut to focus search
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
 }
 
 export function createNavbar() {
@@ -132,12 +140,17 @@ export function createNavbar() {
     const searchInput = document.createElement("input");
     searchInput.type = "search";
     searchInput.placeholder = "Search tools...";
-    searchInput.className = "px-3 py-2 rounded-md bg-background border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm w-full md:w-40 transition-all duration-200 md:focus:w-56";
+    searchInput.className = "px-3 py-2 rounded-md bg-background border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm w-full md:w-40 transition-all duration-200 md:focus:w-56 pr-10"; // Added pr-10 for badge space
+
+    // Keyboard shortcut badge
+    const kbdBadge = document.createElement("div");
+    kbdBadge.className = "absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex items-center pointer-events-none";
+    kbdBadge.innerHTML = '<kbd class="hidden sm:inline-block px-1.5 h-5 text-[10px] font-medium leading-5 text-muted-foreground bg-muted border border-border rounded">Ctrl K</kbd>';
 
     const searchResults = document.createElement("div");
     searchResults.className = "absolute hidden top-full left-0 mt-1 w-full md:w-64 max-h-64 overflow-y-auto rounded-md bg-background border border-border shadow-lg z-50";
 
-    searchBox.append(searchInput, searchResults);
+    searchBox.append(searchInput, kbdBadge, searchResults);
     setupSearch(searchInput, searchResults);
 
     // Desktop menu with dropdowns

@@ -10,8 +10,8 @@ import { showToast } from '@components/toast.js';
 function App() {
     console.log("App component rendering");
     const [isSimplifiedMode, setIsSimplifiedMode] = useState(false);
-    const [html, setHtml] = useState('<h2>Code Playground!</h2>\n<p>Start coding to see your changes in real-time.</p>');
-    const [cssText, setCss] = useState(`/* Your CSS code here */
+    const [html, setHtml] = useState(() => localStorage.getItem('playground_html') || '<h2>Code Playground!</h2>\n<p>Start coding to see your changes in real-time.</p>');
+    const [cssText, setCss] = useState(() => localStorage.getItem('playground_css') || `/* Your CSS code here */
 body {
   font-family: 'Arial', sans-serif;
   line-height: 1.6;
@@ -24,11 +24,25 @@ body {
 h2 {
   color: #0070f3;
 }`);
-    const [js, setJs] = useState(`// Your JavaScript code or JSX here
+    const [js, setJs] = useState(() => localStorage.getItem('playground_js') || `// Your JavaScript code or JSX here
 console.log("Hello from the playground!");
 
 // You can now add packages and use them in your code!
 `);
+
+    // Persist code changes
+    useEffect(() => {
+        localStorage.setItem('playground_html', html);
+    }, [html]);
+
+    useEffect(() => {
+        localStorage.setItem('playground_css', cssText);
+    }, [cssText]);
+
+    useEffect(() => {
+        localStorage.setItem('playground_js', js);
+    }, [js]);
+
     const [packages, setPackages] = useState(() => {
         const savedPackages = localStorage.getItem('playgroundPackages');
         return savedPackages ? JSON.parse(savedPackages) : [

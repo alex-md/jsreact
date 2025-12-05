@@ -1,7 +1,9 @@
-import '@styles/global.css';
+import { showToast } from '@components/toast.js';
+
 const textInput = document.getElementById("text-input");
 const keywordInput = document.getElementById("keyword-input");
 const processButton = document.getElementById("process-button");
+const copyResultButton = document.getElementById("copy-result-button");
 const resultTextDiv = document.getElementById("result-text");
 const insertionCountP = document.getElementById("insertion-count");
 const errorDisplay = document.getElementById("error-display");
@@ -584,3 +586,25 @@ frequencySlider.addEventListener("input", () => {
     frequencyValueSpan.textContent = frequencySlider.value;
 });
 frequencyValueSpan.textContent = frequencySlider.value;
+
+if (copyResultButton) {
+    copyResultButton.addEventListener("click", async () => {
+        const text = resultTextDiv.textContent;
+        if (!text || text === "Processing failed.") {
+            showToast("No text to copy", "warning");
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(text);
+            const originalHTML = copyResultButton.innerHTML;
+            copyResultButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            showToast("Text copied to clipboard", "success");
+            setTimeout(() => {
+                copyResultButton.innerHTML = originalHTML;
+            }, 2000);
+        } catch (err) {
+            console.error("Failed to copy:", err);
+            showToast("Failed to copy to clipboard", "error");
+        }
+    });
+}

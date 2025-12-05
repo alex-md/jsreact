@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modifiedText = document.getElementById('modified-text');
     const compareButton = document.getElementById('compare-button');
     const clearButton = document.getElementById('clear-button');
+    const swapButton = document.getElementById('swap-button');
     const diffContainer = document.getElementById('diff-container');
     const diffOutput = document.getElementById('diff-output');
     const errorMessage = document.getElementById('error-message');
@@ -104,9 +105,27 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('All text cleared');
     }
 
+    // Function to swap inputs
+    function swapInputs() {
+        const temp = originalText.value;
+        originalText.value = modifiedText.value;
+        modifiedText.value = temp;
+        
+        // If we have content, we might want to re-run the diff or just clear the output
+        if (originalText.value.trim() || modifiedText.value.trim()) {
+            if (!diffContainer.classList.contains('hidden')) {
+                computeDiff();
+            }
+            showToast('Inputs swapped');
+        }
+    }
+
     // Event listeners
     compareButton.addEventListener('click', computeDiff);
     clearButton.addEventListener('click', clearAll);
+    if (swapButton) {
+        swapButton.addEventListener('click', swapInputs);
+    }
 
     // Add keyboard shortcuts
     document.addEventListener('keydown', (e) => {

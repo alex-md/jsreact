@@ -111,7 +111,8 @@ export async function getStableFlipSuggestions(mapping, fiveMin, latest, hourly,
             if (profitPer <= 0 || roi < min_roi_threshold) return null;
 
             const avgHourlyVol = ((c.fiveItem.highPriceVolume ?? 0) + (c.fiveItem.lowPriceVolume ?? 0)) / 2 * 12;
-            const liquidityCap = Math.max(Math.floor(avgHourlyVol * 3), 1); // trade within ~3 hours of volume
+            // Improvement: Safer liquidity cap (1 hour of volume) to ensure easier exit.
+            const liquidityCap = Math.max(Math.floor(avgHourlyVol), 1); 
             const qty = Math.min(
                 Math.floor(maxCapitalPerItem / buyPrice),
                 c.item.limit || Infinity,
@@ -172,12 +173,14 @@ export async function getStableFlipSuggestions(mapping, fiveMin, latest, hourly,
         const stabilityComponent = 1 - Math.min(f.volatility, 0.1) / 0.1;
         const velocityComponent = maxPvs > 0 ? f.pvs / maxPvs : 0;
 
+        // Adjusted weights to heavily favor Turnover and Velocity (Profit Speed)
+        // This helps avoid items that have high ROI but take forever to sell (trap flips).
         const weightedScore = (
-            liquidityComponent * 0.5 +
-            turnoverComponent * 0.2 +
-            roiComponent * 0.15 +
-            stabilityComponent * 0.1 +
-            velocityComponent * 0.05
+            liquidityComponent * 0.15 +  // Baseline volume presence
+            turnoverComponent * 0.30 +   // High money flow (easier to liquidate)
+            velocityComponent * 0.25 +   // High profit * volume (best efficiency)
+            roiComponent * 0.15 +        // Good margins
+            stabilityComponent * 0.15    // Reliable prices
         );
 
         f.flipScore = Math.round(Math.max(0, Math.min(weightedScore, 1)) * 100);
