@@ -231,7 +231,7 @@ export function calculateTradeMetrics(item, fiveMinData, latestData, hourlyData,
 
     if (weightedBuyPrice <= 0 || weightedSellPrice <= 0) return null;
 
-    const taxedSell = Math.floor(weightedSellPrice * 0.99); // GE Tax
+    const taxedSell = weightedSellPrice - Math.floor(weightedSellPrice * 0.02); // 2% GE Tax
     const profitPer = taxedSell - weightedBuyPrice;
 
     if (profitPer <= 0) return null;
@@ -590,7 +590,7 @@ export function calculateInstaBuyPrice(itemId, latestPrices, fiveMin, hourlyPric
     }
 
     const expectedSellPrice = baseSellPrice;
-    const taxedSell = Math.floor(expectedSellPrice * 0.98);
+    const taxedSell = expectedSellPrice - Math.floor(expectedSellPrice * 0.02); // Exact 2% tax deduction
     const netProfit = taxedSell - finalPrice;
     const margin = netProfit / finalPrice;
 

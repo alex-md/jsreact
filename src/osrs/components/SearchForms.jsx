@@ -17,10 +17,10 @@ const SearchForms = ({
     return (
         <Paper elevation={0} className="p-5 border border-gray-200 rounded-2xl">
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 700, color: 'text.primary' }}>
-                Item Price Checker
+                Instant Buy/Sell Price search
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                Check real-time buy and sell prices to plan your flips.
+                GE Tracker data is limited to active items. The provided buy/sell prices reflect only items with recent trading volume on the API.
             </Typography>
             <div className="relative">
                 <TextField

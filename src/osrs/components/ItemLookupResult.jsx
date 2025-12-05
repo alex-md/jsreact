@@ -38,10 +38,10 @@ const ItemLookupResult = ({ data, getWikiLink, formatTimeSince, formatPrice }) =
                 {/* Buying Strategy (For Flippers: Price to Place Buy Offer) */}
                 <div className="bg-blue-50/50 rounded-lg p-3 border border-blue-100">
                     <Typography variant="subtitle2" className="text-blue-800 font-bold mb-2 flex justify-between">
-                        <span>Target Buy Price</span>
+                        <span>Suggested Insta-Buy Price</span>
                         {buyData && <span className="text-xs font-normal opacity-75">Confidence: {Math.round(buyData.confidence * 100)}%</span>}
                     </Typography>
-                    
+
                     {buyData ? (
                         <>
                             <div className="flex items-baseline gap-2 mb-1">
@@ -71,7 +71,7 @@ const ItemLookupResult = ({ data, getWikiLink, formatTimeSince, formatPrice }) =
                 {/* Selling Strategy (For Flippers: Price to Place Sell Offer) */}
                 <div className="bg-green-50/50 rounded-lg p-3 border border-green-100">
                     <Typography variant="subtitle2" className="text-green-800 font-bold mb-2 flex justify-between">
-                        <span>Target Sell Price</span>
+                        <span>Suggested Insta-Sell Price</span>
                         {sellData && <span className="text-xs font-normal opacity-75">Confidence: {Math.round(sellData.confidence * 100)}%</span>}
                     </Typography>
 
@@ -104,7 +104,7 @@ const ItemLookupResult = ({ data, getWikiLink, formatTimeSince, formatPrice }) =
 
             {/* Margin Info */}
             {buyData && sellData && (
-                <div className="mt-3 flex items-center justify-center gap-4 bg-gray-50 rounded-lg p-2 text-sm">
+                <div className="mt-3 flex items-center justify-center gap-4 bg-gray-100 rounded-lg p-2 text-sm">
                     <div className="flex flex-col items-center">
                         <span className="text-gray-500 text-xs">Potential Profit</span>
                         <span className="font-bold text-green-600">
@@ -120,10 +120,6 @@ const ItemLookupResult = ({ data, getWikiLink, formatTimeSince, formatPrice }) =
                     </div>
                     <div className="w-px h-8 bg-gray-200"></div>
                     <div className="flex flex-col items-center">
-                        <span className="text-gray-500 text-xs">Updated</span>
-                        <span className={`font-medium ${getFreshnessColor(Math.max(buyData.timestamp, sellData.timestamp))}`}>
-                            {formatTimeSince(Math.max(buyData.timestamp, sellData.timestamp))}
-                        </span>
                     </div>
                 </div>
             )}

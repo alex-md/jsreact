@@ -76,14 +76,14 @@ export default function OSRSFlipper() {
                 // Note: calculateInstaSellPrice gives the price you should ASK (exit)
                 const buyData = calculateInstaBuyPrice(item.id, latestPrices, fiveMin, hourlyPrices);
                 const sellData = calculateInstaSellPrice(item.id, latestPrices, fiveMin, hourlyPrices);
-                
+
                 if (!buyData && !sellData) return null;
 
-                return { 
-                    item, 
-                    buyData, 
-                    sellData, 
-                    wiki: getWikiLink(item.name) 
+                return {
+                    item,
+                    buyData,
+                    sellData,
+                    wiki: getWikiLink(item.name)
                 };
             })
             .filter(Boolean);
@@ -116,7 +116,7 @@ export default function OSRSFlipper() {
                                         component="h1"
                                         sx={{ mt: 0.5, color: 'text.primary', fontWeight: 800 }}
                                     >
-                                        Grand Exchange Analytics
+                                        Smart OSRS Flipper tool
                                     </Typography>
                                     <Typography variant="body1" sx={{ mt: 1, color: 'text.secondary', maxWidth: '60ch' }}>
                                         Real-time price feeds, profit scoring, and risk analysis to help you find the best flips.
@@ -215,7 +215,7 @@ export default function OSRSFlipper() {
                                                     ))}
                                                 </div>
                                             )}
-                                            
+
                                             {searchResults && searchResults.length === 0 && !dataLoading && (
                                                 <div className="text-center py-8 px-4 bg-white rounded-xl border border-gray-200 border-dashed">
                                                     <Typography className="text-gray-400 italic">

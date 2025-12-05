@@ -1,6 +1,3 @@
-// filepath: c:\Users\alexr\Documents\Github\jsreact\src\pages\osrs\styles\globalStyles.js
-
-// Using MUI's GlobalStyles component is often preferred over <style jsx> for theme integration
 import GlobalStyles from '@mui/material/GlobalStyles';
 
 export const OsrsGlobalStyles = () => (
@@ -24,6 +21,10 @@ export const OsrsGlobalStyles = () => (
                     background: theme.palette.grey[500], // Use theme colors
                 },
             },
+            '.text-gray-500': {
+                '--tw-text-opacity': '1',
+                color: 'rgb(22 166 69)',
+            },
             // You can add more global styles here if needed
             body: {
                 backgroundColor: theme.palette.background.default, // Ensure body bg matches theme
@@ -31,34 +32,3 @@ export const OsrsGlobalStyles = () => (
         })}
     />
 );
-
-// If you MUST use <style jsx>, you can export it as a component:
-/*
-export const OsrsGlobalStylesJsx = () => (
-     <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f3f4f6; // gray-100
-            border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #d1d5db; // gray-300
-            border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af; // gray-400
-        }
-        // For Firefox
-        .custom-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: #d1d5db #f3f4f6;
-        }
-        body {
-             background-color: #f3f4f6; // Ensure body bg matches theme default
-        }
-    `}</style>
-);
-*/
-
