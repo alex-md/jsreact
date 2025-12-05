@@ -26,6 +26,7 @@ Allow: /expression/
 Allow: /keyword/
 Allow: /speech/
 Allow: /playground/
+Allow: /connect4/
 
 # Important files
 Allow: /sitemap.xml

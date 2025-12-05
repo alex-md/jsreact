@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Connect 4 Solver - AI Powered Game Analysis | JSreact</title>
+        <meta name="description"
+            content="Master Connect 4 with this advanced AI solver. Analyze positions, get real-time move suggestions, and play against a perfect engine.">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+        <script type="module">
+            import { createHead } from '@components/head.js';
+
+            createHead(
+                'Connect 4 Solver - AI Powered Game Analysis',
+                'Master Connect 4 with this advanced AI solver. Analyze positions, get real-time move suggestions, and play against a perfect engine.',
+                {
+                    keywords: ['connect 4', 'connect 4 solver', 'ai game', 'game analysis', 'perfect play', 'strategy game', 'board game solver', 'minimax algorithm'],
+                    structuredData: {
+                        '@type': 'SoftwareApplication',
+                        'name': 'Connect 4 Solver',
+                        'applicationCategory': 'GameApplication',
+                        'operatingSystem': 'Any',
+                        'offers': {
+                            '@type': 'Offer',
+                            'price': '0',
+                            'priceCurrency': 'USD'
+                        },
+                        'aggregateRating': {
+                            '@type': 'AggregateRating',
+                            'ratingValue': '5',
+                            'ratingCount': '1'
+                        },
+                        'featureList': 'AI Solver, Move Suggestions, Perfect Play Engine, Game Analysis'
+                    }
+                }
+            );
+        </script>
+    </head>
+
+    <body class="bg-gray-50">
+        <script type="module">
+            import { createNavbar } from '@components/navbar.js';
+            createNavbar();
+        </script>
+
+        <div id="header"></div>
+
+        <main class="container mx-auto px-4 py-8 max-w-7xl min-h-[calc(100vh-300px)]">
+            <div id="root"></div>
+        </main>
+
+        <script type="module" src="@components/footer.js"></script>
+        <script type="module" src="./main.tsx"></script>
+    </body>
+
+</html>

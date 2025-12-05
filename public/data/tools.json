@@ -27,6 +27,15 @@
         "new": true
     },
     {
+        "id": "connect4",
+        "title": "Connect 4 Solver",
+        "description": "Master Connect 4 with this advanced AI solver. Analyze positions and get real-time move suggestions.",
+        "icon": "fas fa-brain",
+        "color": "indigo",
+        "link": "/connect4/",
+        "new": true
+    },
+    {
         "id": "domain",
         "title": "Domain Appraisal",
         "description": "Get accurate market value estimates for domain names",

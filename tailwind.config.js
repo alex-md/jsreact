@@ -161,10 +161,21 @@ export default {
                     from: { height: 'var(--radix-accordion-content-height)' },
                     to: { height: '0' },
                 },
+                'pulse-short': {
+                    '0%, 100%': {
+                        transform: 'scale(1)',
+                        opacity: '1',
+                    },
+                    '50%': {
+                        transform: 'scale(1.15)',
+                        opacity: '0.9',
+                    },
+                },
             },
             animation: {
                 'accordion-down': 'accordion-down 0.22s ease-out',
                 'accordion-up': 'accordion-up 0.22s ease-out',
+                'pulse-short': 'pulse-short 1.5s ease-in-out 2 forwards',
             },
         },
     },

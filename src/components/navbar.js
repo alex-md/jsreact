@@ -117,7 +117,8 @@ export function createNavbar() {
             { text: "Domain Appraisal", href: "/domain/", icon: "fa-chart-line" },
             { text: "OSRS Flipper", href: "/osrs/", icon: "fa-coins" },
             { text: "Elevation Finder", href: "/elevation/", icon: "fa-mountain" },
-            { text: "Numigma", href: "/numigma/", icon: "fa-puzzle-piece" }
+            { text: "Numigma", href: "/numigma/", icon: "fa-puzzle-piece" },
+            { text: "Connect 4", href: "/connect4/", icon: "fa-brain" }
         ]
     };
 

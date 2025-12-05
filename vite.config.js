@@ -81,7 +81,8 @@ export default defineConfig({
                 domain: path.resolve(srcDir, 'domain/index.html'),
                 osrs: path.resolve(srcDir, 'osrs/index.html'),
                 elevation: path.resolve(srcDir, 'elevation/index.html'),
-                numigma: path.resolve(srcDir, 'numigma/index.html')
+                numigma: path.resolve(srcDir, 'numigma/index.html'),
+                connect4: path.resolve(srcDir, 'connect4/index.html')
             },
             output: {
                 manualChunks: {
