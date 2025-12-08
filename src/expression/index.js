@@ -122,9 +122,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- OPTIMIZED SOLVER START ---
     function findExpressionOptimized(numbers, target) {
-        const useExponents = document.getElementById("exponents-checkbox").checked;
-        const useSqrt = document.getElementById("sqrt-checkbox").checked;
-        const noParentheses = document.getElementById("no-parentheses-checkbox").checked;
+        // Read "Strict 24 Mode" checkbox (replaces the No Parentheses checkbox logic)
+        const isStrict24Mode = document.getElementById("no-parentheses-checkbox").checked;
+        
+        let useExponents = document.getElementById("exponents-checkbox").checked;
+        let useSqrt = document.getElementById("sqrt-checkbox").checked;
+        let noParentheses = isStrict24Mode; // Strict mode enforces no parentheses
+
+        // Enforce 24 Game Rules if selected: Only +, -, *, / allowed.
+        if (isStrict24Mode) {
+            useExponents = false;
+            useSqrt = false;
+        }
 
         const timeLimit = 4000; // 4 seconds soft limit
         const startTime = Date.now();
@@ -167,16 +176,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (useSqrt) {
                 for (let i = 0; i < items.length; i++) {
                     const x = items[i];
-                    // Pruning: sqrt(0) and sqrt(1) usually just waste cycles in countdown
                     if (x.val > 1) { 
                         const root = Math.sqrt(x.val);
                         // Strict countdown rule: intermediate values must be integers
                         if (Number.isInteger(root)) { 
                             const newItem = new Item(root, `sqrt(${x.expr})`, 4);
-                            
                             const nextItems = [...items];
                             nextItems[i] = newItem;
-                            
                             solve(nextItems);
                             if (solution) return;
                         }
@@ -185,7 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // 4. Binary Operations
-            // If items.length is 1, these loops won't run, which is correct
             for (let i = 0; i < items.length; i++) {
                 for (let j = 0; j < items.length; j++) {
                     if (i === j) continue;
@@ -209,35 +214,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // --- Multiplication (*) Prec: 2 ---
                     if (i < j) {
-                        if (a.val !== 1 && b.val !== 1) {
-                            if (noParentheses) {
-                                // If children are weak (Prec 1), we can't multiply without parens
-                                if (a.prec < 2 || b.prec < 2) {
-                                    // Forbidden by "No Parentheses" rule
-                                } else {
-                                    const val = a.val * b.val;
-                                    remaining.push(new Item(val, `${a.expr} * ${b.expr}`, 2));
-                                    solve(remaining);
-                                    remaining.pop();
-                                }
+                        // Strict Mode: Allow *1 to burn digits
+                        if (noParentheses) {
+                            if (a.prec < 2 || b.prec < 2) {
+                                // Forbidden: (a+b) * c or a * (b+c) requires parens
                             } else {
                                 const val = a.val * b.val;
-                                const strA = a.prec < 2 ? `(${a.expr})` : a.expr;
-                                const strB = b.prec < 2 ? `(${b.expr})` : b.expr;
-                                remaining.push(new Item(val, `${strA} * ${strB}`, 2));
+                                remaining.push(new Item(val, `${a.expr} * ${b.expr}`, 2));
                                 solve(remaining);
                                 remaining.pop();
                             }
-                            if (solution) return;
+                        } else {
+                            const val = a.val * b.val;
+                            const strA = a.prec < 2 ? `(${a.expr})` : a.expr;
+                            const strB = b.prec < 2 ? `(${b.expr})` : b.expr;
+                            remaining.push(new Item(val, `${strA} * ${strB}`, 2));
+                            solve(remaining);
+                            remaining.pop();
                         }
+                        if (solution) return;
                     }
 
                     // --- Subtraction (-) Prec: 1 ---
-                    if (b.val !== 0) { 
+                    {
                         if (noParentheses) {
-                            // Can't subtract a complex sum/diff: a - (b+c)
                             if (b.prec === 1) {
-                                // Forbidden
+                                // Forbidden: a - (b+c) requires parens
                             } else {
                                 const val = a.val - b.val;
                                 remaining.push(new Item(val, `${a.expr} - ${b.expr}`, 1));
@@ -255,14 +257,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     // --- Division (/) Prec: 2 ---
-                    if (b.val !== 0 && b.val !== 1) { 
+                    // Strict Mode: Allow /1 to burn digits
+                    if (b.val !== 0) { 
                         const val = a.val / b.val;
                         if (Number.isInteger(val)) {
                             if (noParentheses) {
-                                // Denominator cannot be Add/Sub/Mult/Div without ambiguity or parens in some notations
-                                // We strictly forbid Add/Sub (Prec 1) and Mult/Div (Prec 2) in denom if no parens allowed
-                                // a / b / c is valid (left assoc), but a / (b*c) requires parens.
-                                // For simplicity in "No Parens" mode, denom must be strong (atom/exp).
+                                // Denom can't be weak (Prec 1) or med (Prec 2) to avoid ambiguity/parens
                                 if (a.prec < 2 || b.prec < 3) { 
                                     // Forbidden
                                 } else {
@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // --- Exponents (**) Prec: 3 ---
                     if (useExponents) {
                         const limit = Math.max(target * 100, 500000); 
-                        if (a.val > 1 && b.val > 1 && b.val < 20) { 
+                        if (a.val <= 1 || b.val < 20) { // Allow 1**9 and 9**1
                             const val = Math.pow(a.val, b.val);
                             if (val < limit && Number.isInteger(val)) {
                                 if (noParentheses) {
@@ -454,6 +454,12 @@ document.addEventListener("DOMContentLoaded", () => {
         advancedSettings.querySelectorAll('input[type="number"]').forEach(input => {
             input.addEventListener("click", (event) => event.stopPropagation());
         });
+    }
+
+    // UPDATE UI: Change "No Parentheses" label to "Strict 24 Mode"
+    const noParensCheckbox = document.getElementById("no-parentheses-checkbox");
+    if (noParensCheckbox && noParensCheckbox.nextElementSibling) {
+        noParensCheckbox.nextElementSibling.textContent = "Strict 24 Mode (No (), No ^/sqrt)";
     }
 
     if (!document.getElementById("sqrt-checkbox")) {
