@@ -1,46 +1,46 @@
 import '@styles/global.css';
 import { showToast } from '@/components/toast.js';
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", () => {
     let descriptionTimeout, infoButton = document.getElementById("info-toggle"), calculatorDescription = document.getElementById("calculator-description");
-    infoButton.addEventListener("click", ()=>{
-        calculatorDescription.classList.remove("hidden", "translate-y-full", "opacity-0"), clearTimeout(descriptionTimeout), descriptionTimeout = setTimeout(()=>{
-            calculatorDescription.classList.add("hiding"), setTimeout(()=>{
+    infoButton.addEventListener("click", () => {
+        calculatorDescription.classList.remove("hidden", "translate-y-full", "opacity-0"), clearTimeout(descriptionTimeout), descriptionTimeout = setTimeout(() => {
+            calculatorDescription.classList.add("hiding"), setTimeout(() => {
                 calculatorDescription.classList.remove("hiding"), calculatorDescription.classList.add("hidden");
             }, 300);
         }, 5000);
-    }), document.getElementById("random-numbers-button").addEventListener("click", (event)=>{
+    }), document.getElementById("random-numbers-button").addEventListener("click", (event) => {
         event.preventDefault();
         let count = document.getElementById("num-integers-input").value || 6, maxValue = document.getElementById("max-number-input").value || 90, randomNumbers = Array.from({
             length: parseInt(count)
-        }, ()=>Math.floor(Math.random() * parseInt(maxValue)) + 1);
+        }, () => Math.floor(Math.random() * parseInt(maxValue)) + 1);
         document.getElementById("numbers-input").value = randomNumbers.join(","), showToast('Random numbers generated');
-    }), document.getElementById("submit-button").addEventListener("click", (event)=>{
+    }), document.getElementById("submit-button").addEventListener("click", (event) => {
         event.preventDefault();
         let submitButton = document.getElementById("submit-button"), solutionOutput = document.getElementById("solution-output"), originalButtonText = submitButton.innerHTML, loadingSpinner = document.createElement('span');
         loadingSpinner.className = 'loading-spinner', submitButton.innerHTML = 'Calculating', submitButton.appendChild(loadingSpinner), submitButton.disabled = !0, solutionOutput.classList.remove("hidden");
-        let numbers = document.getElementById("numbers-input").value.split(",").map((num)=>parseInt(num.trim())), target = parseInt(document.getElementById("target-input").value);
-        if (!numbers.every((n)=>!isNaN(n)) || isNaN(target)) {
+        let numbers = document.getElementById("numbers-input").value.split(",").map((num) => parseInt(num.trim())), target = parseInt(document.getElementById("target-input").value);
+        if (!numbers.every((n) => !isNaN(n)) || isNaN(target)) {
             showToast('Please enter valid numbers'), submitButton.innerHTML = originalButtonText, submitButton.disabled = !1;
             return;
         }
-        setTimeout(()=>{
-            let result = function(numbers, target) {
-                let useExponents = document.getElementById("exponents-checkbox").checked, useSqrt = document.getElementById("sqrt-checkbox").checked, noParentheses = document.getElementById("no-parentheses-checkbox").checked, startTime = Date.now(), isTimedOut = ()=>Date.now() - startTime > 4000;
+        setTimeout(() => {
+            let result = function (numbers, target) {
+                let useExponents = document.getElementById("exponents-checkbox").checked, useSqrt = document.getElementById("sqrt-checkbox").checked, noParentheses = document.getElementById("no-parentheses-checkbox").checked, startTime = Date.now(), isTimedOut = () => Date.now() - startTime > 4000;
                 class Item {
-                    constructor(val, expr = null, prec = 4, steps = []){
+                    constructor(val, expr = null, prec = 4, steps = []) {
                         this.val = val, this.expr = null === expr ? val.toString() : expr, this.prec = prec, this.steps = steps;
                     }
                 }
-                let initialItems = numbers.map((n)=>new Item(n)), visited = new Set(), solution = null;
+                let initialItems = numbers.map((n) => new Item(n)), visited = new Set(), solution = null;
                 if (!function solve(items) {
                     if (solution || isTimedOut()) return;
                     if (1 === items.length && 1e-6 > Math.abs(items[0].val - target)) {
                         solution = items[0];
                         return;
                     }
-                    let stateKey = items.map((i)=>i.val).sort((a, b)=>a - b).join('|');
+                    let stateKey = items.map((i) => i.val).sort((a, b) => a - b).join('|');
                     if (!visited.has(stateKey)) {
-                        if (visited.add(stateKey), useSqrt) for(let i = 0; i < items.length; i++){
+                        if (visited.add(stateKey), useSqrt) for (let i = 0; i < items.length; i++) {
                             let x = items[i];
                             if (x.val > 1) {
                                 let root = Math.sqrt(x.val);
@@ -55,9 +55,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 }
                             }
                         }
-                        for(let i = 0; i < items.length; i++)for(let j = 0; j < items.length; j++){
+                        for (let i = 0; i < items.length; i++)for (let j = 0; j < items.length; j++) {
                             if (i === j) continue;
-                            let a = items[i], b = items[j], remaining = items.filter((_, idx)=>idx !== i && idx !== j);
+                            let a = items[i], b = items[j], remaining = items.filter((_, idx) => idx !== i && idx !== j);
                             if (i < j) {
                                 let val = a.val + b.val, expr = noParentheses ? `${a.expr} + ${b.expr}` : `(${a.expr} + ${b.expr})`, newSteps = [
                                     ...a.steps,
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 if (remaining.push(new Item(val, expr, 1, newSteps)), solve(remaining), remaining.pop(), solution) return;
                             }
                             if (i < j) {
-                                if (noParentheses) if (a.prec < 2 || b.prec < 2) ;
+                                if (noParentheses) if (a.prec < 2 || b.prec < 2);
                                 else {
                                     let val = a.val * b.val, newSteps = [
                                         ...a.steps,
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 }
                                 if (solution) return;
                             }
-                            if (noParentheses) if (1 === b.prec) ;
+                            if (noParentheses) if (1 === b.prec);
                             else {
                                 let val = a.val - b.val, newSteps = [
                                     ...a.steps,
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             if (0 !== b.val) {
                                 let val = a.val / b.val;
                                 if (Number.isInteger(val)) {
-                                    if (noParentheses) if (a.prec < 2 || b.prec < 3) ;
+                                    if (noParentheses) if (a.prec < 2 || b.prec < 3);
                                     else {
                                         let newSteps = [
                                             ...a.steps,
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 if (a.val <= 1 || b.val < 20) {
                                     let val = Math.pow(a.val, b.val);
                                     if (val < limit && Number.isInteger(val)) {
-                                        if (noParentheses) if (a.prec < 3 || b.prec < 3) ;
+                                        if (noParentheses) if (a.prec < 3 || b.prec < 3);
                                         else {
                                             let newSteps = [
                                                 ...a.steps,
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     let finalExpr = solution.expr;
                     if (!noParentheses && finalExpr.startsWith('(') && finalExpr.endsWith(')')) {
                         let balance = 0, clean = !0;
-                        for(let k = 1; k < finalExpr.length - 1; k++)if ('(' === finalExpr[k] && balance++, ')' === finalExpr[k] && balance--, balance < 0) {
+                        for (let k = 1; k < finalExpr.length - 1; k++)if ('(' === finalExpr[k] && balance++, ')' === finalExpr[k] && balance--, balance < 0) {
                             clean = !1;
                             break;
                         }
@@ -173,14 +173,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 return isTimedOut() ? "Computation timed out - try with fewer numbers" : "No solution found";
             }(numbers, target);
             if ('object' == typeof result && null !== result) {
-                let originalExpression = result.expr, steps = result.steps, latexExpression = `${function(expr) {
+                let originalExpression = result.expr, steps = result.steps, latexExpression = `${function (expr) {
                     try {
                         if ('undefined' != typeof math) return math.parse(expr).toTex({
                             parenthesis: 'keep'
                         });
                         throw Error("Math.js not found");
                     } catch (e) {
-                        return expr.replace(/\*/g, ' \\times ').replace(/\//g, ' \\div ').replace(/\*\*/g, '^');
+                        console.warn("Math.js fallback active:", e);
+                        return expr
+                            .replace(/\*\*/g, '^')
+                            .replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}')
+                            .replace(/\*/g, ' \\times ')
+                            .replace(/\//g, ' \\div ');
                     }
                 }(originalExpression)} = ${target}`;
                 try {
@@ -196,19 +201,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         let stepsHeader = document.createElement('h3');
                         stepsHeader.className = 'font-bold mb-2 text-sm uppercase tracking-wide opacity-70', stepsHeader.textContent = 'Solution Steps:', stepsContainer.appendChild(stepsHeader);
                         let ol = document.createElement('ol');
-                        ol.className = 'list-decimal list-inside space-y-1 font-mono text-sm', steps.forEach((step)=>{
+                        ol.className = 'list-decimal list-inside space-y-1 font-mono text-sm', steps.forEach((step) => {
                             let li = document.createElement('li');
                             li.textContent = step, ol.appendChild(li);
                         }), stepsContainer.appendChild(ol), solutionOutput.appendChild(stepsContainer);
                     }
                     let copyButton = document.createElement('button');
-                    copyButton.className = 'px-3 py-1 mt-4 bg-gray-200 text-gray-800 rounded-md text-sm hover:bg-gray-300 w-full', copyButton.textContent = 'Copy Expression', copyButton.addEventListener('click', ()=>{
+                    copyButton.className = 'px-3 py-1 mt-4 bg-gray-200 text-gray-800 rounded-md text-sm hover:bg-gray-300 w-full', copyButton.textContent = 'Copy Expression', copyButton.addEventListener('click', () => {
                         let copyText = `${originalExpression} `;
-                        navigator.clipboard.writeText(copyText).then(()=>{
-                            showToast('Expression copied!'), copyButton.textContent = 'Copied!', setTimeout(()=>{
+                        navigator.clipboard.writeText(copyText).then(() => {
+                            showToast('Expression copied!'), copyButton.textContent = 'Copied!', setTimeout(() => {
                                 copyButton.textContent = 'Copy Expression';
                             }, 2000);
-                        }).catch((err)=>console.error('Failed to copy:', err));
+                        }).catch((err) => console.error('Failed to copy:', err));
                     }), solutionOutput.appendChild(copyButton);
                 } catch (e) {
                     console.error('KaTeX error:', e), solutionOutput.textContent = originalExpression;
@@ -218,10 +223,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
         }, 20);
     });
     let advancedSettings = document.querySelector("#advanced-settings"), advancedSettingsToggle = document.querySelector("#advanced-settings-toggle");
-    if (advancedSettingsToggle && advancedSettings && (advancedSettingsToggle.addEventListener("click", ()=>{
+    if (advancedSettingsToggle && advancedSettings && (advancedSettingsToggle.addEventListener("click", () => {
         advancedSettings.classList.toggle("hidden");
-    }), advancedSettings.querySelectorAll('input[type="number"]').forEach((input)=>{
-        input.addEventListener("click", (event)=>event.stopPropagation());
+    }), advancedSettings.querySelectorAll('input[type="number"]').forEach((input) => {
+        input.addEventListener("click", (event) => event.stopPropagation());
     })), !document.getElementById("sqrt-checkbox")) {
         let exponentsCheckbox = document.getElementById("exponents-checkbox");
         if (exponentsCheckbox && exponentsCheckbox.parentNode) {
