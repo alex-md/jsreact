@@ -181,9 +181,36 @@ document.addEventListener("DOMContentLoaded", () => {
                         throw Error("Math.js not found");
                     } catch (e) {
                         console.warn("Math.js fallback active:", e);
-                        return expr
-                            .replace(/\*\*/g, '^')
-                            .replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}')
+                        // Handle exponents first
+                        let tex = expr.replace(/\*\*/g, '^');
+
+                        // Handle sqrt with nested parentheses support
+                        while (tex.includes('sqrt(')) {
+                            let startIndex = tex.indexOf('sqrt(');
+                            let openParens = 0;
+                            let endIndex = -1;
+
+                            // Start searching after "sqrt"
+                            for (let i = startIndex + 4; i < tex.length; i++) {
+                                if (tex[i] === '(') openParens++;
+                                else if (tex[i] === ')') {
+                                    openParens--;
+                                    if (openParens === 0) {
+                                        endIndex = i;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (endIndex !== -1) {
+                                let content = tex.substring(startIndex + 5, endIndex);
+                                tex = tex.substring(0, startIndex) + `\\sqrt{${content}}` + tex.substring(endIndex + 1);
+                            } else {
+                                break; // Malformed or something went wrong
+                            }
+                        }
+
+                        return tex
                             .replace(/\*/g, ' \\times ')
                             .replace(/\//g, ' \\div ');
                     }
