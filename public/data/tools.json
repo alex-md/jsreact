@@ -9,6 +9,15 @@
         "new": true
     },
     {
+        "id": "oeis",
+        "title": "Sequence Extrapolator",
+        "description": "Forecast numeric sequences with ensemble statistical models",
+        "icon": "fas fa-chart-line",
+        "color": "emerald",
+        "link": "/oeis/",
+        "new": true
+    },
+    {
         "id": "osrs",
         "title": "OSRS Flipper",
         "description": "Get real-time, risk-managed flipping suggestions for Old School RuneScape's Grand Exchange.",

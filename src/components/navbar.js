@@ -8,6 +8,7 @@ function setupSearch(searchInput, searchResults) {
         { name: "Generator", href: "/generator/", description: "Generate creative domain names" },
         { name: "Diff Checker", href: "/diff/", description: "Compare text differences" },
         { name: "Expression Tester", href: "/expression/", description: "Test regular expressions" },
+        { name: "Sequence Extrapolator", href: "/oeis/", description: "Forecast numeric sequences with ensemble models" },
         { name: "Playground", href: "/playground/", description: "Live HTML, CSS, JS editor" },
         { name: "QR Code", href: "/qr/", description: "Generate QR codes" },
         { name: "Speech Tools", href: "/speech/", description: "Text to speech conversion" },
@@ -117,6 +118,7 @@ export function createNavbar() {
             { text: "Generator", href: "/generator/", icon: "fa-magic" },
             { text: "Diff", href: "/diff/", icon: "fa-code-compare" },
             { text: "Expression", href: "/expression/", icon: "fa-calculator" },
+            { text: "Sequence Extrapolator", href: "/oeis/", icon: "fa-chart-line" },
             { text: "Playground", href: "/playground/", icon: "fa-code" }
         ],
         "Utilities": [
