@@ -1,7 +1,8 @@
 
 self.onmessage = function (e) {
     const { numbers, target, config } = e.data;
-    const { useExponents, useSqrt, noParentheses } = config;
+    const { useExponents, useSqrt } = config;
+    let { noParentheses } = config;
 
     const startTime = Date.now();
     const isTimedOut = () => Date.now() - startTime > 4000;
@@ -229,9 +230,20 @@ self.onmessage = function (e) {
 
     solve(initialItems);
 
+
+    // FALLBACK STRATEGY:
+    // If we are in "Ignore Order of Operations" mode (noParentheses: true) and found no solution,
+    // try again with Standard Mode (noParentheses: false).
+    if (!solution && noParentheses && !isTimedOut()) {
+        visited.clear();
+        noParentheses = false; // Now mutable
+        solve(initialItems);
+    }
+
     if (solution) {
         let finalExpr = solution.expr;
-        if (!noParentheses && finalExpr.startsWith('(') && finalExpr.endsWith(')')) {
+        if (!config.noParentheses && finalExpr.startsWith('(') && finalExpr.endsWith(')')) { // Check original config for intent? Or just clean based on current mode
+            // Always clean outer parens for display if safe
             let balance = 0;
             let clean = true;
             for (let k = 1; k < finalExpr.length - 1; k++) {
