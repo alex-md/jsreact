@@ -80,10 +80,9 @@ export function calculateSpeakingTime(wordCount, rate = "average") {
     if (seconds > 0 || fullMinutes === 0) {
         parts.push(`${seconds} sec`);
     }
-    if (parts.length === 0 && wordCount > 0) return `~1 sec`;
-    if (parts.length === 0 && wordCount === 0) return `~0 sec`;
-
-    return `~${parts.join(' ')} of speaking time`;
+    if (totalSeconds < 60) return `${totalSeconds}s`;
+    const minutes = (totalSeconds / 60).toFixed(1);
+    return `${minutes}m`;
 }
 
 /**
@@ -451,7 +450,94 @@ const utils = {
     calculateMultiKeywordDensity,
     highlightText,
     getKeywordColor,
-    calculateSpeakingTime
+    calculateSpeakingTime,
+    calculateLexicalDiversity,
+    detectTopPhrases,
+    calculateSpreadScore,
+    calculateComplexity
 };
+
+/**
+ * Calculates lexical diversity as the percentage of unique words.
+ */
+export function calculateLexicalDiversity(text) {
+    const tokens = _getTokens(text, true);
+    if (!tokens.length) return 0;
+    const uniqueWords = new Set(tokens).size;
+    return (uniqueWords / tokens.length) * 100;
+}
+
+/**
+ * Detects top n-grams (phrases) in the text, excluding stop words and current target keywords.
+ */
+export function detectTopPhrases(text, keywordsToExclude = [], limit = 8) {
+    const tokens = _getTokens(text, true);
+    if (!tokens.length) return [];
+
+    const stopWords = new Set(['the', 'and', 'a', 'to', 'of', 'in', 'is', 'it', 'that', 'with', 'for', 'was', 'on', 'as', 'at', 'by', 'an', 'be', 'this', 'are', 'which', 'or', 'from', 'but', 'not', 'what', 'all', 'were', 'when', 'can', 'said', 'there', 'use', 'each', 'she', 'how', 'their', 'if', 'will', 'up', 'other', 'about', 'out', 'many', 'then', 'them', 'these', 'so', 'some', 'her', 'would', 'make', 'like', 'him', 'into', 'time', 'has', 'look', 'more', 'write', 'go', 'see', 'number', 'no', 'way', 'could', 'my', 'than', 'first', 'water', 'been', 'call', 'who', 'oil', 'its', 'now', 'find', 'long', 'down', 'day', 'did', 'get', 'come', 'made', 'may', 'part']);
+    const excludeSet = new Set([...keywordsToExclude.map(kw => kw.toLowerCase())]);
+    const phrases = {};
+
+    // Helper to evaluate a phrase
+    const processNgram = (ngramTokens) => {
+        if (ngramTokens.some(t => t.length <= 2 || stopWords.has(t))) return;
+        const phrase = ngramTokens.join(' ');
+        if (excludeSet.has(phrase)) return;
+        phrases[phrase] = (phrases[phrase] || 0) + 1;
+    };
+
+    for (let i = 0; i < tokens.length; i++) {
+        // 1-word
+        processNgram([tokens[i]]);
+
+        // 2-word
+        if (i < tokens.length - 1) {
+            processNgram([tokens[i], tokens[i + 1]]);
+        }
+
+        // 3-word
+        if (i < tokens.length - 2) {
+            processNgram([tokens[i], tokens[i + 1], tokens[i + 2]]);
+        }
+    }
+
+    return Object.entries(phrases)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit)
+        .map(([phrase, count]) => ({
+            phrase,
+            count,
+            words: phrase.split(' ').length
+        }));
+}
+
+/**
+ * Calculates a consistency/spread score for keyword distribution.
+ */
+export function calculateSpreadScore(windows) {
+    if (!windows || windows.length === 0) return 0;
+    const totalKeywordHits = windows.reduce((acc, win) => acc + win.count, 0);
+    const avgHits = totalKeywordHits / windows.length;
+    if (avgHits === 0) return 100;
+
+    const variance = windows.reduce((acc, win) => acc + Math.pow(win.count - avgHits, 2), 0) / windows.length;
+    const stdDev = Math.sqrt(variance);
+    // 0 is perfectly consistent, higher values are clumped. Map to 0-100 score.
+    return Math.max(0, Math.min(100, 100 - (stdDev * 10)));
+}
+
+/**
+ * Determines reading complexity based on average word length.
+ */
+export function calculateComplexity(text) {
+    const tokens = _getTokens(text, true);
+    if (!tokens.length) return 'N/A';
+    const totalLength = tokens.reduce((acc, w) => acc + w.length, 0);
+    const avgWordLength = totalLength / tokens.length;
+
+    if (avgWordLength > 6) return 'Sophisticated';
+    if (avgWordLength > 4.5) return 'Professional';
+    return 'Conversational';
+}
 
 export default utils;
