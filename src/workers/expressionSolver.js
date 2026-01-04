@@ -1,8 +1,7 @@
 
 self.onmessage = function (e) {
     const { numbers, target, config } = e.data;
-    const { useExponents, useSqrt } = config;
-    let { noParentheses } = config;
+    const { useExponents, useSqrt, noParentheses } = config;
 
     const startTime = Date.now();
     const isTimedOut = () => Date.now() - startTime > 4000;
@@ -74,7 +73,8 @@ self.onmessage = function (e) {
                     let operandB = b;
 
                     if (noParentheses) {
-                        // Strict mode validation
+                        // Strict mode validation REMOVED to allow Tree Merges
+                        /*
                         // 1. Right side must be atomic (no parentheses needed for the right term)
                         if (!a.isAtomic && !b.isAtomic) continue;
 
@@ -84,6 +84,7 @@ self.onmessage = function (e) {
                             operandA = b;
                             operandB = a;
                         }
+                        */
                     } else {
                         if (!(i < j)) continue;
                     }
@@ -106,11 +107,14 @@ self.onmessage = function (e) {
                     let operandB = b;
 
                     if (noParentheses) {
+                        // Relaxed for tree merging
+                        /*
                         if (!a.isAtomic && !b.isAtomic) continue;
                         if (a.isAtomic && !b.isAtomic) {
                             operandA = b;
                             operandB = a;
                         }
+                        */
 
                         // Check Precedence: 2 <= operandA.lastPrec
                         // if (2 > operandA.lastPrec) continue; // REMOVED PRECEDENCE CHECK FOR LINEAR MODE
@@ -230,20 +234,9 @@ self.onmessage = function (e) {
 
     solve(initialItems);
 
-
-    // FALLBACK STRATEGY:
-    // If we are in "Ignore Order of Operations" mode (noParentheses: true) and found no solution,
-    // try again with Standard Mode (noParentheses: false).
-    if (!solution && noParentheses && !isTimedOut()) {
-        visited.clear();
-        noParentheses = false; // Now mutable
-        solve(initialItems);
-    }
-
     if (solution) {
         let finalExpr = solution.expr;
-        if (!config.noParentheses && finalExpr.startsWith('(') && finalExpr.endsWith(')')) { // Check original config for intent? Or just clean based on current mode
-            // Always clean outer parens for display if safe
+        if (!noParentheses && finalExpr.startsWith('(') && finalExpr.endsWith(')')) {
             let balance = 0;
             let clean = true;
             for (let k = 1; k < finalExpr.length - 1; k++) {
