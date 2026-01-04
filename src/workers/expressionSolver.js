@@ -112,7 +112,7 @@ self.onmessage = function (e) {
                         }
 
                         // Check Precedence: 2 <= operandA.lastPrec
-                        if (2 > operandA.lastPrec) continue;
+                        // if (2 > operandA.lastPrec) continue; // REMOVED PRECEDENCE CHECK FOR LINEAR MODE
                     } else {
                         if (!(i < j)) continue;
                     }
@@ -162,30 +162,32 @@ self.onmessage = function (e) {
                 // Op Prec: 2.
                 if (b.val !== 0) {
                     if (!noParentheses || b.isAtomic) {
-
+                        // REMOVED PRECEDENCE CHECK FOR DIVISION IN LINEAR MODE
+                        /* 
                         if (noParentheses && 2 > a.lastPrec) {
                             // Skip
-                        } else {
-                            const val = a.val / b.val;
-                            if (Number.isInteger(val)) {
-                                let expr;
-                                if (noParentheses) {
-                                    expr = `${a.expr} / ${b.expr}`;
-                                } else {
-                                    const strA = a.prec < 2 ? `(${a.expr})` : a.expr;
-                                    const strB = b.prec < 3 ? `(${b.expr})` : b.expr;
-                                    expr = `${strA} / ${strB}`;
-                                }
-
-                                const newSteps = [...a.steps, ...b.steps, `${a.val} / ${b.val} = ${val}`];
-                                remaining.push(new Item(val, expr, 2, newSteps, false, 2));
-                                solve(remaining);
-                                remaining.pop();
-                                if (solution) return;
+                        } else { 
+                        */
+                        const val = a.val / b.val;
+                        if (Number.isInteger(val)) {
+                            let expr;
+                            if (noParentheses) {
+                                expr = `${a.expr} / ${b.expr}`;
+                            } else {
+                                const strA = a.prec < 2 ? `(${a.expr})` : a.expr;
+                                const strB = b.prec < 3 ? `(${b.expr})` : b.expr;
+                                expr = `${strA} / ${strB}`;
                             }
+
+                            const newSteps = [...a.steps, ...b.steps, `${a.val} / ${b.val} = ${val}`];
+                            remaining.push(new Item(val, expr, 2, newSteps, false, 2));
+                            solve(remaining);
+                            remaining.pop();
+                            if (solution) return;
                         }
                     }
                 }
+
 
                 // Exponents
                 if (useExponents) {
