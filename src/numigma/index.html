@@ -14,17 +14,17 @@
         </script>
     </head>
 
-    <body class="bg-gray-50">
+    <body class="bg-gray-50 numigma-bg">
         <script type="module">
             import { createNavbar } from '@components/navbar.js';
             createNavbar();
         </script>
 
         <main
-            class="container mx-auto px-3 py-6 sm:px-4 sm:py-8 md:py-12 max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
-            <div class="space-y-6 md:space-y-8">
+            class="numigma-layout container mx-auto px-3 py-6 sm:px-4 sm:py-8 md:py-12 max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
+            <div class="space-y-8 md:space-y-10">
                 <section
-                    class="bg-gradient-to-br from-violet-600 via-indigo-500 to-blue-500 text-white rounded-3xl shadow-xl overflow-hidden">
+                    class="numigma-hero bg-gradient-to-br from-violet-600 via-indigo-500 to-blue-500 text-white rounded-3xl shadow-xl overflow-hidden">
                     <div class="p-6 sm:p-8 lg:p-10">
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                             <div class="space-y-4 lg:max-w-2xl">
@@ -57,7 +57,7 @@
                             </div>
                             <div class="lg:self-start">
                                 <button id="generate-button"
-                                    class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/95 text-indigo-600 font-semibold rounded-2xl shadow-lg shadow-indigo-900/20 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-all">
+                                    class="numigma-hero-button inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/95 text-indigo-600 font-semibold rounded-2xl shadow-lg shadow-indigo-900/20 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-all">
                                     <i class="fas fa-dice"></i>
                                     Generate puzzle
                                 </button>
@@ -66,10 +66,45 @@
                     </div>
                 </section>
 
+                <section class="numigma-section numigma-step-panel bg-white numigma-surface">
+                    <div class="p-5 sm:p-6 lg:p-8 space-y-5">
+                        <div class="numigma-section-header space-y-2">
+                            <div class="numigma-section-kicker">Quick start</div>
+                            <h2 class="text-xl font-semibold text-gray-900">Find a puzzle flow in minutes</h2>
+                            <p class="text-sm text-gray-600">Use the generator controls and clue packs below, then hit
+                                generate to craft a unique logic puzzle with a shareable link.</p>
+                        </div>
+                        <div class="numigma-step-grid">
+                            <div class="numigma-step-card">
+                                <div class="numigma-step-number">1</div>
+                                <div>
+                                    <div class="numigma-step-title">Define the range</div>
+                                    <p>Set the minimum, maximum, and difficulty to bound the search.</p>
+                                </div>
+                            </div>
+                            <div class="numigma-step-card">
+                                <div class="numigma-step-number">2</div>
+                                <div>
+                                    <div class="numigma-step-title">Pick clue packs</div>
+                                    <p>Toggle mathematical themes to shape the logic flavor and tone.</p>
+                                </div>
+                            </div>
+                            <div class="numigma-step-card">
+                                <div class="numigma-step-number">3</div>
+                                <div>
+                                    <div class="numigma-step-title">Generate &amp; share</div>
+                                    <p>Review diagnostics, copy clues, and share the deterministic link.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section
-                    class="bg-white numigma-surface overflow-hidden divide-y divide-gray-100">
+                    class="numigma-section bg-white numigma-surface overflow-hidden divide-y divide-gray-100">
                     <div class="p-5 sm:p-6 lg:p-8 space-y-6">
-                        <div class="space-y-4">
+                        <div class="numigma-section-header space-y-3">
+                            <div class="numigma-section-kicker">Start here</div>
                             <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
                                 <i class="fas fa-tuning-fork text-indigo-500"></i>
                                 Generator controls
@@ -120,7 +155,7 @@
 
                     <div class="p-5 sm:p-6 lg:p-8 space-y-5" id="clue-pack-container">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div class="space-y-2">
+                            <div class="numigma-section-header space-y-2">
                                 <h3 class="text-lg font-semibold text-gray-900">Clue packs</h3>
                                 <p class="text-sm text-gray-600">Toggle mathematical themes to shape the flavor of the
                                     generated puzzle.</p>
@@ -161,7 +196,7 @@
                     <div class="lg:col-span-3 space-y-6">
                         <div class="bg-white numigma-surface">
                             <div
-                                class="border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between gap-3">
+                                class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between gap-3">
                                 <h3 class="text-lg font-semibold text-gray-900">Active clues</h3>
                                 <div class="flex items-center gap-3">
                                     <button id="copy-clues-button" class="copy-clues-button" type="button" disabled>
@@ -177,7 +212,7 @@
                         </div>
 
                         <div class="bg-white numigma-surface">
-                            <div class="border-b border-gray-100 px-5 py-4 sm:px-6">
+                            <div class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6">
                                 <h3 class="text-lg font-semibold text-gray-900">Candidate inspector</h3>
                             </div>
                             <div class="p-5 sm:p-6 space-y-4 text-sm text-gray-600" id="candidate-details">
@@ -189,7 +224,7 @@
                     <div class="lg:col-span-2 space-y-6">
                         <div class="bg-white numigma-surface">
                             <div
-                                class="border-b border-gray-100 px-5 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
+                                class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
                                 <h3 class="text-lg font-semibold text-gray-900">Puzzle diagnostics</h3>
                                 <div class="flex items-center gap-3">
                                     <span id="status-badge"
@@ -211,7 +246,7 @@
                         </div>
 
                         <div class="bg-white numigma-surface">
-                            <div class="border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between">
+                            <div class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between">
                                 <h3 class="text-lg font-semibold text-gray-900">Solution reveal</h3>
                                 <button id="toggle-solution"
                                     class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">Reveal</button>
