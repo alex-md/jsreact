@@ -1,5 +1,8 @@
 // Import styles
 import '@styles/global.css';
+import { createHeader } from './header.js';
+
+export { createHeader };
 
 const redirectMap = Object.freeze({
     '/osrs-flip-finder': '/osrs/',
@@ -24,38 +27,6 @@ const ensureTrailingSlash = (pathname) => {
     }
     return `${pathname}/`;
 };
-
-// Export header creation function
-export function createHeader(title, description) {
-    const header = document.createElement('header');
-
-    /* --- Aurora background effect --- */
-    const aurora = document.createElement('div');
-    header.appendChild(aurora);
-
-    /* --- Grid overlay --- */
-    const grid = document.createElement('div');
-    header.appendChild(grid);
-
-    /* --- Content container --- */
-    const container = document.createElement('div');
-
-    /* --- Badge --- */
-    const badge = document.createElement('span');
-    badge.innerHTML = '<i class="fas fa-sparkles"></i> Developer Tools';
-
-    /* --- Title --- */
-    const h1 = document.createElement('h1');
-    h1.textContent = title;
-
-    /* --- Description --- */
-    const p = document.createElement('p');
-    p.textContent = description;
-
-    container.append(badge, h1, p);
-    header.appendChild(container);
-    return header;
-}
 
 /**
  * Creates and configures the document head with metadata, styles, and tracking

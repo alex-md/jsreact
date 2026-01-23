@@ -46,7 +46,7 @@ const SVG = {
 /* ----------------------------------------------------------------
    createFooter 
 ---------------------------------------------------------------- */
-export function createFooter() {
+export function createFooter(mountTarget = null) {
     if (document.querySelector('footer[data-jsreact-footer]')) return; // guard
 
     /* ---- DOM skeleton ---- */
@@ -101,9 +101,21 @@ export function createFooter() {
     container.append(content);
     footer.append(container);
 
-    const mount = () => document.body.appendChild(footer);
-    if (document.body) mount();
-    else document.addEventListener('DOMContentLoaded', mount);
+    const mount = () => {
+        if (mountTarget instanceof HTMLElement) {
+            mountTarget.appendChild(footer);
+            return;
+        }
+        if (document.body) {
+            document.body.appendChild(footer);
+        }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mount, { once: true });
+    } else {
+        mount();
+    }
 
     /* ---- Timers / cleanup ---- */
     updateActiveUsers();

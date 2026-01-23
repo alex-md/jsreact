@@ -1,22 +1,7 @@
+import { fetchTools, groupToolsByCategory } from '@utils/toolData.js';
+
 // Search functionality
-function setupSearch(searchInput, searchResults) {
-    const allTools = [
-        { name: "Minifier", href: "/minify/", description: "Minify JavaScript, CSS, and HTML code" },
-        { name: "Cleaner", href: "/clean/", description: "Clean and format text content" },
-        { name: "Insert Tool", href: "/insert/", description: "Insert text at specific positions" },
-        { name: "Keywords", href: "/keyword/", description: "Analyze keyword density and distribution" },
-        { name: "Generator", href: "/generator/", description: "Generate creative domain names" },
-        { name: "Diff Checker", href: "/diff/", description: "Compare text differences" },
-        { name: "Expression Tester", href: "/expression/", description: "Test regular expressions" },
-        { name: "Sequence Extrapolator", href: "/oeis/", description: "Forecast numeric sequences with ensemble models" },
-        { name: "Playground", href: "/playground/", description: "Live HTML, CSS, JS editor" },
-        { name: "QR Code", href: "/qr/", description: "Generate QR codes" },
-        { name: "Speech Tools", href: "/speech/", description: "Text to speech conversion" },
-        { name: "Domain Appraisal", href: "/domain/", description: "Value domain names" },
-        { name: "OSRS Flipper", href: "/osrs/", description: "OSRS item price checker" },
-        { name: "Elevation Finder", href: "/elevation/", description: "Find elevation data for any location" },
-        { name: "Numigma", href: "/numigma/", description: "Build deterministic reverse-number puzzles" },
-    ];
+function setupSearch(searchInput, searchResults, tools = []) {
 
     let searchTimeout;
 
@@ -29,16 +14,16 @@ function setupSearch(searchInput, searchResults) {
                 return;
             }
 
-            const matches = allTools.filter(tool =>
-                tool.name.toLowerCase().includes(query) ||
+            const matches = tools.filter(tool =>
+                tool.title.toLowerCase().includes(query) ||
                 tool.description.toLowerCase().includes(query)
             );
 
             if (matches.length) {
                 searchResults.innerHTML = matches.map(tool => `
-                    <a href="${tool.href}" class="flex items-start gap-2 p-2 hover:bg-accent hover:text-accent-foreground">
+                    <a href="${tool.link}" class="flex items-start gap-2 p-2 hover:bg-accent hover:text-accent-foreground">
                         <div>
-                            <div class="font-medium">${tool.name}</div>
+                            <div class="font-medium">${tool.title}</div>
                             <div class="text-sm text-muted-foreground">${tool.description}</div>
                         </div>
                     </a>
@@ -96,7 +81,9 @@ export function createNavbar() {
 
     const logoLink = document.createElement("a");
     logoLink.href = "/";
-    logoLink.className = "flex items-center gap-2"; const logoImage = document.createElement("img");
+    logoLink.className = "flex items-center gap-2";
+
+    const logoImage = document.createElement("img");
     logoImage.src = "/assets/images/logo.png";
     logoImage.alt = "JSReact Logo";
     logoImage.className = "h-14 w-auto max-h-16 min-w-[3.5rem] object-contain";
@@ -106,31 +93,7 @@ export function createNavbar() {
     logoText.className = "text-lg font-semibold text-foreground";
 
     logoLink.append(logoImage, logoText);
-    logoSection.appendChild(logoLink);// Organize links into categories
-    const categories = {
-        "Text Tools": [
-            { text: "Minifier", href: "/minify/", icon: "fa-compress-alt" },
-            { text: "Cleaner", href: "/clean/", icon: "fa-broom" },
-            { text: "Insert", href: "/insert/", icon: "fa-edit" },
-            { text: "Keywords", href: "/keyword/", icon: "fa-key" }
-        ],
-        "Code Tools": [
-            { text: "Generator", href: "/generator/", icon: "fa-magic" },
-            { text: "Diff", href: "/diff/", icon: "fa-code-compare" },
-            { text: "Expression", href: "/expression/", icon: "fa-calculator" },
-            { text: "Sequence Extrapolator", href: "/oeis/", icon: "fa-chart-line" },
-            { text: "Playground", href: "/playground/", icon: "fa-code" }
-        ],
-        "Utilities": [
-            { text: "QR Code", href: "/qr/", icon: "fa-qrcode" },
-            { text: "Speech", href: "/speech/", icon: "fa-microphone-alt" },
-            { text: "Domain Appraisal", href: "/domain/", icon: "fa-chart-line" },
-            { text: "OSRS Flipper", href: "/osrs/", icon: "fa-coins" },
-            { text: "Elevation Finder", href: "/elevation/", icon: "fa-mountain" },
-            { text: "Numigma", href: "/numigma/", icon: "fa-puzzle-piece" },
-            { text: "Connect 4", href: "/connect4/", icon: "fa-brain" }
-        ]
-    };
+    logoSection.appendChild(logoLink);
 
     const menuSection = document.createElement("div");
     menuSection.className = "flex items-center gap-4";
@@ -153,62 +116,10 @@ export function createNavbar() {
     searchResults.className = "absolute hidden top-full left-0 mt-1 w-full md:w-64 max-h-64 overflow-y-auto rounded-md bg-background border border-border shadow-lg z-50";
 
     searchBox.append(searchInput, kbdBadge, searchResults);
-    setupSearch(searchInput, searchResults);
 
     // Desktop menu with dropdowns
     const desktopMenu = document.createElement("div");
-    desktopMenu.className = "hidden md:flex items-center gap-2"; Object.entries(categories).forEach(([category, items]) => {
-        const dropdown = document.createElement("div");
-        dropdown.className = "relative";
-
-        const trigger = document.createElement("button");
-        trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
-        trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
-
-        const menu = document.createElement("div");
-        menu.className = "absolute top-full left-0 mt-1 w-48 rounded-md bg-background border border-border shadow-lg opacity-0 invisible transition-all duration-200 z-50";
-
-        let isDropdownOpen = false;
-        let timeoutId = null;
-
-        const showMenu = () => {
-            clearTimeout(timeoutId);
-            menu.classList.remove('opacity-0', 'invisible');
-            menu.classList.add('opacity-100', 'visible');
-            isDropdownOpen = true;
-        };
-
-        const hideMenu = () => {
-            timeoutId = setTimeout(() => {
-                menu.classList.remove('opacity-100', 'visible');
-                menu.classList.add('opacity-0', 'invisible');
-                isDropdownOpen = false;
-            }, 100);
-        };
-
-        trigger.addEventListener('mouseenter', showMenu);
-        trigger.addEventListener('mouseleave', hideMenu);
-        menu.addEventListener('mouseenter', showMenu);
-        menu.addEventListener('mouseleave', hideMenu);
-
-        items.forEach(({ text, href, icon }) => {
-            const a = document.createElement("a");
-            a.href = href;
-            a.className = "flex items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors";
-
-            const i = document.createElement("i");
-            i.className = `fas ${icon} mr-2 w-4`;
-
-            const span = document.createElement("span");
-            span.textContent = text;
-
-            a.append(i, span);
-            menu.appendChild(a);
-        });
-
-        dropdown.append(trigger, menu);
-        desktopMenu.appendChild(dropdown);
-    });
+    desktopMenu.className = "hidden md:flex items-center gap-2";
 
     // Mobile menu
     const mobileMenu = document.createElement("div");
@@ -229,79 +140,143 @@ export function createNavbar() {
         }
     });
 
-    Object.entries(categories).forEach(([category, items]) => {
-        const dropdown = document.createElement("div");
-        dropdown.className = "relative inline-block align-top";
+    const renderMenus = (tools) => {
+        const groupedCategories = groupToolsByCategory(tools);
+        const removeExistingMenus = () => {
+            desktopMenu.innerHTML = '';
+            mobileMenu.innerHTML = '';
+            document.querySelectorAll('.mobile-dropdown-menu').forEach(menu => menu.remove());
+        };
 
-        const trigger = document.createElement("button");
-        trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors bg-background hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
-        trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
+        removeExistingMenus();
 
-        const menu = document.createElement("div");
-        menu.className = "fixed left-4 right-4 top-1/4 -translate-y-1/2 bg-background border border-border rounded-lg shadow-xl z-[1000] p-4 opacity-0 invisible transition-all duration-200 mobile-dropdown-menu max-h-[60vh] overflow-y-auto";
+        groupedCategories.forEach(([category, items]) => {
+            const dropdown = document.createElement("div");
+            dropdown.className = "relative";
 
-        const menuHeader = document.createElement("div");
-        menuHeader.className = "flex items-center justify-between mb-4 pb-2 border-b border-border";
+            const trigger = document.createElement("button");
+            trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
+            trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
 
-        const menuTitle = document.createElement("h3");
-        menuTitle.className = "text-lg font-semibold";
-        menuTitle.textContent = category;
+            const menu = document.createElement("div");
+            menu.className = "absolute top-full left-0 mt-1 w-48 rounded-md bg-background border border-border shadow-lg opacity-0 invisible transition-all duration-200 z-50";
 
-        const closeButton = document.createElement("button");
-        closeButton.className = "p-1 hover:bg-accent hover:text-accent-foreground rounded-md";
-        closeButton.innerHTML = '<i class="fas fa-times"></i>';
+            let timeoutId = null;
 
-        menuHeader.append(menuTitle, closeButton);
-        menu.appendChild(menuHeader);
+            const showMenu = () => {
+                clearTimeout(timeoutId);
+                menu.classList.remove('opacity-0', 'invisible');
+                menu.classList.add('opacity-100', 'visible');
+            };
 
-        items.forEach(({ text, href, icon }) => {
-            const a = document.createElement("a");
-            a.href = href;
-            a.className = "flex items-center px-4 py-3 text-base hover:bg-accent hover:text-accent-foreground transition-colors rounded-md";
+            const hideMenu = () => {
+                timeoutId = setTimeout(() => {
+                    menu.classList.remove('opacity-100', 'visible');
+                    menu.classList.add('opacity-0', 'invisible');
+                }, 100);
+            };
 
-            const i = document.createElement("i");
-            i.className = `fas ${icon} mr-3 w-5`;
+            trigger.addEventListener('mouseenter', showMenu);
+            trigger.addEventListener('mouseleave', hideMenu);
+            menu.addEventListener('mouseenter', showMenu);
+            menu.addEventListener('mouseleave', hideMenu);
 
-            const span = document.createElement("span");
-            span.textContent = text;
+            items.forEach(({ title, link, icon }) => {
+                const a = document.createElement("a");
+                a.href = link;
+                a.className = "flex items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors";
 
-            a.append(i, span);
-            menu.appendChild(a);
+                const i = document.createElement("i");
+                i.className = `${icon} mr-2 w-4`;
+
+                const span = document.createElement("span");
+                span.textContent = title;
+
+                a.append(i, span);
+                menu.appendChild(a);
+            });
+
+            dropdown.append(trigger, menu);
+            desktopMenu.appendChild(dropdown);
         });
 
-        // Mobile menu click handler
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isVisible = !menu.classList.contains('opacity-0');
+        groupedCategories.forEach(([category, items]) => {
+            const dropdown = document.createElement("div");
+            dropdown.className = "relative inline-block align-top";
 
-            // Hide all other menus
-            document.querySelectorAll('.mobile-dropdown-menu').forEach(m => {
-                if (m !== menu) {
-                    m.classList.remove('opacity-100', 'visible');
-                    m.classList.add('opacity-0', 'invisible');
+            const trigger = document.createElement("button");
+            trigger.className = "inline-flex items-center justify-center px-3 py-2 text-sm font-medium transition-colors bg-background hover:bg-accent hover:text-accent-foreground rounded-md gap-1";
+            trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
+
+            const menu = document.createElement("div");
+            menu.className = "fixed left-4 right-4 top-1/4 -translate-y-1/2 bg-background border border-border rounded-lg shadow-xl z-[1000] p-4 opacity-0 invisible transition-all duration-200 mobile-dropdown-menu max-h-[60vh] overflow-y-auto";
+
+            const menuHeader = document.createElement("div");
+            menuHeader.className = "flex items-center justify-between mb-4 pb-2 border-b border-border";
+
+            const menuTitle = document.createElement("h3");
+            menuTitle.className = "text-lg font-semibold";
+            menuTitle.textContent = category;
+
+            const closeButton = document.createElement("button");
+            closeButton.className = "p-1 hover:bg-accent hover:text-accent-foreground rounded-md";
+            closeButton.innerHTML = '<i class="fas fa-times"></i>';
+
+            menuHeader.append(menuTitle, closeButton);
+            menu.appendChild(menuHeader);
+
+            items.forEach(({ title, link, icon }) => {
+                const a = document.createElement("a");
+                a.href = link;
+                a.className = "flex items-center px-4 py-3 text-base hover:bg-accent hover:text-accent-foreground transition-colors rounded-md";
+
+                const i = document.createElement("i");
+                i.className = `${icon} mr-3 w-5`;
+
+                const span = document.createElement("span");
+                span.textContent = title;
+
+                a.append(i, span);
+                menu.appendChild(a);
+            });
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isVisible = !menu.classList.contains('opacity-0');
+
+                document.querySelectorAll('.mobile-dropdown-menu').forEach(m => {
+                    if (m !== menu) {
+                        m.classList.remove('opacity-100', 'visible');
+                        m.classList.add('opacity-0', 'invisible');
+                    }
+                });
+
+                if (!isVisible) {
+                    mobileDropdownContainer.classList.remove('hidden');
+                    menu.classList.remove('opacity-0', 'invisible');
+                    menu.classList.add('opacity-100', 'visible');
+                } else {
+                    mobileDropdownContainer.classList.add('hidden');
+                    menu.classList.remove('opacity-100', 'visible');
+                    menu.classList.add('opacity-0', 'invisible');
                 }
             });
 
-            if (!isVisible) {
-                mobileDropdownContainer.classList.remove('hidden');
-                menu.classList.remove('opacity-0', 'invisible');
-                menu.classList.add('opacity-100', 'visible');
-            } else {
+            closeButton.addEventListener('click', () => {
                 mobileDropdownContainer.classList.add('hidden');
                 menu.classList.remove('opacity-100', 'visible');
                 menu.classList.add('opacity-0', 'invisible');
-            }
-        });
+            });
 
-        closeButton.addEventListener('click', () => {
-            mobileDropdownContainer.classList.add('hidden');
-            menu.classList.remove('opacity-100', 'visible');
-            menu.classList.add('opacity-0', 'invisible');
+            dropdown.append(trigger);
+            document.body.appendChild(menu);
+            mobileMenu.appendChild(dropdown);
         });
+    };
 
-        dropdown.append(trigger);
-        document.body.appendChild(menu);
-        mobileMenu.appendChild(dropdown);
+    fetchTools().then((tools) => {
+        setupSearch(searchInput, searchResults, tools);
+        renderMenus(tools);
     });
 
     menuSection.append(searchBox, desktopMenu);

@@ -67,19 +67,13 @@
     </head>
 
     <body class="bg-background text-foreground">
-        <script type="module">
-            import { createNavbar } from '../components/navbar.js';
-            createNavbar();
-        </script>
-
         <div id="header"></div>
         <script type="module">
-            import { createHeader } from '../components/header.js';
-            const header = createHeader(
-                'QR Code Generator',
-                'Create QR codes instantly from images'
-            );
-            document.getElementById('header').appendChild(header);
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell({
+                title: 'QR Code Generator',
+                description: 'Create QR codes instantly from images'
+            });
         </script>
 
         <main class="container mx-auto px-4 py-8 max-w-7xl">
@@ -131,10 +125,6 @@
             </div>
         </main>
         <script type="module" src="./index.js"></script>
-        <script type="module">
-            import { createFooter } from '../components/footer.js';
-            createFooter();
-        </script>
     </body>
 
 </html>

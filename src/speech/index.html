@@ -15,8 +15,8 @@
 
     <body class="bg-gray-50">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <div id="header"></div>
@@ -144,10 +144,6 @@
         </main>
         <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
     </body>
 
 </html>

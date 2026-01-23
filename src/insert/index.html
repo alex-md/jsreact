@@ -32,11 +32,6 @@
     on mobile, extra menu adds ~1rem,
     so pt-20 (5rem) mobile → md:pt-16 (4rem) desktop
   -->
-        <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
-        </script>
-
         <main class="flex items-center justify-center max-h">
             <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8 space-y-6">
                 <!-- Title -->
@@ -103,19 +98,12 @@
             </div>
         </main>
 
-        <script type="module" src="@components/footer.js"></script>
         <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
 
-        <div id="footer-container" class="relative z-10"></div>
         <script type="module">
-            import { createFooter } from '@components/footer.js';
-            const footerContainer = document.getElementById('footer-container');
-            if (footerContainer) {
-                createFooter(footerContainer);
-            } else {
-                console.error("Footer container not found");
-            }
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
     </body>

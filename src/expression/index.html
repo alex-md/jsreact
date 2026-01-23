@@ -24,48 +24,13 @@
         <script defer src="https://cdn.jsdelivr.net/npm/mathjs@12.2.1/lib/browser/math.js"></script>
     </head>
 
-    <body class="bg-gray-50 min-h-screen flex flex-col">
+    <body class="bg-gray-50 min-h-screen flex flex-col page-expression">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <div id="header"></div>
-
-        <!-- Custom Animations -->
-        <style>
-            @keyframes spin {
-                from {
-                    transform: rotate(0deg);
-                }
-
-                to {
-                    transform: rotate(360deg);
-                }
-            }
-
-            .loading-spinner {
-                display: inline-block;
-                width: 1rem;
-                height: 1rem;
-                border: 2px solid rgba(255, 255, 255, 0.3);
-                border-radius: 50%;
-                border-top-color: #fff;
-                animation: spin 1s ease-in-out infinite;
-                margin-right: 0.5rem;
-            }
-
-            .fade-enter {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            .fade-enter-active {
-                opacity: 1;
-                transform: translateY(0);
-                transition: opacity 300ms, transform 300ms;
-            }
-        </style>
 
         <main class="flex-grow container mx-auto px-4 py-8 max-w-3xl relative">
 
@@ -297,13 +262,8 @@
             </div>
         </main>
 
-        <script type="module" src="@components/footer.js"></script>
         <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
     </body>
 
 </html>

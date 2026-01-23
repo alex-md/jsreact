@@ -21,18 +21,13 @@
 
     <body class="bg-gray-50 min-h-screen flex flex-col">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <main class="container mx-auto px-4 py-8 flex-grow">
             <div id="root"></div>
         </main>
-
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
 
         <script type="module" src="./src/main.tsx"></script>
     </body>

@@ -13,87 +13,12 @@
             );
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
-        <style>
-            .diff-add {
-                background-color: #dcfce7;
-                color: #166534;
-                text-decoration: none;
-                padding: 0.125rem 0.25rem;
-                margin: 0 0.125rem;
-                border-radius: 0.25rem;
-            }
-
-            .diff-remove {
-                background-color: #fee2e2;
-                color: #991b1b;
-                text-decoration: line-through;
-                padding: 0.125rem 0.25rem;
-                margin: 0 0.125rem;
-                border-radius: 0.25rem;
-            }
-
-            .tooltip {
-                position: relative;
-            }
-
-            .tooltip:hover .tooltip-text {
-                opacity: 1;
-                visibility: visible;
-                transform: translate(-50%, -0.25rem);
-            }
-
-            .tooltip-text {
-                position: absolute;
-                left: 50%;
-                bottom: calc(100% + 0.5rem);
-                transform: translate(-50%, 0.5rem);
-                padding: 0.5rem 1rem;
-                background: #1f2937;
-                color: white;
-                font-size: 0.875rem;
-                white-space: nowrap;
-                border-radius: 0.375rem;
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.2s ease;
-                z-index: 50;
-                pointer-events: none;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            }
-
-            .tooltip-text::after {
-                content: '';
-                position: absolute;
-                left: 50%;
-                top: 100%;
-                transform: translateX(-50%);
-                border-width: 0.25rem;
-                border-style: solid;
-                border-color: #1f2937 transparent transparent transparent;
-            }
-
-            @media (min-width: 768px) {
-                .grid-cols-1 {
-                    grid-template-columns: 1fr;
-                }
-
-                .md\:grid-cols-2 {
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
-                }
-            }
-
-            @media (min-width: 1024px) {
-                .lg\:grid-cols-\[1fr_minmax\(300px\,400px\)\] {
-                    grid-template-columns: 1fr minmax(300px, 400px);
-                }
-            }
-        </style>
     </head>
 
-    <body class="bg-gray-50">
+    <body class="bg-gray-50 page-diff">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <div id="header"></div>
@@ -232,13 +157,8 @@
             </div>
         </main>
 
-        <script type="module" src="@components/footer.js"></script>
         <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
     </body>
 
 </html>

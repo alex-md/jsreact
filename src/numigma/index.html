@@ -16,8 +16,8 @@
 
     <body class="bg-gray-50 numigma-bg">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <main
@@ -264,11 +264,6 @@
             </div>
         </main>
 
-        <script type="module" src="@components/footer.js"></script>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
         <script type="module" src="./script.js"></script>
     </body>
 

@@ -69,19 +69,13 @@
             );
         </script>
 
-        <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
-        </script>
-
         <div id="header"></div>
         <script type="module">
-            import { createHeader } from '@components/header.js';
-            const header = createHeader(
-                '🏔️ Elevation Finder',
-                'Find the elevation for any location. Just click the map or search an address.'
-            );
-            document.getElementById('header').appendChild(header);
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell({
+                title: '🏔️ Elevation Finder',
+                description: 'Find the elevation for any location. Just click the map or search an address.'
+            });
         </script>
 
         <main class="container mx-auto px-4 py-8 max-w-7xl">
@@ -306,10 +300,6 @@
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script type="module" src="./script.js"></script>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
     </body>
 
 </html>

@@ -39,8 +39,8 @@
 
     <body class="bg-gray-50 flex flex-col min-h-screen">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <div id="header"></div>
@@ -66,7 +66,6 @@
         </div>
 
         <script type="module" src="./index.jsx"></script>
-        <script type="module" src="@components/footer.js"></script>
     </body>
 
 </html>

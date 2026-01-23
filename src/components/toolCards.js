@@ -1,3 +1,5 @@
+import { fetchTools } from '@utils/toolData.js';
+
 export async function createToolCards() {
     const container = document.getElementById('tool-cards-container');
     if (!container) {
@@ -6,12 +8,11 @@ export async function createToolCards() {
     }
 
     try {
-        // Updated fetch path to public/data/tools.json
-        const response = await fetch('/data/tools.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const tools = await fetchTools();
+        if (!tools.length) {
+            container.innerHTML = '<p class="text-red-500">Error loading tools. Please try again later.</p>';
+            return;
         }
-        const tools = await response.json();
 
         tools.forEach(tool => {
             const card = document.createElement('article');

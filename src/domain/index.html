@@ -33,32 +33,10 @@
             );
         </script>
 
-        <!-- Subtle grid overlay background for theme -->
-        <style>
-            body {
-                background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-                color: #222;
-            }
-
-            .bg-grid {
-                pointer-events: none;
-                position: fixed;
-                inset: 0;
-                z-index: 0;
-                background: linear-gradient(to right, #cbd5e1 1px, transparent 1px), linear-gradient(to bottom, #cbd5e1 1px, transparent 1px);
-                background-size: 24px 24px;
-                opacity: 0.60;
-            }
-        </style>
     </head>
 
-    <body class="bg-gray-50 flex flex-col min-h-screen">
+    <body class="bg-gray-50 flex flex-col min-h-screen page-domain">
         <!-- Subtle grid overlay background removed -->
-
-        <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
-        </script>
 
         <div id="header"></div>
         <!-- <script type="module">
@@ -74,21 +52,15 @@
             <div id="root"></div>
         </main>
 
-        <div id="footer-container" class="relative z-10"></div>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            const footerContainer = document.getElementById('footer-container');
-            if (footerContainer) {
-                createFooter(footerContainer);
-            } else {
-                console.error("Footer container not found");
-            }
-        </script>
 
         <script type="module" src="./main.jsx"></script>
         <!-- Global styles -->
         <link rel="stylesheet" href="/assets/styles/global.css">
         <script type="module" src="@components/toast.js"></script>
+        <script type="module">
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
+        </script>
     </body>
 
 </html>

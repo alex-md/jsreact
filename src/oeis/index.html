@@ -53,8 +53,8 @@
 
     <body class="bg-background text-foreground min-h-screen antialiased selection:bg-primary/20">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -243,10 +243,6 @@
         </main>
 
         <script type="module" src="./index.js"></script>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
     </body>
 
 </html>

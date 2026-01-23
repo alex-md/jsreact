@@ -28,144 +28,12 @@
         <meta property="article:tag" content="Text Cleaning">
         <meta property="article:tag" content="Content Formatting">
         <meta property="article:tag" content="Text Tools">
-        <style>
-            .option-group {
-                background: hsla(var(--card) / 0.6);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid hsla(var(--border) / 0.5);
-                border-radius: var(--radius-lg);
-                box-shadow:
-                    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-                    0 2px 4px -1px rgba(0, 0, 0, 0.03),
-                    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                padding: var(--space-4);
-                margin-bottom: var(--space-2);
-            }
-
-            .option-group:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.1);
-                border-color: rgba(59, 148, 184, 0.2);
-            }
-
-            .checkbox-wrapper {
-                transition: all 0.2s ease;
-                padding: 0.5rem;
-                border-radius: 0.5rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .checkbox-wrapper:hover {
-                background: rgba(59, 148, 184, 0.05);
-            }
-
-            .tooltip {
-                position: relative;
-            }
-
-            .tooltip:hover .tooltip-text {
-                opacity: 1;
-                visibility: visible;
-                transform: translate(-50%, -0.25rem);
-            }
-
-            .tooltip-text {
-                position: absolute;
-                left: 50%;
-                bottom: calc(100% + 0.5rem);
-                transform: translate(-50%, 0.5rem);
-                padding: var(--space-2) var(--space-4);
-                background: hsla(var(--popover) / 0.95);
-                color: hsl(var(--popover-foreground));
-                font-size: var(--text-sm);
-                white-space: nowrap;
-                border-radius: var(--radius-md);
-                border: 1px solid hsla(var(--border) / 0.1);
-                box-shadow: var(--shadow-md);
-                backdrop-filter: blur(4px);
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 50;
-                pointer-events: none;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            }
-
-            .tooltip-text::after {
-                content: '';
-                position: absolute;
-                left: 50%;
-                top: 100%;
-                transform: translateX(-50%);
-                border-width: 0.25rem;
-                border-style: solid;
-                border-color: #1f2937 transparent transparent transparent;
-            }
-
-            .option-group h3 {
-                position: relative;
-                padding-left: 1rem;
-            }
-
-            .option-group h3::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 0.5rem;
-                height: 0.5rem;
-                background: #3b94b8;
-                border-radius: 50%;
-                opacity: 0.6;
-            }
-
-            /* Additional spacing styles for cleaning options */
-            .cleaning-options-grid {
-                display: grid;
-                gap: 0.75rem;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-
-            .checkbox-wrapper label {
-                font-size: 0.75rem;
-                line-height: 1rem;
-            }
-
-            .checkbox-wrapper .description {
-                font-size: 0.625rem;
-                line-height: 0.875rem;
-                color: #6b7280;
-                margin-top: 0.25rem;
-            }
-
-            /* Responsive adjustments */
-            @media (max-width: 640px) {
-                .cleaning-options-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .option-group {
-                    padding: 0.75rem;
-                }
-
-                .checkbox-wrapper {
-                    padding: 0.25rem;
-                }
-
-                .tooltip-text {
-                    font-size: 0.625rem;
-                }
-            }
-        </style>
     </head>
 
-    <body class="bg-gray-50">
+    <body class="bg-gray-50 page-clean">
         <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
         </script>
 
         <div id="header"></div>
@@ -506,13 +374,8 @@
             </section>
         </main>
 
-        <script type="module" src="@components/footer.js"></script>
         <script type="module" src="@components/toast.js"></script>
         <script type="module" src="./index.js"></script>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script>
     </body>
 
 </html>

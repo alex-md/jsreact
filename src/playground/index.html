@@ -42,16 +42,15 @@
         <!-- Header will be injected by header.js -->
         <div id="header"></div>
         <script type="module">
-            import { createHeader } from '@components/header.js';
-            createHeader();
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell({
+                title: 'Code Playground',
+                description: 'Live HTML, CSS, and JavaScript editor with instant previews.'
+            });
         </script>
 
         <!-- Navbar will be injected by navbar.js -->
         <div id="navbar"></div>
-        <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
-        </script>
 
         <main class="flex-grow flex flex-col items-center justify-center">
             <div id="root" class="w-full h-[80vh] rounded-lg overflow-hidden border shadow-lg">
@@ -61,10 +60,7 @@
 
         <!-- Footer will be injected by footer.js -->
         <div id="footer"></div>
-        <script type="module">
-            import { createFooter } from '@components/footer.js';
-            createFooter();
-        </script> <!-- Toast notifications container -->
+        <!-- Toast notifications container -->
         <div id="toast"></div>
 
         <script type="module" src="./main.jsx"></script>

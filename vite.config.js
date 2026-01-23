@@ -86,15 +86,19 @@ export default defineConfig({
                 connect4: path.resolve(srcDir, 'connect4/index.html')
             },
             output: {
-                manualChunks: {
-                    vendor: [
-                        'react',
-                        'react-dom',
-                        '@mui/material',
-                        '@emotion/react',
-                        '@emotion/styled'
-                    ],
-                    monaco: ['monaco-editor']
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('monaco-editor')) {
+                            return 'monaco';
+                        }
+                        if (id.includes('@mui') || id.includes('@emotion')) {
+                            return 'mui';
+                        }
+                        if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+                            return 'react';
+                        }
+                        return 'vendor';
+                    }
                 }
             }
         }

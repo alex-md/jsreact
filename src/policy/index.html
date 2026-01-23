@@ -14,19 +14,13 @@
     </head>
 
     <body class="bg-gray-50">
-        <script type="module">
-            import { createNavbar } from '@components/navbar.js';
-            createNavbar();
-        </script>
-
         <div id="header"></div>
         <script type="module">
-            import { createHeader } from '@components/head.js';
-            const header = createHeader(
-                'Privacy Policy',
-                'How we handle and protect your data'
-            );
-            document.getElementById('header').appendChild(header);
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell({
+                title: 'Privacy Policy',
+                description: 'How we handle and protect your data'
+            });
         </script>
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">
@@ -63,7 +57,6 @@
             </article>
         </main>
 
-        <script type="module" src="@components/footer.js"></script>
     </body>
 
 </html>
