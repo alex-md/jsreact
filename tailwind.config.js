@@ -41,7 +41,7 @@ export default {
                     200: '#bfdbfe',
                     300: '#93c5fd',
                     400: '#60a5fa',
-                    500: '#3b82f6', // electric blue
+                    500: '#3b82f6',
                     600: '#2563eb',
                     700: '#1d4ed8',
                     800: '#1e40af',
@@ -52,48 +52,48 @@ export default {
                 secondary: {
                     DEFAULT: 'hsl(var(--secondary))',
                     foreground: 'hsl(var(--secondary-foreground))',
-                    50: '#ecfdf5',
-                    100: '#d1fae5',
-                    200: '#a7f3d0',
-                    300: '#6ee7b7',
-                    400: '#34d399',
-                    500: '#10b981', // mint‑emerald
-                    600: '#059669',
-                    700: '#047857',
-                    800: '#065f46',
-                    900: '#064e3b',
+                    50: '#f8fafc',
+                    100: '#f1f5f9',
+                    200: '#e2e8f0',
+                    300: '#cbd5e1',
+                    400: '#94a3b8',
+                    500: '#64748b',
+                    600: '#475569',
+                    700: '#334155',
+                    800: '#1e293b',
+                    900: '#0f172a',
                 },
 
                 /** Accent / highlight */
                 accent: {
                     DEFAULT: 'hsl(var(--accent))',
                     foreground: 'hsl(var(--accent-foreground))',
-                    50: '#f5f3ff',
-                    100: '#ede9fe',
-                    200: '#ddd6fe',
-                    300: '#c4b5fd',
-                    400: '#a78bfa',
-                    500: '#8b5cf6', // ultraviolet
-                    600: '#7c3aed',
-                    700: '#6d28d9',
-                    800: '#5b21b6',
-                    900: '#4c1d95',
+                    50: '#fef2f2',
+                    100: '#fee2e2',
+                    200: '#fecaca',
+                    300: '#fca5a5',
+                    400: '#f87171',
+                    500: '#ef4444',
+                    600: '#dc2626',
+                    700: '#b91c1c',
+                    800: '#991b1b',
+                    900: '#7f1d1d',
                 },
 
                 /** Neutral surface / text variants */
                 muted: {
                     DEFAULT: 'hsl(var(--muted))',
                     foreground: 'hsl(var(--muted-foreground))',
-                    50: '#f9fafb',
-                    100: '#f3f4f6',
-                    200: '#e5e7eb',
-                    300: '#d1d5db',
-                    400: '#9ca3af',
-                    500: '#6b7280',
-                    600: '#4b5563',
-                    700: '#374151',
-                    800: '#1f2937',
-                    900: '#111827',
+                    50: '#fafaf9',
+                    100: '#f5f5f4',
+                    200: '#e7e5e4',
+                    300: '#d6d3d1',
+                    400: '#a8a29e',
+                    500: '#78716c',
+                    600: '#57534e',
+                    700: '#44403c',
+                    800: '#292524',
+                    900: '#1c1917',
                 },
 
                 /** Destructive / danger */
@@ -123,31 +123,36 @@ export default {
                 },
             },
 
-            /** Rounded corners tuned for softer, touch‑friendly aesthetic */
+            /** Rounded corners tuned for crisp, editorial UI */
             borderRadius: {
-                lg: '1.5rem',  // 24px
-                md: '1rem',    // 16px
-                sm: '0.5rem',  // 8px
+                lg: '0.75rem',  // 12px
+                md: '0.5rem',   // 8px
+                sm: '0.375rem', // 6px
             },
 
-            /** Typography — use variable font if available */
+            /** Typography - editorial sans + serif pairing */
             fontFamily: {
                 sans: [
-                    'Inter',
-                    'Plus Jakarta Sans',
+                    'Libre Franklin',
+                    'Source Sans 3',
                     'Segoe UI',
-                    'Roboto',
                     'system-ui',
                     'sans-serif',
                 ],
                 heading: [
-                    'Poppins',
-                    'Plus Jakarta Sans',
-                    'Inter',
-                    'Segoe UI',
-                    'Roboto',
-                    'system-ui',
-                    'sans-serif',
+                    'Source Serif 4',
+                    'Libre Franklin',
+                    'Iowan Old Style',
+                    'serif',
+                ],
+                mono: [
+                    'IBM Plex Mono',
+                    'ui-monospace',
+                    'SFMono-Regular',
+                    'Menlo',
+                    'Monaco',
+                    'Consolas',
+                    'monospace',
                 ],
             },
 

@@ -55,7 +55,8 @@ export function createFooter() {
 
     const container = el('div', ['w-full', 'backdrop-blur-sm']);
     const content = el('div', [
-        'bg-gray-700', 'flex', 'items-center', 'justify-end',
+        'bg-card', 'text-foreground', 'border-t', 'border-border',
+        'flex', 'items-center', 'justify-end',
         'h-16', 'mx-auto', 'px-6', 'py-2', 'w-full'
     ]);
     const stats = el('div', [
@@ -81,7 +82,7 @@ export function createFooter() {
         const count = await getActiveUsers();
         let span = activeBtn.querySelector('span');
         if (!span) {
-            span = el('span', ['text-white']);
+            span = el('span', ['text-foreground']);
             activeBtn.appendChild(span);
         }
         span.textContent = ` ${count} online`;
@@ -90,7 +91,7 @@ export function createFooter() {
     /* ---- Views logic ---- */
     const loadViewCount = async () => {
         const count = await fetchViewCount();
-        const span = el('span', ['fw-bold', 'text-white'], ` ${count} views`);
+        const span = el('span', ['fw-bold', 'text-foreground'], ` ${count} views`);
         viewsBtn.appendChild(span);
     };
 

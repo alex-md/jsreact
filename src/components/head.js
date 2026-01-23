@@ -279,7 +279,7 @@ export function createHead(title, description, options = {}) {
         { charset: 'UTF-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         { name: 'description', content: description },
-        { name: 'theme-color', content: '#09090b' },
+        { name: 'theme-color', content: '#f7f5f2' },
         { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
         { name: 'googlebot', content: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' },
         { name: 'author', content: 'JSreact' },

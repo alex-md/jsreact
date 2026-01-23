@@ -4,8 +4,8 @@
     "description": "Collection of web developer tools",
     "start_url": "./index.html",
     "display": "standalone",
-    "background_color": "#1D201F",
-    "theme_color": "#1D201F",
+    "background_color": "#f7f5f2",
+    "theme_color": "#f7f5f2",
     "icons": [
         {
             "src": "/assets/images/favicon-16x16.png",
