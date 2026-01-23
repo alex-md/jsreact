@@ -393,7 +393,7 @@ processButton.addEventListener("click", function () {
         return;
     }
     if (!lowerKeyword.endsWith("ing")) {
-        errorDisplay.textContent = 'Error: Keyword must end with "ing" (e.g., "fucking", "freaking").';
+        errorDisplay.textContent = 'Error: Keyword must end with "ing" (e.g., "running, "jumping, etc.").';
         return;
     }
     if (isNaN(frequencyLevel) || frequencyLevel < 0 || frequencyLevel > 10) {
