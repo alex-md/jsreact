@@ -2,12 +2,47 @@
 <html lang="en" class="scroll-smooth">
 
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEFG04PXR7"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-ZEFG04PXR7');
+        </script>
+
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
-        <title>Free QR Code Generator - Create QR Codes from Images | JSreact</title>
-        <meta name="description"
-            content="Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images. Easy to use, no registration required.">
+        <script type="module">
+            import { createHead } from '@components/head.js';
+
+            createHead(
+                'Free QR Code Generator - Create QR Codes from Images',
+                'Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images. Easy to use, no registration required.',
+                {
+                    canonicalPath: '/qr/',
+                    keywords: 'qr code generator, image to qr code, free qr code maker, online qr code generator, qr code from image',
+                    structuredData: {
+                        name: 'JSreact QR Code Generator',
+                        applicationCategory: 'UtilityApplication',
+                        description: 'Free online tool for generating QR codes from uploaded or pasted images. Easy to use with instant QR code generation.',
+                        offers: {
+                            '@type': 'Offer',
+                            price: '0',
+                            priceCurrency: 'USD'
+                        },
+                        featureList: [
+                            'Image to QR code conversion',
+                            'Drag and drop support',
+                            'Clipboard paste support',
+                            'Instant QR code generation',
+                            'Download QR codes',
+                            'Multiple image format support'
+                        ]
+                    }
+                }
+            );
+        </script>
 
         <!-- Styles -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,44 +58,6 @@
             content="qr code generator, image to qr code, free qr code maker, online qr code generator, qr code from image">
         <meta name="author" content="JSreact">
         <meta name="robots" content="index, follow">
-
-        <!-- Open Graph Meta Tags -->
-        <meta property="og:type" content="website">
-        <meta property="og:title" content="Free QR Code Generator - Create QR Codes from Images">
-        <meta property="og:description"
-            content="Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images.">
-        <meta property="og:site_name" content="JSreact">
-
-        <!-- Twitter Card Meta Tags -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Free QR Code Generator - Create QR Codes from Images">
-        <meta name="twitter:description"
-            content="Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images.">
-
-        <!-- JSON-LD Structured Data -->
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "JSreact QR Code Generator",
-            "applicationCategory": "UtilityApplication",
-            "operatingSystem": "Any",
-            "description": "Free online tool for generating QR codes from uploaded or pasted images. Easy to use with instant QR code generation.",
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD"
-            },
-            "featureList": [
-                "Image to QR code conversion",
-                "Drag and drop support",
-                "Clipboard paste support",
-                "Instant QR code generation",
-                "Download QR codes",
-                "Multiple image format support"
-            ]
-        }
-        </script>
 
         <!-- Preload Resources -->
         <link rel="preconnect" href="https://image-host.vs.workers.dev">
@@ -128,3 +125,5 @@
     </body>
 
 </html>
+
+
