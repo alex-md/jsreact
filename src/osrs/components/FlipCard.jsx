@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { Typography, IconButton, Tooltip } from '@mui/material';
 import { formatGrandExchangePrice } from '../utils/formatting';
 
 const FlipCard = ({ flip }) => {
@@ -13,132 +12,133 @@ const FlipCard = ({ flip }) => {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    // Memoized color calculations
     const volatilityColor = useMemo(() => {
-        if (!flip.volatility) return 'text-gray-600';
+        if (!flip.volatility) return 'text-slate-500';
         if (flip.volatility > 0.15) return 'text-red-600';
-        if (flip.volatility > 0.07) return 'text-orange-600';
-        return 'text-green-700';
+        if (flip.volatility > 0.07) return 'text-amber-600';
+        return 'text-emerald-600';
     }, [flip.volatility]);
 
     const flipScoreColor = useMemo(() => {
-        if (!flip.flipScore) return 'text-gray-600';
-        if (flip.flipScore >= 80) return 'text-green-700';
+        if (!flip.flipScore) return 'text-slate-500';
+        if (flip.flipScore >= 80) return 'text-emerald-600';
         if (flip.flipScore >= 65) return 'text-blue-600';
-        if (flip.flipScore >= 50) return 'text-yellow-600';
+        if (flip.flipScore >= 50) return 'text-amber-600';
         return 'text-orange-600';
     }, [flip.flipScore]);
 
     const formatPrice = formatGrandExchangePrice;
-
     const iconUrl = `https://oldschool.runescape.wiki/images/${encodeURIComponent(flip.icon?.replace(/ /g, '_') ?? '')}`;
 
     return (
-        <article className="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-200 transition-all duration-200 group relative flex flex-col h-full overflow-hidden">
-            {/* Header Section */}
-            <div className="p-4 sm:p-5 flex-grow">
-                <div className="flex items-start justify-between gap-3 mb-4">
-                    <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-12 h-12 flex-shrink-0 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center p-1">
+        <article className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+            <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-blue-500 via-slate-200 to-emerald-500 opacity-80"></div>
+            <div className="p-5 pl-6">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex min-w-0 items-start gap-3">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50">
                             <img
                                 src={iconUrl}
                                 alt=""
-                                className="w-full h-full object-contain drop-shadow-sm"
+                                className="h-9 w-9 object-contain"
                                 loading="lazy"
                                 onError={(e) => e.target.style.display = 'none'}
                             />
                         </div>
-                        <div className="min-w-0 flex flex-col">
+                        <div className="min-w-0">
                             <div className="flex items-center gap-2">
                                 <a
                                     href={flip.wiki}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-extrabold text-lg leading-tight text-gray-900 hover:text-blue-600 transition-colors truncate"
+                                    className="truncate text-lg font-semibold text-slate-900 transition hover:text-blue-600"
                                     title={`View ${flip.name} on OSRS Wiki`}
                                 >
                                     {flip.name}
                                 </a>
-                                <Tooltip title={copied ? "Copied!" : "Copy Name"} arrow>
-                                    <button
-                                        onClick={handleCopyName}
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded focus:opacity-100"
-                                    >
-                                        <i className={`fas ${copied ? 'fa-check text-green-500' : 'fa-copy text-gray-400'} text-xs`}></i>
-                                    </button>
-                                </Tooltip>
+                                <button
+                                    onClick={handleCopyName}
+                                    className="rounded-full border border-slate-200 bg-white px-2 py-1 text-[10px] font-semibold text-slate-500 opacity-0 transition hover:text-slate-900 focus:opacity-100 focus:outline-none group-hover:opacity-100"
+                                    aria-label="Copy item name"
+                                >
+                                    {copied ? 'Copied' : 'Copy'}
+                                </button>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-                                <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">GE Limit: {flip.limit?.toLocaleString() ?? 'None'}</span>
-                                <span>•</span>
-                                <span>Vol: {formatPrice(flip.fiveMinHighVolume + flip.fiveMinLowVolume)} in 5m</span>
+                            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wider text-slate-500">
+                                <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
+                                    GE Limit {flip.limit?.toLocaleString() ?? 'None'}
+                                </span>
+                                <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
+                                    5m Vol {formatPrice(flip.fiveMinHighVolume + flip.fiveMinLowVolume)}
+                                </span>
                             </div>
+                        </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2 text-right">
+                        <span className={`rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold ${flipScoreColor}`}>
+                            Score {flip.flipScore}
+                        </span>
+                        <span className={`text-xs font-semibold ${volatilityColor}`}>
+                            {flip.volatility ? `${(flip.volatility * 100).toFixed(1)}% vol` : 'Volatility n/a'}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3">
+                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-blue-700">
+                            <span>Buy</span>
+                            <span>{flip.maxQty?.toLocaleString()} qty</span>
+                        </div>
+                        <p className="mt-2 text-xl font-semibold text-slate-900">
+                            {formatPrice(flip.buyPrice)} gp
+                        </p>
+                        <div className="mt-2 flex items-center justify-between border-t border-blue-100 pt-2 text-xs text-blue-800">
+                            <span>Total cost</span>
+                            <span className="font-semibold">{formatPrice(flip.maxQty * flip.buyPrice)}</span>
+                        </div>
+                    </div>
+                    <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 p-3 text-right">
+                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
+                            <span>Sell</span>
+                            <span>{flip.maxQty?.toLocaleString()} qty</span>
+                        </div>
+                        <p className="mt-2 text-xl font-semibold text-slate-900">
+                            {formatPrice(flip.sellPrice)} gp
+                        </p>
+                        <div className="mt-2 flex items-center justify-between border-t border-emerald-100 pt-2 text-xs text-emerald-800">
+                            <span>Total return</span>
+                            <span className="font-semibold">{formatPrice(flip.maxQty * flip.sellPrice)}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Primary Action: Instructions */}
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                    {/* Buy Instruction */}
-                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-100 flex flex-col relative group/price">
-                        <div className="flex justify-between items-baseline mb-1">
-                            <span className="text-[11px] uppercase tracking-wider text-blue-700 font-bold">Buy <u>{flip.maxQty?.toLocaleString()}</u></span>
-                            <span className="text-[10px] text-blue-600/70 font-medium">Qty</span>
-                        </div>
-                        <span className="text-xl font-black text-gray-900 tracking-tight">for {formatPrice(flip.buyPrice)}gp</span>
-                        <div className="mt-1 pt-1 border-t border-blue-200/50 flex justify-between items-center">
-                            <span className="text-[10px] text-blue-800/60 font-medium">Total Cost</span>
-                            <span className="text-xs font-bold text-blue-900">{formatPrice(flip.maxQty * flip.buyPrice)}</span>
-                        </div>
-                        <div className="inset-x-0 bottom-0 h-0.5 bg-blue-300/50 rounded-b-lg"></div>
+                <div className="mt-4 grid grid-cols-3 gap-3 border-t border-slate-100 pt-4 text-center text-xs">
+                    <div>
+                        <p className="text-[11px] uppercase tracking-wider text-slate-400">Profit / Item</p>
+                        <p className="mt-1 font-semibold text-blue-600">{formatPrice(flip.profitPer)}</p>
                     </div>
-
-                    {/* Sell Instruction */}
-                    <div className="bg-green-50 rounded-lg p-3 border border-green-100 flex flex-col relative group/price text-right">
-                        <div className="flex justify-between items-baseline mb-1 flex-row-reverse">
-                            <span className="text-[11px] uppercase tracking-wider text-green-700 font-bold">Sell {flip.maxQty?.toLocaleString()}</span>
-                            <span className="text-[10px] text-green-600/70 font-medium">Qty</span>
-                        </div>
-                        <span className="text-xl font-black text-gray-900 tracking-tight">for {formatPrice(flip.sellPrice)}gp</span>
-                        <div className="mt-1 pt-1 border-t border-green-200/50 flex justify-between items-center">
-                            <span className="text-[10px] text-green-800/60 font-medium">Total Return</span>
-                            <span className="text-xs font-bold text-green-900">{formatPrice(flip.maxQty * flip.sellPrice)}</span>
-                        </div>
-                        <div className="inset-x-0 bottom-0 h-0.5 bg-green-300/50 rounded-b-lg"></div>
-                    </div>
-                </div>
-
-                {/* Secondary Metrics Grid */}
-                <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-gray-100 pt-4">
-                    <div className="text-center px-1">
-                        <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-wide mb-1">Profit/Item</p>
-                        <p className="font-bold text-blue-600 text-sm">{formatPrice(flip.profitPer)}</p>
-                    </div>
-                    <div className="text-center px-1">
-                        <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-wide mb-1">ROI</p>
-                        <p className={`font-bold text-sm ${(flip.margin * 100) > 1 ? 'text-green-600' : 'text-yellow-600'}`}>
+                    <div>
+                        <p className="text-[11px] uppercase tracking-wider text-slate-400">ROI</p>
+                        <p className={`mt-1 font-semibold ${(flip.margin * 100) > 1 ? 'text-emerald-600' : 'text-amber-600'}`}>
                             {(flip.margin * 100).toFixed(2)}%
                         </p>
                     </div>
-                    <div className="text-center px-1">
-                        <div className="flex flex-col items-center">
-                            <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-wide mb-1">Score</p>
-                            <span className={`font-bold text-sm ${flipScoreColor}`}>
-                                {flip.flipScore}
-                            </span>
-                        </div>
+                    <div>
+                        <p className="text-[11px] uppercase tracking-wider text-slate-400">Velocity</p>
+                        <p className="mt-1 font-semibold text-slate-700">
+                            {formatPrice(flip.fiveMinHighVolume + flip.fiveMinLowVolume)}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            {/* Footer: Potential Profit */}
-            <div className="mt-auto bg-gray-800 p-3 px-5 flex justify-between items-center border-t border-gray-700/50">
-                <div className="flex flex-col">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Potential Profit (after 2% GE tax)</span>
-                    <span className="text-xs text-gray-500">If all sold</span>
+            <div className="flex items-center justify-between border-t border-slate-200 bg-slate-950 px-5 py-3 text-white">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-slate-300">
+                    Potential Profit (after 2% tax)
                 </div>
-                <div className="text-right">
-                    <span className="block text-green-400 font-bold text-lg leading-none">{formatPrice(flip.totalProfit)}</span>
+                <div className="text-lg font-semibold text-emerald-300">
+                    {formatPrice(flip.totalProfit)} gp
                 </div>
             </div>
         </article>

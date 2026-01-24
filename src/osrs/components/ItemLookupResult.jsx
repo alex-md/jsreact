@@ -1,125 +1,112 @@
 import React from 'react';
-import { Typography } from '@mui/material';
 
-const ItemLookupResult = ({ data, getWikiLink, formatTimeSince, formatPrice }) => {
+const ItemLookupResult = ({ data, formatPrice }) => {
     const { item, buyData, sellData, wiki } = data;
 
-    // Helper to determine freshness color
-    const getFreshnessColor = (timestamp) => {
-        const seconds = (Date.now() - timestamp) / 1000;
-        if (seconds < 60) return 'text-green-600';
-        if (seconds < 300) return 'text-yellow-600';
-        return 'text-red-600';
-    };
-
     return (
-        <div className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all">
-            <div className="flex justify-between items-start mb-3">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between gap-3">
                 <a
                     href={wiki}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg font-bold text-gray-900 hover:text-blue-600 hover:underline flex items-center gap-2"
+                    className="flex min-w-0 items-center gap-2 text-base font-semibold text-slate-900 transition hover:text-blue-600"
                 >
-                    <img
-                        src={`https://oldschool.runescape.wiki/images/${encodeURIComponent(item.icon?.replace(/ /g, '_') ?? '')}`}
-                        alt=""
-                        className="w-6 h-6 object-contain"
-                        onError={(e) => e.target.style.display = 'none'}
-                    />
-                    {item.name}
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-100 bg-slate-50">
+                        <img
+                            src={`https://oldschool.runescape.wiki/images/${encodeURIComponent(item.icon?.replace(/ /g, '_') ?? '')}`}
+                            alt=""
+                            className="h-6 w-6 object-contain"
+                            onError={(e) => e.target.style.display = 'none'}
+                        />
+                    </span>
+                    <span className="truncate">{item.name}</span>
                 </a>
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    Limit: {item.limit ?? 'None'}
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    Limit {item.limit ?? 'None'}
                 </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Buying Strategy (For Flippers: Price to Place Buy Offer) */}
-                <div className="bg-blue-50/50 rounded-lg p-3 border border-blue-100">
-                    <Typography variant="subtitle2" className="text-blue-800 font-bold mb-2 flex justify-between">
-                        <span>Suggested Insta-Buy Price</span>
-                        {buyData && <span className="text-xs font-normal opacity-75">Confidence: {Math.round(buyData.confidence * 100)}%</span>}
-                    </Typography>
-
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3">
+                    <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-blue-700">
+                        <span>Insta-Buy</span>
+                        {buyData && (
+                            <span className="text-[10px] font-medium text-blue-500">
+                                {Math.round(buyData.confidence * 100)}% conf.
+                            </span>
+                        )}
+                    </div>
                     {buyData ? (
                         <>
-                            <div className="flex items-baseline gap-2 mb-1">
-                                <span className="text-2xl font-bold text-gray-900">{formatPrice(buyData.weightedLowPrice)}</span>
-                                <span className="text-xs text-gray-500">gp</span>
-                            </div>
-                            <div className="text-xs text-gray-600 space-y-1">
-                                <div className="flex justify-between">
-                                    <span>Latest Low:</span>
-                                    <span className="font-medium">{formatPrice(buyData.latestLow)}</span>
+                            <p className="mt-2 text-lg font-semibold text-slate-900">{formatPrice(buyData.weightedLowPrice)} gp</p>
+                            <div className="mt-2 space-y-1 text-xs text-slate-600">
+                                <div className="flex items-center justify-between">
+                                    <span>Latest Low</span>
+                                    <span className="font-semibold">{formatPrice(buyData.latestLow)}</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span>5m Avg:</span>
-                                    <span className="font-medium">{formatPrice(buyData.fiveMinLow)}</span>
+                                <div className="flex items-center justify-between">
+                                    <span>5m Avg</span>
+                                    <span className="font-semibold">{formatPrice(buyData.fiveMinLow)}</span>
                                 </div>
-                                <div className="mt-2 pt-2 border-t border-blue-200/50 flex justify-between items-center">
-                                    <span>Volume (5m):</span>
-                                    <span className="font-medium">{formatPrice(buyData.lowPriceVolume)}</span>
+                                <div className="flex items-center justify-between border-t border-blue-100 pt-2">
+                                    <span>Volume (5m)</span>
+                                    <span className="font-semibold">{formatPrice(buyData.lowPriceVolume)}</span>
                                 </div>
                             </div>
                         </>
                     ) : (
-                        <span className="text-sm text-gray-500 italic">Insufficient buy data</span>
+                        <p className="mt-2 text-sm text-slate-500 italic">Insufficient buy data</p>
                     )}
                 </div>
 
-                {/* Selling Strategy (For Flippers: Price to Place Sell Offer) */}
-                <div className="bg-green-50/50 rounded-lg p-3 border border-green-100">
-                    <Typography variant="subtitle2" className="text-green-800 font-bold mb-2 flex justify-between">
-                        <span>Suggested Insta-Sell Price</span>
-                        {sellData && <span className="text-xs font-normal opacity-75">Confidence: {Math.round(sellData.confidence * 100)}%</span>}
-                    </Typography>
-
+                <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-3">
+                    <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
+                        <span>Insta-Sell</span>
+                        {sellData && (
+                            <span className="text-[10px] font-medium text-emerald-500">
+                                {Math.round(sellData.confidence * 100)}% conf.
+                            </span>
+                        )}
+                    </div>
                     {sellData ? (
                         <>
-                            <div className="flex items-baseline gap-2 mb-1">
-                                <span className="text-2xl font-bold text-gray-900">{formatPrice(sellData.weightedHighPrice)}</span>
-                                <span className="text-xs text-gray-500">gp</span>
-                            </div>
-                            <div className="text-xs text-gray-600 space-y-1">
-                                <div className="flex justify-between">
-                                    <span>Latest High:</span>
-                                    <span className="font-medium">{formatPrice(sellData.latestHigh)}</span>
+                            <p className="mt-2 text-lg font-semibold text-slate-900">{formatPrice(sellData.weightedHighPrice)} gp</p>
+                            <div className="mt-2 space-y-1 text-xs text-slate-600">
+                                <div className="flex items-center justify-between">
+                                    <span>Latest High</span>
+                                    <span className="font-semibold">{formatPrice(sellData.latestHigh)}</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span>5m Avg:</span>
-                                    <span className="font-medium">{formatPrice(sellData.fiveMinHigh)}</span>
+                                <div className="flex items-center justify-between">
+                                    <span>5m Avg</span>
+                                    <span className="font-semibold">{formatPrice(sellData.fiveMinHigh)}</span>
                                 </div>
-                                <div className="mt-2 pt-2 border-t border-green-200/50 flex justify-between items-center">
-                                    <span>Volume (5m):</span>
-                                    <span className="font-medium">{formatPrice(sellData.highPriceVolume)}</span>
+                                <div className="flex items-center justify-between border-t border-emerald-100 pt-2">
+                                    <span>Volume (5m)</span>
+                                    <span className="font-semibold">{formatPrice(sellData.highPriceVolume)}</span>
                                 </div>
                             </div>
                         </>
                     ) : (
-                        <span className="text-sm text-gray-500 italic">Insufficient sell data</span>
+                        <p className="mt-2 text-sm text-slate-500 italic">Insufficient sell data</p>
                     )}
                 </div>
             </div>
 
-            {/* Margin Info */}
             {buyData && sellData && (
-                <div className="mt-3 flex items-center justify-center gap-4 bg-gray-100 rounded-lg p-2 text-sm">
-                    <div className="flex flex-col items-center">
-                        <span className="text-gray-500 text-xs">Potential Profit</span>
-                        <span className="font-bold text-green-600">
+                <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                    <div>
+                        <p className="text-[10px] uppercase tracking-wider text-slate-400">Potential Profit</p>
+                        <p className="font-semibold text-emerald-600">
                             {formatPrice(sellData.taxedSellPrice - buyData.weightedLowPrice)} gp
-                        </span>
+                        </p>
                     </div>
-                    <div className="w-px h-8 bg-gray-200"></div>
-                    <div className="flex flex-col items-center">
-                        <span className="text-gray-500 text-xs">ROI</span>
-                        <span className="font-bold text-blue-600">
-                            {((sellData.suggestedMargin) * 100).toFixed(2)}%
-                        </span>
-                    </div>
-                    <div className="w-px h-8 bg-gray-200"></div>
-                    <div className="flex flex-col items-center">
+                    <div className="h-8 w-px bg-slate-200"></div>
+                    <div>
+                        <p className="text-[10px] uppercase tracking-wider text-slate-400">ROI</p>
+                        <p className="font-semibold text-blue-600">
+                            {(sellData.suggestedMargin * 100).toFixed(2)}%
+                        </p>
                     </div>
                 </div>
             )}

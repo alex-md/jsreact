@@ -199,6 +199,41 @@
     border-radius: 0.25rem;
 }
 
+/* OSRS page */
+.page-osrs {
+    background: linear-gradient(180deg, #f9f7f2 0%, #fffdfa 55%, #f1ede6 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-osrs .osrs-grid {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: 0.45;
+}
+
+.page-osrs .osrs-glow {
+    pointer-events: none;
+    position: absolute;
+    top: -140px;
+    right: -120px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.04) 60%, transparent 100%);
+    opacity: 0.7;
+    filter: blur(6px);
+}
+
+.page-osrs h1,
+.page-osrs h2 {
+    font-family: var(--font-serif);
+}
+
 .page-diff .tooltip {
     position: relative;
 }
