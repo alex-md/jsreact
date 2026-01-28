@@ -2,11 +2,14 @@
 let map;
 let currentMarker;
 let geocodingTimeout;
+let lastResult;
 
 // API Configuration
 const ELEVATION_API_BASE = 'https://api.opentopodata.org/v1';
 const ELEVATION_DATASET = 'aster30m'; // Global 30m resolution dataset
 const NOMINATIM_API = 'https://nominatim.openstreetmap.org/search';
+const DEFAULT_CENTER = [33.4484, -112.0740];
+const DEFAULT_ZOOM = 8;
 
 // CORS proxy for elevation API (fallback options)
 const CORS_PROXIES = [
@@ -33,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Initialize the Leaflet map
 function initializeMap() {
     // Create map centered on Phoenix, Arizona (used in the API documentation)
-    map = L.map('map').setView([33.4484, -112.0740], 8); // The 4 is the zoom level, the higher the number, the closer the zoom
+    map = L.map('map').setView(DEFAULT_CENTER, DEFAULT_ZOOM); // The higher the number, the closer the zoom
 
     // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -45,7 +48,7 @@ function initializeMap() {
     map.on('click', onMapClick);
 
     // Add initial marker
-    currentMarker = L.marker([33.4484, -112.0740])
+    currentMarker = L.marker(DEFAULT_CENTER)
         .addTo(map)
         .bindPopup('Click anywhere on the map to get elevation data');
 }
@@ -57,6 +60,11 @@ function setupEventListeners() {
     const coordBtn = document.getElementById('coordBtn');
     const latInput = document.getElementById('latInput');
     const lngInput = document.getElementById('lngInput');
+    const geoBtn = document.getElementById('geoBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const quickCopyBtn = document.getElementById('quickCopyBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const resetMapBtn = document.getElementById('resetMapBtn');
 
     // Address search
     searchBtn.addEventListener('click', searchAddress);
@@ -79,6 +87,26 @@ function setupEventListeners() {
         }
     });
 
+    if (geoBtn) {
+        geoBtn.addEventListener('click', useCurrentLocation);
+    }
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearInputs);
+    }
+
+    if (quickCopyBtn) {
+        quickCopyBtn.addEventListener('click', () => copyResults('quickCopyStatus'));
+    }
+
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => copyResults('copyStatus'));
+    }
+
+    if (resetMapBtn) {
+        resetMapBtn.addEventListener('click', resetMapView);
+    }
+
     // Auto-complete for address input (debounced)
     addressInput.addEventListener('input', function () {
         clearTimeout(geocodingTimeout);
@@ -88,6 +116,127 @@ function setupEventListeners() {
             }
         }, 300);
     });
+}
+
+function resetMapView() {
+    if (!map) return;
+    map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+    if (currentMarker) {
+        currentMarker.setLatLng(DEFAULT_CENTER);
+        currentMarker.bindPopup('Click anywhere on the map to get elevation data');
+    } else {
+        currentMarker = L.marker(DEFAULT_CENTER)
+            .addTo(map)
+            .bindPopup('Click anywhere on the map to get elevation data');
+    }
+}
+
+function clearInputs() {
+    const addressInput = document.getElementById('addressInput');
+    const latInput = document.getElementById('latInput');
+    const lngInput = document.getElementById('lngInput');
+
+    if (addressInput) addressInput.value = '';
+    if (latInput) latInput.value = '';
+    if (lngInput) lngInput.value = '';
+
+    lastResult = null;
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('loading').classList.add('hidden');
+    hideCopyStatus('copyStatus');
+    hideCopyStatus('quickCopyStatus');
+    resetMapView();
+}
+
+function useCurrentLocation() {
+    if (!navigator.geolocation) {
+        showCopyStatus('quickCopyStatus', 'Geolocation not supported', true);
+        return;
+    }
+
+    showLoading();
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            document.getElementById('latInput').value = lat.toFixed(6);
+            document.getElementById('lngInput').value = lng.toFixed(6);
+
+            map.setView([lat, lng], 15);
+            if (currentMarker) {
+                currentMarker.setLatLng([lat, lng]);
+            } else {
+                currentMarker = L.marker([lat, lng]).addTo(map);
+            }
+
+            getElevationData(lat, lng, 'Current Location');
+        },
+        (error) => {
+            showError(`Unable to access location: ${error.message}`);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+function hideCopyStatus(statusId) {
+    const statusEl = document.getElementById(statusId);
+    if (statusEl) {
+        statusEl.classList.add('hidden');
+        statusEl.classList.remove('text-destructive');
+        statusEl.classList.add('text-primary');
+        statusEl.textContent = 'Copied to clipboard.';
+    }
+}
+
+function showCopyStatus(statusId, message, isError = false) {
+    const statusEl = document.getElementById(statusId);
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.classList.remove('hidden');
+    if (isError) {
+        statusEl.classList.remove('text-primary');
+        statusEl.classList.add('text-destructive');
+    } else {
+        statusEl.classList.remove('text-destructive');
+        statusEl.classList.add('text-primary');
+    }
+    setTimeout(() => {
+        statusEl.classList.add('hidden');
+    }, 2000);
+}
+
+function copyResults(statusId) {
+    if (!lastResult) {
+        showCopyStatus(statusId, 'Run a lookup first.', true);
+        return;
+    }
+
+    if (lastResult.elevation === null || lastResult.elevation === undefined) {
+        showCopyStatus(statusId, 'Elevation unavailable to copy.', true);
+        return;
+    }
+
+    const copyText = [
+        `Location: ${lastResult.location}`,
+        `Coordinates: ${lastResult.latitude.toFixed(6)}, ${lastResult.longitude.toFixed(6)}`,
+        `Elevation: ${lastResult.elevation.toFixed(1)} m / ${(lastResult.elevation * 3.28084).toFixed(1)} ft`,
+        `Dataset: ${lastResult.dataset}`
+    ].join('\n');
+
+    if (!navigator.clipboard) {
+        showCopyStatus(statusId, 'Clipboard unavailable.', true);
+        return;
+    }
+
+    navigator.clipboard.writeText(copyText)
+        .then(() => showCopyStatus(statusId, 'Copied to clipboard.'))
+        .catch(() => showCopyStatus(statusId, 'Copy failed.', true));
 }
 
 // Handle map click events
@@ -311,9 +460,9 @@ async function tryAlternativeAPIs(lat, lng) {
 function updateMarkerPopup(lat, lng, elevation) {
     if (!currentMarker) return;
 
-    const elevationText = elevation !== null && elevation !== undefined ?
-        `${elevation.toFixed(1)}m` :
-        'No data available';
+    const elevationText = elevation !== null && elevation !== undefined
+        ? `${elevation.toFixed(1)}m / ${(elevation * 3.28084).toFixed(1)}ft`
+        : 'No data available';
 
     currentMarker.bindPopup(`
         <div class="elevation-popup">
@@ -329,6 +478,8 @@ function showLoading() {
     document.getElementById('loading').classList.remove('hidden');
     document.getElementById('results').classList.add('hidden');
     document.getElementById('error').classList.add('hidden');
+    hideCopyStatus('copyStatus');
+    hideCopyStatus('quickCopyStatus');
 }
 
 // Show results
@@ -340,11 +491,24 @@ function showResults(data) {
     document.getElementById('resultLocation').textContent = data.location;
     document.getElementById('resultCoords').textContent = `${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}`;
 
-    const elevationText = data.elevation !== null ?
-        `${data.elevation.toFixed(1)} meters (${(data.elevation * 3.28084).toFixed(1)} feet)` :
-        'No data available';
-    document.getElementById('resultElevation').textContent = elevationText;
+    const elevationMeters = data.elevation !== null ? `${data.elevation.toFixed(1)} m` : 'No data';
+    const elevationFeet = data.elevation !== null ? `${(data.elevation * 3.28084).toFixed(1)} ft` : 'No data';
+    document.getElementById('resultElevationMeters').textContent = elevationMeters;
+    document.getElementById('resultElevationFeet').textContent = elevationFeet;
     document.getElementById('resultDataset').textContent = data.dataset;
+
+    const mapLink = document.getElementById('mapLink');
+    if (mapLink) {
+        mapLink.href = `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
+    }
+
+    lastResult = {
+        location: data.location,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        elevation: data.elevation,
+        dataset: data.dataset
+    };
 
     resultsDiv.classList.remove('hidden');
 }
@@ -356,6 +520,8 @@ function showError(message) {
 
     document.getElementById('errorMessage').textContent = message;
     document.getElementById('error').classList.remove('hidden');
+    hideCopyStatus('copyStatus');
+    hideCopyStatus('quickCopyStatus');
 }
 
 // Utility function to debounce function calls

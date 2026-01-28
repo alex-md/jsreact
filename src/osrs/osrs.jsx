@@ -11,12 +11,20 @@ import FlipCard from './components/FlipCard';
 import ItemLookupResult from './components/ItemLookupResult';
 import SearchForms from './components/SearchForms';
 
+const BUDGET_PRESETS = [
+    { label: '1M', value: '1', unit: 'M' },
+    { label: '5M', value: '5', unit: 'M' },
+    { label: '10M', value: '10', unit: 'M' },
+    { label: '25M', value: '25', unit: 'M' }
+];
+
 export default function OSRSFlipper() {
     // === State ===
     // Budget State
     const [budget, setBudget] = useState(10_000_000);
     const [budgetUnit, setBudgetUnit] = useState('M');
     const [budgetValue, setBudgetValue] = useState('10');
+    const [showSidebar, setShowSidebar] = useState(false);
 
     // Search State
     const [searchQuery, setSearchQuery] = useState('');
@@ -65,6 +73,7 @@ export default function OSRSFlipper() {
         };
     }, [dataError, dataLoading, hasData]);
 
+
     // === Event Handlers ===
     const handleBudgetChange = useCallback((value, unit) => {
         const numValue = parseFloat(value);
@@ -77,6 +86,10 @@ export default function OSRSFlipper() {
             setBudget(0);
         }
     }, []);
+
+    const applyBudgetPreset = useCallback((preset) => {
+        handleBudgetChange(preset.value, preset.unit);
+    }, [handleBudgetChange]);
 
     const handleSearchQueryChange = useCallback((event) => {
         const value = event.target.value;
@@ -134,31 +147,30 @@ export default function OSRSFlipper() {
                                     </span>
                                 </div>
                                 <h1 className="mt-4 text-3xl font-semibold text-slate-950 md:text-4xl lg:text-[2.75rem]">
-                                    Grand Exchange signals, curated for fast flips.
+                                    Start with your budget. We’ll surface the best flips.
                                 </h1>
                                 <p className="mt-3 text-sm text-slate-600 md:text-base">
-                                    Scan real-time price streams, volatility, and confidence scoring in one clean board.
-                                    Designed for quick decisions and clean execution.
+                                    Enter your GP, refresh prices, and review the ranked list. Simple, fast, and focused.
                                 </p>
-                                <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-slate-600">
-                                    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
-                                        <i className="fas fa-signal text-blue-500"></i>
-                                        {flips.length} active opportunities
-                                    </span>
-                                    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
-                                        <i className="fas fa-database text-emerald-500"></i>
-                                        {mapping.length.toLocaleString()} items tracked
-                                    </span>
-                                    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
-                                        <i className="fas fa-coins text-amber-500"></i>
-                                        Capital: {budget.toLocaleString()} gp
-                                    </span>
+                                <div className="mt-6 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
+                                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Step 1</p>
+                                        <p className="font-semibold text-slate-800">Set your budget</p>
+                                    </div>
+                                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Step 2</p>
+                                        <p className="font-semibold text-slate-800">Refresh live prices</p>
+                                    </div>
+                                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Step 3</p>
+                                        <p className="font-semibold text-slate-800">Pick a top flip</p>
+                                    </div>
                                 </div>
                             </div>
                             <div className="w-full max-w-sm space-y-4">
                                 <div className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm">
                                     <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                        Market Snapshot
+                                        Live Prices
                                         <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400">
                                             <span className={`h-2 w-2 rounded-full ${dataLoading ? 'bg-amber-400 animate-pulse' : dataError ? 'bg-red-500' : 'bg-emerald-500'}`}></span>
                                             {dataLoading ? 'Updating' : dataError ? 'Issues' : 'Stable'}
@@ -183,16 +195,6 @@ export default function OSRSFlipper() {
                                             {dataLoading ? 'Refreshing' : 'Refresh'}
                                         </button>
                                     </div>
-                                    <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-600">
-                                        <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
-                                            <p className="font-semibold text-slate-900">{mapping.length ? mapping.length.toLocaleString() : '—'}</p>
-                                            <p>Items tracked</p>
-                                        </div>
-                                        <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
-                                            <p className="font-semibold text-slate-900">{hasData ? flips.length : '—'}</p>
-                                            <p>Live opportunities</p>
-                                        </div>
-                                    </div>
                                 </div>
                                 {dataError && (
                                     <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -205,93 +207,121 @@ export default function OSRSFlipper() {
                     </div>
                 </header>
 
-                <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(280px,360px)_1fr]">
-                    <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
-                        <section className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Capital Settings</h2>
-                                <span className="text-xs text-slate-400">Total: {budget.toLocaleString()} gp</span>
-                            </div>
-                            <p className="mt-2 text-sm text-slate-600">
-                                Set a budget to tune flip sizing and risk thresholds.
-                            </p>
-                            <div className="mt-4 flex items-center gap-2">
-                                <div className="relative flex-1">
-                                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">GP</span>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        step="0.1"
-                                        value={budgetValue}
-                                        onChange={(e) => handleBudgetChange(e.target.value, budgetUnit)}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-10 py-2 text-sm font-semibold text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white"
-                                        placeholder="Amount"
-                                        aria-label="Budget amount"
-                                    />
-                                </div>
-                                <select
-                                    value={budgetUnit}
-                                    onChange={(e) => handleBudgetChange(budgetValue, e.target.value)}
-                                    className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm outline-none transition focus:border-slate-400"
-                                    aria-label="Budget unit"
-                                >
-                                    <option value="K">K</option>
-                                    <option value="M">M</option>
-                                </select>
-                            </div>
-                            <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                                <span>Auto allocation cap</span>
-                                <span className="font-semibold text-slate-700">25% per item</span>
-                            </div>
-                        </section>
-
-                        <SearchForms
-                            searchQuery={searchQuery}
-                            onSearchQueryChange={handleSearchQueryChange}
-                            onSearchSubmit={handleSearch}
-                            loading={dataLoading || !hasData}
-                        />
-
-                        <section className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Instant Price Results</h2>
-                                {searchResults && (
-                                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-                                        {searchResults.length}
-                                    </span>
-                                )}
-                            </div>
-                            <div className="mt-4 space-y-4">
-                                {dataLoading && !searchResults ? (
-                                    <div className="flex items-center justify-center py-6">
-                                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"></div>
-                                    </div>
-                                ) : (
-                                    <>
-                                        {searchResults && searchResults.length > 0 && (
-                                            <div className="space-y-3">
-                                                {searchResults.map((result) => (
-                                                    <ItemLookupResult
-                                                        key={result.item.id}
-                                                        data={result}
-                                                        formatPrice={formatGrandExchangePrice}
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {searchResults && searchResults.length === 0 && !dataLoading && (
-                                            <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-                                                No items found for "{searchQuery}".
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                        </section>
-                    </aside>
-
+                <div className={`mt-8 grid gap-6 ${showSidebar ? 'lg:grid-cols-[1fr_minmax(280px,360px)]' : 'grid-cols-1'}`}>
                     <main className="space-y-6">
+                        <section className="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm">
+                            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                                        Capital Settings
+                                    </div>
+                                    <h2 className="mt-3 text-2xl font-semibold text-slate-900">Set your trading budget</h2>
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        Enter your GP once. Everything below updates to match your budget.
+                                    </p>
+                                </div>
+                                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-right shadow-sm">
+                                    <p className="text-[10px] uppercase tracking-widest text-slate-400">Total GP</p>
+                                    <p className="text-base font-semibold text-slate-900">{budget.toLocaleString()}</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 space-y-4">
+                                <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Budget amount</label>
+                                <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+                                    <div className="relative">
+                                        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">GP</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.1"
+                                            value={budgetValue}
+                                            onChange={(e) => handleBudgetChange(e.target.value, budgetUnit)}
+                                            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-lg font-semibold text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white"
+                                            placeholder="Amount"
+                                            aria-label="Budget amount"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleBudgetChange(budgetValue, 'K')}
+                                            aria-pressed={budgetUnit === 'K'}
+                                            className={`rounded-xl border px-3 py-2 text-xs font-semibold uppercase tracking-widest transition ${budgetUnit === 'K'
+                                                ? 'border-slate-900 bg-slate-900 text-white'
+                                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
+                                                }`}
+                                        >
+                                            K
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleBudgetChange(budgetValue, 'M')}
+                                            aria-pressed={budgetUnit === 'M'}
+                                            className={`rounded-xl border px-3 py-2 text-xs font-semibold uppercase tracking-widest transition ${budgetUnit === 'M'
+                                                ? 'border-slate-900 bg-slate-900 text-white'
+                                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
+                                                }`}
+                                        >
+                                            M
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-5 flex flex-wrap items-center gap-2">
+                                {BUDGET_PRESETS.map((preset) => {
+                                    const isActive = budgetUnit === preset.unit && budgetValue === preset.value;
+                                    return (
+                                        <button
+                                            key={preset.label}
+                                            type="button"
+                                            onClick={() => applyBudgetPreset(preset)}
+                                            aria-pressed={isActive}
+                                            className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition ${isActive
+                                                ? 'border-slate-900 bg-slate-900 text-white'
+                                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
+                                                }`}
+                                        >
+                                            {preset.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="mt-4 grid gap-2 text-xs text-slate-500 sm:grid-cols-2">
+                                <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
+                                    <p className="text-[10px] uppercase tracking-widest text-slate-400">Auto allocation cap</p>
+                                    <p className="mt-1 font-semibold text-slate-700">25% per item</p>
+                                </div>
+                                <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
+                                    <p className="text-[10px] uppercase tracking-widest text-slate-400">Ideal flip range</p>
+                                    <p className="mt-1 font-semibold text-slate-700">
+                                        {Math.max(1, Math.round(budget * 0.08)).toLocaleString()} – {Math.max(1, Math.round(budget * 0.25)).toLocaleString()} gp
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Optional Tools</h2>
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        Need instant price checks? Open the sidebar search when you want it.
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowSidebar((prev) => !prev)}
+                                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-900"
+                                >
+                                    <i className={`fas ${showSidebar ? 'fa-eye-slash' : 'fa-search'}`}></i>
+                                    {showSidebar ? 'Hide Tools' : 'Show Tools'}
+                                </button>
+                            </div>
+                        </section>
+
                         <section aria-live="polite" className="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm">
                             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                                 <div>
@@ -344,6 +374,71 @@ export default function OSRSFlipper() {
                             </div>
                         </section>
                     </main>
+
+                    {showSidebar && (
+                        <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
+                            <section className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Optional Tools</p>
+                                        <p className="text-sm font-semibold text-slate-800">Search & price lookup</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowSidebar(false)}
+                                        className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
+                                    >
+                                        Hide
+                                    </button>
+                                </div>
+                            </section>
+
+                            <SearchForms
+                                searchQuery={searchQuery}
+                                onSearchQueryChange={handleSearchQueryChange}
+                                onSearchSubmit={handleSearch}
+                                loading={dataLoading || !hasData}
+                            />
+
+                            <section className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Instant Price Results</h2>
+                                    {searchResults && (
+                                        <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                                            {searchResults.length}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="mt-4 space-y-4">
+                                    {dataLoading && !searchResults ? (
+                                        <div className="flex items-center justify-center py-6">
+                                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"></div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {searchResults && searchResults.length > 0 && (
+                                                <div className="space-y-3">
+                                                    {searchResults.map((result) => (
+                                                        <ItemLookupResult
+                                                            key={result.item.id}
+                                                            data={result}
+                                                            formatPrice={formatGrandExchangePrice}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {searchResults && searchResults.length === 0 && !dataLoading && (
+                                                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                                                    No items found for "{searchQuery}".
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </section>
+                        </aside>
+                    )}
                 </div>
             </div>
         </div>

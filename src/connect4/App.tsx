@@ -40,6 +40,13 @@ function App() {
     const currentBoard = history[currentStep].board;
     const currentPlayer = history[currentStep].currentPlayer;
     const moveCount = currentStep;
+    const canUndo = currentStep > 0;
+    const canRedo = currentStep < history.length - 1;
+    const solverTargetLabel = solverTarget === 'current'
+        ? 'Current player'
+        : solverTarget === PLAYER_1
+            ? 'Red'
+            : 'Yellow';
 
 
 
@@ -124,17 +131,66 @@ function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentBoard, autoHint, solverTarget]);
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (isHowToPlayOpen) return;
+            if (event.code === 'Space') {
+                event.preventDefault();
+                if (!winner && !isCalculating) {
+                    calculateBestMove();
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [calculateBestMove, isCalculating, winner, isHowToPlayOpen]);
+
+    useEffect(() => {
+        if (!isHowToPlayOpen) return;
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsHowToPlayOpen(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isHowToPlayOpen]);
+
 
 
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary-500 selection:text-white pb-10">
-            <div className="container mx-auto px-4 py-4 sm:py-6 flex flex-col items-center max-w-7xl">
+        <div className="relative min-h-screen bg-background text-foreground font-sans selection:bg-primary-500 selection:text-white pb-10 overflow-hidden">
+            <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-primary-500/10 blur-3xl"></div>
+            <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-secondary-500/10 blur-3xl"></div>
+
+            <div className="relative container mx-auto px-4 py-4 sm:py-6 flex flex-col items-center max-w-7xl">
 
                 <GameHeader
                     onOpenHowToPlay={() => setIsHowToPlayOpen(true)}
+                    onReset={handleReset}
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
+                    canUndo={canUndo}
+                    canRedo={canRedo}
+                    canReset={currentStep > 0}
                 />
 
                 <GameStatus currentPlayer={currentPlayer} winner={winner} />
+
+                <div className="mb-6 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Moves Played</p>
+                        <p className="mt-1 text-xl font-bold text-foreground">{moveCount}</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Auto Hint</p>
+                        <p className="mt-1 text-xl font-bold text-foreground">{autoHint ? 'Enabled' : 'Off'}</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Solver Target</p>
+                        <p className="mt-1 text-xl font-bold text-foreground">{solverTargetLabel}</p>
+                    </div>
+                </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start justify-center w-full max-w-6xl">
                     {/* Left Control Panel (Desktop) */}
@@ -163,11 +219,11 @@ function App() {
                         onColumnClick={handleColumnClick}
                         bestMove={bestMove}
                         isCalculating={isCalculating}
-                        onCalculateBestMove={calculateBestMove}
-                        autoHint={autoHint}
-                        setAutoHint={setAutoHint}
-                        solverTarget={solverTarget}
-                    />
+                            onCalculateBestMove={calculateBestMove}
+                            autoHint={autoHint}
+                            setAutoHint={setAutoHint}
+                            solverTarget={solverTarget}
+                        />
 
                     {/* Mobile Controls (Below Board) */}
                     <div className="lg:hidden w-full">
@@ -185,6 +241,42 @@ function App() {
                         />
                     </div>
                 </div>
+
+                <section className="mt-10 w-full max-w-6xl grid gap-4 lg:grid-cols-3">
+                    <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-primary-500/10 text-primary-600 flex items-center justify-center">
+                                <i className="fas fa-brain"></i>
+                            </div>
+                            <h2 className="text-lg font-bold text-foreground">Perfect-play engine</h2>
+                        </div>
+                        <p className="mt-3 text-sm text-muted-foreground">
+                            The solver evaluates optimal moves using a full game tree to keep every turn sharp.
+                        </p>
+                    </article>
+                    <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-secondary-500/10 text-secondary-600 flex items-center justify-center">
+                                <i className="fas fa-bolt"></i>
+                            </div>
+                            <h2 className="text-lg font-bold text-foreground">Fast tactical checks</h2>
+                        </div>
+                        <p className="mt-3 text-sm text-muted-foreground">
+                            Tap any column to test a line, then use Undo/Redo to explore alternative responses.
+                        </p>
+                    </article>
+                    <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-accent-500/10 text-accent-600 flex items-center justify-center">
+                                <i className="fas fa-lightbulb"></i>
+                            </div>
+                            <h2 className="text-lg font-bold text-foreground">Strategy refresher</h2>
+                        </div>
+                        <p className="mt-3 text-sm text-muted-foreground">
+                            Control the center early, force double threats, and watch for diagonal traps.
+                        </p>
+                    </article>
+                </section>
             </div>
 
             <HowToPlayModal

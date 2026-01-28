@@ -90,6 +90,44 @@
         </script>
 
         <main class="container mx-auto px-4 py-8 max-w-7xl">
+            <section class="mb-10">
+                <div class="grid gap-4 lg:grid-cols-3">
+                    <div class="bg-card text-card-foreground rounded-2xl border border-border/70 shadow-sm p-5">
+                        <div class="flex items-center gap-3">
+                            <div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold">Instant elevation lookups</p>
+                                <p class="text-xs text-muted-foreground">Search by address, coordinates, or map click.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-card text-card-foreground rounded-2xl border border-border/70 shadow-sm p-5">
+                        <div class="flex items-center gap-3">
+                            <div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold">Trusted data sources</p>
+                                <p class="text-xs text-muted-foreground">Blended datasets for dependable terrain insight.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-card text-card-foreground rounded-2xl border border-border/70 shadow-sm p-5">
+                        <div class="flex items-center gap-3">
+                            <div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold">Export-ready results</p>
+                                <p class="text-xs text-muted-foreground">Copy coordinates and elevations in one click.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Input Section -->
                 <section class="space-y-6">
@@ -144,6 +182,39 @@
                         </div>
                     </div>
 
+                    <!-- Quick Actions Card -->
+                    <div class="bg-card text-card-foreground rounded-xl shadow-lg border border-border">
+                        <div class="p-6 space-y-4">
+                            <h2 class="text-lg font-semibold flex items-center gap-2">
+                                <i class="fas fa-sliders-h text-primary"></i>
+                                Quick Actions
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <button id="geoBtn"
+                                    class="px-4 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                                    <i class="fas fa-location-crosshairs text-sm"></i>
+                                    Use my location
+                                </button>
+                                <button id="clearBtn"
+                                    class="px-4 py-3 rounded-lg border border-border bg-muted text-muted-foreground font-medium hover:bg-muted/80 transition-colors flex items-center justify-center gap-2">
+                                    <i class="fas fa-eraser text-sm"></i>
+                                    Clear inputs
+                                </button>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <button id="quickCopyBtn"
+                                    class="px-4 py-2 rounded-full border border-border bg-card text-sm font-semibold text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                                    <i class="fas fa-copy text-xs mr-2"></i>
+                                    Copy last result
+                                </button>
+                                <span id="quickCopyStatus" class="text-xs text-primary hidden">Copied!</span>
+                            </div>
+                            <p class="text-xs text-muted-foreground">
+                                Location lookups run locally in your browser. We never store your searches.
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Map Instructions Card -->
                     <div class="bg-primary-light border border-primary/20 rounded-xl p-4">
                         <div class="flex items-start gap-3">
@@ -167,12 +238,27 @@
                         </div>
 
                         <div id="results"
-                            class="hidden bg-card text-card-foreground rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
-                            <div class="p-6 space-y-4">
-                                <h3 class="text-lg font-semibold flex items-center gap-2">
-                                    <i class="fas fa-mountain text-primary"></i>
-                                    Elevation Results
-                                </h3>
+                            class="hidden bg-card text-card-foreground rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border"
+                            aria-live="polite">
+                            <div class="p-6 space-y-5">
+                                <div class="flex flex-wrap items-center justify-between gap-3">
+                                    <h3 class="text-lg font-semibold flex items-center gap-2">
+                                        <i class="fas fa-mountain text-primary"></i>
+                                        Elevation Results
+                                    </h3>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <button id="copyBtn"
+                                            class="px-3 py-1.5 rounded-full border border-border bg-muted text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                                            <i class="fas fa-copy text-xs mr-2"></i>
+                                            Copy details
+                                        </button>
+                                        <a id="mapLink" href="#" target="_blank" rel="noopener noreferrer"
+                                            class="px-3 py-1.5 rounded-full border border-border bg-card text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                                            <i class="fas fa-map-marker-alt text-xs mr-2"></i>
+                                            Open in Maps
+                                        </a>
+                                    </div>
+                                </div>
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center p-3 bg-muted rounded-lg">
                                         <span class="font-medium text-muted-foreground">Location:</span>
@@ -183,15 +269,22 @@
                                         <span class="font-medium text-muted-foreground">Coordinates:</span>
                                         <span id="resultCoords" class="font-semibold text-right"></span>
                                     </div>
+                                </div>
+                                <div class="grid gap-3 sm:grid-cols-2">
                                     <div class="flex justify-between items-center p-3 bg-primary-light rounded-lg">
-                                        <span class="font-medium text-primary">Elevation:</span>
-                                        <span id="resultElevation" class="font-bold text-primary text-lg"></span>
+                                        <span class="font-medium text-primary">Elevation (meters):</span>
+                                        <span id="resultElevationMeters" class="font-bold text-primary text-lg"></span>
                                     </div>
-                                    <div class="flex justify-between items-center p-3 bg-muted rounded-lg">
+                                    <div class="flex justify-between items-center p-3 bg-primary-light rounded-lg">
+                                        <span class="font-medium text-primary">Elevation (feet):</span>
+                                        <span id="resultElevationFeet" class="font-bold text-primary text-lg"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-muted rounded-lg sm:col-span-2">
                                         <span class="font-medium text-muted-foreground">Dataset:</span>
                                         <span id="resultDataset" class="font-semibold text-right"></span>
                                     </div>
                                 </div>
+                                <p id="copyStatus" class="text-xs text-primary hidden">Copied to clipboard.</p>
                             </div>
                         </div>
 
@@ -211,10 +304,17 @@
                 <section
                     class="bg-card text-card-foreground rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
                     <div class="p-6">
-                        <h2 class="text-lg font-semibold flex items-center gap-2 mb-4">
-                            <i class="fas fa-map text-primary"></i>
-                            Interactive Map
-                        </h2>
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                            <h2 class="text-lg font-semibold flex items-center gap-2">
+                                <i class="fas fa-map text-primary"></i>
+                                Interactive Map
+                            </h2>
+                            <button id="resetMapBtn"
+                                class="px-3 py-1.5 rounded-full border border-border bg-card text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                                <i class="fas fa-rotate-left text-xs mr-2"></i>
+                                Reset view
+                            </button>
+                        </div>
                         <div class="h-96 lg:h-[600px] rounded-lg overflow-hidden border border-border">
                             <div id="map" class="w-full h-full"></div>
                         </div>
@@ -257,9 +357,9 @@
                     <div class="grid gap-6 lg:grid-cols-2 text-muted-foreground">
                         <div class="space-y-3">
                             <p>
-                                Start with an exact street address or drop the marker directly on your area of interest. The map supports
-                                satellite and terrain overlays so you can fine-tune the location. When you need to inspect multiple points,
-                                use the refresh button to pull the latest elevation data before saving your notes.
+                                Start with an exact street address or drop the marker directly on your area of interest. Zoom and pan the
+                                map to fine-tune the location. When you need to inspect multiple points, run another lookup to refresh the
+                                elevation data before saving your notes.
                             </p>
                             <p>
                                 Need to reference historical or seasonal changes? Combine our elevation finder with public datasets from USGS,
@@ -314,5 +414,3 @@
     </body>
 
 </html>
-
-

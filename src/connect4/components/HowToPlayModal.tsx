@@ -41,6 +41,8 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose }) => {
                             <li><strong>Calculate Best Move:</strong> Press Space or click the button to see the optimal move for the current player.</li>
                             <li><strong>Auto Hint:</strong> Toggle this to automatically see the best move after every turn.</li>
                             <li><strong>Solver Target:</strong> Choose who the solver should help. "Current" helps whoever's turn it is.</li>
+                            <li><strong>Undo/Redo:</strong> Step back and forward through the move timeline to explore lines.</li>
+                            <li><strong>Quick exit:</strong> Press Escape to close this panel.</li>
                         </ul>
                     </section>
 
