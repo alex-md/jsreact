@@ -20,14 +20,25 @@ const GameHeader: React.FC<GameHeaderProps> = ({
     canReset
 }) => {
     return (
-        <header className="mb-6 text-center w-full max-w-4xl mx-auto relative">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <header className="mb-4 sm:mb-6 text-center w-full max-w-4xl mx-auto relative">
+            <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left">
-                    <h1 className="text-3xl md:text-4xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
-                        Connect 4
+                    <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                        <span className="rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            Online Solver
+                        </span>
+                        <span className="rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            2 Player
+                        </span>
+                        <span className="rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            AI Hints
+                        </span>
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
+                        Connect 4 Solver
                     </h1>
-                    <p className="text-sm text-muted-foreground max-w-md">
-                        Analyze any position, get instant solver hints, and practice perfect-play lines.
+                    <p className="text-sm text-muted-foreground max-w-md leading-5">
+                        Analyze any Connect 4 board, get instant AI hints, and test winning lines for online or unblocked browser matches.
                     </p>
                 </div>
                 <div className="flex items-center justify-center gap-2 sm:justify-end">
@@ -69,7 +80,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
                 </div>
             </div>
 
-            <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-muted-foreground">
+            <div className="mt-3 hidden sm:flex flex-wrap justify-center gap-3 text-sm text-muted-foreground">
                 <div className="bg-card/50 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-sm border border-border flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
                     <span>Tap a column to drop a disc</span>

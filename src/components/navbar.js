@@ -84,9 +84,12 @@ export function createNavbar() {
     logoLink.className = "flex items-center gap-2";
 
     const logoImage = document.createElement("img");
-    logoImage.src = "/assets/images/logo.png";
+    logoImage.src = "/assets/images/icon.png";
     logoImage.alt = "JSReact Logo";
-    logoImage.className = "h-14 w-auto max-h-16 min-w-[3.5rem] object-contain";
+    logoImage.width = 146;
+    logoImage.height = 165;
+    logoImage.decoding = 'async';
+    logoImage.className = "h-12 w-auto object-contain";
 
     const logoText = document.createElement("span");
     logoText.textContent = "JSreact";

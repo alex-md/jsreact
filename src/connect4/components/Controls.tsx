@@ -60,7 +60,7 @@ const Controls: React.FC<ControlsProps> = ({
             <button
                 onClick={onReset}
                 title="Reset Board"
-                className="w-full py-3 px-4 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2 border border-destructive/20"
+                className="w-full py-3 px-4 rounded-xl border border-red-200 bg-red-50 text-red-700 font-medium transition-all active:scale-95 hover:bg-red-100 flex items-center justify-center gap-2"
             >
                 <i className="fas fa-sync-alt"></i> Reset Board
             </button>

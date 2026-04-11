@@ -175,9 +175,11 @@ function App() {
                     canReset={currentStep > 0}
                 />
 
-                <GameStatus currentPlayer={currentPlayer} winner={winner} />
+                <div className="mb-4 flex w-full justify-center lg:hidden">
+                    <GameStatus currentPlayer={currentPlayer} winner={winner} />
+                </div>
 
-                <div className="mb-6 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="mb-6 hidden w-full max-w-4xl lg:grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
                         <p className="text-xs uppercase tracking-widest text-muted-foreground">Moves Played</p>
                         <p className="mt-1 text-xl font-bold text-foreground">{moveCount}</p>
@@ -192,7 +194,11 @@ function App() {
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-8 items-start justify-center w-full max-w-6xl">
+                <div className="hidden lg:flex mb-4 w-full justify-center">
+                    <GameStatus currentPlayer={currentPlayer} winner={winner} />
+                </div>
+
+                <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-center w-full max-w-6xl">
                     {/* Left Control Panel (Desktop) */}
                     <div className="hidden lg:block">
                         <Controls
@@ -239,6 +245,21 @@ function App() {
                             solverTarget={solverTarget}
                             setSolverTarget={setSolverTarget}
                         />
+                    </div>
+                </div>
+
+                <div className="mt-4 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3 lg:hidden">
+                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Moves Played</p>
+                        <p className="mt-1 text-xl font-bold text-foreground">{moveCount}</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Auto Hint</p>
+                        <p className="mt-1 text-xl font-bold text-foreground">{autoHint ? 'Enabled' : 'Off'}</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Solver Target</p>
+                        <p className="mt-1 text-xl font-bold text-foreground">{solverTargetLabel}</p>
                     </div>
                 </div>
 
