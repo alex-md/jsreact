@@ -6,16 +6,16 @@
     }
 
     60% {
-        transform: translateY(20px) scale(1.05);
+        transform: translateY(0) scale(1.05);
         opacity: 1;
     }
 
     80% {
-        transform: translateY(-10px) scale(0.95);
+        transform: translateY(-20px) scale(0.95);
     }
 
     90% {
-        transform: translateY(5px) scale(1.02);
+        transform: translateY(-5px) scale(1.02);
     }
 
     100% {
@@ -58,7 +58,7 @@
 }
 
 .animate-drop {
-    animation: drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: drop 0.6s ease-in-out;
 }
 
 .animate-fade-in-up {

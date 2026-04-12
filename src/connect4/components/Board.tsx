@@ -146,7 +146,7 @@ const Board: React.FC<BoardProps> = ({
             </div>
 
             {/* Action Button & Suggestion Box */}
-            <div className="mt-4 w-full max-w-md flex flex-col items-center gap-3 min-h-[120px]">
+            <div className="mt-4 w-full max-w-md flex flex-col items-center gap-3 min-h-[180px]">
                 <div className="w-full flex flex-col gap-3">
                     {!autoHint && (
                         <button
@@ -182,30 +182,32 @@ const Board: React.FC<BoardProps> = ({
                     </div>
                 </div>
 
-                {bestMove && (
-                    <div
-                        className={`w-full bg-secondary-50/50 backdrop-blur-sm px-6 py-4 rounded-xl border border-secondary-200 text-center animate-fade-in-up ${autoHint ? 'opacity-90' : ''
-                            }`}
-                    >
-                        <div className="flex justify-between items-center mb-1">
-                            <p className="text-secondary-700 text-xs font-bold uppercase tracking-widest">
-                                {autoHint ? 'Auto Suggestion' : 'Recommendation'}
+                <div className="w-full min-h-[110px]">
+                    {bestMove && (
+                        <div
+                            className={`w-full bg-secondary-50/50 backdrop-blur-sm px-6 py-4 rounded-xl border border-secondary-200 text-center animate-fade-in-up ${autoHint ? 'opacity-90' : ''
+                                }`}
+                        >
+                            <div className="flex justify-between items-center mb-1">
+                                <p className="text-secondary-700 text-xs font-bold uppercase tracking-widest">
+                                    {autoHint ? 'Auto Suggestion' : 'Recommendation'}
+                                </p>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-foreground bg-background/80 px-2 py-0.5 rounded-full border border-border">
+                                    Target: {solverTarget === 'current' ? 'Current' : solverTarget === PLAYER_1 ? 'Red' : 'Yellow'}
+                                </span>
+                            </div>
+                            <div className="flex items-baseline justify-center gap-2">
+                                <span className="text-slate-600 dark:text-slate-300 text-sm">Play Column</span>
+                                <span className="text-3xl font-extrabold text-secondary-600">{bestMove.column + 1}</span>
+                            </div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                Score: <span className={bestMove.score > 0 ? 'text-secondary-600 font-bold' : bestMove.score < 0 ? 'text-red-500 font-bold' : 'text-muted-foreground'}>
+                                    {bestMove.score > 0 ? '+' : ''}{bestMove.score}
+                                </span>
                             </p>
-                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground bg-background/80 px-2 py-0.5 rounded-full border border-border">
-                                Target: {solverTarget === 'current' ? 'Current' : solverTarget === PLAYER_1 ? 'Red' : 'Yellow'}
-                            </span>
                         </div>
-                        <div className="flex items-baseline justify-center gap-2">
-                            <span className="text-slate-600 dark:text-slate-300 text-sm">Play Column</span>
-                            <span className="text-3xl font-extrabold text-secondary-600">{bestMove.column + 1}</span>
-                        </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                            Score: <span className={bestMove.score > 0 ? 'text-secondary-600 font-bold' : bestMove.score < 0 ? 'text-red-500 font-bold' : 'text-muted-foreground'}>
-                                {bestMove.score > 0 ? '+' : ''}{bestMove.score}
-                            </span>
-                        </p>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );
