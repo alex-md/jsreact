@@ -18,14 +18,12 @@ export function copyBoard(board: Board): Board {
 }
 
 export function isValidLocation(board: Board, col: number): boolean {
-    return board[0][col] === EMPTY;
+    return col >= 0 && col < COLS && board[0][col] === EMPTY;
 }
 
 export function getNextOpenRow(board: Board, col: number): number {
     for (let r = ROWS - 1; r >= 0; r--) {
-        if (board[r][col] === EMPTY) {
-            return r;
-        }
+        if (board[r][col] === EMPTY) return r;
     }
     return -1;
 }
@@ -38,338 +36,487 @@ export function checkWin(board: Board, piece: Player): boolean {
     // Horizontal
     for (let c = 0; c < COLS - 3; c++) {
         for (let r = 0; r < ROWS; r++) {
-            if (board[r][c] === piece && board[r][c + 1] === piece && board[r][c + 2] === piece && board[r][c + 3] === piece) return true;
+            if (
+                board[r][c] === piece &&
+                board[r][c + 1] === piece &&
+                board[r][c + 2] === piece &&
+                board[r][c + 3] === piece
+            ) return true;
         }
     }
+
     // Vertical
     for (let c = 0; c < COLS; c++) {
         for (let r = 0; r < ROWS - 3; r++) {
-            if (board[r][c] === piece && board[r + 1][c] === piece && board[r + 2][c] === piece && board[r + 3][c] === piece) return true;
+            if (
+                board[r][c] === piece &&
+                board[r + 1][c] === piece &&
+                board[r + 2][c] === piece &&
+                board[r + 3][c] === piece
+            ) return true;
         }
     }
-    // Pos Diagonal
+
+    // Positive diagonal
     for (let c = 0; c < COLS - 3; c++) {
         for (let r = 0; r < ROWS - 3; r++) {
-            if (board[r][c] === piece && board[r + 1][c + 1] === piece && board[r + 2][c + 2] === piece && board[r + 3][c + 3] === piece) return true;
+            if (
+                board[r][c] === piece &&
+                board[r + 1][c + 1] === piece &&
+                board[r + 2][c + 2] === piece &&
+                board[r + 3][c + 3] === piece
+            ) return true;
         }
     }
-    // Neg Diagonal
+
+    // Negative diagonal
     for (let c = 0; c < COLS - 3; c++) {
         for (let r = 3; r < ROWS; r++) {
-            if (board[r][c] === piece && board[r - 1][c + 1] === piece && board[r - 2][c + 2] === piece && board[r - 3][c + 3] === piece) return true;
+            if (
+                board[r][c] === piece &&
+                board[r - 1][c + 1] === piece &&
+                board[r - 2][c + 2] === piece &&
+                board[r - 3][c + 3] === piece
+            ) return true;
         }
     }
+
     return false;
 }
 
-// --- ADVANCED SOLVER ENGINE (UPGRADED) ---
+// --- OPTIMIZED ENGINE ---
 
 interface TTEntry {
     depth: number;
-    flag: 'EXACT' | 'LOWER' | 'UPPER';
-    value: number;
+    score: number;
     bestMove: number;
+    flag: 0 | 1 | 2; // EXACT=0, LOWER=1, UPPER=2
 }
 
 class Connect4Engine {
-    private position: bigint = 0n; // Bitboard for Current Player
-    private mask: bigint = 0n;     // Bitboard for Both Players
-    private movesPlayed: number = 0;
+    // 7 bits per column, with 1 sentinel bit on top => classic 7x6 bitboard layout
+    // bit index = col * 7 + rowFromBottom
+    // rowFromBottom: 0..5 playable, 6 sentinel
+    private currentPosition: bigint = 0n; // current player's stones
+    private mask: bigint = 0n;            // all stones
+    private movesPlayed = 0;
 
-    // Transposition Table
-    private tt: Map<bigint, TTEntry>;
+    private readonly tt = new Map<bigint, TTEntry>();
 
-    // Column Order: Center, then alternating left/right (3, 2, 4, 1, 5, 0, 6)
-    // We prioritize center control heavily.
-    private static COL_ORDER = [3, 2, 4, 1, 5, 0, 6];
+    private static readonly COL_ORDER = [3, 2, 4, 1, 5, 0, 6];
+    private static readonly MAX_SCORE = 10_000_000;
+    private static readonly WIN_SCORE = 1_000_000;
+    private static readonly DRAW_SCORE = 0;
+
+    private static readonly BOTTOM_MASK = [
+        1n << 0n,
+        1n << 7n,
+        1n << 14n,
+        1n << 21n,
+        1n << 28n,
+        1n << 35n,
+        1n << 42n
+    ];
+
+    private static readonly TOP_MASK = [
+        1n << 5n,
+        1n << 12n,
+        1n << 19n,
+        1n << 26n,
+        1n << 33n,
+        1n << 40n,
+        1n << 47n
+    ];
+
+    private static readonly COLUMN_MASK = [
+        ((1n << 6n) - 1n) << 0n,
+        ((1n << 6n) - 1n) << 7n,
+        ((1n << 6n) - 1n) << 14n,
+        ((1n << 6n) - 1n) << 21n,
+        ((1n << 6n) - 1n) << 28n,
+        ((1n << 6n) - 1n) << 35n,
+        ((1n << 6n) - 1n) << 42n
+    ];
 
     constructor(board: Board, currentPlayer: Player) {
-        this.tt = new Map();
         this.loadBoard(board, currentPlayer);
     }
 
-    private loadBoard(board: Board, currentPlayer: Player) {
-        this.position = 0n;
-        this.mask = 0n;
-        this.movesPlayed = 0;
+    private opponent(player: Player): Player {
+        return player === PLAYER_1 ? PLAYER_2 : PLAYER_1;
+    }
+
+    private loadBoard(board: Board, currentPlayer: Player): void {
+        let p1 = 0n;
+        let p2 = 0n;
+        let total = 0;
 
         for (let c = 0; c < COLS; c++) {
             for (let r = ROWS - 1; r >= 0; r--) {
                 const cell = board[r][c];
-                if (cell !== EMPTY) {
-                    this.movesPlayed++;
-                    // Bit Index: Col * 7 + (RowFromBottom)
-                    const rowFromBottom = ROWS - 1 - r;
-                    const bitIndex = BigInt(c * 7 + rowFromBottom);
+                if (cell === EMPTY) continue;
 
-                    this.mask |= (1n << bitIndex);
-                    if (cell === currentPlayer) {
-                        this.position |= (1n << bitIndex);
-                    }
-                }
+                const rowFromBottom = ROWS - 1 - r;
+                const bit = 1n << BigInt(c * 7 + rowFromBottom);
+
+                if (cell === PLAYER_1) p1 |= bit;
+                else p2 |= bit;
+                total++;
             }
         }
+
+        this.mask = p1 | p2;
+        this.movesPlayed = total;
+
+        // Internal convention:
+        // currentPosition always stores the side-to-move stones.
+        this.currentPosition = currentPlayer === PLAYER_1 ? p1 : p2;
     }
 
-    /**
-     * Highly optimized bitwise win check.
-     */
+    private key(): bigint {
+        // collision-resistant enough for practical TT use here
+        return this.currentPosition + this.mask * 65537n;
+    }
+
+    private canPlay(col: number): boolean {
+        return (this.mask & Connect4Engine.TOP_MASK[col]) === 0n;
+    }
+
+    private playableMask(col: number): bigint {
+        return (this.mask + Connect4Engine.BOTTOM_MASK[col]) & Connect4Engine.COLUMN_MASK[col];
+    }
+
+    private play(col: number): bigint {
+        const move = this.playableMask(col);
+        this.currentPosition ^= this.mask;
+        this.mask |= move;
+        this.movesPlayed++;
+        return move;
+    }
+
+    private undo(move: bigint): void {
+        this.movesPlayed--;
+        this.mask ^= move;
+        this.currentPosition ^= this.mask;
+    }
+
     private hasWon(pos: bigint): boolean {
-        // Horizontal (Shift 7)
-        let m = pos & (pos >> 7n);
+        let m = pos & (pos >> 1n);   // vertical
+        if ((m & (m >> 2n)) !== 0n) return true;
+
+        m = pos & (pos >> 7n);       // horizontal
         if ((m & (m >> 14n)) !== 0n) return true;
 
-        // Diagonal \ (Shift 6)
-        m = pos & (pos >> 6n);
+        m = pos & (pos >> 6n);       // diagonal \
         if ((m & (m >> 12n)) !== 0n) return true;
 
-        // Diagonal / (Shift 8)
-        m = pos & (pos >> 8n);
+        m = pos & (pos >> 8n);       // diagonal /
         if ((m & (m >> 16n)) !== 0n) return true;
-
-        // Vertical (Shift 1)
-        m = pos & (pos >> 1n);
-        if ((m & (m >> 2n)) !== 0n) return true;
 
         return false;
     }
 
-    private canPlay(col: number): boolean {
-        // Check if top row (5) of column is empty.
-        // Index = col * 7 + 5
-        return (this.mask & (1n << BigInt(col * 7 + 5))) === 0n;
+    private isWinningMove(col: number): boolean {
+        const move = this.playableMask(col);
+        return this.hasWon(this.currentPosition | move);
+    }
+
+    private getOpponentPosition(): bigint {
+        return this.mask ^ this.currentPosition;
+    }
+
+    private countWinningMovesForCurrent(): number {
+        let count = 0;
+        for (const col of Connect4Engine.COL_ORDER) {
+            if (this.canPlay(col) && this.isWinningMove(col)) count++;
+        }
+        return count;
+    }
+
+    private countWinningMovesForOpponent(): number {
+        const savedPos = this.currentPosition;
+        this.currentPosition = this.getOpponentPosition();
+        let count = 0;
+        for (const col of Connect4Engine.COL_ORDER) {
+            if (this.canPlay(col) && this.isWinningMove(col)) count++;
+        }
+        this.currentPosition = savedPos;
+        return count;
+    }
+
+    private isDraw(): boolean {
+        return this.movesPlayed >= 42;
+    }
+
+    private popcount(x: bigint): number {
+        let n = x;
+        let count = 0;
+        while (n !== 0n) {
+            n &= (n - 1n);
+            count++;
+        }
+        return count;
     }
 
     /**
-     * Advanced "Aggressive & Human-Like" Heuristic.
-     * 1. Rewards "Odd" threats (Zugzwang potential).
-     * 2. Rewards connecting 3s with open ends (Traps).
-     * 3. Penalizes pure vertical stacking (to avoid predictable bot behavior).
-     * 4. Non-linear scoring (Forks are valued exponentially higher).
+     * Cheap positional evaluation.
+     * Not perfect, but intentionally fast:
+     * - center control
+     * - immediate threats
+     * - potential alignments via bit tricks
      */
-    private score(): number {
-        const oppPos = this.mask ^ this.position;
+    private evaluate(): number {
+        const me = this.currentPosition;
+        const opp = this.getOpponentPosition();
 
-        // Evaluate Aggressiveness (My Potential) vs Defense (Opponent Potential)
-        // We use a multiplier for offense to make the bot aggressive.
-        const myScore = this.evaluateCluster(this.position, this.mask);
-        const oppScore = this.evaluateCluster(oppPos, this.mask);
+        // Center preference
+        const centerMask =
+            (1n << 21n) | (1n << 22n) | (1n << 23n) | (1n << 24n) | (1n << 25n) | (1n << 26n);
 
-        // Aggression Multiplier: 1.2x. We prefer creating our own threats 
-        // slightly more than blocking opponent's non-lethal setups.
-        return Math.floor(myScore * 1.2) - oppScore;
-    }
-
-    /**
-     * Evaluates bitboard based on 4-in-a-row potentials.
-     * Scans for patterns like 1-1-1-0 or 1-0-1-1 where 0 is empty but playable.
-     */
-    private evaluateCluster(pos: bigint, mask: bigint): number {
         let score = 0;
+        score += this.popcount(me & centerMask) * 12;
+        score -= this.popcount(opp & centerMask) * 12;
 
-        // 1. Center Control (Static Weights) - Gaussian distribution preferred
-        const CENTER_WEIGHTS = [
-            0, 2, 4, 6, 4, 2, 0,  // Row 0
-            1, 3, 5, 7, 5, 3, 1,
-            2, 4, 8, 10, 8, 4, 2,
-            2, 4, 8, 10, 8, 4, 2,
-            1, 3, 5, 7, 5, 3, 1,
-            0, 2, 4, 6, 4, 2, 0
-        ];
+        // Alignment potentials
+        score += this.alignmentScore(me);
+        score -= this.alignmentScore(opp);
 
-        for (let i = 0; i < 42; i++) {
-            if ((pos & (1n << BigInt(i))) !== 0n) {
-                score += CENTER_WEIGHTS[i];
-            }
-        }
-
-        // 2. Connectivity & Open Lines
-        // We look for every possible line of 4.
-        // If a line contains ONLY my pieces and empty spots, it's a potential win.
-        // We sum squares: 1 piece = 1, 2 pieces = 4, 3 pieces = 9.
-        // This makes 3-connected vastly more valuable than 3 scattered pieces.
-
-        // Directions: Vert(1), Horiz(7), Diag1(6), Diag2(8)
-        const shifts = [1n, 7n, 6n, 8n];
-
-        // Iterate over all possible 4-slots on the board manually for precision
-        // (A fully unrolled loop would be faster, but this loop logic is cleaner for the snippet)
-
-        // Check Horizontal
-        for (let r = 0; r < 6; r++) {
-            for (let c = 0; c < 4; c++) {
-                score += this.evaluateWindow(pos, mask, r, c, 0, 1);
-            }
-        }
-        // Check Vertical
-        for (let c = 0; c < 7; c++) {
-            for (let r = 0; r < 3; r++) {
-                // Vertical Penalty: We subtract slightly for vertical lines 
-                // to encourage the bot to spread out ("Human feel").
-                score += (this.evaluateWindow(pos, mask, r, c, 1, 0) - 5);
-            }
-        }
-        // Check Diagonals
-        for (let r = 0; r < 3; r++) {
-            for (let c = 0; c < 4; c++) {
-                score += this.evaluateWindow(pos, mask, r, c, 1, 1); // Up-Right
-                score += this.evaluateWindow(pos, mask, r + 3, c, -1, 1); // Down-Right
-            }
-        }
+        // Immediate tactical threats
+        score += this.countWinningMovesForCurrent() * 300;
+        score -= this.countWinningMovesForOpponent() * 340;
 
         return score;
     }
 
-    private evaluateWindow(pos: bigint, mask: bigint, r: number, c: number, dr: number, dc: number): number {
-        let pieces = 0;
-        let empty = 0;
-        let oddRowThreat = 0;
+    private alignmentScore(pos: bigint): number {
+        let score = 0;
 
-        for (let i = 0; i < 4; i++) {
-            const tr = r + dr * i;
-            const tc = c + dc * i;
-            const idx = BigInt(tc * 7 + tr);
+        // Two-in-a-row and three-in-a-row style patterns, approximated via intersections
+        let m = pos & (pos >> 1n);
+        score += this.popcount(m) * 8;
+        score += this.popcount(m & (m >> 1n)) * 40;
 
-            if ((pos & (1n << idx)) !== 0n) {
-                pieces++;
-                // Bonus for threats on even rows (0, 2, 4) if we are Player 1, or Odd if Player 2.
-                // Simplified: Even rows (from bottom 0) are generally stronger for P1 due to parity.
-                if (tr % 2 === 0) oddRowThreat++;
-            } else if ((mask & (1n << idx)) === 0n) {
-                empty++;
-            } else {
-                // Opponent block
-                return 0;
-            }
-        }
+        m = pos & (pos >> 7n);
+        score += this.popcount(m) * 10;
+        score += this.popcount(m & (m >> 7n)) * 60;
 
-        // Scoring Formula
-        if (pieces === 4) return 10000; // Win
-        if (pieces === 3 && empty === 1) return 100 + (oddRowThreat * 10); // Threat
-        if (pieces === 2 && empty === 2) return 10; // Setup
+        m = pos & (pos >> 6n);
+        score += this.popcount(m) * 9;
+        score += this.popcount(m & (m >> 6n)) * 55;
 
-        return 0;
+        m = pos & (pos >> 8n);
+        score += this.popcount(m) * 9;
+        score += this.popcount(m & (m >> 8n)) * 55;
+
+        return score;
     }
 
-    private pvs(depth: number, alpha: number, beta: number): number {
-        const key = this.position ^ (this.mask + 0x9e3779b9n); // Simple Hash
-        const ttEntry = this.tt.get(key);
+    private orderedMoves(ttBestMove: number = -1): number[] {
+        const wins: number[] = [];
+        const blocks: number[] = [];
+        const safe: number[] = [];
+        const risky: number[] = [];
 
-        if (ttEntry && ttEntry.depth >= depth) {
-            if (ttEntry.flag === 'EXACT') return ttEntry.value;
-            if (ttEntry.flag === 'LOWER' && ttEntry.value > alpha) alpha = ttEntry.value;
-            if (ttEntry.flag === 'UPPER' && ttEntry.value < beta) beta = ttEntry.value;
-            if (alpha >= beta) return ttEntry.value;
+        // Find opponent immediate wins before move
+        const opponentWinsNow: boolean[] = Array(COLS).fill(false);
+        const savedPos = this.currentPosition;
+        this.currentPosition = this.getOpponentPosition();
+        for (const col of Connect4Engine.COL_ORDER) {
+            if (this.canPlay(col) && this.isWinningMove(col)) {
+                opponentWinsNow[col] = true;
+            }
+        }
+        this.currentPosition = savedPos;
+
+        for (const col of Connect4Engine.COL_ORDER) {
+            if (!this.canPlay(col)) continue;
+
+            if (this.isWinningMove(col)) {
+                wins.push(col);
+                continue;
+            }
+
+            if (opponentWinsNow[col]) {
+                blocks.push(col);
+                continue;
+            }
+
+            const move = this.play(col);
+            const oppCanWin = this.countWinningMovesForCurrent() > 0;
+            this.undo(move);
+
+            if (oppCanWin) risky.push(col);
+            else safe.push(col);
         }
 
-        // Draw check
-        if (this.movesPlayed === 42) return 0;
+        const merged = [...wins, ...blocks, ...safe, ...risky];
 
-        if (depth <= 0) return this.score();
-
-        let moves = [];
-        for (let c of Connect4Engine.COL_ORDER) {
-            if (this.canPlay(c)) moves.push(c);
+        if (ttBestMove !== -1) {
+            merged.sort((a, b) => {
+                if (a === ttBestMove) return -1;
+                if (b === ttBestMove) return 1;
+                return 0;
+            });
         }
 
-        if (moves.length === 0) return 0;
+        return merged;
+    }
 
-        // Move Ordering: TT best move first
-        if (ttEntry) {
-            moves.sort((a, b) => (a === ttEntry.bestMove ? -1 : (b === ttEntry.bestMove ? 1 : 0)));
+    private negamax(depth: number, alpha: number, beta: number, ply: number): number {
+        const originalAlpha = alpha;
+        const key = this.key();
+        const entry = this.tt.get(key);
+
+        if (entry && entry.depth >= depth) {
+            if (entry.flag === 0) return entry.score;
+            if (entry.flag === 1) alpha = Math.max(alpha, entry.score);
+            else beta = Math.min(beta, entry.score);
+            if (alpha >= beta) return entry.score;
         }
 
-        let bestScore = -Infinity;
+        // If previous player just made a win, current side is lost
+        if (this.hasWon(this.getOpponentPosition())) {
+            return -Connect4Engine.WIN_SCORE + ply;
+        }
+
+        if (this.isDraw()) return Connect4Engine.DRAW_SCORE;
+        if (depth === 0) return this.evaluate();
+
+        const moves = this.orderedMoves(entry?.bestMove ?? -1);
+        if (moves.length === 0) return Connect4Engine.DRAW_SCORE;
+
+        // Fast tactical resolution
+        if (this.isWinningMove(moves[0])) {
+            return Connect4Engine.WIN_SCORE - ply;
+        }
+
+        let bestScore = -Connect4Engine.MAX_SCORE;
         let bestMove = moves[0];
-        let originalAlpha = alpha;
 
-        for (let i = 0; i < moves.length; i++) {
-            const col = moves[i];
-
-            // Execute Move
-            const colShift = BigInt(col * 7);
-            const moveBit = (this.mask + (1n << colShift)) & ~this.mask;
-
-            // Immediate Win Check (Optimization)
-            if (this.hasWon(this.position | moveBit)) {
-                bestScore = 10000 + depth; // Prefer winning sooner
-                bestMove = col;
-                // Store and return immediately
-                this.tt.set(key, { depth, flag: 'EXACT', value: bestScore, bestMove });
-                return bestScore;
-            }
-
-            const nextMask = this.mask | moveBit;
-            const nextPos = this.position ^ this.mask; // Flip perspective
-
-            // Recursion
-            const savedPos = this.position;
-            const savedMask = this.mask;
-            this.position = nextPos;
-            this.mask = nextMask;
-            this.movesPlayed++;
-
-            let score;
-            if (i === 0) {
-                score = -this.pvs(depth - 1, -beta, -alpha);
-            } else {
-                score = -this.pvs(depth - 1, -alpha - 1, -alpha);
-                if (score > alpha && score < beta) {
-                    score = -this.pvs(depth - 1, -beta, -alpha);
-                }
-            }
-
-            this.movesPlayed--;
-            this.position = savedPos;
-            this.mask = savedMask;
+        for (const col of moves) {
+            const move = this.play(col);
+            const score = -this.negamax(depth - 1, -beta, -alpha, ply + 1);
+            this.undo(move);
 
             if (score > bestScore) {
                 bestScore = score;
                 bestMove = col;
             }
 
-            alpha = Math.max(alpha, score);
+            if (score > alpha) alpha = score;
             if (alpha >= beta) break;
         }
 
-        const flag = bestScore <= originalAlpha ? 'UPPER' : (bestScore >= beta ? 'LOWER' : 'EXACT');
-        this.tt.set(key, { depth, flag, value: bestScore, bestMove });
+        let flag: 0 | 1 | 2 = 0;
+        if (bestScore <= originalAlpha) flag = 2;
+        else if (bestScore >= beta) flag = 1;
+
+        this.tt.set(key, {
+            depth,
+            score: bestScore,
+            bestMove,
+            flag
+        });
 
         return bestScore;
     }
 
-    public solve(): { column: number, score: number } {
-        // Grandmaster Search Depth
-        const MAX_DEPTH = 10;
+    private pickHumanLikeMove(candidates: Array<{ col: number; score: number }>): { col: number; score: number } {
+        candidates.sort((a, b) => b.score - a.score);
+        const best = candidates[0];
 
-        let bestMove = -1;
-        let bestScore = -Infinity;
+        if (!best) return { col: 3, score: 0 };
 
-        // Iterative Deepening
-        for (let d = 1; d <= MAX_DEPTH; d++) {
-            // Aspiration Window Optimization could go here, 
-            // but standard PVS is robust enough for this constraint.
-            this.pvs(d, -200000, 200000);
+        // Never randomize forced wins/losses
+        if (Math.abs(best.score) >= Connect4Engine.WIN_SCORE - 1000) {
+            return best;
+        }
 
-            // Fetch best from TT
-            const key = this.position ^ (this.mask + 0x9e3779b9n);
-            const entry = this.tt.get(key);
+        // Allow slight variation among very close moves
+        const near = candidates.filter(m => m.score >= best.score - 18);
 
-            if (entry) {
-                bestMove = entry.bestMove;
-                bestScore = entry.value;
+        // Prefer center among close moves
+        near.sort((a, b) => {
+            const da = Math.abs(3 - a.col);
+            const db = Math.abs(3 - b.col);
+            if (da !== db) return da - db;
+            return b.score - a.score;
+        });
+
+        const roll = Math.random();
+        if (near.length >= 3 && roll > 0.94) return near[2];
+        if (near.length >= 2 && roll > 0.80) return near[1];
+        return near[0];
+    }
+
+    public solve(): { column: number; score: number } {
+        const remaining = 42 - this.movesPlayed;
+
+        // Adaptive depth: deeper in sparse/endgame positions, but still responsive
+        let maxDepth = 9;
+        if (remaining <= 20) maxDepth = 10;
+        if (remaining <= 14) maxDepth = 11;
+        if (remaining <= 10) maxDepth = 12;
+
+        const rootMoves = this.orderedMoves();
+        if (rootMoves.length === 0) return { column: -1, score: 0 };
+
+        // Immediate tactical fast path
+        for (const col of rootMoves) {
+            if (this.isWinningMove(col)) {
+                return { column: col, score: Connect4Engine.WIN_SCORE };
+            }
+        }
+
+        const candidates: Array<{ col: number; score: number }> = [];
+        let bestCol = rootMoves[0];
+        let bestScore = -Connect4Engine.MAX_SCORE;
+
+        // Iterative deepening keeps move quality decent under shallower searches
+        for (let depth = 1; depth <= maxDepth; depth++) {
+            candidates.length = 0;
+            let localBestCol = rootMoves[0];
+            let localBestScore = -Connect4Engine.MAX_SCORE;
+
+            for (const col of rootMoves) {
+                const move = this.play(col);
+                const score = -this.negamax(depth - 1, -Connect4Engine.MAX_SCORE, Connect4Engine.MAX_SCORE, 1);
+                this.undo(move);
+
+                candidates.push({ col, score });
+
+                if (score > localBestScore) {
+                    localBestScore = score;
+                    localBestCol = col;
+                }
             }
 
-            // Time management / Early exit on win
-            if (bestScore > 9000 || bestScore < -9000) break;
+            bestCol = localBestCol;
+            bestScore = localBestScore;
+
+            // Early exit on forced line
+            if (Math.abs(bestScore) >= Connect4Engine.WIN_SCORE - 1000) break;
+
+            // Reorder root moves for next iteration
+            candidates.sort((a, b) => b.score - a.score);
+            for (let i = 0; i < candidates.length; i++) {
+                rootMoves[i] = candidates[i].col;
+            }
         }
 
-        // Failsafe
-        if (bestMove === -1) {
-            for (let c of Connect4Engine.COL_ORDER) if (this.canPlay(c)) return { column: c, score: 0 };
-        }
+        const picked = this.pickHumanLikeMove(
+            rootMoves.map(col => {
+                const move = this.play(col);
+                const score = -this.negamax(Math.max(6, maxDepth - 1), -Connect4Engine.MAX_SCORE, Connect4Engine.MAX_SCORE, 1);
+                this.undo(move);
+                return { col, score };
+            })
+        );
 
-        return { column: bestMove, score: bestScore };
+        return {
+            column: picked.col,
+            score: picked.score
+        };
     }
 }
 
@@ -386,11 +533,11 @@ export function minimax(
     const engine = new Connect4Engine(board, currentPlayer);
     const result = engine.solve();
 
-    // Scale score to match legacy expectation (huge numbers for wins)
+    // Preserve legacy score expectations
     let s = result.score;
-    if (s > 9000) s = 10000000000000;
-    else if (s < -9000) s = -10000000000000;
-    else s = s * 100;
+    if (s >= Connect4Engine["WIN_SCORE"] - 1000) s = 10000000000000;
+    else if (s <= -Connect4Engine["WIN_SCORE"] + 1000) s = -10000000000000;
+    else s *= 100;
 
     return [result.column, s];
 }

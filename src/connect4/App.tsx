@@ -173,6 +173,8 @@ function App() {
                     canUndo={canUndo}
                     canRedo={canRedo}
                     canReset={currentStep > 0}
+                    isAutoHintOn={autoHint}
+                    onToggleAutoHint={() => setAutoHint(!autoHint)}
                 />
 
                 <div className="mb-4 flex w-full justify-center lg:hidden">
@@ -184,10 +186,20 @@ function App() {
                         <p className="text-xs uppercase tracking-widest text-muted-foreground">Moves Played</p>
                         <p className="mt-1 text-xl font-bold text-foreground">{moveCount}</p>
                     </div>
-                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Auto Hint</p>
-                        <p className="mt-1 text-xl font-bold text-foreground">{autoHint ? 'Enabled' : 'Off'}</p>
-                    </div>
+                    <button 
+                        onClick={() => setAutoHint(!autoHint)}
+                        className={`group rounded-2xl border px-4 py-3 shadow-sm transition-all text-left cursor-pointer ${
+                            autoHint 
+                                ? 'bg-primary-500/10 border-primary-500/40 hover:bg-primary-500/20' 
+                                : 'bg-card/80 border-border hover:bg-card hover:border-primary-500/40'
+                        }`}
+                    >
+                        <div className="flex w-full items-center justify-between">
+                            <p className={`text-xs uppercase tracking-widest transition-colors ${autoHint ? 'text-primary-600 font-bold' : 'text-muted-foreground'}`}>Auto Hint</p>
+                            <div className={`h-2 w-2 rounded-full transition-colors ${autoHint ? 'bg-primary-500 shadow-[0_0_8px] shadow-primary-500/80 animate-pulse' : 'bg-muted-foreground/30 group-hover:bg-primary-500/40'}`}></div>
+                        </div>
+                        <p className={`mt-1 text-xl font-bold transition-colors ${autoHint ? 'text-primary-600' : 'text-foreground'}`}>{autoHint ? 'Enabled' : 'Off'}</p>
+                    </button>
                     <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
                         <p className="text-xs uppercase tracking-widest text-muted-foreground">Solver Target</p>
                         <p className="mt-1 text-xl font-bold text-foreground">{solverTargetLabel}</p>
@@ -253,10 +265,20 @@ function App() {
                         <p className="text-xs uppercase tracking-widest text-muted-foreground">Moves Played</p>
                         <p className="mt-1 text-xl font-bold text-foreground">{moveCount}</p>
                     </div>
-                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Auto Hint</p>
-                        <p className="mt-1 text-xl font-bold text-foreground">{autoHint ? 'Enabled' : 'Off'}</p>
-                    </div>
+                    <button 
+                        onClick={() => setAutoHint(!autoHint)}
+                        className={`group rounded-2xl border px-4 py-3 shadow-sm transition-all text-left cursor-pointer ${
+                            autoHint 
+                                ? 'bg-primary-500/10 border-primary-500/40 hover:bg-primary-500/20' 
+                                : 'bg-card/80 border-border hover:bg-card hover:border-primary-500/40'
+                        }`}
+                    >
+                        <div className="flex w-full items-center justify-between">
+                            <p className={`text-xs uppercase tracking-widest transition-colors ${autoHint ? 'text-primary-600 font-bold' : 'text-muted-foreground'}`}>Auto Hint</p>
+                            <div className={`h-2 w-2 rounded-full transition-colors ${autoHint ? 'bg-primary-500 shadow-[0_0_8px] shadow-primary-500/80 animate-pulse' : 'bg-muted-foreground/30 group-hover:bg-primary-500/40'}`}></div>
+                        </div>
+                        <p className={`mt-1 text-xl font-bold transition-colors ${autoHint ? 'text-primary-600' : 'text-foreground'}`}>{autoHint ? 'Enabled' : 'Off'}</p>
+                    </button>
                     <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
                         <p className="text-xs uppercase tracking-widest text-muted-foreground">Solver Target</p>
                         <p className="mt-1 text-xl font-bold text-foreground">{solverTargetLabel}</p>

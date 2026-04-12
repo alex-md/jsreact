@@ -8,6 +8,8 @@ interface GameHeaderProps {
     canUndo: boolean;
     canRedo: boolean;
     canReset: boolean;
+    isAutoHintOn: boolean;
+    onToggleAutoHint: () => void;
 }
 
 const GameHeader: React.FC<GameHeaderProps> = ({
@@ -17,20 +19,25 @@ const GameHeader: React.FC<GameHeaderProps> = ({
     onRedo,
     canUndo,
     canRedo,
-    canReset
+    canReset,
+    isAutoHintOn,
+    onToggleAutoHint
 }) => {
     return (
         <header className="mb-4 sm:mb-6 text-center w-full max-w-4xl mx-auto relative">
             <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left">
                     <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                        <span className="rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        <span className="hidden rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                             Online Solver
                         </span>
-                        <span className="rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                            2 Player
+                        <span className="hidden rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            1 or 2 Players
                         </span>
-                        <span className="rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        <span className="hidden rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            Customizable Board
+                        </span>
+                        <span className="hidden rounded-full border border-border bg-card/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                             AI Hints
                         </span>
                     </div>
@@ -85,10 +92,25 @@ const GameHeader: React.FC<GameHeaderProps> = ({
                     <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
                     <span>Tap a column to drop a disc</span>
                 </div>
-                <div className="bg-card/50 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-sm border border-border flex items-center gap-2">
-                    <i className="fas fa-keyboard text-primary-500"></i>
-                    <span>Press Space for best move</span>
-                </div>
+                {isAutoHintOn ? (
+                    <div 
+                        onClick={onToggleAutoHint}
+                        className="bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/30 text-primary-500 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-[0_0_15px_rgba(var(--primary),0.15)] flex items-center gap-2 cursor-pointer transition-all duration-300 transform hover:scale-105"
+                        title="Turn Auto Hint Off"
+                    >
+                        <i className="fas fa-lightbulb text-primary-500 animate-pulse"></i>
+                        <span className="font-semibold">Auto hint: ON</span>
+                    </div>
+                ) : (
+                    <div 
+                        onClick={onToggleAutoHint}
+                        className="bg-card/50 hover:bg-card border border-border hover:border-primary-500/30 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-sm flex items-center gap-2 cursor-pointer transition-all duration-300"
+                        title="Turn Auto Hint On"
+                    >
+                        <i className="fas fa-keyboard text-muted-foreground"></i>
+                        <span className="transition-colors group-hover:text-foreground">Press Space for best move</span>
+                    </div>
+                )}
             </div>
         </header>
     );
