@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(rootDir, 'src');
 const siteUrl = 'https://jsreact.com';
+const googleTagId = 'G-ZEFG04PXR7';
 
 // Define directories that should not be treated as pages
 const nonPageDirs = ['components', 'utils', 'assets'];
@@ -200,6 +201,15 @@ const createSeoPlugin = () => ({
                 : '';
 
             const seoTags = `
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=${googleTagId}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); };
+            window.gtag('js', new Date());
+            window.gtag('config', '${googleTagId}');
+            window.__jsreactGtagConfigured = true;
+        </script>
         <title>${escapeHtml(fullTitle)}</title>
         <meta name="description" content="${escapeHtml(metadata.description)}">${keywords}
         <meta name="author" content="JSreact">
