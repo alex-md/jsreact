@@ -62,6 +62,8 @@ const Board: React.FC<BoardProps> = ({
                                                 : 'bg-primary-100/20 text-transparent hover:bg-primary-100/40'
                                         : 'opacity-0 cursor-not-allowed'
                                         }`}
+                                    data-analytics-click="connect4-column-indicator"
+                                    data-analytics-label={`Connect4 column ${colIndex + 1}`}
                                     onMouseEnter={() => isPlayable && setHoveredColumn(colIndex)}
                                     onMouseLeave={() => setHoveredColumn(null)}
                                     onClick={() => isPlayable && onColumnClick(colIndex)}
@@ -85,6 +87,8 @@ const Board: React.FC<BoardProps> = ({
                                 <div
                                     key={`col-overlay-${colIndex}`}
                                     className={`absolute top-0 bottom-0 z-20 ${isPlayable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                                    data-analytics-click="connect4-column"
+                                    data-analytics-label={`Connect4 column ${colIndex + 1}`}
                                     style={{
                                         left: `calc(${colIndex} * (100% / 7))`,
                                         width: 'calc(100% / 7)',

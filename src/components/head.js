@@ -28,6 +28,81 @@ const ensureTrailingSlash = (pathname) => {
     return `${pathname}/`;
 };
 
+const getClickLabel = (element) => {
+    const explicitLabel = element.getAttribute('data-analytics-label') ||
+        element.getAttribute('aria-label') ||
+        element.getAttribute('title');
+
+    if (explicitLabel) {
+        return explicitLabel.trim();
+    }
+
+    const text = element.textContent?.replace(/\s+/g, ' ').trim();
+    if (text) {
+        return text.slice(0, 100);
+    }
+
+    return element.id || element.tagName.toLowerCase();
+};
+
+const ensureGoogleAnalytics = (head, gaTrackingId) => {
+    if (!gaTrackingId) {
+        return;
+    }
+
+    if (!head.querySelector(`script[src*="gtag/js?id=${gaTrackingId}"]`)) {
+        const gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`;
+        head.appendChild(gaScript);
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function gtag() {
+        window.dataLayer.push(arguments);
+    };
+
+    if (!window.__jsreactGtagConfigured) {
+        window.gtag('js', new Date());
+        window.gtag('config', gaTrackingId);
+        window.__jsreactGtagConfigured = true;
+    }
+
+    if (window.__jsreactClickTrackingConfigured) {
+        return;
+    }
+
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element) || typeof window.gtag !== 'function') {
+            return;
+        }
+
+        const clickable = target.closest(
+            'a, button, input, select, textarea, label, [role="button"], [role="switch"], [role="radio"], [data-analytics-click], .cursor-pointer'
+        );
+
+        if (!clickable) {
+            return;
+        }
+
+        const link = clickable.closest('a[href]');
+        const clickText = getClickLabel(clickable);
+        const clickUrl = link ? link.href : undefined;
+
+        window.gtag('event', 'click', {
+            event_category: 'engagement',
+            event_label: clickText,
+            click_text: clickText,
+            click_url: clickUrl,
+            page_path: window.location.pathname,
+            transport_type: 'beacon'
+        });
+    }, true);
+
+    window.__jsreactClickTrackingConfigured = true;
+};
+
 /**
  * Creates and configures the document head with metadata, styles, and tracking
  * @param {string} title - Page title
@@ -281,22 +356,7 @@ export function createHead(title, description, options = {}) {
 
     metaTags.forEach(setMetaTag);
 
-    if (gaTrackingId && !head.querySelector(`script[src*="gtag/js?id=${gaTrackingId}"]`)) {
-        const gaScript = document.createElement('script');
-        gaScript.async = true;
-        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`;
-        head.appendChild(gaScript);
-
-        const gaInit = document.createElement('script');
-        gaInit.dataset.jsreactGtag = 'true';
-        gaInit.textContent = `
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-            gtag('config', '${gaTrackingId}');
-        `;
-        head.appendChild(gaInit);
-    }
+    ensureGoogleAnalytics(head, gaTrackingId);
 
     const baseStructuredData = {
         '@context': 'https://schema.org',

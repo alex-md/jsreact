@@ -14,6 +14,7 @@ export async function createToolCards() {
             return;
         }
 
+        container.innerHTML = '';
         tools.forEach(tool => {
             const card = document.createElement('article');
             card.className = 'tool-card group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 transition-all hover:shadow-lg hover:-translate-y-1';
