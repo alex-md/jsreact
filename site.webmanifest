@@ -1,8 +1,8 @@
 {
-    "name": "Web Tools Hub",
-    "short_name": "Web Tools",
-    "description": "Collection of web developer tools",
-    "start_url": "./index.html",
+    "name": "JSreact Free Online Tools",
+    "short_name": "JSreact Tools",
+    "description": "Free online developer, text, game, and everyday utility tools.",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#f7f5f2",
     "theme_color": "#f7f5f2",
@@ -32,8 +32,5 @@
             "sizes": "512x512",
             "type": "image/png"
         }
-    ],
-    "permissions": [
-        "https://activeusers.vs.workers.dev"
     ]
 }

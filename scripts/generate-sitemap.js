@@ -9,6 +9,12 @@ const distDir = path.resolve(rootDir, 'dist');
 
 // Configuration
 const siteUrl = 'https://jsreact.com';
+const pageOverrides = {
+    connect4: {
+        priority: '0.9',
+        changefreq: 'weekly'
+    }
+};
 
 // Directories and files to exclude from sitemap
 const excludedDirs = [
@@ -53,7 +59,9 @@ function generatePageUrls() {
     const urls = [];
 
     // Add home page with its last modification date
-    const homeLastMod = getDirectoryLastMod(srcDir);
+    const homeLastMod = new Date(fs.statSync(path.join(srcDir, 'index.html')).mtimeMs)
+        .toISOString()
+        .split('T')[0];
     urls.push({
         url: '/',
         priority: '1.0',
@@ -74,11 +82,12 @@ function generatePageUrls() {
         pages.forEach(pageName => {
             const pageDir = path.join(srcDir, pageName);
             const lastmod = getDirectoryLastMod(pageDir);
+            const override = pageOverrides[pageName] || {};
 
             urls.push({
                 url: `/${pageName}/`,
-                priority: '0.8',
-                changefreq: 'weekly',
+                priority: override.priority || '0.8',
+                changefreq: override.changefreq || 'weekly',
                 lastmod
             });
         });

@@ -41,8 +41,8 @@
     },
     {
         "id": "connect4",
-        "title": "Connect 4 Solver",
-        "description": "Master Connect 4 with this advanced AI solver. Analyze positions and get real-time move suggestions.",
+        "title": "Free Connect 4 Solver",
+        "description": "Analyze any Connect 4 position and get an instant best-move recommendation.",
         "icon": "fas fa-brain",
         "color": "indigo",
         "link": "/connect4/",

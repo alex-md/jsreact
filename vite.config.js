@@ -16,8 +16,8 @@ const nonPageDirs = ['components', 'utils', 'assets'];
 
 const pageSeo = {
     '/': {
-        title: 'Web Tools Hub',
-        description: 'A collection of free developer tools to simplify your workflow',
+        title: 'Free Online Tools for Developers and Everyday Tasks',
+        description: 'Use free online tools for coding, text cleanup, calculations, games, SEO, and everyday tasks. Fast, practical utilities with no account required.',
         keywords: 'web development tools, online tools, developer utilities, code tools, programming utilities, web tools hub'
     },
     '/analytics/': {
@@ -32,21 +32,70 @@ const pageSeo = {
         keywords: 'text cleaner, text formatter, whitespace cleanup, string normalizer, content cleaner, text processing tool, remove extra spaces, clean text online, format text tool, text editor'
     },
     '/connect4/': {
-        title: 'Connect 4 Instant Solver',
-        description: 'Use this free Connect 4 online solver to get instant hints and suggestions from a minimax algorithm, fully board customizable of course.',
-        keywords: 'connect 4, connect 4 online, connect 4 solver, connect 4 unblocked, connect 4 2 player, connect 4 ai, four in a row, four in a row solver, board game solver',
-        structuredData: {
-            '@type': 'SoftwareApplication',
-            name: 'Connect 4 Solver',
-            applicationCategory: 'GameApplication',
-            operatingSystem: 'Any',
-            offers: {
-                '@type': 'Offer',
-                price: '0',
-                priceCurrency: 'USD'
+        title: 'Connect 4 Solver - Find the Best Move Free',
+        description: 'Analyze any Connect 4 position and get the best move instantly. Free online solver with automatic hints, undo and redo, and support for Red or Yellow.',
+        keywords: 'connect 4 solver, connect four solver, best connect 4 move, connect 4 strategy, four in a row solver',
+        imageAlt: 'JSreact free Connect 4 solver',
+        structuredDataGraph: [
+            {
+                '@type': 'WebApplication',
+                '@id': `${siteUrl}/connect4/#app`,
+                name: 'JSreact Connect 4 Solver',
+                url: `${siteUrl}/connect4/`,
+                description: 'Free online Connect 4 solver for analyzing positions and finding the best move for Red, Yellow, or the current player.',
+                applicationCategory: 'GameApplication',
+                operatingSystem: 'Any',
+                browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
+                isAccessibleForFree: true,
+                offers: {
+                    '@type': 'Offer',
+                    price: '0',
+                    priceCurrency: 'USD'
+                },
+                featureList: [
+                    'Automatic best-move hints',
+                    'Whole-column move recommendations',
+                    'Undo and redo move analysis',
+                    'Keyboard controls',
+                    'Solver targeting for Red, Yellow, or the current player'
+                ],
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'JSreact',
+                    url: `${siteUrl}/`
+                }
             },
-            featureList: 'Connect 4 online solver, AI move suggestions, 2-player board analysis, perfect play engine, unblocked browser game support'
-        }
+            {
+                '@type': 'FAQPage',
+                '@id': `${siteUrl}/connect4/#faq`,
+                mainEntity: [
+                    {
+                        '@type': 'Question',
+                        name: 'How do I use the Connect 4 solver?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and you can use Undo and Redo to explore alternative lines.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        name: 'Can the solver analyze a move for either player?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Yes. Choose Current, Red, or Yellow in Solver Options to control which player receives the recommendation.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        name: 'Is the Connect 4 solver free?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Yes. The solver is free to use online and does not require an account.'
+                        }
+                    }
+                ]
+            }
+        ]
     },
     '/diff/': {
         title: 'Online Diff Checker',
@@ -160,27 +209,36 @@ const getRouteFromHtml = (filename) => {
     return `/${relativePath.replace(/\/index\.html$/, '/')}`;
 };
 
-const createStructuredData = (route, metadata) => ({
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'JSreact',
-    headline: metadata.title,
-    description: metadata.description,
-    url: `${siteUrl}${route}`,
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Any',
-    author: {
-        '@type': 'Organization',
+const createStructuredData = (route, metadata) => {
+    if (metadata.structuredDataGraph) {
+        return {
+            '@context': 'https://schema.org',
+            '@graph': metadata.structuredDataGraph
+        };
+    }
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
         name: 'JSreact',
-        url: siteUrl,
-        logo: {
-            '@type': 'ImageObject',
-            url: `${siteUrl}/assets/images/icon.png`
-        }
-    },
-    datePublished: metadata.publishDate,
-    ...metadata.structuredData
-});
+        headline: metadata.title,
+        description: metadata.description,
+        url: `${siteUrl}${route}`,
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Any',
+        author: {
+            '@type': 'Organization',
+            name: 'JSreact',
+            url: siteUrl,
+            logo: {
+                '@type': 'ImageObject',
+                url: `${siteUrl}/assets/images/icon.png`
+            }
+        },
+        ...(metadata.publishDate ? { datePublished: metadata.publishDate } : {}),
+        ...metadata.structuredData
+    };
+};
 
 const createSeoPlugin = () => ({
     name: 'jsreact-static-seo',
@@ -220,19 +278,22 @@ const createSeoPlugin = () => ({
         <meta property="og:description" content="${escapeHtml(metadata.description)}">
         <meta property="og:url" content="${canonicalUrl}">
         <meta property="og:site_name" content="JSreact">
+        <meta property="og:locale" content="en_US">
         <meta property="og:image" content="${siteUrl}/assets/images/og-image.png">
-        <meta property="og:image:width" content="1200">
-        <meta property="og:image:height" content="630">
+        <meta property="og:image:width" content="589">
+        <meta property="og:image:height" content="303">
+        <meta property="og:image:alt" content="${escapeHtml(metadata.imageAlt || `${metadata.title} on JSreact`)}">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
         <meta name="twitter:description" content="${escapeHtml(metadata.description)}">
         <meta name="twitter:image" content="${siteUrl}/assets/images/og-image.png">
+        <meta name="twitter:image:alt" content="${escapeHtml(metadata.imageAlt || `${metadata.title} on JSreact`)}">
         <script type="application/ld+json">${structuredData.replace(/</g, '\\u003c')}</script>
 `;
 
             return html
                 .replace(/\s*<title>[\s\S]*?<\/title>/gi, '')
-                .replace(/\s*<meta\s+(?:name|property)=["'](?:description|keywords|author|robots|googlebot|twitter:card|twitter:title|twitter:description|twitter:image|og:type|og:title|og:description|og:url|og:site_name|og:image|og:image:width|og:image:height|article:tag)["'][^>]*>/gi, '')
+                .replace(/\s*<meta\s+(?:name|property)=["'](?:description|keywords|author|robots|googlebot|twitter:card|twitter:title|twitter:description|twitter:image|twitter:image:alt|og:type|og:title|og:description|og:url|og:site_name|og:locale|og:image|og:image:width|og:image:height|og:image:alt|article:tag)["'][^>]*>/gi, '')
                 .replace(/\s*<link\s+rel=["']canonical["'][^>]*>/gi, '')
                 .replace(/\s*<script\s+type=["']application\/ld\+json["'][\s\S]*?<\/script>/gi, '')
                 .replace(/<\/head>/i, `${seoTags}    </head>`);

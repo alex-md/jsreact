@@ -12,6 +12,12 @@ interface BoardProps {
     bestMove: { column: number; score: number } | null;
     isCalculating: boolean;
     onCalculateBestMove: () => void;
+    onUndo: () => void;
+    onRedo: () => void;
+    onReset: () => void;
+    canUndo: boolean;
+    canRedo: boolean;
+    canReset: boolean;
     autoHint: boolean;
     setAutoHint: (value: boolean) => void;
     solverTarget: 'current' | Player;
@@ -27,21 +33,27 @@ const Board: React.FC<BoardProps> = ({
     bestMove,
     isCalculating,
     onCalculateBestMove,
+    onUndo,
+    onRedo,
+    onReset,
+    canUndo,
+    canRedo,
+    canReset,
     autoHint,
     setAutoHint,
     solverTarget,
 }) => {
     return (
-        <div className="bg-card/30 backdrop-blur-md p-4 sm:p-6 rounded-[2rem] shadow-2xl border border-white/20 w-full lg:w-auto flex flex-col items-center relative overflow-hidden">
+        <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full lg:w-auto flex flex-col items-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-secondary-500/5 -z-10"></div>
 
-            <div className="relative bg-gradient-to-b from-primary-600 to-primary-800 p-3 sm:p-4 rounded-2xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.5)] inline-block border-4 border-primary-700">
+            <div className="relative bg-gradient-to-b from-primary-600 to-primary-800 p-3 rounded-2xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.5)] inline-block border-4 border-primary-700">
                 {/* Board Feet/Stand */}
                 <div className="absolute -bottom-6 -left-4 w-6 h-20 bg-primary-900 rounded-b-xl transform rotate-12 -z-10 border-2 border-primary-800"></div>
                 <div className="absolute -bottom-6 -right-4 w-6 h-20 bg-primary-900 rounded-b-xl transform -rotate-12 -z-10 border-2 border-primary-800"></div>
 
                 {/* Column Hover Indicators */}
-                <div className="grid grid-cols-7 gap-2 sm:gap-3 mb-2">
+                <div className="grid grid-cols-7 gap-2 sm:gap-2.5 mb-2" aria-hidden="true">
                     {Array(COLS)
                         .fill(null)
                         .map((_, colIndex) => {
@@ -62,11 +74,6 @@ const Board: React.FC<BoardProps> = ({
                                                 : 'bg-primary-100/20 text-transparent hover:bg-primary-100/40'
                                         : 'opacity-0 cursor-not-allowed'
                                         }`}
-                                    data-analytics-click="connect4-column-indicator"
-                                    data-analytics-label={`Connect4 column ${colIndex + 1}`}
-                                    onMouseEnter={() => isPlayable && setHoveredColumn(colIndex)}
-                                    onMouseLeave={() => setHoveredColumn(null)}
-                                    onClick={() => isPlayable && onColumnClick(colIndex)}
                                 >
                                     {colIndex + 1}
                                 </div>
@@ -75,26 +82,40 @@ const Board: React.FC<BoardProps> = ({
                 </div>
 
                 {/* Game Board Grid */}
-                <div className="grid grid-cols-7 gap-2 sm:gap-3 relative bg-primary-800/50 p-2 sm:p-3 rounded-xl shadow-inner border border-primary-700/50">
+                <div className="connect4-grid grid grid-cols-7 gap-2 sm:gap-2.5 relative bg-primary-800/50 p-2 sm:p-2.5 rounded-xl shadow-inner border border-primary-700/50">
                     {/* Full-height Clickable Column Overlays */}
                     {Array(COLS)
                         .fill(null)
                         .map((_, colIndex) => {
                             const nextRow = getNextOpenRow(board, colIndex);
                             const isPlayable = nextRow !== -1 && !winner;
+                            const isBestMove = bestMove?.column === colIndex;
 
                             return (
-                                <div
+                                <button
+                                    type="button"
                                     key={`col-overlay-${colIndex}`}
-                                    className={`absolute top-0 bottom-0 z-20 ${isPlayable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                                    className={`connect4-column absolute top-0 bottom-0 z-20 rounded-lg transition-colors ${
+                                        isBestMove
+                                            ? 'connect4-column-recommended'
+                                            : hoveredColumn === colIndex
+                                                ? currentPlayer === PLAYER_1
+                                                    ? 'connect4-column-red'
+                                                    : 'connect4-column-yellow'
+                                                : ''
+                                    } ${isPlayable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                                     data-analytics-click="connect4-column"
                                     data-analytics-label={`Connect4 column ${colIndex + 1}`}
+                                    aria-label={`Drop ${currentPlayer === PLAYER_1 ? 'red' : 'yellow'} disc in column ${colIndex + 1}${isBestMove ? ', recommended' : ''}`}
+                                    disabled={!isPlayable}
                                     style={{
                                         left: `calc(${colIndex} * (100% / 7))`,
                                         width: 'calc(100% / 7)',
                                     }}
                                     onMouseEnter={() => isPlayable && setHoveredColumn(colIndex)}
                                     onMouseLeave={() => setHoveredColumn(null)}
+                                    onFocus={() => isPlayable && setHoveredColumn(colIndex)}
+                                    onBlur={() => setHoveredColumn(null)}
                                     onClick={() => isPlayable && onColumnClick(colIndex)}
                                 />
                             );
@@ -105,12 +126,10 @@ const Board: React.FC<BoardProps> = ({
                         row.map((cell, colIndex) => {
                             const nextRow = getNextOpenRow(board, colIndex);
                             const isHoverPreview = hoveredColumn === colIndex && rowIndex === nextRow && !winner;
-                            const isBestMovePosition = bestMove?.column === colIndex && rowIndex === nextRow;
-
                             return (
                                 <div
                                     key={`${rowIndex}-${colIndex}`}
-                                    className="w-9 h-9 sm:w-12 sm:h-12 rounded-full relative flex items-center justify-center"
+                                    className="connect4-cell rounded-full relative flex items-center justify-center"
                                 >
                                     {/* The Hole Background */}
                                     <div className="absolute inset-0 bg-primary-950/60 rounded-full shadow-[inset_0_3px_6px_rgba(0,0,0,0.4)] border border-primary-900/50"></div>
@@ -138,10 +157,6 @@ const Board: React.FC<BoardProps> = ({
                                         ></div>
                                     )}
 
-                                    {/* Best Move Highlight */}
-                                    {isBestMovePosition && !isHoverPreview && (
-                                        <div className="absolute inset-[-6px] border-4 border-secondary-400 rounded-full animate-pulse shadow-[0_0_20px_rgba(16,185,129,0.6)] z-10 pointer-events-none"></div>
-                                    )}
                                 </div>
                             );
                         })
@@ -149,68 +164,61 @@ const Board: React.FC<BoardProps> = ({
                 </div>
             </div>
 
-            {/* Action Button & Suggestion Box */}
-            <div className="mt-4 w-full max-w-md flex flex-col items-center gap-3 min-h-[180px]">
-                <div className="w-full flex flex-col gap-3">
-                    {!autoHint && (
-                        <button
-                            onClick={onCalculateBestMove}
-                            disabled={!!winner || isCalculating}
-                            className={`w-full h-12 rounded-xl font-bold text-lg shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-4 focus:ring-secondary-500/30 flex items-center justify-center ${winner
-                                ? 'bg-muted text-muted-foreground cursor-not-allowed shadow-none'
-                                : 'bg-gradient-to-r from-secondary-500 to-secondary-600 text-white hover:from-secondary-400 hover:to-secondary-500 hover:shadow-secondary-500/25'
-                                }`}
-                        >
+            <div className="mt-4 w-full max-w-md flex flex-col gap-2 sm:mt-5 sm:gap-3">
+                <div className="grid grid-cols-[auto_auto_1fr_auto] gap-2 sm:gap-3">
+                    <button onClick={onUndo} disabled={!canUndo} className="connect4-action-button" title="Undo move" aria-label="Undo move">
+                        <i className="fas fa-undo"></i>
+                    </button>
+                    <button onClick={onRedo} disabled={!canRedo} className="connect4-action-button" title="Redo move" aria-label="Redo move">
+                        <i className="fas fa-redo"></i>
+                    </button>
+                    <button
+                        onClick={onCalculateBestMove}
+                        disabled={!!winner || isCalculating}
+                        className="h-11 rounded-xl bg-gradient-to-r from-secondary-600 to-secondary-700 px-3 font-bold text-white shadow-md transition hover:from-secondary-500 hover:to-secondary-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
                             {isCalculating ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <i className="fas fa-spinner fa-spin"></i>
-                                    Calculating...
+                                    Thinking...
                                 </span>
                             ) : (
-                                <span><i className="fas fa-brain mr-2"></i> Calculate Best Move</span>
+                                <span><i className="fas fa-lightbulb mr-2"></i>{bestMove ? 'Refresh Hint' : 'Show Best Move'}</span>
                             )}
-                        </button>
-                    )}
-
-                    {/* Auto Hint Toggle (Mobile/Quick Access) */}
-                    <div className="flex items-center justify-center gap-2 text-slate-600 dark:text-slate-400 text-sm">
-                        <label className="flex items-center gap-2 cursor-pointer select-none">
-                            <input
-                                type="checkbox"
-                                checked={autoHint}
-                                onChange={(e) => setAutoHint(e.target.checked)}
-                                className="w-5 h-5 rounded border-input text-secondary-600 focus:ring-secondary-500"
-                            />
-                            <span>Auto Hint</span>
-                        </label>
-                    </div>
+                    </button>
+                    <button onClick={onReset} disabled={!canReset} className="connect4-action-button" title="Start a new board" aria-label="Start a new board">
+                        <i className="fas fa-rotate-left"></i>
+                    </button>
                 </div>
 
-                <div className="w-full min-h-[110px]">
-                    {bestMove && (
-                        <div
-                            className={`w-full bg-secondary-50/50 backdrop-blur-sm px-6 py-4 rounded-xl border border-secondary-200 text-center animate-fade-in-up ${autoHint ? 'opacity-90' : ''
-                                }`}
-                        >
-                            <div className="flex justify-between items-center mb-1">
-                                <p className="text-secondary-700 text-xs font-bold uppercase tracking-widest">
-                                    {autoHint ? 'Auto Suggestion' : 'Recommendation'}
-                                </p>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-foreground bg-background/80 px-2 py-0.5 rounded-full border border-border">
-                                    Target: {solverTarget === 'current' ? 'Current' : solverTarget === PLAYER_1 ? 'Red' : 'Yellow'}
-                                </span>
-                            </div>
-                            <div className="flex items-baseline justify-center gap-2">
-                                <span className="text-slate-600 dark:text-slate-300 text-sm">Play Column</span>
-                                <span className="text-3xl font-extrabold text-secondary-600">{bestMove.column + 1}</span>
-                            </div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                Score: <span className={bestMove.score > 0 ? 'text-secondary-600 font-bold' : bestMove.score < 0 ? 'text-red-500 font-bold' : 'text-muted-foreground'}>
-                                    {bestMove.score > 0 ? '+' : ''}{bestMove.score}
+                <div className="flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border bg-card/80 px-4 py-3 text-sm shadow-sm" aria-live="polite">
+                    <div className="min-w-0">
+                        {bestMove ? (
+                            <p className="truncate text-foreground">
+                                <span className="font-semibold text-secondary-700">Recommended:</span> column <strong>{bestMove.column + 1}</strong>
+                                <span className="ml-2 hidden text-xs text-muted-foreground sm:inline">
+                                    for {solverTarget === 'current' ? 'current player' : solverTarget === PLAYER_1 ? 'Red' : 'Yellow'}
                                 </span>
                             </p>
-                        </div>
-                    )}
+                        ) : (
+                            <p className="truncate text-muted-foreground">Choose a column, or press 1–7 on your keyboard.</p>
+                        )}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                        <span className="hidden text-xs font-semibold text-muted-foreground sm:inline">Auto hints</span>
+                        <button
+                            type="button"
+                            role="switch"
+                            aria-checked={autoHint}
+                            aria-label={`Auto hints ${autoHint ? 'on' : 'off'}`}
+                            onClick={() => setAutoHint(!autoHint)}
+                            className={`connect4-auto-switch ${autoHint ? 'is-on' : 'is-off'}`}
+                        >
+                            <span className="connect4-switch-label connect4-switch-off">OFF</span>
+                            <span className="connect4-switch-label connect4-switch-on">ON</span>
+                            <span className="connect4-switch-thumb" aria-hidden="true"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -9,8 +9,8 @@ interface GameStatusProps {
 
 const GameStatus: React.FC<GameStatusProps> = ({ currentPlayer, winner }) => {
     return (
-        <div className="flex flex-col sm:flex-row justify-center items-center mb-4 gap-4 w-full">
-            <div className="flex items-center gap-3 bg-card px-6 py-3 rounded-full shadow-md border border-border">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 w-full">
+            <div className="flex items-center gap-4 bg-card px-5 py-2.5 rounded-full shadow-md border border-border">
                 <span className="text-muted-foreground font-medium text-sm uppercase tracking-wider">Current Turn</span>
                 <div
                     className={`px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-2 transition-colors ${currentPlayer === PLAYER_1

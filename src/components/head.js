@@ -111,6 +111,7 @@ const ensureGoogleAnalytics = (head, gaTrackingId) => {
  * @param {string} options.gaTrackingId - Google Analytics tracking ID (default: G-ZEFG04PXR7)
  * @param {string} options.baseUrl - Base URL for canonical links and images
  * @param {string} options.publishDate - Publication date for JSON-LD
+ * @param {string} options.modifiedDate - Last modified date for JSON-LD
  */
 export function createHead(title, description, options = {}) {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -129,12 +130,17 @@ export function createHead(title, description, options = {}) {
     const {
         gaTrackingId = 'G-ZEFG04PXR7',
         baseUrl: providedBaseUrl,
-        publishDate = new Date().toISOString().split('T')[0],
+        publishDate,
+        modifiedDate,
         canonicalPath,
         canonicalUrl: canonicalUrlOverride,
         redirectToCanonical = true,
         manualRedirects = true,
         keywords,
+        ogImage = '/assets/images/og-image.png',
+        ogImageAlt = `${title} on JSreact`,
+        ogImageWidth = '589',
+        ogImageHeight = '303',
         additionalMeta = [],
         structuredData: structuredDataOverride
     } = options;
@@ -266,7 +272,6 @@ export function createHead(title, description, options = {}) {
     ensureCriticalStyles();
 
     [
-        { type: 'link', rel: 'manifest', href: '/manifest.json' },
         { type: 'link', rel: 'manifest', href: '/site.webmanifest' },
         {
             type: 'link',
@@ -334,13 +339,16 @@ export function createHead(title, description, options = {}) {
         { property: 'og:description', content: description },
         { property: 'og:url', content: canonicalUrl },
         { property: 'og:site_name', content: 'JSreact' },
-        { property: 'og:image', content: getFullUrl('/assets/images/og-image.png') },
-        { property: 'og:image:width', content: '1200' },
-        { property: 'og:image:height', content: '630' },
+        { property: 'og:locale', content: 'en_US' },
+        { property: 'og:image', content: getFullUrl(ogImage) },
+        { property: 'og:image:width', content: ogImageWidth },
+        { property: 'og:image:height', content: ogImageHeight },
+        { property: 'og:image:alt', content: ogImageAlt },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: `${title} | JSreact` },
         { name: 'twitter:description', content: description },
-        { name: 'twitter:image', content: getFullUrl('/assets/images/og-image.png') }
+        { name: 'twitter:image', content: getFullUrl(ogImage) },
+        { name: 'twitter:image:alt', content: ogImageAlt }
     ];
 
     if (keywords) {
@@ -376,8 +384,8 @@ export function createHead(title, description, options = {}) {
                 url: getFullUrl('/assets/images/icon.png')
             }
         },
-        datePublished: publishDate,
-        dateModified: new Date().toISOString()
+        ...(publishDate ? { datePublished: publishDate } : {}),
+        ...(modifiedDate ? { dateModified: modifiedDate } : {})
     };
 
     const structuredData = structuredDataOverride === null

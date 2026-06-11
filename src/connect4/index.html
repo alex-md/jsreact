@@ -4,37 +4,105 @@
     <head>
         <meta charset="UTF-8">
 
-        <title>Free Connect 4 Online Solver - Open-Source AI Tool</title>
+        <title>Connect 4 Solver - Find the Best Move Free | JSreact</title>
         <meta name="description"
-            content="Free Connect 4 online solver with instant AI hints. Analyze any board, find winning moves, and practice perfect play.">
+            content="Analyze any Connect 4 position and get the best move instantly. Free online solver with automatic hints, undo and redo, and support for Red or Yellow.">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <link rel="canonical" href="https://jsreact.com/connect4/">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="JSreact">
+        <meta property="og:locale" content="en_US">
+        <meta property="og:title" content="Connect 4 Solver - Find the Best Move Free">
+        <meta property="og:description"
+            content="Analyze any Connect 4 board and get an instant best-move recommendation with automatic hints.">
+        <meta property="og:url" content="https://jsreact.com/connect4/">
+        <meta property="og:image" content="https://jsreact.com/assets/images/og-image.png">
+        <meta property="og:image:alt" content="JSreact free Connect 4 solver">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Connect 4 Solver - Find the Best Move Free">
+        <meta name="twitter:description"
+            content="Analyze any Connect 4 board and get an instant best-move recommendation with automatic hints.">
+        <meta name="twitter:image" content="https://jsreact.com/assets/images/og-image.png">
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "WebApplication",
+                    "@id": "https://jsreact.com/connect4/#app",
+                    "name": "JSreact Connect 4 Solver",
+                    "url": "https://jsreact.com/connect4/",
+                    "description": "Free online Connect 4 solver for analyzing positions and finding the best move for Red, Yellow, or the current player.",
+                    "applicationCategory": "GameApplication",
+                    "operatingSystem": "Any",
+                    "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+                    "isAccessibleForFree": true,
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    },
+                    "featureList": [
+                        "Automatic best-move hints",
+                        "Whole-column move recommendations",
+                        "Undo and redo move analysis",
+                        "Keyboard controls",
+                        "Solver targeting for Red, Yellow, or the current player"
+                    ],
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "JSreact",
+                        "url": "https://jsreact.com/"
+                    }
+                },
+                {
+                    "@type": "FAQPage",
+                    "@id": "https://jsreact.com/connect4/#faq",
+                    "mainEntity": [
+                        {
+                            "@type": "Question",
+                            "name": "How do I use the Connect 4 solver?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and you can use Undo and Redo to explore alternative lines."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Can the solver analyze a move for either player?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Choose Current, Red, or Yellow in Solver Options to control which player receives the recommendation."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Is the Connect 4 solver free?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. The solver is free to use online and does not require an account."
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+        </script>
 
         <script type="module">
             import { createHead } from '@components/head.js';
 
             createHead(
-                'Connect 4 Instant Solver',
-                'Use this free Connect 4 online solver to get instant hints and suggestions from a minimax algorithm, fully board customizable of course.',
+                'Connect 4 Solver - Find the Best Move Free',
+                'Analyze any Connect 4 position and get the best move instantly. Free online solver with automatic hints, undo and redo, and support for Red or Yellow.',
                 {
-                    keywords: ['connect 4', 'connect 4 online', 'connect 4 solver', 'connect 4 unblocked', 'connect 4 2 player', 'connect 4 ai', 'four in a row', 'four in a row solver', 'four in a row', 'four in a row ai', 'board game solver'],
-                    structuredData: {
-                        '@type': 'SoftwareApplication',
-                        'name': 'Connect 4 Solver',
-                        'applicationCategory': 'GameApplication',
-                        'operatingSystem': 'Any',
-                        'offers': {
-                            '@type': 'Offer',
-                            'price': '0',
-                            'priceCurrency': 'USD'
-                        },
-                        'aggregateRating': {
-                            '@type': 'AggregateRating',
-                            'ratingValue': '5',
-                            'ratingCount': '1'
-                        },
-                        'featureList': 'Connect 4 online solver, AI move suggestions, 2-player board analysis, perfect play engine, unblocked browser game support'
-                    }
+                    canonicalPath: '/connect4/',
+                    keywords: ['connect 4 solver', 'connect four solver', 'best connect 4 move', 'connect 4 strategy', 'four in a row solver'],
+                    ogImageAlt: 'JSreact free Connect 4 solver',
+                    structuredData: null
                 }
             );
         </script>
@@ -48,7 +116,7 @@
 
         <div id="header"></div>
 
-        <main class="container mx-auto px-4 py-4 sm:py-8 max-w-7xl min-h-[calc(100vh-300px)]">
+        <main class="container mx-auto px-3 py-2 sm:px-4 sm:py-3 max-w-7xl min-h-[calc(100vh-300px)]">
             <div id="root"></div>
         </main>
 

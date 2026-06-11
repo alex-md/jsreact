@@ -1,10 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
     createBoard,
     dropPiece,
     getNextOpenRow,
     checkWin,
-    getBestMove,
     PLAYER_1,
     PLAYER_2,
     copyBoard,
@@ -27,7 +26,7 @@ function App() {
     const [winner, setWinner] = useState<Player | null>(null);
 
     // Settings (Persisted)
-    const [autoHint, setAutoHint] = useLocalStorage<boolean>('connect4-autoHint', false);
+    const [autoHint, setAutoHint] = useLocalStorage<boolean>('connect4-autoHint', true);
     const [solverTarget, setSolverTarget] = useLocalStorage<'current' | Player>('connect4-solverTarget', 'current');
 
 
@@ -36,26 +35,21 @@ function App() {
     const [isCalculating, setIsCalculating] = useState(false);
     const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
     const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
+    const solverWorkerRef = useRef<Worker | null>(null);
+    const solverRequestIdRef = useRef(0);
+    const hintCacheRef = useRef(new Map<string, { column: number; score: number }>());
 
     const currentBoard = history[currentStep].board;
     const currentPlayer = history[currentStep].currentPlayer;
     const moveCount = currentStep;
     const canUndo = currentStep > 0;
     const canRedo = currentStep < history.length - 1;
-    const solverTargetLabel = solverTarget === 'current'
-        ? 'Current player'
-        : solverTarget === PLAYER_1
-            ? 'Red'
-            : 'Yellow';
-
-
-
     const checkWinner = useCallback((board: BoardType, player: Player) => {
         if (checkWin(board, player)) return player;
         return null;
     }, []);
 
-    const handleColumnClick = (col: number) => {
+    const handleColumnClick = useCallback((col: number) => {
         if (winner) return;
 
         const row = getNextOpenRow(currentBoard, col);
@@ -71,18 +65,22 @@ function App() {
 
         setHistory(newHistory);
         setCurrentStep(newHistory.length - 1);
+        solverRequestIdRef.current++;
+        setIsCalculating(false);
         setBestMove(null);
 
         const win = checkWinner(newBoard, currentPlayer);
         if (win) {
             setWinner(win);
         }
-    };
+    }, [checkWinner, currentBoard, currentPlayer, currentStep, history, winner]);
 
     const handleUndo = () => {
         if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
             setWinner(null);
+            solverRequestIdRef.current++;
+            setIsCalculating(false);
             setBestMove(null);
         }
     };
@@ -91,6 +89,8 @@ function App() {
         if (currentStep < history.length - 1) {
             const nextStep = currentStep + 1;
             setCurrentStep(nextStep);
+            solverRequestIdRef.current++;
+            setIsCalculating(false);
             setBestMove(null);
 
             const nextState = history[nextStep];
@@ -104,46 +104,103 @@ function App() {
         setHistory([{ board: createBoard(), currentPlayer: PLAYER_1 }]);
         setCurrentStep(0);
         setWinner(null);
+        solverRequestIdRef.current++;
+        setIsCalculating(false);
+        setHoveredColumn(null);
         setBestMove(null);
     };
 
-    const calculateBestMove = useCallback(() => {
-        if (winner) return;
-        setIsCalculating(true);
+    useEffect(() => {
+        const worker = new Worker(new URL('./solver.worker.ts', import.meta.url), { type: 'module' });
+        solverWorkerRef.current = worker;
 
-        let targetPlayer = currentPlayer;
-        if (solverTarget !== 'current') {
-            targetPlayer = solverTarget;
+        worker.onmessage = (event: MessageEvent<{ id: number; move: { column: number; score: number }; cacheKey: string }>) => {
+            hintCacheRef.current.set(event.data.cacheKey, event.data.move);
+            if (event.data.id !== solverRequestIdRef.current) return;
+            setBestMove(event.data.move);
+            setIsCalculating(false);
+        };
+        worker.onerror = () => {
+            setIsCalculating(false);
+        };
+
+        return () => {
+            worker.terminate();
+            solverWorkerRef.current = null;
+        };
+    }, []);
+
+    const calculateBestMove = useCallback(() => {
+        if (winner || !solverWorkerRef.current) return;
+
+        const targetPlayer = solverTarget === 'current' ? currentPlayer : solverTarget;
+        const cacheKey = `${targetPlayer}:${currentBoard.flat().join('')}`;
+        const cachedMove = hintCacheRef.current.get(cacheKey);
+
+        if (cachedMove) {
+            setBestMove(cachedMove);
+            setIsCalculating(false);
+            return;
         }
 
-        setTimeout(() => {
-            const move = getBestMove(currentBoard, targetPlayer);
-            setBestMove(move);
-            setIsCalculating(false);
-        }, 50);
+        const id = ++solverRequestIdRef.current;
+        setIsCalculating(true);
+        solverWorkerRef.current.postMessage({ id, board: currentBoard, player: targetPlayer, cacheKey });
     }, [currentBoard, currentPlayer, winner, solverTarget]);
 
     // Auto Hint Effect
     useEffect(() => {
-        if (autoHint && !winner && !isCalculating) {
+        if (autoHint && !winner) {
             calculateBestMove();
+        } else if (!autoHint) {
+            solverRequestIdRef.current++;
+            setIsCalculating(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentBoard, autoHint, solverTarget]);
+    }, [autoHint, calculateBestMove, winner]);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (isHowToPlayOpen) return;
+            const target = event.target as HTMLElement | null;
+            if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;
+
             if (event.code === 'Space') {
                 event.preventDefault();
                 if (!winner && !isCalculating) {
                     calculateBestMove();
                 }
+                return;
+            }
+
+            if (/^[1-7]$/.test(event.key)) {
+                event.preventDefault();
+                handleColumnClick(Number(event.key) - 1);
+                return;
+            }
+
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                event.preventDefault();
+                const direction = event.key === 'ArrowLeft' ? -1 : 1;
+                setHoveredColumn((column) => {
+                    const start = column ?? 3;
+                    return Math.min(6, Math.max(0, start + direction));
+                });
+                return;
+            }
+
+            if (event.key === 'Enter' && hoveredColumn !== null) {
+                event.preventDefault();
+                handleColumnClick(hoveredColumn);
+                return;
+            }
+
+            if (event.key === 'Escape') {
+                setHoveredColumn(null);
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [calculateBestMove, isCalculating, winner, isHowToPlayOpen]);
+    }, [calculateBestMove, handleColumnClick, hoveredColumn, isCalculating, winner, isHowToPlayOpen]);
 
     useEffect(() => {
         if (!isHowToPlayOpen) return;
@@ -159,133 +216,63 @@ function App() {
 
 
     return (
-        <div className="relative min-h-screen bg-background text-foreground font-sans selection:bg-primary-500 selection:text-white pb-10 overflow-hidden">
+        <div className="relative min-h-screen bg-background text-foreground font-sans selection:bg-primary-500 selection:text-white pb-6 overflow-hidden">
             <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-primary-500/10 blur-3xl"></div>
             <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-secondary-500/10 blur-3xl"></div>
 
-            <div className="relative container mx-auto px-4 py-4 sm:py-6 flex flex-col items-center max-w-7xl">
+            <div className="relative container mx-auto px-1 py-2 sm:px-2 sm:py-3 flex flex-col items-center max-w-7xl">
 
                 <GameHeader
                     onOpenHowToPlay={() => setIsHowToPlayOpen(true)}
-                    onReset={handleReset}
-                    onUndo={handleUndo}
-                    onRedo={handleRedo}
-                    canUndo={canUndo}
-                    canRedo={canRedo}
-                    canReset={currentStep > 0}
-                    isAutoHintOn={autoHint}
-                    onToggleAutoHint={() => setAutoHint(!autoHint)}
                 />
 
-                <div className="mb-4 flex w-full justify-center lg:hidden">
-                    <GameStatus currentPlayer={currentPlayer} winner={winner} />
-                </div>
-
-                <div className="mb-6 hidden w-full max-w-4xl lg:grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Moves Played</p>
-                        <p className="mt-1 text-xl font-bold text-foreground">{moveCount}</p>
-                    </div>
-                    <button 
-                        onClick={() => setAutoHint(!autoHint)}
-                        className={`group rounded-2xl border px-4 py-3 shadow-sm transition-all text-left cursor-pointer ${
-                            autoHint 
-                                ? 'bg-primary-500/10 border-primary-500/40 hover:bg-primary-500/20' 
-                                : 'bg-card/80 border-border hover:bg-card hover:border-primary-500/40'
-                        }`}
-                    >
-                        <div className="flex w-full items-center justify-between">
-                            <p className={`text-xs uppercase tracking-widest transition-colors ${autoHint ? 'text-primary-600 font-bold' : 'text-muted-foreground'}`}>Auto Hint</p>
-                            <div className={`h-2 w-2 rounded-full transition-colors ${autoHint ? 'bg-primary-500 shadow-[0_0_8px] shadow-primary-500/80 animate-pulse' : 'bg-muted-foreground/30 group-hover:bg-primary-500/40'}`}></div>
-                        </div>
-                        <p className={`mt-1 text-xl font-bold transition-colors ${autoHint ? 'text-primary-600' : 'text-foreground'}`}>{autoHint ? 'Enabled' : 'Off'}</p>
-                    </button>
-                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Solver Target</p>
-                        <p className="mt-1 text-xl font-bold text-foreground">{solverTargetLabel}</p>
-                    </div>
-                </div>
-
-                <div className="hidden lg:flex mb-4 w-full justify-center">
+                <div className="mb-3 flex w-full justify-center sm:mb-4">
                     <GameStatus currentPlayer={currentPlayer} winner={winner} />
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-center w-full max-w-6xl">
-                    {/* Left Control Panel (Desktop) */}
-                    <div className="hidden lg:block">
+                    <div className="order-2 w-full lg:order-1 lg:w-auto">
                         <Controls
                             moveCount={moveCount}
-                            currentStep={currentStep}
-                            historyLength={history.length}
-                            onUndo={handleUndo}
-                            onRedo={handleRedo}
-                            onReset={handleReset}
-                            autoHint={autoHint}
-                            setAutoHint={setAutoHint}
                             solverTarget={solverTarget}
                             setSolverTarget={setSolverTarget}
                         />
                     </div>
 
-                    {/* Main Board Area */}
-                    <Board
-                        board={currentBoard}
-                        currentPlayer={currentPlayer}
-                        winner={winner}
-                        hoveredColumn={hoveredColumn}
-                        setHoveredColumn={setHoveredColumn}
-                        onColumnClick={handleColumnClick}
-                        bestMove={bestMove}
-                        isCalculating={isCalculating}
+                    <div className="order-1 w-full lg:order-2 lg:w-auto">
+                        <Board
+                            board={currentBoard}
+                            currentPlayer={currentPlayer}
+                            winner={winner}
+                            hoveredColumn={hoveredColumn}
+                            setHoveredColumn={setHoveredColumn}
+                            onColumnClick={handleColumnClick}
+                            bestMove={bestMove}
+                            isCalculating={isCalculating}
                             onCalculateBestMove={calculateBestMove}
-                            autoHint={autoHint}
-                            setAutoHint={setAutoHint}
-                            solverTarget={solverTarget}
-                        />
-
-                    {/* Mobile Controls (Below Board) */}
-                    <div className="lg:hidden w-full">
-                        <Controls
-                            moveCount={moveCount}
-                            currentStep={currentStep}
-                            historyLength={history.length}
                             onUndo={handleUndo}
                             onRedo={handleRedo}
                             onReset={handleReset}
+                            canUndo={canUndo}
+                            canRedo={canRedo}
+                            canReset={currentStep > 0}
                             autoHint={autoHint}
                             setAutoHint={setAutoHint}
                             solverTarget={solverTarget}
-                            setSolverTarget={setSolverTarget}
                         />
                     </div>
                 </div>
 
-                <div className="mt-4 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3 lg:hidden">
-                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Moves Played</p>
-                        <p className="mt-1 text-xl font-bold text-foreground">{moveCount}</p>
+                <section aria-labelledby="connect4-features-title" className="mt-10 w-full max-w-6xl">
+                    <div className="mx-auto mb-5 max-w-3xl text-center">
+                        <h2 id="connect4-features-title" className="text-2xl font-heading font-bold text-foreground">
+                            Analyze Connect 4 positions in seconds
+                        </h2>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            Build the board one move at a time, compare ideas, and use the highlighted recommendation to find stronger tactical and strategic moves.
+                        </p>
                     </div>
-                    <button 
-                        onClick={() => setAutoHint(!autoHint)}
-                        className={`group rounded-2xl border px-4 py-3 shadow-sm transition-all text-left cursor-pointer ${
-                            autoHint 
-                                ? 'bg-primary-500/10 border-primary-500/40 hover:bg-primary-500/20' 
-                                : 'bg-card/80 border-border hover:bg-card hover:border-primary-500/40'
-                        }`}
-                    >
-                        <div className="flex w-full items-center justify-between">
-                            <p className={`text-xs uppercase tracking-widest transition-colors ${autoHint ? 'text-primary-600 font-bold' : 'text-muted-foreground'}`}>Auto Hint</p>
-                            <div className={`h-2 w-2 rounded-full transition-colors ${autoHint ? 'bg-primary-500 shadow-[0_0_8px] shadow-primary-500/80 animate-pulse' : 'bg-muted-foreground/30 group-hover:bg-primary-500/40'}`}></div>
-                        </div>
-                        <p className={`mt-1 text-xl font-bold transition-colors ${autoHint ? 'text-primary-600' : 'text-foreground'}`}>{autoHint ? 'Enabled' : 'Off'}</p>
-                    </button>
-                    <div className="rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm">
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Solver Target</p>
-                        <p className="mt-1 text-xl font-bold text-foreground">{solverTargetLabel}</p>
-                    </div>
-                </div>
-
-                <section className="mt-10 w-full max-w-6xl grid gap-4 lg:grid-cols-3">
+                    <div className="grid gap-4 lg:grid-cols-3">
                     <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
                         <div className="flex items-center gap-3">
                             <div className="h-10 w-10 rounded-xl bg-primary-500/10 text-primary-600 flex items-center justify-center">
@@ -294,7 +281,7 @@ function App() {
                             <h2 className="text-lg font-bold text-foreground">Perfect-play engine</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            The solver evaluates optimal moves using a full game tree to keep every turn sharp.
+                            The engine evaluates legal moves, immediate wins, forced blocks, center control, and future threats before recommending a column.
                         </p>
                     </article>
                     <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
@@ -305,7 +292,7 @@ function App() {
                             <h2 className="text-lg font-bold text-foreground">Fast tactical checks</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            Tap any column to test a line, then use Undo/Redo to explore alternative responses.
+                            Tap a column or press 1–7, then use Undo and Redo to compare alternative responses without rebuilding the position.
                         </p>
                     </article>
                     <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
@@ -316,9 +303,36 @@ function App() {
                             <h2 className="text-lg font-bold text-foreground">Strategy refresher</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            Control the center early, force double threats, and watch for diagonal traps.
+                            Use the solver to practice center control, forced blocks, double threats, vertical setups, and diagonal traps.
                         </p>
                     </article>
+                    </div>
+                </section>
+
+                <section aria-labelledby="connect4-faq-title" className="mt-8 w-full max-w-4xl rounded-2xl border border-border bg-card/80 p-6 shadow-sm">
+                    <h2 id="connect4-faq-title" className="text-2xl font-heading font-bold text-foreground">
+                        Connect 4 solver questions
+                    </h2>
+                    <div className="mt-5 grid gap-5 md:grid-cols-3">
+                        <article>
+                            <h3 className="text-base font-bold text-foreground">How do I analyze a position?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Enter the moves in order by selecting columns. Auto Hint highlights the recommended column after every turn.
+                            </p>
+                        </article>
+                        <article>
+                            <h3 className="text-base font-bold text-foreground">Can I solve for Red or Yellow?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Yes. Choose Current, Red, or Yellow to analyze the board from the player you want to help.
+                            </p>
+                        </article>
+                        <article>
+                            <h3 className="text-base font-bold text-foreground">Is it free to use?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Yes. The Connect 4 solver is free, works in your browser, and does not require an account.
+                            </p>
+                        </article>
+                    </div>
                 </section>
             </div>
 

@@ -1,8 +1,8 @@
 {
-    "name": "Web Tools Hub",
-    "short_name": "Web Tools",
-    "description": "Collection of web developer tools",
-    "start_url": "./index.html",
+    "name": "JSreact Free Online Tools",
+    "short_name": "JSreact Tools",
+    "description": "Free online developer, text, game, and everyday utility tools.",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#f7f5f2",
     "theme_color": "#f7f5f2",
@@ -13,22 +13,22 @@
             "type": "image/png"
         },
         {
-            "src": "./images/favicon-32x32.png",
+            "src": "/assets/images/favicon-32x32.png",
             "sizes": "32x32",
             "type": "image/png"
         },
         {
-            "src": "./images/apple-touch-icon.png",
+            "src": "/assets/images/apple-touch-icon.png",
             "sizes": "180x180",
             "type": "image/png"
         },
         {
-            "src": "./images/android-chrome-192x192.png",
+            "src": "/assets/images/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "./images/android-chrome-512x512.png",
+            "src": "/assets/images/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
