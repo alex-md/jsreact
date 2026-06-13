@@ -8,7 +8,7 @@ interface BoardProps {
     winner: Player | null;
     hoveredColumn: number | null;
     setHoveredColumn: (col: number | null) => void;
-    onColumnClick: (col: number) => void;
+    onColumnClick: (col: number, inputMethod?: 'pointer' | 'keyboard') => void;
     bestMove: { column: number; score: number } | null;
     isCalculating: boolean;
     onCalculateBestMove: () => void;
@@ -116,7 +116,7 @@ const Board: React.FC<BoardProps> = ({
                                     onMouseLeave={() => setHoveredColumn(null)}
                                     onFocus={() => isPlayable && setHoveredColumn(colIndex)}
                                     onBlur={() => setHoveredColumn(null)}
-                                    onClick={() => isPlayable && onColumnClick(colIndex)}
+                                    onClick={() => isPlayable && onColumnClick(colIndex, 'pointer')}
                                 />
                             );
                         })}
@@ -173,7 +173,7 @@ const Board: React.FC<BoardProps> = ({
                         <i className="fas fa-redo"></i>
                     </button>
                     <button
-                        onClick={onCalculateBestMove}
+                        onClick={() => onCalculateBestMove()}
                         disabled={!!winner || isCalculating}
                         className="h-11 rounded-xl bg-gradient-to-r from-secondary-600 to-secondary-700 px-3 font-bold text-white shadow-md transition hover:from-secondary-500 hover:to-secondary-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >

@@ -15,7 +15,17 @@ import GameStatus from './components/GameStatus';
 import Controls from './components/Controls';
 import Board from './components/Board';
 import HowToPlayModal from './components/HowToPlayModal';
+import { trackAnalyticsEvent } from '@components/head.js';
 import './App.css';
+
+type HintTrigger = 'auto' | 'button' | 'keyboard';
+
+const trackConnect4Event = (eventName: string, parameters: Record<string, string | number>) => {
+    trackAnalyticsEvent(eventName, {
+        event_category: 'connect4',
+        ...parameters
+    });
+};
 
 function App() {
     // Game State
@@ -38,6 +48,14 @@ function App() {
     const solverWorkerRef = useRef<Worker | null>(null);
     const solverRequestIdRef = useRef(0);
     const hintCacheRef = useRef(new Map<string, { column: number; score: number }>());
+    const hintAnalyticsRef = useRef(new Map<number, {
+        startedAt: number;
+        trigger: HintTrigger;
+        moveCount: number;
+        targetPlayer: Player;
+    }>());
+    const firstMoveTrackedRef = useRef(false);
+    const gameNumberRef = useRef(1);
 
     const currentBoard = history[currentStep].board;
     const currentPlayer = history[currentStep].currentPlayer;
@@ -49,7 +67,7 @@ function App() {
         return null;
     }, []);
 
-    const handleColumnClick = useCallback((col: number) => {
+    const handleColumnClick = useCallback((col: number, inputMethod: 'pointer' | 'keyboard' = 'pointer') => {
         if (winner) return;
 
         const row = getNextOpenRow(currentBoard, col);
@@ -69,14 +87,38 @@ function App() {
         setIsCalculating(false);
         setBestMove(null);
 
+        if (!firstMoveTrackedRef.current) {
+            trackConnect4Event('connect4_first_move', {
+                game_number: gameNumberRef.current,
+                column: col + 1,
+                player: currentPlayer === PLAYER_1 ? 'red' : 'yellow',
+                input_method: inputMethod,
+                auto_hint_enabled: autoHint ? 1 : 0
+            });
+            firstMoveTrackedRef.current = true;
+        }
+
         const win = checkWinner(newBoard, currentPlayer);
         if (win) {
             setWinner(win);
+            trackConnect4Event('connect4_winner_reached', {
+                game_number: gameNumberRef.current,
+                winner: win === PLAYER_1 ? 'red' : 'yellow',
+                move_count: newHistory.length - 1,
+                winning_column: col + 1,
+                input_method: inputMethod
+            });
         }
-    }, [checkWinner, currentBoard, currentPlayer, currentStep, history, winner]);
+    }, [autoHint, checkWinner, currentBoard, currentPlayer, currentStep, history, winner]);
 
     const handleUndo = () => {
         if (currentStep > 0) {
+            trackConnect4Event('connect4_undo', {
+                game_number: gameNumberRef.current,
+                from_move_count: currentStep,
+                to_move_count: currentStep - 1,
+                had_winner: winner ? 1 : 0
+            });
             setCurrentStep(currentStep - 1);
             setWinner(null);
             solverRequestIdRef.current++;
@@ -88,6 +130,11 @@ function App() {
     const handleRedo = () => {
         if (currentStep < history.length - 1) {
             const nextStep = currentStep + 1;
+            trackConnect4Event('connect4_redo', {
+                game_number: gameNumberRef.current,
+                from_move_count: currentStep,
+                to_move_count: nextStep
+            });
             setCurrentStep(nextStep);
             solverRequestIdRef.current++;
             setIsCalculating(false);
@@ -101,6 +148,13 @@ function App() {
     };
 
     const handleReset = () => {
+        if (currentStep > 0) {
+            trackConnect4Event('connect4_reset', {
+                game_number: gameNumberRef.current,
+                move_count: currentStep,
+                had_winner: winner ? 1 : 0
+            });
+        }
         setHistory([{ board: createBoard(), currentPlayer: PLAYER_1 }]);
         setCurrentStep(0);
         setWinner(null);
@@ -108,6 +162,8 @@ function App() {
         setIsCalculating(false);
         setHoveredColumn(null);
         setBestMove(null);
+        firstMoveTrackedRef.current = false;
+        gameNumberRef.current++;
     };
 
     useEffect(() => {
@@ -116,12 +172,26 @@ function App() {
 
         worker.onmessage = (event: MessageEvent<{ id: number; move: { column: number; score: number }; cacheKey: string }>) => {
             hintCacheRef.current.set(event.data.cacheKey, event.data.move);
+            const analytics = hintAnalyticsRef.current.get(event.data.id);
+            hintAnalyticsRef.current.delete(event.data.id);
             if (event.data.id !== solverRequestIdRef.current) return;
             setBestMove(event.data.move);
             setIsCalculating(false);
+            if (analytics) {
+                trackConnect4Event('connect4_hint_calculated', {
+                    game_number: gameNumberRef.current,
+                    trigger: analytics.trigger,
+                    move_count: analytics.moveCount,
+                    target_player: analytics.targetPlayer === PLAYER_1 ? 'red' : 'yellow',
+                    recommended_column: event.data.move.column + 1,
+                    cache_hit: 0,
+                    calculation_ms: Math.round(performance.now() - analytics.startedAt)
+                });
+            }
         };
         worker.onerror = () => {
             setIsCalculating(false);
+            hintAnalyticsRef.current.clear();
         };
 
         return () => {
@@ -130,7 +200,7 @@ function App() {
         };
     }, []);
 
-    const calculateBestMove = useCallback(() => {
+    const calculateBestMove = useCallback((trigger: HintTrigger = 'button') => {
         if (winner || !solverWorkerRef.current) return;
 
         const targetPlayer = solverTarget === 'current' ? currentPlayer : solverTarget;
@@ -140,18 +210,46 @@ function App() {
         if (cachedMove) {
             setBestMove(cachedMove);
             setIsCalculating(false);
+            if (trigger !== 'auto' || moveCount > 0) {
+                trackConnect4Event('connect4_hint_calculated', {
+                    game_number: gameNumberRef.current,
+                    trigger,
+                    move_count: moveCount,
+                    target_player: targetPlayer === PLAYER_1 ? 'red' : 'yellow',
+                    recommended_column: cachedMove.column + 1,
+                    cache_hit: 1,
+                    calculation_ms: 0
+                });
+            }
             return;
         }
 
         const id = ++solverRequestIdRef.current;
+        if (trigger !== 'auto' || moveCount > 0) {
+            hintAnalyticsRef.current.set(id, {
+                startedAt: performance.now(),
+                trigger,
+                moveCount,
+                targetPlayer
+            });
+        }
         setIsCalculating(true);
         solverWorkerRef.current.postMessage({ id, board: currentBoard, player: targetPlayer, cacheKey });
-    }, [currentBoard, currentPlayer, winner, solverTarget]);
+    }, [currentBoard, currentPlayer, moveCount, winner, solverTarget]);
+
+    const handleAutoHintChange = (enabled: boolean) => {
+        trackConnect4Event('connect4_auto_hint_toggled', {
+            game_number: gameNumberRef.current,
+            enabled: enabled ? 1 : 0,
+            move_count: moveCount
+        });
+        setAutoHint(enabled);
+    };
 
     // Auto Hint Effect
     useEffect(() => {
         if (autoHint && !winner) {
-            calculateBestMove();
+            calculateBestMove('auto');
         } else if (!autoHint) {
             solverRequestIdRef.current++;
             setIsCalculating(false);
@@ -167,14 +265,14 @@ function App() {
             if (event.code === 'Space') {
                 event.preventDefault();
                 if (!winner && !isCalculating) {
-                    calculateBestMove();
+                    calculateBestMove('keyboard');
                 }
                 return;
             }
 
             if (/^[1-7]$/.test(event.key)) {
                 event.preventDefault();
-                handleColumnClick(Number(event.key) - 1);
+                handleColumnClick(Number(event.key) - 1, 'keyboard');
                 return;
             }
 
@@ -190,7 +288,7 @@ function App() {
 
             if (event.key === 'Enter' && hoveredColumn !== null) {
                 event.preventDefault();
-                handleColumnClick(hoveredColumn);
+                handleColumnClick(hoveredColumn, 'keyboard');
                 return;
             }
 
@@ -257,7 +355,7 @@ function App() {
                             canRedo={canRedo}
                             canReset={currentStep > 0}
                             autoHint={autoHint}
-                            setAutoHint={setAutoHint}
+                            setAutoHint={handleAutoHintChange}
                             solverTarget={solverTarget}
                         />
                     </div>

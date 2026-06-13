@@ -45,6 +45,18 @@ const getClickLabel = (element) => {
     return element.id || element.tagName.toLowerCase();
 };
 
+export const trackAnalyticsEvent = (eventName, parameters = {}) => {
+    if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+        return;
+    }
+
+    window.gtag('event', eventName, {
+        ...parameters,
+        page_path: window.location.pathname,
+        transport_type: 'beacon'
+    });
+};
+
 const ensureGoogleAnalytics = (head, gaTrackingId) => {
     if (!gaTrackingId) {
         return;
@@ -90,13 +102,11 @@ const ensureGoogleAnalytics = (head, gaTrackingId) => {
         const clickText = getClickLabel(clickable);
         const clickUrl = link ? link.href : undefined;
 
-        window.gtag('event', 'click', {
+        trackAnalyticsEvent('click', {
             event_category: 'engagement',
             event_label: clickText,
             click_text: clickText,
-            click_url: clickUrl,
-            page_path: window.location.pathname,
-            transport_type: 'beacon'
+            click_url: clickUrl
         });
     }, true);
 
