@@ -1,6 +1,8 @@
 import React from 'react';
 import { PLAYER_1, EMPTY, COLS, getNextOpenRow } from '../utils/solver';
 import type { Board as BoardType, Player } from '../utils/solver';
+import GameStatus from './GameStatus';
+import SolverTargetPicker from './SolverTargetPicker';
 
 interface BoardProps {
     board: BoardType;
@@ -21,6 +23,8 @@ interface BoardProps {
     autoHint: boolean;
     setAutoHint: (value: boolean) => void;
     solverTarget: 'current' | Player;
+    moveCount: number;
+    onSolverTargetChange: (value: 'current' | Player) => void;
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -42,10 +46,19 @@ const Board: React.FC<BoardProps> = ({
     autoHint,
     setAutoHint,
     solverTarget,
+    moveCount,
+    onSolverTargetChange,
 }) => {
     return (
-        <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full lg:w-auto flex flex-col items-center relative overflow-hidden">
+        <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full md:w-auto flex flex-col items-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-secondary-500/5 -z-10"></div>
+
+            <div className="connect4-inline-status mb-2 flex w-full max-w-md items-center justify-between gap-3 sm:mb-3">
+                <GameStatus currentPlayer={currentPlayer} winner={winner} compact />
+                <span className="shrink-0 text-xs font-semibold text-muted-foreground">
+                    Move <strong className="text-base text-primary-600">{moveCount}</strong>
+                </span>
+            </div>
 
             <div className="relative bg-gradient-to-b from-primary-600 to-primary-800 p-3 rounded-2xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.5)] inline-block border-4 border-primary-700">
                 {/* Board Feet/Stand */}
@@ -164,7 +177,7 @@ const Board: React.FC<BoardProps> = ({
                 </div>
             </div>
 
-            <div className="mt-4 w-full max-w-md flex flex-col gap-2 sm:mt-5 sm:gap-3">
+            <div className="mt-3 w-full max-w-md flex flex-col gap-2 sm:mt-4 sm:gap-3">
                 <div className="grid grid-cols-[auto_auto_1fr_auto] gap-2 sm:gap-3">
                     <button onClick={onUndo} disabled={!canUndo} className="connect4-action-button" title="Undo move" aria-label="Undo move">
                         <i className="fas fa-undo"></i>
@@ -189,6 +202,14 @@ const Board: React.FC<BoardProps> = ({
                     <button onClick={onReset} disabled={!canReset} className="connect4-action-button" title="Start a new board" aria-label="Start a new board">
                         <i className="fas fa-rotate-left"></i>
                     </button>
+                </div>
+
+                <div className="connect4-mobile-target rounded-xl border border-border bg-card/80 px-3 py-2 shadow-sm md:hidden">
+                    <SolverTargetPicker
+                        solverTarget={solverTarget}
+                        onChange={onSolverTargetChange}
+                        compact
+                    />
                 </div>
 
                 <div className="flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border bg-card/80 px-4 py-3 text-sm shadow-sm" aria-live="polite">

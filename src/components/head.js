@@ -1,8 +1,10 @@
 // Import styles
 import '@styles/global.css';
 import { createHeader } from './header.js';
+import { trackAnalyticsEvent } from './analytics.js';
 
 export { createHeader };
+export { trackAnalyticsEvent };
 
 const redirectMap = Object.freeze({
     '/osrs-flip-finder': '/osrs/',
@@ -43,18 +45,6 @@ const getClickLabel = (element) => {
     }
 
     return element.id || element.tagName.toLowerCase();
-};
-
-export const trackAnalyticsEvent = (eventName, parameters = {}) => {
-    if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
-        return;
-    }
-
-    window.gtag('event', eventName, {
-        ...parameters,
-        page_path: window.location.pathname,
-        transport_type: 'beacon'
-    });
 };
 
 const ensureGoogleAnalytics = (head, gaTrackingId) => {

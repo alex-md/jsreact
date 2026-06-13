@@ -11,21 +11,13 @@ import {
 import type { Board as BoardType, Player } from './utils/solver';
 import useLocalStorage from './hooks/useLocalStorage';
 import GameHeader from './components/GameHeader';
-import GameStatus from './components/GameStatus';
 import Controls from './components/Controls';
 import Board from './components/Board';
 import HowToPlayModal from './components/HowToPlayModal';
-import { trackAnalyticsEvent } from '@components/head.js';
+import { CONNECT4_EVENTS, trackConnect4Event } from './utils/analytics';
 import './App.css';
 
 type HintTrigger = 'auto' | 'button' | 'keyboard';
-
-const trackConnect4Event = (eventName: string, parameters: Record<string, string | number>) => {
-    trackAnalyticsEvent(eventName, {
-        event_category: 'connect4',
-        ...parameters
-    });
-};
 
 function App() {
     // Game State
@@ -67,7 +59,11 @@ function App() {
         return null;
     }, []);
 
-    const handleColumnClick = useCallback((col: number, inputMethod: 'pointer' | 'keyboard' = 'pointer') => {
+    const handleColumnClick = useCallback((
+        col: number,
+        inputMethod: 'pointer' | 'keyboard' = 'pointer',
+        keyboardMethod?: 'number' | 'arrow_enter'
+    ) => {
         if (winner) return;
 
         const row = getNextOpenRow(currentBoard, col);
@@ -87,8 +83,17 @@ function App() {
         setIsCalculating(false);
         setBestMove(null);
 
+        if (inputMethod === 'keyboard') {
+            trackConnect4Event(CONNECT4_EVENTS.keyboardMove, {
+                game_number: gameNumberRef.current,
+                move_count: newHistory.length - 1,
+                column: col + 1,
+                navigation_method: keyboardMethod || 'number'
+            });
+        }
+
         if (!firstMoveTrackedRef.current) {
-            trackConnect4Event('connect4_first_move', {
+            trackConnect4Event(CONNECT4_EVENTS.firstMove, {
                 game_number: gameNumberRef.current,
                 column: col + 1,
                 player: currentPlayer === PLAYER_1 ? 'red' : 'yellow',
@@ -101,7 +106,7 @@ function App() {
         const win = checkWinner(newBoard, currentPlayer);
         if (win) {
             setWinner(win);
-            trackConnect4Event('connect4_winner_reached', {
+            trackConnect4Event(CONNECT4_EVENTS.winnerReached, {
                 game_number: gameNumberRef.current,
                 winner: win === PLAYER_1 ? 'red' : 'yellow',
                 move_count: newHistory.length - 1,
@@ -113,7 +118,7 @@ function App() {
 
     const handleUndo = () => {
         if (currentStep > 0) {
-            trackConnect4Event('connect4_undo', {
+            trackConnect4Event(CONNECT4_EVENTS.undo, {
                 game_number: gameNumberRef.current,
                 from_move_count: currentStep,
                 to_move_count: currentStep - 1,
@@ -130,7 +135,7 @@ function App() {
     const handleRedo = () => {
         if (currentStep < history.length - 1) {
             const nextStep = currentStep + 1;
-            trackConnect4Event('connect4_redo', {
+            trackConnect4Event(CONNECT4_EVENTS.redo, {
                 game_number: gameNumberRef.current,
                 from_move_count: currentStep,
                 to_move_count: nextStep
@@ -149,7 +154,7 @@ function App() {
 
     const handleReset = () => {
         if (currentStep > 0) {
-            trackConnect4Event('connect4_reset', {
+            trackConnect4Event(CONNECT4_EVENTS.reset, {
                 game_number: gameNumberRef.current,
                 move_count: currentStep,
                 had_winner: winner ? 1 : 0
@@ -178,7 +183,7 @@ function App() {
             setBestMove(event.data.move);
             setIsCalculating(false);
             if (analytics) {
-                trackConnect4Event('connect4_hint_calculated', {
+                trackConnect4Event(CONNECT4_EVENTS.hintCalculated, {
                     game_number: gameNumberRef.current,
                     trigger: analytics.trigger,
                     move_count: analytics.moveCount,
@@ -211,7 +216,7 @@ function App() {
             setBestMove(cachedMove);
             setIsCalculating(false);
             if (trigger !== 'auto' || moveCount > 0) {
-                trackConnect4Event('connect4_hint_calculated', {
+                trackConnect4Event(CONNECT4_EVENTS.hintCalculated, {
                     game_number: gameNumberRef.current,
                     trigger,
                     move_count: moveCount,
@@ -238,12 +243,41 @@ function App() {
     }, [currentBoard, currentPlayer, moveCount, winner, solverTarget]);
 
     const handleAutoHintChange = (enabled: boolean) => {
-        trackConnect4Event('connect4_auto_hint_toggled', {
+        trackConnect4Event(CONNECT4_EVENTS.autoHintToggled, {
             game_number: gameNumberRef.current,
             enabled: enabled ? 1 : 0,
             move_count: moveCount
         });
         setAutoHint(enabled);
+    };
+
+    const handleSolverTargetChange = (target: 'current' | Player) => {
+        if (target === solverTarget) return;
+        trackConnect4Event(CONNECT4_EVENTS.solverTargetChanged, {
+            game_number: gameNumberRef.current,
+            move_count: moveCount,
+            previous_target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow',
+            target: target === 'current' ? 'current' : target === PLAYER_1 ? 'red' : 'yellow'
+        });
+        setSolverTarget(target);
+    };
+
+    const handleOpenHowToPlay = () => {
+        trackConnect4Event(CONNECT4_EVENTS.helpOpened, {
+            game_number: gameNumberRef.current,
+            move_count: moveCount
+        });
+        setIsHowToPlayOpen(true);
+    };
+
+    const handleManualHint = () => {
+        trackConnect4Event(CONNECT4_EVENTS.manualHintRequested, {
+            game_number: gameNumberRef.current,
+            move_count: moveCount,
+            input_method: 'pointer',
+            target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow'
+        });
+        calculateBestMove('button');
     };
 
     // Auto Hint Effect
@@ -265,6 +299,12 @@ function App() {
             if (event.code === 'Space') {
                 event.preventDefault();
                 if (!winner && !isCalculating) {
+                    trackConnect4Event(CONNECT4_EVENTS.manualHintRequested, {
+                        game_number: gameNumberRef.current,
+                        move_count: moveCount,
+                        input_method: 'keyboard',
+                        target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow'
+                    });
                     calculateBestMove('keyboard');
                 }
                 return;
@@ -272,7 +312,7 @@ function App() {
 
             if (/^[1-7]$/.test(event.key)) {
                 event.preventDefault();
-                handleColumnClick(Number(event.key) - 1, 'keyboard');
+                handleColumnClick(Number(event.key) - 1, 'keyboard', 'number');
                 return;
             }
 
@@ -288,7 +328,7 @@ function App() {
 
             if (event.key === 'Enter' && hoveredColumn !== null) {
                 event.preventDefault();
-                handleColumnClick(hoveredColumn, 'keyboard');
+                handleColumnClick(hoveredColumn, 'keyboard', 'arrow_enter');
                 return;
             }
 
@@ -298,7 +338,7 @@ function App() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [calculateBestMove, handleColumnClick, hoveredColumn, isCalculating, winner, isHowToPlayOpen]);
+    }, [calculateBestMove, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen]);
 
     useEffect(() => {
         if (!isHowToPlayOpen) return;
@@ -318,26 +358,22 @@ function App() {
             <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-primary-500/10 blur-3xl"></div>
             <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-secondary-500/10 blur-3xl"></div>
 
-            <div className="relative container mx-auto px-1 py-2 sm:px-2 sm:py-3 flex flex-col items-center max-w-7xl">
+            <div className="relative container mx-auto px-0 py-1 sm:px-2 sm:py-3 flex flex-col items-center max-w-7xl">
 
                 <GameHeader
-                    onOpenHowToPlay={() => setIsHowToPlayOpen(true)}
+                    onOpenHowToPlay={handleOpenHowToPlay}
                 />
 
-                <div className="mb-3 flex w-full justify-center sm:mb-4">
-                    <GameStatus currentPlayer={currentPlayer} winner={winner} />
-                </div>
-
-                <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-center w-full max-w-6xl">
-                    <div className="order-2 w-full lg:order-1 lg:w-auto">
+                <div className="flex flex-col md:flex-row gap-4 lg:gap-8 items-start justify-center w-full max-w-6xl">
+                    <div className="order-2 hidden w-full md:order-1 md:block md:w-auto">
                         <Controls
                             moveCount={moveCount}
                             solverTarget={solverTarget}
-                            setSolverTarget={setSolverTarget}
+                            onSolverTargetChange={handleSolverTargetChange}
                         />
                     </div>
 
-                    <div className="order-1 w-full lg:order-2 lg:w-auto">
+                    <div className="order-1 w-full md:order-2 md:w-auto">
                         <Board
                             board={currentBoard}
                             currentPlayer={currentPlayer}
@@ -347,7 +383,7 @@ function App() {
                             onColumnClick={handleColumnClick}
                             bestMove={bestMove}
                             isCalculating={isCalculating}
-                            onCalculateBestMove={calculateBestMove}
+                            onCalculateBestMove={handleManualHint}
                             onUndo={handleUndo}
                             onRedo={handleRedo}
                             onReset={handleReset}
@@ -357,6 +393,8 @@ function App() {
                             autoHint={autoHint}
                             setAutoHint={handleAutoHintChange}
                             solverTarget={solverTarget}
+                            moveCount={moveCount}
+                            onSolverTargetChange={handleSolverTargetChange}
                         />
                     </div>
                 </div>

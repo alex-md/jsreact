@@ -5,9 +5,37 @@ import type { Player } from '../utils/solver';
 interface GameStatusProps {
     currentPlayer: Player;
     winner: Player | null;
+    compact?: boolean;
 }
 
-const GameStatus: React.FC<GameStatusProps> = ({ currentPlayer, winner }) => {
+const GameStatus: React.FC<GameStatusProps> = ({ currentPlayer, winner, compact = false }) => {
+    if (compact) {
+        return (
+            <div
+                className={`flex min-w-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold ${
+                    winner
+                        ? winner === PLAYER_1
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        : currentPlayer === PLAYER_1
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                }`}
+                role={winner ? 'alert' : undefined}
+                aria-live={winner ? 'assertive' : 'polite'}
+            >
+                <span className={`h-3 w-3 shrink-0 rounded-full shadow-sm ${
+                    (winner || currentPlayer) === PLAYER_1 ? 'bg-red-500' : 'bg-yellow-400'
+                }`}></span>
+                <span className="truncate">
+                    {winner
+                        ? `${winner === PLAYER_1 ? 'Red' : 'Yellow'} wins!`
+                        : `${currentPlayer === PLAYER_1 ? 'Red' : 'Yellow'} to move`}
+                </span>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 w-full">
             <div className="flex items-center gap-4 bg-card px-5 py-2.5 rounded-full shadow-md border border-border">
