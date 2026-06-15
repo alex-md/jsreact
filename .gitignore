@@ -38,5 +38,8 @@ debug.log
 # Optional npm cache directory
 .npm
 
+# Cloudflare Wrangler local state
+.wrangler/
+
 # Optional eslint cache
 .eslintcache

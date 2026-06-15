@@ -1,3 +1,5 @@
+import type { AiStrength } from './aiStrength';
+
 export type Player = 1 | 2;
 export type Board = number[][];
 
@@ -421,7 +423,10 @@ class Connect4Engine {
         return bestScore;
     }
 
-    private pickHumanLikeMove(candidates: Array<{ col: number; score: number }>): { col: number; score: number } {
+    private pickVariedMove(
+        candidates: Array<{ col: number; score: number }>,
+        strength: 'casual' | 'human'
+    ): { col: number; score: number } {
         candidates.sort((a, b) => b.score - a.score);
         const best = candidates[0];
 
@@ -432,8 +437,8 @@ class Connect4Engine {
             return best;
         }
 
-        // Allow slight variation among very close moves
-        const near = candidates.filter(m => m.score >= best.score - 18);
+        const scoreWindow = strength === 'casual' ? 90 : 24;
+        const near = candidates.filter(m => m.score >= best.score - scoreWindow);
 
         // Prefer center among close moves
         near.sort((a, b) => {
@@ -444,22 +449,25 @@ class Connect4Engine {
         });
 
         const roll = Math.random();
-        if (near.length >= 3 && roll > 0.94) return near[2];
-        if (near.length >= 2 && roll > 0.80) return near[1];
+        if (strength === 'casual') {
+            if (near.length >= 3 && roll > 0.72) return near[2];
+            if (near.length >= 2 && roll > 0.42) return near[1];
+        } else {
+            if (near.length >= 3 && roll > 0.94) return near[2];
+            if (near.length >= 2 && roll > 0.80) return near[1];
+        }
         return near[0];
     }
 
-    public solve(): { column: number; score: number } {
+    public solve(strength: AiStrength = 'human'): { column: number; score: number } {
         const remaining = 42 - this.movesPlayed;
-
-        // Adaptive depth: deeper in sparse/endgame positions, but still responsive
-        let maxDepth = 9;
-        if (remaining <= 20) maxDepth = 10;
-        if (remaining <= 14) maxDepth = 11;
-        if (remaining <= 10) maxDepth = 12;
-
         const rootMoves = this.orderedMoves();
         if (rootMoves.length === 0) return { column: -1, score: 0 };
+
+        if (strength === 'random') {
+            const column = rootMoves[Math.floor(Math.random() * rootMoves.length)];
+            return { column, score: 0 };
+        }
 
         // Immediate tactical fast path
         for (const col of rootMoves) {
@@ -468,9 +476,19 @@ class Connect4Engine {
             }
         }
 
+        let maxDepth = strength === 'casual' ? 2 : strength === 'human' ? 5 : 9;
+        if (strength === 'expert') {
+            if (remaining <= 20) maxDepth = 10;
+            if (remaining <= 14) maxDepth = 11;
+            if (remaining <= 10) maxDepth = 12;
+        } else if (strength === 'master') {
+            maxDepth = remaining <= 12 ? remaining : 11;
+        }
+
         const candidates: Array<{ col: number; score: number }> = [];
         let bestCol = rootMoves[0];
         let bestScore = -Connect4Engine.MAX_SCORE;
+        let finalCandidates: Array<{ col: number; score: number }> = [];
 
         // Iterative deepening keeps move quality decent under shallower searches
         for (let depth = 1; depth <= maxDepth; depth++) {
@@ -493,6 +511,7 @@ class Connect4Engine {
 
             bestCol = localBestCol;
             bestScore = localBestScore;
+            finalCandidates = [...candidates];
 
             // Early exit on forced line
             if (Math.abs(bestScore) >= Connect4Engine.WIN_SCORE - 1000) break;
@@ -504,18 +523,17 @@ class Connect4Engine {
             }
         }
 
-        const picked = this.pickHumanLikeMove(
-            rootMoves.map(col => {
-                const move = this.play(col);
-                const score = -this.negamax(Math.max(6, maxDepth - 1), -Connect4Engine.MAX_SCORE, Connect4Engine.MAX_SCORE, 1);
-                this.undo(move);
-                return { col, score };
-            })
-        );
+        if (strength === 'casual' || strength === 'human') {
+            const picked = this.pickVariedMove(finalCandidates, strength);
+            return {
+                column: picked.col,
+                score: picked.score
+            };
+        }
 
         return {
-            column: picked.col,
-            score: picked.score
+            column: bestCol,
+            score: bestScore
         };
     }
 }
@@ -542,7 +560,11 @@ export function minimax(
     return [result.column, s];
 }
 
-export function getBestMove(board: Board, currentPlayer: Player): { column: number; score: number } {
+export function getBestMove(
+    board: Board,
+    currentPlayer: Player,
+    strength: AiStrength = 'human'
+): { column: number; score: number } {
     const engine = new Connect4Engine(board, currentPlayer);
-    return engine.solve();
+    return engine.solve(strength);
 }

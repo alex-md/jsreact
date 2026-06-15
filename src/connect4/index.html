@@ -4,9 +4,9 @@
     <head>
         <meta charset="UTF-8">
 
-        <title>Connect 4 Solver - Find the Best Move Free | JSreact</title>
+        <title>Connect 4 Solver & Best Move Calculator - Free | JSreact</title>
         <meta name="description"
-            content="Analyze any Connect 4 position and get the best move instantly. Free online solver with automatic hints, undo and redo, and support for Red or Yellow.">
+            content="Free Connect 4 solver and best move calculator with adjustable AI difficulty. Analyze any board using random, human-like, expert, or master play.">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
         <link rel="canonical" href="https://jsreact.com/connect4/">
@@ -14,16 +14,16 @@
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="JSreact">
         <meta property="og:locale" content="en_US">
-        <meta property="og:title" content="Connect 4 Solver - Find the Best Move Free">
+        <meta property="og:title" content="Connect 4 Solver & Best Move Calculator - Free">
         <meta property="og:description"
-            content="Analyze any Connect 4 board and get an instant best-move recommendation with automatic hints.">
+            content="Find the best Connect 4 move with adjustable AI difficulty, from random and human-like play to deep master analysis.">
         <meta property="og:url" content="https://jsreact.com/connect4/">
         <meta property="og:image" content="https://jsreact.com/assets/images/og-image.png">
         <meta property="og:image:alt" content="JSreact free Connect 4 solver">
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Connect 4 Solver - Find the Best Move Free">
+        <meta name="twitter:title" content="Connect 4 Solver & Best Move Calculator - Free">
         <meta name="twitter:description"
-            content="Analyze any Connect 4 board and get an instant best-move recommendation with automatic hints.">
+            content="Find the best Connect 4 move with adjustable AI difficulty, from random and human-like play to deep master analysis.">
         <meta name="twitter:image" content="https://jsreact.com/assets/images/og-image.png">
 
         <script type="application/ld+json">
@@ -35,7 +35,12 @@
                     "@id": "https://jsreact.com/connect4/#app",
                     "name": "JSreact Connect 4 Solver",
                     "url": "https://jsreact.com/connect4/",
-                    "description": "Free online Connect 4 solver for analyzing positions and finding the best move for Red, Yellow, or the current player.",
+                    "alternateName": [
+                        "Connect Four Solver",
+                        "Four in a Row Solver",
+                        "Connect 4 Best Move Calculator"
+                    ],
+                    "description": "Free online Connect 4 solver and best move calculator with adjustable AI difficulty for analyzing positions and finding moves for Red, Yellow, or the current player.",
                     "applicationCategory": "GameApplication",
                     "operatingSystem": "Any",
                     "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
@@ -50,7 +55,10 @@
                         "Whole-column move recommendations",
                         "Undo and redo move analysis",
                         "Keyboard controls",
-                        "Solver targeting for Red, Yellow, or the current player"
+                        "Solver targeting for Red, Yellow, or the current player",
+                        "Five adjustable AI strength levels",
+                        "Random, casual, human-like, expert, and master analysis",
+                        "Complete late-game position analysis in Master mode"
                     ],
                     "publisher": {
                         "@type": "Organization",
@@ -80,6 +88,14 @@
                         },
                         {
                             "@type": "Question",
+                            "name": "Can I adjust the Connect 4 AI difficulty?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Use the AI strength slider to choose Random, Casual, Human, Expert, or Master analysis. Lower levels add natural variation, while Expert and Master search deeper and choose deterministic moves."
+                            }
+                        },
+                        {
+                            "@type": "Question",
                             "name": "Is the Connect 4 solver free?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
@@ -96,11 +112,21 @@
             import { createHead } from '@components/head.js';
 
             createHead(
-                'Connect 4 Solver - Find the Best Move Free',
-                'Analyze any Connect 4 position and get the best move instantly. Free online solver with automatic hints, undo and redo, and support for Red or Yellow.',
+                'Connect 4 Solver & Best Move Calculator - Free',
+                'Free Connect 4 solver and best move calculator with adjustable AI difficulty. Analyze any board using random, human-like, expert, or master play.',
                 {
                     canonicalPath: '/connect4/',
-                    keywords: ['connect 4 solver', 'connect four solver', 'best connect 4 move', 'connect 4 strategy', 'four in a row solver'],
+                    keywords: [
+                        'connect 4 solver',
+                        'connect 4 best move calculator',
+                        'connect four solver',
+                        'four in a row solver',
+                        'connect 4 calculator',
+                        'connect 4 game solver',
+                        'adjustable connect 4 AI',
+                        'connect 4 AI difficulty',
+                        'human-like connect 4 AI'
+                    ],
                     ogImageAlt: 'JSreact free Connect 4 solver',
                     structuredData: null
                 }

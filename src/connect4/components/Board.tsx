@@ -3,6 +3,8 @@ import { PLAYER_1, EMPTY, COLS, getNextOpenRow } from '../utils/solver';
 import type { Board as BoardType, Player } from '../utils/solver';
 import GameStatus from './GameStatus';
 import SolverTargetPicker from './SolverTargetPicker';
+import AiStrengthControl from './AiStrengthControl';
+import type { AiStrength } from '../utils/aiStrength';
 
 interface BoardProps {
     board: BoardType;
@@ -25,6 +27,8 @@ interface BoardProps {
     solverTarget: 'current' | Player;
     moveCount: number;
     onSolverTargetChange: (value: 'current' | Player) => void;
+    aiStrength: AiStrength;
+    onAiStrengthChange: (value: AiStrength) => void;
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -48,6 +52,8 @@ const Board: React.FC<BoardProps> = ({
     solverTarget,
     moveCount,
     onSolverTargetChange,
+    aiStrength,
+    onAiStrengthChange,
 }) => {
     return (
         <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full md:w-auto flex flex-col items-center relative overflow-hidden">
@@ -210,6 +216,13 @@ const Board: React.FC<BoardProps> = ({
                         onChange={onSolverTargetChange}
                         compact
                     />
+                    <div className="mt-2 border-t border-border pt-2">
+                        <AiStrengthControl
+                            value={aiStrength}
+                            onChange={onAiStrengthChange}
+                            compact
+                        />
+                    </div>
                 </div>
 
                 <div className="flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border bg-card/80 px-4 py-3 text-sm shadow-sm" aria-live="polite">

@@ -15,6 +15,8 @@ import Controls from './components/Controls';
 import Board from './components/Board';
 import HowToPlayModal from './components/HowToPlayModal';
 import { CONNECT4_EVENTS, trackConnect4Event } from './utils/analytics';
+import { DEFAULT_AI_STRENGTH } from './utils/aiStrength';
+import type { AiStrength } from './utils/aiStrength';
 import './App.css';
 
 type HintTrigger = 'auto' | 'button' | 'keyboard';
@@ -30,6 +32,7 @@ function App() {
     // Settings (Persisted)
     const [autoHint, setAutoHint] = useLocalStorage<boolean>('connect4-autoHint', true);
     const [solverTarget, setSolverTarget] = useLocalStorage<'current' | Player>('connect4-solverTarget', 'current');
+    const [aiStrength, setAiStrength] = useLocalStorage<AiStrength>('connect4-aiStrength', DEFAULT_AI_STRENGTH);
 
 
     // UI State
@@ -45,6 +48,7 @@ function App() {
         trigger: HintTrigger;
         moveCount: number;
         targetPlayer: Player;
+        aiStrength: AiStrength;
     }>());
     const firstMoveTrackedRef = useRef(false);
     const gameNumberRef = useRef(1);
@@ -98,7 +102,8 @@ function App() {
                 column: col + 1,
                 player: currentPlayer === PLAYER_1 ? 'red' : 'yellow',
                 input_method: inputMethod,
-                auto_hint_enabled: autoHint ? 1 : 0
+                auto_hint_enabled: autoHint ? 1 : 0,
+                ai_strength: aiStrength
             });
             firstMoveTrackedRef.current = true;
         }
@@ -114,7 +119,7 @@ function App() {
                 input_method: inputMethod
             });
         }
-    }, [autoHint, checkWinner, currentBoard, currentPlayer, currentStep, history, winner]);
+    }, [aiStrength, autoHint, checkWinner, currentBoard, currentPlayer, currentStep, history, winner]);
 
     const handleUndo = () => {
         if (currentStep > 0) {
@@ -188,6 +193,7 @@ function App() {
                     trigger: analytics.trigger,
                     move_count: analytics.moveCount,
                     target_player: analytics.targetPlayer === PLAYER_1 ? 'red' : 'yellow',
+                    ai_strength: analytics.aiStrength,
                     recommended_column: event.data.move.column + 1,
                     cache_hit: 0,
                     calculation_ms: Math.round(performance.now() - analytics.startedAt)
@@ -209,8 +215,9 @@ function App() {
         if (winner || !solverWorkerRef.current) return;
 
         const targetPlayer = solverTarget === 'current' ? currentPlayer : solverTarget;
-        const cacheKey = `${targetPlayer}:${currentBoard.flat().join('')}`;
-        const cachedMove = hintCacheRef.current.get(cacheKey);
+        const cacheKey = `${aiStrength}:${targetPlayer}:${currentBoard.flat().join('')}`;
+        const useCache = aiStrength === 'expert' || aiStrength === 'master';
+        const cachedMove = useCache ? hintCacheRef.current.get(cacheKey) : undefined;
 
         if (cachedMove) {
             setBestMove(cachedMove);
@@ -221,6 +228,7 @@ function App() {
                     trigger,
                     move_count: moveCount,
                     target_player: targetPlayer === PLAYER_1 ? 'red' : 'yellow',
+                    ai_strength: aiStrength,
                     recommended_column: cachedMove.column + 1,
                     cache_hit: 1,
                     calculation_ms: 0
@@ -235,18 +243,20 @@ function App() {
                 startedAt: performance.now(),
                 trigger,
                 moveCount,
-                targetPlayer
+                targetPlayer,
+                aiStrength
             });
         }
         setIsCalculating(true);
-        solverWorkerRef.current.postMessage({ id, board: currentBoard, player: targetPlayer, cacheKey });
-    }, [currentBoard, currentPlayer, moveCount, winner, solverTarget]);
+        solverWorkerRef.current.postMessage({ id, board: currentBoard, player: targetPlayer, strength: aiStrength, cacheKey });
+    }, [aiStrength, currentBoard, currentPlayer, moveCount, winner, solverTarget]);
 
     const handleAutoHintChange = (enabled: boolean) => {
         trackConnect4Event(CONNECT4_EVENTS.autoHintToggled, {
             game_number: gameNumberRef.current,
             enabled: enabled ? 1 : 0,
-            move_count: moveCount
+            move_count: moveCount,
+            ai_strength: aiStrength
         });
         setAutoHint(enabled);
     };
@@ -262,6 +272,20 @@ function App() {
         setSolverTarget(target);
     };
 
+    const handleAiStrengthChange = (strength: AiStrength) => {
+        if (strength === aiStrength) return;
+        trackConnect4Event(CONNECT4_EVENTS.aiStrengthChanged, {
+            game_number: gameNumberRef.current,
+            move_count: moveCount,
+            previous_strength: aiStrength,
+            strength
+        });
+        solverRequestIdRef.current++;
+        setIsCalculating(false);
+        setBestMove(null);
+        setAiStrength(strength);
+    };
+
     const handleOpenHowToPlay = () => {
         trackConnect4Event(CONNECT4_EVENTS.helpOpened, {
             game_number: gameNumberRef.current,
@@ -275,7 +299,8 @@ function App() {
             game_number: gameNumberRef.current,
             move_count: moveCount,
             input_method: 'pointer',
-            target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow'
+            target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow',
+            ai_strength: aiStrength
         });
         calculateBestMove('button');
     };
@@ -303,7 +328,8 @@ function App() {
                         game_number: gameNumberRef.current,
                         move_count: moveCount,
                         input_method: 'keyboard',
-                        target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow'
+                        target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow',
+                        ai_strength: aiStrength
                     });
                     calculateBestMove('keyboard');
                 }
@@ -338,7 +364,7 @@ function App() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [calculateBestMove, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen]);
+    }, [aiStrength, calculateBestMove, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen]);
 
     useEffect(() => {
         if (!isHowToPlayOpen) return;
@@ -370,6 +396,8 @@ function App() {
                             moveCount={moveCount}
                             solverTarget={solverTarget}
                             onSolverTargetChange={handleSolverTargetChange}
+                            aiStrength={aiStrength}
+                            onAiStrengthChange={handleAiStrengthChange}
                         />
                     </div>
 
@@ -395,6 +423,8 @@ function App() {
                             solverTarget={solverTarget}
                             moveCount={moveCount}
                             onSolverTargetChange={handleSolverTargetChange}
+                            aiStrength={aiStrength}
+                            onAiStrengthChange={handleAiStrengthChange}
                         />
                     </div>
                 </div>
@@ -402,10 +432,10 @@ function App() {
                 <section aria-labelledby="connect4-features-title" className="mt-10 w-full max-w-6xl">
                     <div className="mx-auto mb-5 max-w-3xl text-center">
                         <h2 id="connect4-features-title" className="text-2xl font-heading font-bold text-foreground">
-                            Analyze Connect 4 positions in seconds
+                            Connect 4 solver with adjustable AI difficulty
                         </h2>
                         <p className="mt-2 text-sm text-muted-foreground">
-                            Build the board one move at a time, compare ideas, and use the highlighted recommendation to find stronger tactical and strategic moves.
+                            Use this free Connect 4 best move calculator to recreate any board, compare ideas, and get recommendations tuned from random play to deep master analysis.
                         </p>
                     </div>
                     <div className="grid gap-4 lg:grid-cols-3">
@@ -414,10 +444,10 @@ function App() {
                             <div className="h-10 w-10 rounded-xl bg-primary-500/10 text-primary-600 flex items-center justify-center">
                                 <i className="fas fa-brain"></i>
                             </div>
-                            <h2 className="text-lg font-bold text-foreground">Perfect-play engine</h2>
+                            <h2 className="text-lg font-bold text-foreground">Adjustable analysis engine</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            The engine evaluates legal moves, immediate wins, forced blocks, center control, and future threats before recommending a column.
+                            Choose Random, Casual, Human, Expert, or Master strength. Human mode adds natural variation, while stronger levels search further ahead.
                         </p>
                     </article>
                     <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
@@ -449,7 +479,7 @@ function App() {
                     <h2 id="connect4-faq-title" className="text-2xl font-heading font-bold text-foreground">
                         Connect 4 solver questions
                     </h2>
-                    <div className="mt-5 grid gap-5 md:grid-cols-3">
+                    <div className="mt-5 grid gap-5 md:grid-cols-2">
                         <article>
                             <h3 className="text-base font-bold text-foreground">How do I analyze a position?</h3>
                             <p className="mt-2 text-sm text-muted-foreground">
@@ -463,9 +493,15 @@ function App() {
                             </p>
                         </article>
                         <article>
-                            <h3 className="text-base font-bold text-foreground">Is it free to use?</h3>
+                            <h3 className="text-base font-bold text-foreground">Can I adjust the AI difficulty?</h3>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Yes. The Connect 4 solver is free, works in your browser, and does not require an account.
+                                Yes. Pick Random, Casual, Human, Expert, or Master to control how far ahead the solver thinks and how consistently it chooses the top move.
+                            </p>
+                        </article>
+                        <article>
+                            <h3 className="text-base font-bold text-foreground">Is the Connect 4 solver free?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Yes. This Connect Four and four-in-a-row solver works free in your browser and does not require an account.
                             </p>
                         </article>
                     </div>

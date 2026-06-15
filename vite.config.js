@@ -32,9 +32,9 @@ const pageSeo = {
         keywords: 'text cleaner, text formatter, whitespace cleanup, string normalizer, content cleaner, text processing tool, remove extra spaces, clean text online, format text tool, text editor'
     },
     '/connect4/': {
-        title: 'Connect 4 Solver - Find the Best Move Free',
-        description: 'Analyze any Connect 4 position and get the best move instantly. Free online solver with automatic hints, undo and redo, and support for Red or Yellow.',
-        keywords: 'connect 4 solver, connect four solver, best connect 4 move, connect 4 strategy, four in a row solver',
+        title: 'Connect 4 Solver & Best Move Calculator - Free',
+        description: 'Free Connect 4 solver and best move calculator with adjustable AI difficulty. Analyze any board using random, human-like, expert, or master play.',
+        keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 game solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI',
         imageAlt: 'JSreact free Connect 4 solver',
         structuredDataGraph: [
             {
@@ -42,7 +42,12 @@ const pageSeo = {
                 '@id': `${siteUrl}/connect4/#app`,
                 name: 'JSreact Connect 4 Solver',
                 url: `${siteUrl}/connect4/`,
-                description: 'Free online Connect 4 solver for analyzing positions and finding the best move for Red, Yellow, or the current player.',
+                alternateName: [
+                    'Connect Four Solver',
+                    'Four in a Row Solver',
+                    'Connect 4 Best Move Calculator'
+                ],
+                description: 'Free online Connect 4 solver and best move calculator with adjustable AI difficulty for analyzing positions and finding moves for Red, Yellow, or the current player.',
                 applicationCategory: 'GameApplication',
                 operatingSystem: 'Any',
                 browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
@@ -57,7 +62,10 @@ const pageSeo = {
                     'Whole-column move recommendations',
                     'Undo and redo move analysis',
                     'Keyboard controls',
-                    'Solver targeting for Red, Yellow, or the current player'
+                    'Solver targeting for Red, Yellow, or the current player',
+                    'Five adjustable AI strength levels',
+                    'Random, casual, human-like, expert, and master analysis',
+                    'Complete late-game position analysis in Master mode'
                 ],
                 publisher: {
                     '@type': 'Organization',
@@ -83,6 +91,14 @@ const pageSeo = {
                         acceptedAnswer: {
                             '@type': 'Answer',
                             text: 'Yes. Choose Current, Red, or Yellow in Solver Options to control which player receives the recommendation.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        name: 'Can I adjust the Connect 4 AI difficulty?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Yes. Use the AI strength slider to choose Random, Casual, Human, Expert, or Master analysis. Lower levels add natural variation, while Expert and Master search deeper and choose deterministic moves.'
                         }
                     },
                     {

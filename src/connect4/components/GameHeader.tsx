@@ -12,10 +12,10 @@ const GameHeader: React.FC<GameHeaderProps> = ({
             <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                     <h1 className="truncate text-xl sm:text-3xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
-                        Free Connect 4 Solver
+                        Free Connect 4 Solver & Best Move Calculator
                     </h1>
                     <p className="hidden text-sm text-muted-foreground max-w-md leading-5 md:block">
-                        Analyze any position, find the best move instantly, and explore winning lines with automatic hints.
+                        Analyze any position with automatic hints and adjustable AI strength, from human-like moves to deep master analysis.
                     </p>
                 </div>
                 <button
