@@ -431,11 +431,11 @@ function App() {
 
                 <section aria-labelledby="connect4-features-title" className="mt-10 w-full max-w-6xl">
                     <div className="mx-auto mb-5 max-w-3xl text-center">
-                        <h2 id="connect4-features-title" className="text-2xl font-heading font-bold text-foreground">
-                            Connect 4 solver with adjustable AI difficulty
-                        </h2>
+                        <h1 id="connect4-features-title" className="connect4-seo-heading text-2xl font-heading font-bold sm:text-3xl">
+                            Free Connect 4 Solver & Best Move Calculator
+                        </h1>
                         <p className="mt-2 text-sm text-muted-foreground">
-                            Use this free Connect 4 best move calculator to recreate any board, compare ideas, and get recommendations tuned from random play to deep master analysis.
+                            Recreate any board, compare candidate moves, and see the strongest column for Red, Yellow, or whoever moves next.
                         </p>
                     </div>
                     <div className="grid gap-4 lg:grid-cols-3">
@@ -447,7 +447,7 @@ function App() {
                             <h2 className="text-lg font-bold text-foreground">Adjustable analysis engine</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            Choose Random, Casual, Human, Expert, or Master strength. Human mode adds natural variation, while stronger levels search further ahead.
+                            Choose Random, Casual, Human, Expert, or Master strength. Use quick hints for casual positions or deeper analysis when the board needs a longer lookahead.
                         </p>
                     </article>
                     <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
@@ -458,7 +458,7 @@ function App() {
                             <h2 className="text-lg font-bold text-foreground">Fast tactical checks</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            Tap a column or press 1–7, then use Undo and Redo to compare alternative responses without rebuilding the position.
+                            Tap a column or press 1-7, then use Undo and Redo to compare alternative responses without rebuilding the position.
                         </p>
                     </article>
                     <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
@@ -469,7 +469,7 @@ function App() {
                             <h2 className="text-lg font-bold text-foreground">Strategy refresher</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            Use the solver to practice center control, forced blocks, double threats, vertical setups, and diagonal traps.
+                            Practice center control, forced blocks, double threats, vertical setups, and diagonal traps with clear move feedback.
                         </p>
                     </article>
                     </div>
@@ -483,7 +483,7 @@ function App() {
                         <article>
                             <h3 className="text-base font-bold text-foreground">How do I analyze a position?</h3>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Enter the moves in order by selecting columns. Auto Hint highlights the recommended column after every turn.
+                                Enter the moves in order by selecting columns. Auto Hint highlights the best move after every turn so you can study the position as it changes.
                             </p>
                         </article>
                         <article>
@@ -501,7 +501,7 @@ function App() {
                         <article>
                             <h3 className="text-base font-bold text-foreground">Is the Connect 4 solver free?</h3>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Yes. This Connect Four and four-in-a-row solver works free in your browser and does not require an account.
+                                Yes. It runs free in your browser and does not require an account.
                             </p>
                         </article>
                     </div>

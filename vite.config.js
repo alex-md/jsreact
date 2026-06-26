@@ -16,9 +16,9 @@ const nonPageDirs = ['components', 'utils', 'assets'];
 
 const pageSeo = {
     '/': {
-        title: 'Free Online Tools for Developers and Everyday Tasks',
-        description: 'Use free online tools for coding, text cleanup, calculations, games, SEO, and everyday tasks. Fast, practical utilities with no account required.',
-        keywords: 'web development tools, online tools, developer utilities, code tools, programming utilities, web tools hub'
+        title: 'Free Online Tools for Developers, SEO, Games, and Everyday Tasks',
+        description: 'Use fast free online tools for coding, SEO content checks, text cleanup, calculators, games, QR codes, and everyday browser utilities. No account required.',
+        keywords: 'free online tools, web development tools, developer utilities, SEO tools, text tools, online calculators, browser tools, code tools, web tools hub'
     },
     '/analytics/': {
         title: 'ViewTrack Analytics Dashboard',
@@ -27,15 +27,15 @@ const pageSeo = {
         publishDate: '2025-05-08'
     },
     '/clean/': {
-        title: 'Online Text Cleaner & Formatter',
-        description: 'Clean and format text with our advanced text processing tool',
+        title: 'Online Text Cleaner & Formatter - Free Text Cleanup Tool',
+        description: 'Clean, normalize, and format text online. Remove extra spaces, blank lines, punctuation, smart quotes, and messy whitespace with a free browser text cleaner.',
         keywords: 'text cleaner, text formatter, whitespace cleanup, string normalizer, content cleaner, text processing tool, remove extra spaces, clean text online, format text tool, text editor'
     },
     '/connect4/': {
         title: 'Connect 4 Solver & Best Move Calculator - Free',
-        description: 'Free Connect 4 solver and best move calculator with adjustable AI difficulty. Analyze any board using random, human-like, expert, or master play.',
-        keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 game solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI',
-        imageAlt: 'JSreact free Connect 4 solver',
+        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, and analyze Red, Yellow, or the current player for free.',
+        keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI',
+        imageAlt: 'Connect 4 board with recommended move highlighted',
         structuredDataGraph: [
             {
                 '@type': 'WebApplication',
@@ -43,11 +43,15 @@ const pageSeo = {
                 name: 'JSreact Connect 4 Solver',
                 url: `${siteUrl}/connect4/`,
                 alternateName: [
+                    'Connect 4 Best Move Calculator',
                     'Connect Four Solver',
                     'Four in a Row Solver',
-                    'Connect 4 Best Move Calculator'
+                    '4 in a Row Solver',
+                    'Connect 4 Calculator',
+                    'Connect4 Solver',
+                    'Connect 4 Game Solver'
                 ],
-                description: 'Free online Connect 4 solver and best move calculator with adjustable AI difficulty for analyzing positions and finding moves for Red, Yellow, or the current player.',
+                description: 'Analyze any Connect 4 position, highlight the strongest column, and explore alternate lines with free browser-based hints.',
                 applicationCategory: 'GameApplication',
                 operatingSystem: 'Any',
                 browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
@@ -59,6 +63,8 @@ const pageSeo = {
                 },
                 featureList: [
                     'Automatic best-move hints',
+                    'Best-move recommendations for any board position',
+                    'Board analysis for standard game positions',
                     'Whole-column move recommendations',
                     'Undo and redo move analysis',
                     'Keyboard controls',
@@ -83,6 +89,14 @@ const pageSeo = {
                         acceptedAnswer: {
                             '@type': 'Answer',
                             text: 'Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and you can use Undo and Redo to explore alternative lines.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        name: 'Does it work with standard Connect Four rules?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Yes. Enter the moves in column order and the solver analyzes the standard seven-column, six-row game board directly in your browser.'
                         }
                     },
                     {
@@ -114,8 +128,9 @@ const pageSeo = {
         ]
     },
     '/diff/': {
-        title: 'Online Diff Checker',
-        description: 'Compare text differences between two versions'
+        title: 'Online Diff Checker - Compare Text Differences',
+        description: 'Compare two blocks of text online and quickly find additions, deletions, and changed lines with a free browser diff checker.',
+        keywords: 'diff checker, online diff, text compare, compare text, file diff, code diff, text difference checker'
     },
     '/domain/': {
         title: 'Domain Appraisal',
@@ -129,16 +144,19 @@ const pageSeo = {
         keywords: 'elevation finder, elevation data, topographic data, altitude finder, elevation lookup, geographic elevation, map elevation, terrain elevation'
     },
     '/expression/': {
-        title: 'Expression Evaluator',
-        description: 'Evaluate mathematical expressions to reach a target number.'
+        title: 'Expression Evaluator - Find Arithmetic Expressions',
+        description: 'Find arithmetic expressions that reach a target number using operators, parentheses, and search constraints in a free browser calculator.',
+        keywords: 'expression evaluator, arithmetic expression finder, target number calculator, math expression solver, parentheses calculator'
     },
     '/generator/': {
-        title: 'AI Name Generator',
-        description: 'Generate creative names for your projects using startup name generator'
+        title: 'AI Name Generator - Startup and Project Name Ideas',
+        description: 'Generate startup names, product names, project names, and creative brand ideas with a free online AI name generator.',
+        keywords: 'AI name generator, startup name generator, project name generator, product name ideas, brand name generator'
     },
     '/insert/': {
-        title: 'Insert Tool - Text Insertion and Manipulation',
-        description: 'Insert and manipulate text with powerful tools. Format, process, and modify text content easily.'
+        title: 'Keyword Inserter - Natural Text Insertion Tool',
+        description: 'Insert keywords and phrases into text naturally while preserving readability. Use the free text insertion tool for SEO drafts and content editing.',
+        keywords: 'keyword inserter, text insertion tool, natural keyword insertion, SEO keyword tool, content editing tool'
     },
     '/keyword/': {
         title: 'Keyword Density Analyzer & SEO Content Optimization Tool',
@@ -149,13 +167,14 @@ const pageSeo = {
         description: 'Free online tool to minify and optimize JavaScript, CSS, and HTML code. Reduce file size up to 80%, improve load times, and enhance website performance with advanced Terser compression. Best free code minifier with source map support.'
     },
     '/numigma/': {
-        title: 'Numigma Puzzle Generator',
-        description: 'Create and share deterministic reverse-number logic puzzles with customizable clue packs.'
+        title: 'Numigma Puzzle Generator - Reverse Number Logic Puzzles',
+        description: 'Create deterministic reverse-number logic puzzles with configurable clue packs, shareable puzzle states, and browser-based solving.',
+        keywords: 'numigma, number puzzle generator, logic puzzle generator, reverse number puzzle, puzzle maker'
     },
     '/oeis/': {
-        title: 'Sequence Extrapolator',
-        description: 'Analyze and forecast numeric sequences with ensemble models and confidence ranges.',
-        keywords: 'oeis, sequence extrapolator, forecasting, time series, predictive analytics'
+        title: 'Sequence Extrapolator - Number Sequence Predictor',
+        description: 'Analyze numeric sequences and forecast likely next values with ensemble models, confidence ranges, and OEIS-inspired sequence exploration.',
+        keywords: 'oeis, sequence extrapolator, number sequence predictor, sequence calculator, forecasting, time series, predictive analytics'
     },
     '/osrs/': {
         title: 'OSRS Flip Finder & Profit Calculator',
@@ -207,7 +226,8 @@ const pageSeo = {
     },
     '/speech/': {
         title: 'Speech Tools - Text to Speech & Speech to Text',
-        description: 'Free online tool to convert between speech and text using OpenAI APIs. Features high-quality text-to-speech synthesis and accurate speech recognition.'
+        description: 'Convert text to speech and speech to text with high-quality synthesis and accurate browser-based transcription tools.',
+        keywords: 'text to speech, speech to text, audio transcription, voice generator, speech tools'
     }
 };
 
@@ -281,7 +301,10 @@ const createSeoPlugin = () => ({
             window.dataLayer = window.dataLayer || [];
             window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); };
             window.gtag('js', new Date());
-            window.gtag('config', '${googleTagId}');
+            window.gtag('config', '${googleTagId}', {
+                page_title: ${JSON.stringify(fullTitle)},
+                page_location: ${JSON.stringify(canonicalUrl)}
+            });
             window.__jsreactGtagConfigured = true;
         </script>
         <title>${escapeHtml(fullTitle)}</title>

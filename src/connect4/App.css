@@ -82,6 +82,14 @@
     padding: 0;
 }
 
+.connect4-seo-heading {
+    display: inline-block;
+    color: transparent;
+    background: linear-gradient(90deg, rgb(59 130 246), rgb(139 92 246));
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
 .connect4-column {
     border: 0;
     background: transparent;

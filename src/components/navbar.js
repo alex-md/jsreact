@@ -162,20 +162,20 @@ export function createNavbar() {
             trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
 
             const menu = document.createElement("div");
-            menu.className = "absolute top-full left-0 mt-1 w-48 rounded-md bg-background border border-border shadow-lg opacity-0 invisible transition-all duration-200 z-50";
+            menu.className = "absolute hidden top-full left-0 mt-1 w-48 rounded-md bg-background border border-border shadow-lg opacity-0 invisible transition-all duration-200 z-50";
 
             let timeoutId = null;
 
             const showMenu = () => {
                 clearTimeout(timeoutId);
-                menu.classList.remove('opacity-0', 'invisible');
+                menu.classList.remove('hidden', 'opacity-0', 'invisible');
                 menu.classList.add('opacity-100', 'visible');
             };
 
             const hideMenu = () => {
                 timeoutId = setTimeout(() => {
                     menu.classList.remove('opacity-100', 'visible');
-                    menu.classList.add('opacity-0', 'invisible');
+                    menu.classList.add('hidden', 'opacity-0', 'invisible');
                 }, 100);
             };
 
@@ -212,7 +212,7 @@ export function createNavbar() {
             trigger.innerHTML = `${category} <i class="fas fa-chevron-down text-xs opacity-70 transition-all duration-200 ml-1"></i>`;
 
             const menu = document.createElement("div");
-            menu.className = "fixed left-4 right-4 top-1/4 -translate-y-1/2 bg-background border border-border rounded-lg shadow-xl z-[1000] p-4 opacity-0 invisible transition-all duration-200 mobile-dropdown-menu max-h-[60vh] overflow-y-auto";
+            menu.className = "fixed hidden left-4 right-4 top-1/4 -translate-y-1/2 bg-background border border-border rounded-lg shadow-xl z-[1000] p-4 opacity-0 invisible transition-all duration-200 mobile-dropdown-menu max-h-[60vh] overflow-y-auto";
 
             const menuHeader = document.createElement("div");
             menuHeader.className = "flex items-center justify-between mb-4 pb-2 border-b border-border";
@@ -250,25 +250,25 @@ export function createNavbar() {
                 document.querySelectorAll('.mobile-dropdown-menu').forEach(m => {
                     if (m !== menu) {
                         m.classList.remove('opacity-100', 'visible');
-                        m.classList.add('opacity-0', 'invisible');
+                        m.classList.add('hidden', 'opacity-0', 'invisible');
                     }
                 });
 
                 if (!isVisible) {
                     mobileDropdownContainer.classList.remove('hidden');
-                    menu.classList.remove('opacity-0', 'invisible');
+                    menu.classList.remove('hidden', 'opacity-0', 'invisible');
                     menu.classList.add('opacity-100', 'visible');
                 } else {
                     mobileDropdownContainer.classList.add('hidden');
                     menu.classList.remove('opacity-100', 'visible');
-                    menu.classList.add('opacity-0', 'invisible');
+                    menu.classList.add('hidden', 'opacity-0', 'invisible');
                 }
             });
 
             closeButton.addEventListener('click', () => {
                 mobileDropdownContainer.classList.add('hidden');
                 menu.classList.remove('opacity-100', 'visible');
-                menu.classList.add('opacity-0', 'invisible');
+                menu.classList.add('hidden', 'opacity-0', 'invisible');
             });
 
             dropdown.append(trigger);
