@@ -1,6 +1,7 @@
 name = "image-host"
 main = "image-host.js"
-compatibility_date = "2024-03-25"
+compatibility_date = "2026-06-16"
+compatibility_flags = [ "throw_on_not_implemented_tls_options" ]
 
 # Configure your KV namespace
 [[kv_namespaces]]
