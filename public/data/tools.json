@@ -2,7 +2,7 @@
     {
         "id": "elevation",
         "title": "Elevation Finder",
-        "description": "Look up elevation from coordinates or addresses",
+        "description": "Find elevation by address, coordinates, or map click",
         "icon": "fas fa-mountain",
         "color": "green",
         "link": "/elevation/",
@@ -12,7 +12,7 @@
     {
         "id": "oeis",
         "title": "Sequence Extrapolator",
-        "description": "Forecast numeric sequences with ensemble statistical models",
+        "description": "Predict the next numbers in a sequence with ensemble models",
         "icon": "fas fa-chart-line",
         "color": "emerald",
         "link": "/oeis/",
@@ -22,7 +22,7 @@
     {
         "id": "osrs",
         "title": "OSRS Flipper",
-        "description": "Get real-time, risk-managed flipping suggestions for Old School RuneScape's Grand Exchange.",
+        "description": "Find OSRS Grand Exchange flips with profit and risk signals.",
         "icon": "fas fa-coins",
         "color": "amber",
         "link": "/osrs/",
@@ -32,7 +32,7 @@
     {
         "id": "numigma",
         "title": "Numigma Puzzle Generator",
-        "description": "Assemble deterministic reverse-number logic puzzles with configurable clue packs.",
+        "description": "Generate reverse-number logic puzzles with shareable clue packs.",
         "icon": "fas fa-puzzle-piece",
         "color": "violet",
         "link": "/numigma/",
@@ -52,7 +52,7 @@
     {
         "id": "domain",
         "title": "Domain Appraisal",
-        "description": "Get accurate market value estimates for domain names",
+        "description": "Estimate domain name value for one domain or a batch list",
         "icon": "fas fa-chart-line",
         "color": "blue",
         "link": "/domain/",
@@ -61,7 +61,7 @@
     {
         "id": "minify",
         "title": "Code Minifier",
-        "description": "Minify your JavaScript, CSS, and HTML code to reduce file size",
+        "description": "Minify JavaScript, CSS, and HTML code in your browser",
         "icon": "fas fa-compress-alt",
         "color": "blue",
         "link": "/minify/",
@@ -78,8 +78,8 @@
     },
     {
         "id": "generator",
-        "title": "AI Name Generator",
-        "description": "Generate creative and unique names for your projects using AI",
+        "title": "Username Generator",
+        "description": "Generate short fictional usernames from invented words",
         "icon": "fas fa-magic",
         "color": "purple",
         "link": "/generator/",
@@ -88,7 +88,7 @@
     {
         "id": "clean",
         "title": "Text Cleaner",
-        "description": "Clean and format your text with powerful tools",
+        "description": "Remove extra spaces, blank lines, punctuation, and messy formatting",
         "icon": "fas fa-broom",
         "color": "cyan",
         "link": "/clean/",
@@ -97,7 +97,7 @@
     {
         "id": "diff",
         "title": "Diff Checker",
-        "description": "Compare text differences between two versions",
+        "description": "Compare two text blocks and highlight additions or deletions",
         "icon": "fas fa-code-compare",
         "color": "red",
         "link": "/diff/",
@@ -106,7 +106,7 @@
     {
         "id": "expression",
         "title": "Expression Finder",
-        "description": "Find expressions using arithmetic operations and parentheses",
+        "description": "Find arithmetic expressions that reach a target number",
         "icon": "fas fa-calculator",
         "color": "yellow",
         "link": "/expression/",
@@ -115,7 +115,7 @@
     {
         "id": "keyword",
         "title": "Keyword Analyzer",
-        "description": "Analyze keyword density and extract important terms from any text",
+        "description": "Analyze keyword density, repeated phrases, and important terms",
         "icon": "fas fa-key",
         "color": "teal",
         "link": "/keyword/",
@@ -124,7 +124,7 @@
     {
         "id": "speech",
         "title": "Speech Tools",
-        "description": "Convert between speech and text using advanced AI technologies",
+        "description": "Convert text to speech and transcribe speech to text",
         "icon": "fas fa-microphone-lines",
         "color": "indigo",
         "link": "/speech/",

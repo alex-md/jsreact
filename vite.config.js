@@ -18,18 +18,72 @@ const pageSeo = {
     '/': {
         title: 'Free Online Tools for Developers, SEO, Games, and Everyday Tasks',
         description: 'Use fast free online tools for coding, SEO content checks, text cleanup, calculators, games, QR codes, and everyday browser utilities. No account required.',
-        keywords: 'free online tools, web development tools, developer utilities, SEO tools, text tools, online calculators, browser tools, code tools, web tools hub'
+        keywords: 'free online tools, web development tools, developer utilities, SEO tools, text tools, online calculators, browser tools, code tools, web tools hub, free browser tools',
+        structuredDataGraph: [
+            {
+                '@type': 'WebSite',
+                '@id': `${siteUrl}/#website`,
+                name: 'JSreact',
+                url: `${siteUrl}/`,
+                description: 'A collection of free browser-based tools for developers, SEO workflows, text cleanup, games, QR codes, and everyday utilities.',
+                inLanguage: 'en-US',
+                publisher: {
+                    '@type': 'Organization',
+                    name: 'JSreact',
+                    url: `${siteUrl}/`,
+                    logo: {
+                        '@type': 'ImageObject',
+                        url: `${siteUrl}/assets/images/icon.png`
+                    }
+                }
+            },
+            {
+                '@type': 'ItemList',
+                '@id': `${siteUrl}/#tools`,
+                name: 'Free Online Tools on JSreact',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Connect 4 Solver', url: `${siteUrl}/connect4/` },
+                    { '@type': 'ListItem', position: 2, name: 'OSRS Flip Finder', url: `${siteUrl}/osrs/` },
+                    { '@type': 'ListItem', position: 3, name: 'Code Minifier', url: `${siteUrl}/minify/` },
+                    { '@type': 'ListItem', position: 4, name: 'Text Cleaner', url: `${siteUrl}/clean/` },
+                    { '@type': 'ListItem', position: 5, name: 'Diff Checker', url: `${siteUrl}/diff/` },
+                    { '@type': 'ListItem', position: 6, name: 'Keyword Density Analyzer', url: `${siteUrl}/keyword/` },
+                    { '@type': 'ListItem', position: 7, name: 'QR Code Generator', url: `${siteUrl}/qr/` },
+                    { '@type': 'ListItem', position: 8, name: 'Domain Appraisal', url: `${siteUrl}/domain/` }
+                ]
+            }
+        ]
     },
     '/analytics/': {
-        title: 'ViewTrack Analytics Dashboard',
-        description: 'Track and analyze website traffic with real-time analytics and insights.',
-        keywords: 'analytics dashboard, website traffic, real-time analytics, traffic tracking, web analytics',
-        publishDate: '2025-05-08'
+        title: 'Website Analytics Dashboard - Live Traffic and Page Views',
+        description: 'View website traffic, live page views, popular pages, daily trends, and engagement snapshots in a lightweight analytics dashboard.',
+        keywords: 'analytics dashboard, website traffic dashboard, page view tracker, real-time analytics, traffic tracking, web analytics, website metrics',
+        publishDate: '2025-05-08',
+        structuredData: {
+            alternateName: ['ViewTrack Analytics Dashboard', 'Website Traffic Dashboard', 'Page View Tracker'],
+            applicationCategory: 'AnalyticsApplication',
+            featureList: [
+                'Live traffic overview',
+                'Popular page tracking',
+                'Daily and weekly trend charts',
+                'Website engagement metrics'
+            ]
+        }
     },
     '/clean/': {
         title: 'Online Text Cleaner & Formatter - Free Text Cleanup Tool',
         description: 'Clean, normalize, and format text online. Remove extra spaces, blank lines, punctuation, smart quotes, and messy whitespace with a free browser text cleaner.',
-        keywords: 'text cleaner, text formatter, whitespace cleanup, string normalizer, content cleaner, text processing tool, remove extra spaces, clean text online, format text tool, text editor'
+        keywords: 'text cleaner, text formatter, whitespace cleanup, string normalizer, content cleaner, text processing tool, remove extra spaces, clean text online, format text tool, text editor',
+        structuredData: {
+            alternateName: ['Text Cleanup Tool', 'Whitespace Cleaner', 'Online Text Formatter'],
+            applicationCategory: 'UtilitiesApplication',
+            featureList: [
+                'Remove extra spaces and blank lines',
+                'Normalize smart quotes and punctuation',
+                'Find and replace text',
+                'Format pasted content in the browser'
+            ]
+        }
     },
     '/connect4/': {
         title: 'Connect 4 Solver & Best Move Calculator - Free',
@@ -130,51 +184,153 @@ const pageSeo = {
     '/diff/': {
         title: 'Online Diff Checker - Compare Text Differences',
         description: 'Compare two blocks of text online and quickly find additions, deletions, and changed lines with a free browser diff checker.',
-        keywords: 'diff checker, online diff, text compare, compare text, file diff, code diff, text difference checker'
+        keywords: 'diff checker, online diff, text compare, compare text, file diff, code diff, text difference checker, compare two texts online',
+        structuredData: {
+            alternateName: ['Text Compare Tool', 'Online Text Diff', 'Difference Checker'],
+            applicationCategory: 'DeveloperApplication',
+            featureList: [
+                'Compare two text blocks',
+                'Highlight additions and deletions',
+                'Swap original and modified inputs',
+                'Browser-based diff checking'
+            ]
+        }
     },
     '/domain/': {
-        title: 'Domain Appraisal',
-        description: 'Get instant AI-powered domain name valuations for up to 20 domains.',
-        keywords: 'domain appraisal, domain valuation, domain worth, domain price, domain name value, AI domain appraisal, instant domain value, domain tool',
-        publishDate: '2025-04-22'
+        title: 'Domain Appraisal Tool - Estimate Domain Name Value',
+        description: 'Estimate domain name value for up to 20 domains at once with instant appraisal results and market-value signals.',
+        keywords: 'domain appraisal, domain valuation, domain worth, domain price, domain name value, domain appraisal tool, instant domain value, domain value estimator',
+        publishDate: '2025-04-22',
+        structuredData: {
+            alternateName: ['Domain Valuation Tool', 'Domain Value Estimator', 'Domain Worth Checker'],
+            applicationCategory: 'BusinessApplication',
+            featureList: [
+                'Bulk domain appraisal for up to 20 domains',
+                'Instant domain value estimates',
+                'Market-value signals for domain names',
+                'Simple browser-based valuation workflow'
+            ]
+        }
     },
     '/elevation/': {
         title: 'Elevation Finder - Find Elevation Data for Any Location',
         description: 'Find elevation data for any location using address search or map clicking. Free online elevation finder tool with interactive maps.',
-        keywords: 'elevation finder, elevation data, topographic data, altitude finder, elevation lookup, geographic elevation, map elevation, terrain elevation'
+        keywords: 'elevation finder, elevation data, topographic data, altitude finder, elevation lookup, geographic elevation, map elevation, terrain elevation, find elevation by address',
+        structuredData: {
+            alternateName: ['Altitude Finder', 'Map Elevation Lookup', 'Elevation Lookup Tool'],
+            applicationCategory: 'UtilitiesApplication',
+            featureList: [
+                'Find elevation by address',
+                'Click a map to get altitude',
+                'View coordinates and elevation data',
+                'Interactive map-based lookup'
+            ]
+        }
     },
     '/expression/': {
-        title: 'Expression Evaluator - Find Arithmetic Expressions',
-        description: 'Find arithmetic expressions that reach a target number using operators, parentheses, and search constraints in a free browser calculator.',
-        keywords: 'expression evaluator, arithmetic expression finder, target number calculator, math expression solver, parentheses calculator'
+        title: 'Expression Solver - Arithmetic Expression Finder',
+        description: 'Find arithmetic expressions that reach a target number using operators, parentheses, and search constraints in a free browser math solver.',
+        keywords: 'expression solver, expression evaluator, arithmetic expression finder, target number calculator, math expression solver, parentheses calculator, make 24 solver',
+        structuredData: {
+            alternateName: ['Arithmetic Expression Finder', 'Target Number Calculator', 'Math Expression Solver'],
+            applicationCategory: 'EducationApplication',
+            featureList: [
+                'Find formulas that reach a target number',
+                'Use addition, subtraction, multiplication, and division',
+                'Generate math challenges',
+                'Show expression results in the browser'
+            ]
+        }
     },
     '/generator/': {
-        title: 'AI Name Generator - Startup and Project Name Ideas',
-        description: 'Generate startup names, product names, project names, and creative brand ideas with a free online AI name generator.',
-        keywords: 'AI name generator, startup name generator, project name generator, product name ideas, brand name generator'
+        title: 'Fake Word Username Generator - Short Fictional Username Ideas',
+        description: 'Generate short fictional usernames from invented words with cached, rate-limited word fetching and local fallback names.',
+        keywords: 'username generator, fake word username generator, fantasy username generator, short username ideas, fictional usernames, random username generator, invented word generator',
+        structuredData: {
+            alternateName: ['Fake Word Generator', 'Fantasy Username Generator', 'Random Username Generator'],
+            applicationCategory: 'UtilitiesApplication',
+            featureList: [
+                'Generate short fictional usernames',
+                'Blend custom seed words',
+                'Limit username length',
+                'Copy generated handles'
+            ]
+        }
     },
     '/insert/': {
         title: 'Keyword Inserter - Natural Text Insertion Tool',
         description: 'Insert keywords and phrases into text naturally while preserving readability. Use the free text insertion tool for SEO drafts and content editing.',
-        keywords: 'keyword inserter, text insertion tool, natural keyword insertion, SEO keyword tool, content editing tool'
+        keywords: 'keyword inserter, text insertion tool, natural keyword insertion, SEO keyword tool, content editing tool, insert keywords into text',
+        structuredData: {
+            alternateName: ['Natural Keyword Insertion Tool', 'SEO Text Inserter', 'Content Keyword Tool'],
+            applicationCategory: 'BusinessApplication',
+            featureList: [
+                'Insert keywords into existing copy',
+                'Preserve readable sentence flow',
+                'Support SEO content drafts',
+                'Edit content in the browser'
+            ]
+        }
     },
     '/keyword/': {
         title: 'Keyword Density Analyzer & SEO Content Optimization Tool',
-        description: 'Free online keyword density analyzer and content optimization tool. Analyze keyword frequency, find keyword clusters, and optimize your content for search engines. Perfect for SEO writers and content marketers.'
+        description: 'Analyze keyword density, frequency, repeated phrases, and important terms in your text with a free browser SEO content analyzer.',
+        keywords: 'keyword density analyzer, keyword analyzer, SEO content optimization, keyword frequency checker, content analyzer, term frequency tool, SEO writing tool',
+        structuredData: {
+            alternateName: ['Keyword Frequency Checker', 'SEO Content Analyzer', 'Term Frequency Tool'],
+            applicationCategory: 'BusinessApplication',
+            featureList: [
+                'Analyze keyword density',
+                'Find repeated phrases and important terms',
+                'Review word and character counts',
+                'Optimize SEO drafts without uploading files'
+            ]
+        }
     },
     '/minify/': {
         title: 'JavaScript, CSS & HTML Minifier - Free Online Code Compression Tool',
-        description: 'Free online tool to minify and optimize JavaScript, CSS, and HTML code. Reduce file size up to 80%, improve load times, and enhance website performance with advanced Terser compression. Best free code minifier with source map support.'
+        description: 'Minify JavaScript, CSS, and HTML online. Compress code, reduce file size, improve load times, and use Terser options in a free browser minifier.',
+        keywords: 'javascript minifier, css minifier, html minifier, code minifier, online minifier, terser minifier, compress javascript, minify css, minify html',
+        structuredData: {
+            alternateName: ['Code Minifier', 'JavaScript Minifier', 'CSS Minifier', 'HTML Minifier'],
+            applicationCategory: 'DeveloperApplication',
+            featureList: [
+                'Minify JavaScript with Terser options',
+                'Compress CSS and HTML',
+                'Reduce code file size',
+                'Optional source map support'
+            ]
+        }
     },
     '/numigma/': {
         title: 'Numigma Puzzle Generator - Reverse Number Logic Puzzles',
         description: 'Create deterministic reverse-number logic puzzles with configurable clue packs, shareable puzzle states, and browser-based solving.',
-        keywords: 'numigma, number puzzle generator, logic puzzle generator, reverse number puzzle, puzzle maker'
+        keywords: 'numigma, number puzzle generator, logic puzzle generator, reverse number puzzle, puzzle maker, math puzzle generator, deduction puzzle',
+        structuredData: {
+            alternateName: ['Reverse Number Puzzle Generator', 'Math Logic Puzzle Maker', 'Deduction Puzzle Generator'],
+            applicationCategory: 'GameApplication',
+            featureList: [
+                'Generate deterministic number puzzles',
+                'Choose configurable clue packs',
+                'Share puzzle states',
+                'Create unique-solution logic challenges'
+            ]
+        }
     },
     '/oeis/': {
         title: 'Sequence Extrapolator - Number Sequence Predictor',
         description: 'Analyze numeric sequences and forecast likely next values with ensemble models, confidence ranges, and OEIS-inspired sequence exploration.',
-        keywords: 'oeis, sequence extrapolator, number sequence predictor, sequence calculator, forecasting, time series, predictive analytics'
+        keywords: 'oeis, sequence extrapolator, number sequence predictor, sequence calculator, next number in sequence, forecasting, time series, predictive analytics',
+        structuredData: {
+            alternateName: ['Number Sequence Predictor', 'Next Number Calculator', 'Sequence Calculator'],
+            applicationCategory: 'EducationApplication',
+            featureList: [
+                'Predict next values in a number sequence',
+                'Compare multiple statistical models',
+                'Show confidence ranges',
+                'Explore OEIS-inspired sequence patterns'
+            ]
+        }
     },
     '/osrs/': {
         title: 'OSRS Flip Finder & Profit Calculator',
@@ -182,6 +338,7 @@ const pageSeo = {
         keywords: 'osrs flip finder, osrs flipping tool, grand exchange flips, osrs profit calculator, osrs merchanting',
         structuredData: {
             headline: 'OSRS Flip Finder & Profit Calculator',
+            alternateName: ['OSRS Flipping Tool', 'Grand Exchange Flip Finder', 'OSRS Profit Calculator'],
             applicationCategory: 'GameApplication',
             featureList: [
                 'Live Grand Exchange price tracking',
@@ -192,10 +349,20 @@ const pageSeo = {
         }
     },
     '/playground/': {
-        title: 'JavaScript Playground',
-        description: 'Interactive JavaScript coding environment with HTML, CSS and real-time preview.',
-        keywords: 'javascript playground, code editor, html editor, css editor, online IDE, react playground, coding environment',
-        publishDate: '2025-05-07'
+        title: 'JavaScript Playground - HTML CSS JS Online Editor',
+        description: 'Write HTML, CSS, and JavaScript in a browser playground with live preview, package controls, and an online code editor workflow.',
+        keywords: 'javascript playground, code editor, html editor, css editor, online IDE, react playground, coding environment, html css js editor',
+        publishDate: '2025-05-07',
+        structuredData: {
+            alternateName: ['HTML CSS JS Editor', 'Online JavaScript Editor', 'Code Playground'],
+            applicationCategory: 'DeveloperApplication',
+            featureList: [
+                'Live HTML, CSS, and JavaScript preview',
+                'In-browser code editor',
+                'Package manager controls',
+                'Fast prototyping workspace'
+            ]
+        }
     },
     '/policy/': {
         title: 'Privacy Policy',
@@ -204,9 +371,10 @@ const pageSeo = {
     '/qr/': {
         title: 'Free QR Code Generator - Create QR Codes from Images',
         description: 'Generate QR codes instantly from uploaded or pasted images. Free online tool for creating QR codes from your images. Easy to use, no registration required.',
-        keywords: 'qr code generator, image to qr code, free qr code maker, online qr code generator, qr code from image',
+        keywords: 'qr code generator, image to qr code, free qr code maker, online qr code generator, qr code from image, create qr code from image',
         structuredData: {
             name: 'JSreact QR Code Generator',
+            alternateName: ['Image to QR Code Generator', 'Free QR Code Maker', 'Online QR Code Generator'],
             applicationCategory: 'UtilityApplication',
             description: 'Free online tool for generating QR codes from uploaded or pasted images. Easy to use with instant QR code generation.',
             offers: {
@@ -227,7 +395,17 @@ const pageSeo = {
     '/speech/': {
         title: 'Speech Tools - Text to Speech & Speech to Text',
         description: 'Convert text to speech and speech to text with high-quality synthesis and accurate browser-based transcription tools.',
-        keywords: 'text to speech, speech to text, audio transcription, voice generator, speech tools'
+        keywords: 'text to speech, speech to text, audio transcription, voice generator, speech tools, browser speech recognition, text reader',
+        structuredData: {
+            alternateName: ['Text to Speech Tool', 'Speech to Text Tool', 'Audio Transcription Tool'],
+            applicationCategory: 'UtilitiesApplication',
+            featureList: [
+                'Convert text to spoken audio',
+                'Transcribe speech to text',
+                'Use browser-based voice tools',
+                'Work without account signup'
+            ]
+        }
     }
 };
 

@@ -9,8 +9,12 @@
         <script type="module">
             import { createHead } from '@components/head.js';
             createHead(
-                'Online Diff Checker',
-                'Compare text differences between two versions'
+                'Online Diff Checker - Compare Text Differences',
+                'Compare two blocks of text online and quickly find additions, deletions, and changed lines with a free browser diff checker.',
+                {
+                    canonicalPath: '/diff/',
+                    keywords: 'diff checker, online diff, text compare, compare text, file diff, code diff, text difference checker, compare two texts online'
+                }
             );
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
@@ -27,7 +31,7 @@
             import { createHeader } from '@components/header.js';
             const header = createHeader(
                 'Online Diff Checker',
-                'Compare text differences between two versions'
+                'Compare two text blocks and highlight additions or deletions'
             );
             document.getElementById('header').appendChild(header);
         </script> -->
@@ -163,5 +167,3 @@
     </body>
 
 </html>
-
-

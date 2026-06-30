@@ -1,0 +1,6 @@
+name = "username-word"
+main = "username-word.js"
+compatibility_date = "2026-06-29"
+
+[vars]
+ALLOWED_ORIGINS = "*"

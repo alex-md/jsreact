@@ -3,90 +3,141 @@
 
     <head>
         <meta charset="UTF-8">
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
         <script type="module">
             import { createHead } from '@components/head.js';
             createHead(
-                'AI Name Generator',
-                'Generate creative names for your projects using startup name generator'
+                'Fake Word Username Generator',
+                'Generate short fictional usernames from invented words with cached, rate-limited word fetching.',
+                {
+                    canonicalPath: '/generator/',
+                    keywords: 'username generator, fake word username generator, fantasy username generator, short username ideas, fictional usernames, random username generator, invented word generator'
+                }
             );
         </script>
     </head>
 
-    <body class="bg-gray-50">
+    <body class="bg-gray-50 page-generator">
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
-            initPageShell();
+            initPageShell(
+                {
+                    title: 'Fake Word Username Generator',
+                    description: 'Generate short fictional usernames from invented words while reusing a local word pool.'
+                }
+            );
         </script>
 
         <div id="header"></div>
-        <!-- <script type="module">
-            import { createHeader } from '@components/header.js';
-            const header = createHeader(
-                'Domain Name Generator',
-                'Generate creative domain names for your next project'
-            );
-            document.getElementById('header').appendChild(header);
-        </script> -->
 
-        <main
-            class="container mx-auto px-3 py-6 sm:px-4 sm:py-8 md:py-12 max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
-            <div class="space-y-4 md:space-y-6">
-                <!-- Input Section -->
-                <div
-                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                    <div class="p-3 sm:p-4 md:p-6 space-y-4 md:space-y-6">
-                        <div class="space-y-2 md:space-y-4">
-                            <label for="input-text" class="block text-sm font-medium text-gray-700">
-                                Enter words to generate names from
-                            </label>
-                            <textarea id="input-text" rows="3" placeholder="Enter words or phrases..."
-                                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900"></textarea>
+        <main class="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
+            <section class="generator-shell">
+                <div class="generator-panel generator-command-panel">
+                    <div class="generator-panel-header">
+                        <div>
+                            <p class="generator-kicker">Username forge</p>
+                            <h2>Make a short fictional handle</h2>
                         </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                            <button id="generate-button"
-                                class="w-full sm:w-auto px-4 py-2 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
-                                Generate Names
-                            </button>
-                            <button id="clear-button"
-                                class="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                                Clear All
-                            </button>
+                        <div id="status-pill" class="generator-status-pill" data-state="ready">
+                            <span class="generator-status-dot"></span>
+                            <span id="status-text">Ready</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Results Section -->
-                <div
-                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                    <div class="border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4 flex justify-between items-center">
-                        <h2 class="text-lg font-semibold text-gray-900">Generated Names</h2>
-                        <button id="copy-all-button"
-                            class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center gap-2">
-                            <i class="fas fa-copy text-xs"></i> <span class="hidden sm:inline">Copy All</span>
+                    <p class="generator-copy">
+                        Built for compact fantasy-style names. The page generates freely from word chunks, public sources, and any custom seeds you add.
+                    </p>
+
+                    <div class="generator-controls-grid" aria-label="Username generation settings">
+                        <label class="generator-field">
+                            <span>Max length</span>
+                            <input id="max-length" class="input" type="number" min="3" max="20" value="12" inputmode="numeric">
+                        </label>
+
+                        <label class="generator-field">
+                            <span>Results</span>
+                            <input id="result-count" class="input" type="number" min="1" max="30" value="10" inputmode="numeric">
+                        </label>
+                    </div>
+
+                    <label class="generator-field generator-custom-field">
+                        <span>Custom seed words</span>
+                        <textarea id="custom-words" rows="3" placeholder="Optional: rune, moss, ember, drift..."
+                            class="input generator-seed-input"></textarea>
+                        <small>Add words or fragments separated by commas, spaces, or new lines.</small>
+                    </label>
+
+                    <div class="generator-toggles" aria-label="Username variant settings">
+                        <label class="generator-toggle">
+                            <input id="allow-typos" type="checkbox" checked>
+                            <span>
+                                <strong>Typo variants</strong>
+                                <small>Drop a vowel occasionally.</small>
+                            </span>
+                        </label>
+
+                        <label class="generator-toggle">
+                            <input id="allow-suffixes" type="checkbox" checked>
+                            <span>
+                                <strong>Suffix variants</strong>
+                                <small>Add short endings like x, io, or 7.</small>
+                            </span>
+                        </label>
+
+                        <label class="generator-toggle">
+                            <input id="preserve-word" type="checkbox">
+                            <span>
+                                <strong>Preserve words</strong>
+                                <small>Keep the fake word as intact as possible.</small>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="generator-actions">
+                        <button id="generate-button" class="btn-primary" type="button">
+                            <i class="fas fa-dice"></i>
+                            Generate usernames
+                        </button>
+                        <button id="copy-all-button" class="btn-secondary" type="button" disabled>
+                            <i class="fas fa-copy"></i>
+                            Copy all
                         </button>
                     </div>
-                    <div class="p-3 sm:p-4 md:p-6">
-                        <div id="results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
-                            <!-- Results will be dynamically added here -->
+
+                    <div class="generator-pool-meter" aria-label="Source word bank">
+                        <div>
+                            <span>Source bank</span>
+                            <strong id="pool-count">0 source words</strong>
                         </div>
-                        <div id="loading" class="hidden">
-                            <div class="flex items-center justify-center py-4 md:py-8">
-                                <div class="animate-spin rounded-full h-6 w-6 md:h-8 md:w-8 border-b-2 border-primary">
-                                </div>
-                            </div>
+                        <div class="generator-meter-track">
+                            <span id="pool-meter"></span>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <div class="generator-panel generator-results-panel">
+                    <div class="generator-panel-header">
+                        <div>
+                            <p class="generator-kicker">Generated names</p>
+                            <h2>Your username list</h2>
+                            <p class="generator-results-hint">Click any username to copy it.</p>
+                        </div>
+                        <button id="refresh-pool-button" class="btn-secondary generator-icon-button" type="button" aria-label="Enrich source words">
+                            <i class="fas fa-rotate"></i>
+                        </button>
+                    </div>
+
+                    <div id="results" class="generator-results" aria-live="polite"></div>
+
+                    <p id="source-note" class="generator-source-note">
+                        Generates freely from local phonetic chunks, then improves as public sources respond.
+                    </p>
+                </div>
+            </section>
         </main>
+
         <script type="module" src="./index.js"></script>
     </body>
 
 </html>
-
-

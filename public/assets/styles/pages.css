@@ -1,5 +1,343 @@
 /* Page-specific styles consolidated from inline <style> blocks. */
 
+/* Generator page */
+.page-generator .generator-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.page-generator .header-banner {
+    overflow: hidden;
+}
+
+.page-generator .generator-panel {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.page-generator .generator-command-panel {
+    position: sticky;
+    top: 5.5rem;
+}
+
+.page-generator .generator-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.page-generator .generator-panel h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.55rem, 2.4vw, 2rem);
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: 0;
+}
+
+.page-generator .generator-kicker {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: hsl(var(--muted-foreground));
+}
+
+.page-generator .generator-copy {
+    margin: 0 0 1.25rem;
+    color: hsl(var(--muted-foreground));
+    max-width: 42rem;
+}
+
+.page-generator .generator-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: max-content;
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--radius-full);
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.page-generator .generator-status-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: hsl(var(--success));
+}
+
+.page-generator .generator-status-pill[data-state="fetching"] .generator-status-dot {
+    background: hsl(var(--primary));
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.14);
+}
+
+.page-generator .generator-status-pill[data-state="limited"] .generator-status-dot {
+    background: hsl(var(--warning));
+}
+
+.page-generator .generator-status-pill[data-state="fallback"] .generator-status-dot {
+    background: hsl(var(--accent));
+}
+
+.page-generator .generator-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.page-generator .generator-field span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.page-generator .generator-field small {
+    display: block;
+    margin-top: 0.4rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.page-generator .generator-custom-field {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.page-generator .generator-seed-input {
+    height: auto;
+    min-height: 5rem;
+    resize: vertical;
+}
+
+.page-generator .generator-toggles {
+    display: grid;
+    gap: 0.7rem;
+    margin: 1rem 0 1.25rem;
+}
+
+.page-generator .generator-toggle {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.75rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-lg);
+    background: hsl(var(--background));
+    cursor: pointer;
+}
+
+.page-generator .generator-toggle:hover {
+    border-color: hsl(var(--primary) / 0.3);
+}
+
+.page-generator .generator-toggle input {
+    appearance: none;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.15rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-sm);
+    background: hsl(var(--card));
+}
+
+.page-generator .generator-toggle input:checked {
+    border-color: hsl(var(--primary));
+    background:
+        linear-gradient(135deg, transparent 0 38%, hsl(var(--primary-foreground)) 38% 48%, transparent 48%),
+        linear-gradient(45deg, transparent 0 48%, hsl(var(--primary-foreground)) 48% 58%, transparent 58%),
+        hsl(var(--primary));
+}
+
+.page-generator .generator-toggle strong,
+.page-generator .generator-toggle small {
+    display: block;
+}
+
+.page-generator .generator-toggle strong {
+    color: hsl(var(--foreground));
+    line-height: 1.2;
+}
+
+.page-generator .generator-toggle small {
+    margin-top: 0.15rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.35;
+}
+
+.page-generator .generator-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.page-generator .generator-actions .btn-primary,
+.page-generator .generator-actions .btn-secondary {
+    min-height: 2.85rem;
+}
+
+.page-generator .generator-pool-meter {
+    padding: 0.9rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--card)) 100%);
+}
+
+.page-generator .generator-pool-meter > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+    font-size: 0.85rem;
+}
+
+.page-generator .generator-pool-meter span {
+    color: hsl(var(--muted-foreground));
+}
+
+.page-generator .generator-pool-meter strong {
+    color: hsl(var(--foreground));
+}
+
+.page-generator .generator-meter-track {
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    background: hsl(var(--border));
+}
+
+.page-generator .generator-meter-track span {
+    display: block;
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    transition: width 0.25s ease;
+}
+
+.page-generator .generator-icon-button {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    flex: 0 0 auto;
+}
+
+.page-generator .generator-results-hint {
+    margin: 0.35rem 0 0;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.9rem;
+}
+
+.page-generator .generator-results {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.page-generator .generator-name-card {
+    display: grid;
+    gap: 0.45rem;
+    min-height: 7rem;
+    width: 100%;
+    padding: 1rem;
+    text-align: left;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-lg);
+    background:
+        linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.7) 100%);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.page-generator .generator-name-card:hover,
+.page-generator .generator-name-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: var(--shadow-md);
+    outline: none;
+}
+
+.page-generator .generator-name {
+    align-self: end;
+    overflow-wrap: anywhere;
+    font-family: var(--font-mono);
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    font-weight: 500;
+    line-height: 1.05;
+    color: hsl(var(--foreground));
+}
+
+.page-generator .generator-name-meta,
+.page-generator .generator-copy-cue {
+    font-size: 0.8rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.page-generator .generator-copy-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: hsl(var(--primary));
+    font-weight: 600;
+}
+
+.page-generator .generator-source-note {
+    margin: 1rem 0 0;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .page-generator .generator-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .page-generator .generator-command-panel {
+        position: static;
+    }
+}
+
+@media (max-width: 640px) {
+    .page-generator .generator-panel-header,
+    .page-generator .generator-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .page-generator .generator-status-pill {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .page-generator .generator-controls-grid,
+    .page-generator .generator-results {
+        grid-template-columns: 1fr;
+    }
+
+    .page-generator .generator-actions .btn-primary,
+    .page-generator .generator-actions .btn-secondary {
+        width: 100%;
+    }
+}
+
 /* Domain page */
 .page-domain {
     background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
