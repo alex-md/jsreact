@@ -10,6 +10,7 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(rootDir, 'src');
 const siteUrl = 'https://jsreact.com';
 const googleTagId = 'G-ZEFG04PXR7';
+const gtmContainerId = 'GTM-NF9TL7G';
 
 // Define directories that should not be treated as pages
 const nonPageDirs = ['components', 'utils', 'assets'];
@@ -563,6 +564,15 @@ const createSeoPlugin = () => ({
                 ? `\n        <meta name="keywords" content="${escapeHtml(metadata.keywords)}">`
                 : '';
 
+            const gtmHeadTags = `        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','${gtmContainerId}');</script>
+        <!-- End Google Tag Manager -->
+`;
+
             const seoTags = `
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=${googleTagId}"></script>
@@ -604,7 +614,13 @@ const createSeoPlugin = () => ({
                 .replace(/\s*<meta\s+(?:name|property)=["'](?:description|keywords|author|robots|googlebot|twitter:card|twitter:title|twitter:description|twitter:image|twitter:image:alt|og:type|og:title|og:description|og:url|og:site_name|og:locale|og:image|og:image:width|og:image:height|og:image:alt|article:tag)["'][^>]*>/gi, '')
                 .replace(/\s*<link\s+rel=["']canonical["'][^>]*>/gi, '')
                 .replace(/\s*<script\s+type=["']application\/ld\+json["'][\s\S]*?<\/script>/gi, '')
-                .replace(/<\/head>/i, `${seoTags}    </head>`);
+                .replace(/<head([^>]*)>/i, `<head$1>\n${gtmHeadTags}`)
+                .replace(/<\/head>/i, `${seoTags}    </head>`)
+                .replace(/<body([^>]*)>/i, `<body$1>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${gtmContainerId}"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->`);
         }
     }
 });

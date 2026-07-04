@@ -47,16 +47,9 @@ const getClickLabel = (element) => {
     return element.id || element.tagName.toLowerCase();
 };
 
-const ensureGoogleAnalytics = (head, gaTrackingId) => {
-    if (!gaTrackingId) {
+const ensureGoogleTagManager = (head, gtmContainerId) => {
+    if (!gtmContainerId) {
         return;
-    }
-
-    if (!head.querySelector(`script[src*="gtag/js?id=${gaTrackingId}"]`)) {
-        const gaScript = document.createElement('script');
-        gaScript.async = true;
-        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`;
-        head.appendChild(gaScript);
     }
 
     window.dataLayer = window.dataLayer || [];
@@ -64,10 +57,30 @@ const ensureGoogleAnalytics = (head, gaTrackingId) => {
         window.dataLayer.push(arguments);
     };
 
-    if (!window.__jsreactGtagConfigured) {
-        window.gtag('js', new Date());
-        window.gtag('config', gaTrackingId);
-        window.__jsreactGtagConfigured = true;
+    const hasGtmScript = Boolean(head.querySelector(`script[src*="gtm.js?id=${gtmContainerId}"]`));
+    const hasGtmStartEvent = window.dataLayer.some((entry) => entry && entry.event === 'gtm.js');
+
+    if (!window.__jsreactGtmConfigured && !hasGtmStartEvent && !hasGtmScript) {
+        window.dataLayer.push({
+            'gtm.start': new Date().getTime(),
+            event: 'gtm.js'
+        });
+    }
+
+    window.__jsreactGtmConfigured = true;
+
+    if (!hasGtmScript) {
+        const gtmScript = document.createElement('script');
+        gtmScript.async = true;
+        gtmScript.src = `https://www.googletagmanager.com/gtm.js?id=${gtmContainerId}`;
+        head.appendChild(gtmScript);
+    }
+
+    if (document.body && !document.body.querySelector(`noscript[data-jsreact-gtm="${gtmContainerId}"]`)) {
+        const fallback = document.createElement('noscript');
+        fallback.dataset.jsreactGtm = gtmContainerId;
+        fallback.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmContainerId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
+        document.body.insertBefore(fallback, document.body.firstChild);
     }
 
     if (window.__jsreactClickTrackingConfigured) {
@@ -103,11 +116,39 @@ const ensureGoogleAnalytics = (head, gaTrackingId) => {
     window.__jsreactClickTrackingConfigured = true;
 };
 
+const ensureGoogleAnalytics = (head, gaTrackingId, pageTitle, pageLocation) => {
+    if (!gaTrackingId) {
+        return;
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function gtag() {
+        window.dataLayer.push(arguments);
+    };
+
+    if (!head.querySelector(`script[src*="gtag/js?id=${gaTrackingId}"]`)) {
+        const gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`;
+        head.appendChild(gaScript);
+    }
+
+    if (!window.__jsreactGtagConfigured) {
+        window.gtag('js', new Date());
+        window.gtag('config', gaTrackingId, {
+            page_title: pageTitle,
+            page_location: pageLocation
+        });
+        window.__jsreactGtagConfigured = true;
+    }
+};
+
 /**
  * Creates and configures the document head with metadata, styles, and tracking
  * @param {string} title - Page title
  * @param {string} description - Page description
  * @param {Object} options - Optional configuration
+ * @param {string} options.gtmContainerId - Google Tag Manager container ID (default: GTM-NF9TL7G)
  * @param {string} options.gaTrackingId - Google Analytics tracking ID (default: G-ZEFG04PXR7)
  * @param {string} options.baseUrl - Base URL for canonical links and images
  * @param {string} options.publishDate - Publication date for JSON-LD
@@ -128,6 +169,7 @@ export function createHead(title, description, options = {}) {
     const currentUrl = new URL(window.location.href);
 
     const {
+        gtmContainerId = 'GTM-NF9TL7G',
         gaTrackingId = 'G-ZEFG04PXR7',
         baseUrl: providedBaseUrl,
         publishDate,
@@ -364,7 +406,8 @@ export function createHead(title, description, options = {}) {
 
     metaTags.forEach(setMetaTag);
 
-    ensureGoogleAnalytics(head, gaTrackingId);
+    ensureGoogleTagManager(head, gtmContainerId);
+    ensureGoogleAnalytics(head, gaTrackingId, `${title} | JSreact`, canonicalUrl);
 
     const baseStructuredData = {
         '@context': 'https://schema.org',
