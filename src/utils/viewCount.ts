@@ -1,4 +1,4 @@
-export const VIEW_COUNT_ENDPOINT = 'https://views.vs.workers.dev';
+export const VIEW_COUNT_ENDPOINT = import.meta.env.VITE_ANALYTICS_ENDPOINT ?? 'https://views.vs.workers.dev';
 
 export async function fetchViewCount(): Promise<number> {
   const response = await fetch(VIEW_COUNT_ENDPOINT, {
