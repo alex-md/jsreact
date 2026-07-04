@@ -13,6 +13,9 @@ export const CONNECT4_EVENTS = {
     firstMove: 'connect4_first_move',
     winnerReached: 'connect4_winner_reached',
     hintCalculated: 'connect4_hint_calculated',
+    engagedGame: 'connect4_engaged_game',
+    newBoardAfterWin: 'connect4_new_board_after_win',
+    strategyLinkOpened: 'connect4_strategy_link_opened',
 } as const;
 
 type Connect4EventName = typeof CONNECT4_EVENTS[keyof typeof CONNECT4_EVENTS];

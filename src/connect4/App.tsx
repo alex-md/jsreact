@@ -51,6 +51,7 @@ function App() {
         aiStrength: AiStrength;
     }>());
     const firstMoveTrackedRef = useRef(false);
+    const engagedGameTrackedRef = useRef(false);
     const gameNumberRef = useRef(1);
 
     const currentBoard = history[currentStep].board;
@@ -103,9 +104,23 @@ function App() {
                 player: currentPlayer === PLAYER_1 ? 'red' : 'yellow',
                 input_method: inputMethod,
                 auto_hint_enabled: autoHint ? 1 : 0,
-                ai_strength: aiStrength
+                ai_strength: aiStrength,
+                jsreact_key_event: 1
             });
             firstMoveTrackedRef.current = true;
+        }
+
+        if (!engagedGameTrackedRef.current && newHistory.length - 1 >= 4) {
+            trackConnect4Event(CONNECT4_EVENTS.engagedGame, {
+                game_number: gameNumberRef.current,
+                move_count: newHistory.length - 1,
+                input_method: inputMethod,
+                auto_hint_enabled: autoHint ? 1 : 0,
+                ai_strength: aiStrength,
+                jsreact_key_event: 1,
+                value: 2
+            });
+            engagedGameTrackedRef.current = true;
         }
 
         const win = checkWinner(newBoard, currentPlayer);
@@ -116,7 +131,9 @@ function App() {
                 winner: win === PLAYER_1 ? 'red' : 'yellow',
                 move_count: newHistory.length - 1,
                 winning_column: col + 1,
-                input_method: inputMethod
+                input_method: inputMethod,
+                jsreact_key_event: 1,
+                value: 3
             });
         }
     }, [aiStrength, autoHint, checkWinner, currentBoard, currentPlayer, currentStep, history, winner]);
@@ -158,6 +175,15 @@ function App() {
     };
 
     const handleReset = () => {
+        if (winner) {
+            trackConnect4Event(CONNECT4_EVENTS.newBoardAfterWin, {
+                game_number: gameNumberRef.current,
+                move_count: currentStep,
+                winner: winner === PLAYER_1 ? 'red' : 'yellow',
+                jsreact_key_event: 1,
+                value: 2
+            });
+        }
         if (currentStep > 0) {
             trackConnect4Event(CONNECT4_EVENTS.reset, {
                 game_number: gameNumberRef.current,
@@ -173,6 +199,7 @@ function App() {
         setHoveredColumn(null);
         setBestMove(null);
         firstMoveTrackedRef.current = false;
+        engagedGameTrackedRef.current = false;
         gameNumberRef.current++;
     };
 
@@ -196,7 +223,8 @@ function App() {
                     ai_strength: analytics.aiStrength,
                     recommended_column: event.data.move.column + 1,
                     cache_hit: 0,
-                    calculation_ms: Math.round(performance.now() - analytics.startedAt)
+                    calculation_ms: Math.round(performance.now() - analytics.startedAt),
+                    jsreact_key_event: analytics.trigger === 'button' || analytics.trigger === 'keyboard' ? 1 : 0
                 });
             }
         };
@@ -231,7 +259,8 @@ function App() {
                     ai_strength: aiStrength,
                     recommended_column: cachedMove.column + 1,
                     cache_hit: 1,
-                    calculation_ms: 0
+                    calculation_ms: 0,
+                    jsreact_key_event: trigger === 'button' || trigger === 'keyboard' ? 1 : 0
                 });
             }
             return;
@@ -300,7 +329,8 @@ function App() {
             move_count: moveCount,
             input_method: 'pointer',
             target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow',
-            ai_strength: aiStrength
+            ai_strength: aiStrength,
+            jsreact_key_event: 1
         });
         calculateBestMove('button');
     };
@@ -329,7 +359,8 @@ function App() {
                         move_count: moveCount,
                         input_method: 'keyboard',
                         target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow',
-                        ai_strength: aiStrength
+                        ai_strength: aiStrength,
+                        jsreact_key_event: 1
                     });
                     calculateBestMove('keyboard');
                 }
@@ -376,6 +407,16 @@ function App() {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isHowToPlayOpen]);
+
+    const trackStrategyLink = (destination: string, placement: string) => {
+        trackConnect4Event(CONNECT4_EVENTS.strategyLinkOpened, {
+            game_number: gameNumberRef.current,
+            move_count: moveCount,
+            destination,
+            placement,
+            jsreact_key_event: 1
+        });
+    };
 
 
 
@@ -429,6 +470,37 @@ function App() {
                     </div>
                 </div>
 
+                {(winner || bestMove) && (
+                    <section aria-label="Next Connect 4 actions" className="mt-5 w-full max-w-4xl">
+                        <div className="grid gap-3 rounded-2xl border border-border bg-card/85 p-4 shadow-sm sm:grid-cols-3">
+                            <a
+                                href="/connect4/strategy/"
+                                onClick={() => trackStrategyLink('/connect4/strategy/', winner ? 'post_game' : 'hint_result')}
+                                className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary-300 hover:text-primary-700"
+                            >
+                                <i className="fas fa-chess-board mr-2 text-primary-600"></i>
+                                Study strategy
+                            </a>
+                            <a
+                                href="/connect4/best-first-move/"
+                                onClick={() => trackStrategyLink('/connect4/best-first-move/', winner ? 'post_game' : 'hint_result')}
+                                className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary-300 hover:text-primary-700"
+                            >
+                                <i className="fas fa-bullseye mr-2 text-secondary-600"></i>
+                                Best first move
+                            </a>
+                            <a
+                                href="/connect4/solver-guide/"
+                                onClick={() => trackStrategyLink('/connect4/solver-guide/', winner ? 'post_game' : 'hint_result')}
+                                className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary-300 hover:text-primary-700"
+                            >
+                                <i className="fas fa-route mr-2 text-accent-600"></i>
+                                Solver guide
+                            </a>
+                        </div>
+                    </section>
+                )}
+
                 <section aria-labelledby="connect4-features-title" className="mt-10 w-full max-w-6xl">
                     <div className="mx-auto mb-5 max-w-3xl text-center">
                         <h1 id="connect4-features-title" className="connect4-seo-heading text-2xl font-heading font-bold sm:text-3xl">
@@ -472,6 +544,30 @@ function App() {
                             Practice center control, forced blocks, double threats, vertical setups, and diagonal traps with clear move feedback.
                         </p>
                     </article>
+                    </div>
+                </section>
+
+                <section aria-labelledby="connect4-strategy-title" className="mt-8 w-full max-w-5xl">
+                    <div className="grid gap-5 rounded-2xl border border-border bg-card/80 p-6 shadow-sm lg:grid-cols-[1.15fr_0.85fr]">
+                        <div>
+                            <h2 id="connect4-strategy-title" className="text-2xl font-heading font-bold text-foreground">
+                                Turn solver traffic into stronger play
+                            </h2>
+                            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                                Most positions come down to center control, forced blocks, and avoiding moves that give the opponent an immediate fork. Use the calculator for the exact column, then compare the board against the strategy notes so the pattern is easier to recognize next time.
+                            </p>
+                        </div>
+                        <div className="grid gap-2 text-sm">
+                            <a href="/connect4/strategy/" onClick={() => trackStrategyLink('/connect4/strategy/', 'seo_section')} className="rounded-xl border border-border bg-background px-4 py-3 font-semibold text-foreground transition hover:border-primary-300 hover:text-primary-700">
+                                Connect 4 strategy guide
+                            </a>
+                            <a href="/connect4/best-first-move/" onClick={() => trackStrategyLink('/connect4/best-first-move/', 'seo_section')} className="rounded-xl border border-border bg-background px-4 py-3 font-semibold text-foreground transition hover:border-primary-300 hover:text-primary-700">
+                                Best first move in Connect 4
+                            </a>
+                            <a href="/connect4/solver-guide/" onClick={() => trackStrategyLink('/connect4/solver-guide/', 'seo_section')} className="rounded-xl border border-border bg-background px-4 py-3 font-semibold text-foreground transition hover:border-primary-300 hover:text-primary-700">
+                                How the solver analyzes positions
+                            </a>
+                        </div>
                     </div>
                 </section>
 

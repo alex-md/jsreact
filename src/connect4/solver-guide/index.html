@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>How to Use a Connect 4 Solver | JSreact</title>
+        <script type="module">
+            import { createHead } from '@components/head.js';
+
+            createHead(
+                'How to Use a Connect 4 Solver',
+                'Use the Connect 4 solver to recreate board positions, compare recommended columns, study threats, and improve move selection with free browser analysis.',
+                {
+                    canonicalPath: '/connect4/solver-guide/',
+                    keywords: [
+                        'how to use connect 4 solver',
+                        'connect 4 solver guide',
+                        'connect 4 best move calculator guide',
+                        'connect four solver help',
+                        'analyze connect 4 board',
+                        'connect 4 move analyzer'
+                    ],
+                    ogImageAlt: 'Connect 4 solver interface with a recommended move',
+                    structuredData: null
+                }
+            );
+        </script>
+    </head>
+
+    <body class="bg-gray-50 text-gray-900">
+        <script type="module">
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
+        </script>
+
+        <div id="header"></div>
+
+        <main class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+            <section class="max-w-3xl">
+                <p class="text-sm font-semibold uppercase tracking-wide text-primary">Solver guide</p>
+                <h1 class="mt-3 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">How to use the Connect 4 solver</h1>
+                <p class="mt-4 text-lg leading-8 text-gray-700">The calculator works best when you enter the position exactly as it happened. Add each move in order, choose the player you want to analyze, and compare the recommended column with the threats on the board.</p>
+                <a href="/connect4/" class="mt-6 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700">Open the solver</a>
+            </section>
+
+            <section class="mt-12 grid gap-5 md:grid-cols-3">
+                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-950">1. Enter moves</h2>
+                    <p class="mt-3 leading-7 text-gray-700">Click the columns in the same order they were played. Use Undo and Redo if you need to fix a position.</p>
+                </article>
+                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-950">2. Pick a target</h2>
+                    <p class="mt-3 leading-7 text-gray-700">Analyze the current player, Red, or Yellow. This helps when you are studying a position from one side's point of view.</p>
+                </article>
+                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-950">3. Read the result</h2>
+                    <p class="mt-3 leading-7 text-gray-700">The highlighted column is the recommended move. Check whether it blocks a threat, creates a fork, or improves center control.</p>
+                </article>
+            </section>
+
+            <section class="mt-12 border-t border-gray-200 pt-8">
+                <h2 class="text-2xl font-bold text-gray-950">What to study after the result</h2>
+                <p class="mt-3 max-w-3xl leading-7 text-gray-700">A recommendation is most useful when you can explain it. Look for immediate wins, forced blocks, diagonal support, and moves that create two winning threats on the next turn.</p>
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <a href="/connect4/strategy/" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Strategy guide</a>
+                    <a href="/connect4/best-first-move/" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Best first move</a>
+                </div>
+            </section>
+        </main>
+    </body>
+
+</html>

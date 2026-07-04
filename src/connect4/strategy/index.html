@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Connect 4 Strategy Guide - How to Win | JSreact</title>
+        <script type="module">
+            import { createHead } from '@components/head.js';
+
+            createHead(
+                'Connect 4 Strategy Guide - How to Win',
+                'Learn practical Connect 4 strategy: center control, forced blocks, double threats, traps, and how to use the free solver to study winning positions.',
+                {
+                    canonicalPath: '/connect4/strategy/',
+                    keywords: [
+                        'connect 4 strategy',
+                        'how to win connect 4',
+                        'connect four strategy',
+                        'connect 4 tips',
+                        'connect 4 tricks',
+                        'connect 4 double threat',
+                        'connect 4 traps',
+                        'connect 4 solver strategy'
+                    ],
+                    ogImageAlt: 'Connect 4 strategy board showing center control and threats',
+                    structuredData: null
+                }
+            );
+        </script>
+    </head>
+
+    <body class="bg-gray-50 text-gray-900">
+        <script type="module">
+            import { initPageShell } from '@components/pageShell.js';
+            initPageShell();
+        </script>
+
+        <div id="header"></div>
+
+        <main class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+            <section class="max-w-3xl">
+                <p class="text-sm font-semibold uppercase tracking-wide text-primary">Connect 4 strategy</p>
+                <h1 class="mt-3 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">How to win more Connect 4 games</h1>
+                <p class="mt-4 text-lg leading-8 text-gray-700">Good Connect 4 play starts with center control, then shifts into threat management. The solver is useful because it turns those ideas into a concrete column choice for the board in front of you.</p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <a href="/connect4/" class="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700">Open the solver</a>
+                    <a href="/connect4/best-first-move/" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Best first move</a>
+                </div>
+            </section>
+
+            <section class="mt-12 grid gap-5 md:grid-cols-2">
+                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-950">Control the center</h2>
+                    <p class="mt-3 leading-7 text-gray-700">The center column touches more possible four-in-a-row lines than an edge column. Early center pieces keep horizontal, vertical, and diagonal options open.</p>
+                </article>
+                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-950">Block immediate wins</h2>
+                    <p class="mt-3 leading-7 text-gray-700">Before chasing your own plan, check whether the opponent has three connected pieces with an open fourth space. Forced blocks matter more than quiet setup moves.</p>
+                </article>
+                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-950">Create double threats</h2>
+                    <p class="mt-3 leading-7 text-gray-700">A double threat gives you two winning squares on the next turn. If the opponent can block only one, the second line wins.</p>
+                </article>
+                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-950">Avoid helping the opponent</h2>
+                    <p class="mt-3 leading-7 text-gray-700">Some moves look safe but place a disc underneath the opponent's winning square. Use the solver to catch these support mistakes before committing.</p>
+                </article>
+            </section>
+
+            <section class="mt-12 border-t border-gray-200 pt-8">
+                <h2 class="text-2xl font-bold text-gray-950">Practice with a real board</h2>
+                <p class="mt-3 max-w-3xl leading-7 text-gray-700">Enter a position in the Connect 4 solver, ask for the best move, then ask why that column works. Look for center access, a forced block, or a threat that cannot be stopped cleanly.</p>
+                <a href="/connect4/solver-guide/" class="mt-5 inline-flex rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Read the solver guide</a>
+            </section>
+        </main>
+    </body>
+
+</html>

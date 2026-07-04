@@ -1,17 +1,6 @@
 import '@styles/global.css';
 import { getActiveUsers } from '@utils/activeusers.js';
-
-async function fetchViewCount() {
-    try {
-        let response = await fetch("https://views.vs.workers.dev");
-        if (!response.ok) throw Error(`HTTP error! status: ${response.status}`);
-        let data = await response.text(),
-            count = parseInt(data);
-        return isNaN(count) ? "Unavailable" : count.toLocaleString();
-    } catch (error) {
-        return console.error("Error fetching view count:", error), "Unavailable";
-    }
-}
+import { fetchFormattedViewCount } from '@utils/viewCount';
 
 // utils ---------------------------------------------------------
 const el = (tag, classes = [], html = '') => {
@@ -90,7 +79,12 @@ export function createFooter(mountTarget = null) {
 
     /* ---- Views logic ---- */
     const loadViewCount = async () => {
-        const count = await fetchViewCount();
+        let count = 'Unavailable';
+        try {
+            count = await fetchFormattedViewCount();
+        } catch (error) {
+            console.error('Error fetching view count:', error);
+        }
         const span = el('span', ['fw-bold', 'text-foreground'], ` ${count} views`);
         viewsBtn.appendChild(span);
     };

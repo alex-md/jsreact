@@ -6,7 +6,7 @@ interface WeeklyPatternChartProps {
 }
 
 const WeeklyPatternChart: React.FC<WeeklyPatternChartProps> = ({ data, title }) => {
-  const maxValue = Math.max(...data.map(item => item.avgViews));
+  const maxValue = Math.max(1, ...data.map(item => item.avgViews));
   const today = new Date().getDay();
 
   return (

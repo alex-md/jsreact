@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Eye, Clock, CalendarDays, Activity, Users } from 'lucide-react';
-import { getAnalyticsData } from '../utils/calculateViews';
+import { Eye } from 'lucide-react';
+import { getAnalyticsData } from '../utils/liveAnalytics';
 import { AnalyticsData } from '../types/analytics';
 import CounterCard from './CounterCard';
 import MetricCard from './MetricCard';
 import LineChart from './LineChart';
-import Chart from './Chart';
-import WeeklyPatternChart from './WeeklyPatternChart';
 import Header from './Header';
 
 const AnalyticsDashboard: React.FC = () => {
@@ -14,16 +12,30 @@ const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Initial data fetch
-    setData(getAnalyticsData());
-    setLoading(false);
+    let isMounted = true;
 
-    // Update analytics data every 2 seconds for real-time feel
-    const interval = setInterval(() => {
-      setData(getAnalyticsData());
-    }, 2000);
+    const loadAnalyticsData = async () => {
+      try {
+        const analyticsData = await getAnalyticsData();
+        if (isMounted) {
+          setData(analyticsData);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error loading analytics data:', error);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
-    return () => clearInterval(interval);
+    loadAnalyticsData();
+    const interval = setInterval(loadAnalyticsData, 30_000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   if (loading || !data) {
@@ -42,8 +54,6 @@ const AnalyticsDashboard: React.FC = () => {
     value: item.views
   }));
 
-  const weeklyPatternData = data.weeklyPattern;
-
   return (
     <div className="min-h-screen bg-card">
       <Header title="Realtime Analytics" />
@@ -60,19 +70,19 @@ const AnalyticsDashboard: React.FC = () => {
               duration={1000}
             />
             <MetricCard
-              title="Today's Views"
+              title="Observed Today"
               value={data.today.current}
               previousValue={data.today.previous}
               percentChange={data.today.percentChange}
             />
             <MetricCard
-              title="Last 24 Hours"
+              title="Observed 24 Hours"
               value={data.last24Hours.current}
               previousValue={data.last24Hours.previous}
               percentChange={data.last24Hours.percentChange}
             />
             <MetricCard
-              title="Last 7 Days"
+              title="Observed 7 Days"
               value={data.last7Days.current}
               previousValue={data.last7Days.previous}
               percentChange={data.last7Days.percentChange}
@@ -87,7 +97,7 @@ const AnalyticsDashboard: React.FC = () => {
             <div className="col-span-1">
               <LineChart
                 data={dailyTrendData}
-                title="Daily Views (Last 7 Days)"
+                title="Observed Daily Views (Last 7 Days)"
                 height={300}
                 lineColor="stroke-indigo-500"
                 fillColor="fill-indigo-500/10"

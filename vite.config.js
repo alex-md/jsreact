@@ -87,8 +87,8 @@ const pageSeo = {
     },
     '/connect4/': {
         title: 'Connect 4 Solver & Best Move Calculator - Free',
-        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, and analyze Red, Yellow, or the current player for free.',
-        keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI',
+        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare strategy lines, and analyze Red, Yellow, or the current player for free.',
+        keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 strategy, how to win connect 4, best first move connect 4, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI',
         imageAlt: 'Connect 4 board with recommended move highlighted',
         structuredDataGraph: [
             {
@@ -103,9 +103,11 @@ const pageSeo = {
                     '4 in a Row Solver',
                     'Connect 4 Calculator',
                     'Connect4 Solver',
-                    'Connect 4 Game Solver'
+                    'Connect 4 Game Solver',
+                    'Connect 4 Strategy Tool',
+                    'Connect 4 Move Analyzer'
                 ],
-                description: 'Analyze any Connect 4 position, highlight the strongest column, and explore alternate lines with free browser-based hints.',
+                description: 'Analyze any Connect 4 position, highlight the strongest column, compare strategy lines, and explore alternate moves with free browser-based hints.',
                 applicationCategory: 'GameApplication',
                 operatingSystem: 'Any',
                 browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
@@ -125,7 +127,8 @@ const pageSeo = {
                     'Solver targeting for Red, Yellow, or the current player',
                     'Five adjustable AI strength levels',
                     'Random, casual, human-like, expert, and master analysis',
-                    'Complete late-game position analysis in Master mode'
+                    'Complete late-game position analysis in Master mode',
+                    'Strategy links for opening moves, threats, and solver interpretation'
                 ],
                 publisher: {
                     '@type': 'Organization',
@@ -177,9 +180,68 @@ const pageSeo = {
                             text: 'Yes. The solver is free to use online and does not require an account.'
                         }
                     }
+                    ,
+                    {
+                        '@type': 'Question',
+                        name: 'What is the best first move in Connect 4?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'The center column is usually the strongest first move because it creates the most horizontal, vertical, and diagonal connection paths. The solver can still evaluate the exact position after each move.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        name: 'How can I get better at Connect 4?',
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: 'Use the solver to test real board positions, then study center control, immediate threats, double threats, and forced blocks so the same patterns become easier to spot without help.'
+                        }
+                    }
                 ]
             }
         ]
+    },
+    '/connect4/strategy/': {
+        title: 'Connect 4 Strategy Guide - How to Win',
+        description: 'Learn practical Connect 4 strategy: center control, forced blocks, double threats, traps, and how to use the free solver to study winning positions.',
+        keywords: 'connect 4 strategy, how to win connect 4, connect four strategy, connect 4 tips, connect 4 tricks, connect 4 double threat, connect 4 traps, connect 4 solver strategy',
+        imageAlt: 'Connect 4 strategy board showing center control and threats',
+        structuredData: {
+            '@type': 'Article',
+            headline: 'Connect 4 Strategy Guide',
+            alternateName: ['How to Win Connect 4', 'Connect Four Strategy Guide', 'Connect 4 Tips'],
+            articleSection: 'Games',
+            about: ['Connect 4 strategy', 'Connect 4 solver', 'board game tactics'],
+            mainEntityOfPage: `${siteUrl}/connect4/strategy/`
+        }
+    },
+    '/connect4/best-first-move/': {
+        title: 'Best First Move in Connect 4',
+        description: 'The best first move in Connect 4 is usually the center column. Learn why it matters, when to adapt, and how to test openings in the solver.',
+        keywords: 'best first move connect 4, connect 4 opening move, connect four best first move, connect 4 center column, how to start connect 4, connect 4 opening strategy',
+        imageAlt: 'Connect 4 opening board with the center column highlighted',
+        structuredData: {
+            '@type': 'Article',
+            headline: 'Best First Move in Connect 4',
+            alternateName: ['Connect 4 Opening Move', 'Connect Four Best First Move', 'Connect 4 Center Column Strategy'],
+            articleSection: 'Games',
+            about: ['Connect 4 openings', 'center column strategy', 'Connect 4 solver'],
+            mainEntityOfPage: `${siteUrl}/connect4/best-first-move/`
+        }
+    },
+    '/connect4/solver-guide/': {
+        title: 'How to Use a Connect 4 Solver',
+        description: 'Use the Connect 4 solver to recreate board positions, compare recommended columns, study threats, and improve move selection with free browser analysis.',
+        keywords: 'how to use connect 4 solver, connect 4 solver guide, connect 4 best move calculator guide, connect four solver help, analyze connect 4 board, connect 4 move analyzer',
+        imageAlt: 'Connect 4 solver interface with a recommended move',
+        structuredData: {
+            '@type': 'Article',
+            headline: 'How to Use a Connect 4 Solver',
+            alternateName: ['Connect 4 Solver Guide', 'Connect 4 Best Move Calculator Guide', 'Connect 4 Move Analyzer Help'],
+            articleSection: 'Games',
+            about: ['Connect 4 solver', 'Connect 4 board analysis', 'best move calculator'],
+            mainEntityOfPage: `${siteUrl}/connect4/solver-guide/`
+        }
     },
     '/diff/': {
         title: 'Online Diff Checker - Compare Text Differences',
@@ -431,6 +493,35 @@ const createStructuredData = (route, metadata) => {
         };
     }
 
+    if (metadata.structuredData?.['@type'] === 'Article') {
+        return {
+            '@context': 'https://schema.org',
+            headline: metadata.title,
+            description: metadata.description,
+            url: `${siteUrl}${route}`,
+            author: {
+                '@type': 'Organization',
+                name: 'JSreact',
+                url: siteUrl,
+                logo: {
+                    '@type': 'ImageObject',
+                    url: `${siteUrl}/assets/images/icon.png`
+                }
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: 'JSreact',
+                url: siteUrl,
+                logo: {
+                    '@type': 'ImageObject',
+                    url: `${siteUrl}/assets/images/icon.png`
+                }
+            },
+            ...(metadata.publishDate ? { datePublished: metadata.publishDate } : {}),
+            ...metadata.structuredData
+        };
+    }
+
     return {
         '@context': 'https://schema.org',
         '@type': 'WebApplication',
@@ -590,7 +681,10 @@ export default defineConfig({
                 elevation: path.resolve(srcDir, 'elevation/index.html'),
                 oeis: path.resolve(srcDir, 'oeis/index.html'),
                 numigma: path.resolve(srcDir, 'numigma/index.html'),
-                connect4: path.resolve(srcDir, 'connect4/index.html')
+                connect4: path.resolve(srcDir, 'connect4/index.html'),
+                connect4Strategy: path.resolve(srcDir, 'connect4/strategy/index.html'),
+                connect4BestFirstMove: path.resolve(srcDir, 'connect4/best-first-move/index.html'),
+                connect4SolverGuide: path.resolve(srcDir, 'connect4/solver-guide/index.html')
             },
             output: {
                 manualChunks(id) {

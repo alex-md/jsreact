@@ -8,8 +8,18 @@ export const trackAnalyticsEvent = (eventName, parameters = {}) => {
         window.dataLayer.push(arguments);
     };
 
+    const {
+        jsreact_key_event: jsreactKeyEvent,
+        ...eventParameters
+    } = parameters;
+
     window.gtag('event', eventName, {
-        ...parameters,
+        ...eventParameters,
+        ...(jsreactKeyEvent ? {
+            jsreact_key_event: 1,
+            value: eventParameters.value ?? 1,
+            engagement_time_msec: eventParameters.engagement_time_msec ?? 1000
+        } : {}),
         page_path: window.location.pathname,
         transport_type: 'beacon'
     });

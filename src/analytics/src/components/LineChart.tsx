@@ -37,19 +37,21 @@ const LineChart: React.FC<LineChartProps> = ({
     // Calculate scales
     const maxValue = Math.max(...data.map(d => d.value));
     const minValue = Math.min(...data.map(d => d.value));
-    const padding = maxValue * 0.1;
+    const valueRange = Math.max(1, maxValue - minValue);
+    const padding = Math.max(1, valueRange * 0.1);
 
     const yScale = (value: number) => {
-      return paddingTop + chartHeight - ((value - minValue + padding) / (maxValue - minValue + padding * 2)) * chartHeight;
+      return paddingTop + chartHeight - ((value - minValue + padding) / (valueRange + padding * 2)) * chartHeight;
     };
 
     const xScale = (index: number) => {
-      return (index / (data.length - 1)) * width;
+      return data.length === 1 ? width / 2 : (index / (data.length - 1)) * width;
     };
 
     // Create gradient for area
     const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-    gradient.setAttribute('id', 'areaGradient');
+    const gradientId = `areaGradient-${title.replace(/[^a-z0-9]/gi, '-')}`;
+    gradient.setAttribute('id', gradientId);
     gradient.setAttribute('x1', '0');
     gradient.setAttribute('y1', '0');
     gradient.setAttribute('x2', '0');
@@ -97,7 +99,7 @@ const LineChart: React.FC<LineChartProps> = ({
 
     const areaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     areaPath.setAttribute('d', areaPathD);
-    areaPath.setAttribute('fill', 'url(#areaGradient)');
+    areaPath.setAttribute('fill', `url(#${gradientId})`);
 
     // Create dots for data points
     const dotsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');

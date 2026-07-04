@@ -1,0 +1,3 @@
+[     269ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4173/favicon.ico:0
+[     278ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4173/assets/images/android-chrome-192x192.png:0
+[     278ms] [WARNING] Error while trying to use the following icon from the Manifest: http://127.0.0.1:4173/assets/images/android-chrome-192x192.png (Download error or resource isn't a valid image) @ http://127.0.0.1:4173/connect4/?verify=3:0
