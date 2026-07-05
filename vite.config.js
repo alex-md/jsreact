@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(rootDir, 'src');
 const siteUrl = 'https://jsreact.com';
+const siteLogoUrl = `${siteUrl}/assets/images/logo.png`;
 const googleTagId = 'G-ZEFG04PXR7';
 const gtmContainerId = 'GTM-NF9TL7G';
 
@@ -34,7 +35,7 @@ const pageSeo = {
                     url: `${siteUrl}/`,
                     logo: {
                         '@type': 'ImageObject',
-                        url: `${siteUrl}/assets/images/icon.png`
+                        url: siteLogoUrl
                     }
                 }
             },
@@ -506,7 +507,7 @@ const createStructuredData = (route, metadata) => {
                 url: siteUrl,
                 logo: {
                     '@type': 'ImageObject',
-                    url: `${siteUrl}/assets/images/icon.png`
+                    url: siteLogoUrl
                 }
             },
             publisher: {
@@ -515,7 +516,7 @@ const createStructuredData = (route, metadata) => {
                 url: siteUrl,
                 logo: {
                     '@type': 'ImageObject',
-                    url: `${siteUrl}/assets/images/icon.png`
+                    url: siteLogoUrl
                 }
             },
             ...(metadata.publishDate ? { datePublished: metadata.publishDate } : {}),
@@ -538,7 +539,7 @@ const createStructuredData = (route, metadata) => {
             url: siteUrl,
             logo: {
                 '@type': 'ImageObject',
-                url: `${siteUrl}/assets/images/icon.png`
+                url: siteLogoUrl
             }
         },
         ...(metadata.publishDate ? { datePublished: metadata.publishDate } : {}),
@@ -598,9 +599,13 @@ const createSeoPlugin = () => ({
         <meta property="og:site_name" content="JSreact">
         <meta property="og:locale" content="en_US">
         <meta property="og:image" content="${siteUrl}/assets/images/og-image.png">
-        <meta property="og:image:width" content="589">
+        <meta property="og:image:width" content="909">
         <meta property="og:image:height" content="303">
         <meta property="og:image:alt" content="${escapeHtml(metadata.imageAlt || `${metadata.title} on JSreact`)}">
+        <link rel="icon" type="image/png" sizes="48x48" href="/assets/images/favicon-48x48.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+        <link rel="manifest" href="/site.webmanifest">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
         <meta name="twitter:description" content="${escapeHtml(metadata.description)}">

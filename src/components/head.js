@@ -181,7 +181,7 @@ export function createHead(title, description, options = {}) {
         keywords,
         ogImage = '/assets/images/og-image.png',
         ogImageAlt = `${title} on JSreact`,
-        ogImageWidth = '589',
+        ogImageWidth = '909',
         ogImageHeight = '303',
         additionalMeta = [],
         structuredData: structuredDataOverride
@@ -244,10 +244,11 @@ export function createHead(title, description, options = {}) {
     };
 
     const appendExternalResource = (resource) => {
-        const { type, rel, href, src } = resource;
-        const selector = type === 'link'
+        const { tag, type, rel, href, src } = resource;
+        const tagName = tag || type;
+        const selector = tagName === 'link'
             ? `link[rel="${rel}"][href="${href}"]`
-            : type === 'script'
+            : tagName === 'script'
                 ? `script[src="${src}"]`
                 : '';
 
@@ -255,9 +256,9 @@ export function createHead(title, description, options = {}) {
             return;
         }
 
-        const el = document.createElement(type);
+        const el = document.createElement(tagName);
         Object.entries(resource).forEach(([key, value]) => {
-            if (key !== 'type' && value !== undefined) {
+            if (key !== 'tag' && value !== undefined) {
                 el.setAttribute(key, value);
             }
         });
@@ -314,6 +315,9 @@ export function createHead(title, description, options = {}) {
     ensureCriticalStyles();
 
     [
+        { tag: 'link', rel: 'icon', type: 'image/png', sizes: '48x48', href: '/assets/images/favicon-48x48.png' },
+        { tag: 'link', rel: 'icon', type: 'image/png', sizes: '32x32', href: '/assets/images/favicon-32x32.png' },
+        { tag: 'link', rel: 'apple-touch-icon', sizes: '180x180', href: '/assets/images/apple-touch-icon.png' },
         { type: 'link', rel: 'manifest', href: '/site.webmanifest' },
         {
             type: 'link',
@@ -424,7 +428,7 @@ export function createHead(title, description, options = {}) {
             url: defaultBaseUrl,
             logo: {
                 '@type': 'ImageObject',
-                url: getFullUrl('/assets/images/icon.png')
+                url: getFullUrl('/assets/images/logo.png')
             }
         },
         ...(publishDate ? { datePublished: publishDate } : {}),
