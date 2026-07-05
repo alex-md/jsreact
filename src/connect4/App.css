@@ -115,22 +115,28 @@
 }
 
 .connect4-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 2.75rem;
     height: 2.75rem;
     border: 1px solid hsl(var(--border));
     border-radius: 0.75rem;
     background: hsl(var(--card) / 0.8);
-    color: hsl(var(--muted-foreground));
+    color: hsl(var(--foreground) / 0.78);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.08);
 }
 
 .connect4-action-button:hover:not(:disabled) {
     color: hsl(var(--foreground));
     border-color: hsl(var(--primary) / 0.4);
+    background: hsl(var(--card));
 }
 
 .connect4-action-button:disabled {
     cursor: not-allowed;
-    opacity: 0.35;
+    color: hsl(var(--muted-foreground) / 0.55);
+    opacity: 0.7;
 }
 
 .connect4-auto-switch {

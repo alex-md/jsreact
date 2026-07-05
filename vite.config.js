@@ -89,8 +89,8 @@ const pageSeo = {
     },
     '/connect4/': {
         title: 'Connect 4 Solver & Best Move Calculator - Free',
-        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare strategy lines, and analyze Red, Yellow, or the current player for free.',
-        keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 strategy, how to win connect 4, best first move connect 4, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI',
+        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, cycle through equal-best suggestions, and analyze Red, Yellow, or the current player for free.',
+        keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 strategy, how to win connect 4, best first move connect 4, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI, connect 4 move suggestions, alternate connect 4 best moves',
         imageAlt: 'Connect 4 board with recommended move highlighted',
         structuredDataGraph: [
             {
@@ -107,9 +107,10 @@ const pageSeo = {
                     'Connect4 Solver',
                     'Connect 4 Game Solver',
                     'Connect 4 Strategy Tool',
-                    'Connect 4 Move Analyzer'
+                    'Connect 4 Move Analyzer',
+                    'Connect 4 Move Suggestions'
                 ],
-                description: 'Analyze any Connect 4 position, highlight the strongest column, compare strategy lines, and explore alternate moves with free browser-based hints.',
+                description: 'Analyze any Connect 4 position, highlight the strongest column, cycle through equal-best suggestions, and explore alternate moves with free browser-based hints.',
                 applicationCategory: 'GameApplication',
                 operatingSystem: 'Any',
                 browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
@@ -124,6 +125,7 @@ const pageSeo = {
                     'Best-move recommendations for any board position',
                     'Board analysis for standard game positions',
                     'Whole-column move recommendations',
+                    'New suggestion cycling for equal-best moves',
                     'Undo and redo move analysis',
                     'Keyboard controls',
                     'Solver targeting for Red, Yellow, or the current player',
@@ -147,7 +149,7 @@ const pageSeo = {
                         name: 'How do I use the Connect 4 solver?',
                         acceptedAnswer: {
                             '@type': 'Answer',
-                            text: 'Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and you can use Undo and Redo to explore alternative lines.'
+                            text: 'Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and when multiple moves score equally well, New suggestion cycles to another top move without dropping to a weaker choice.'
                         }
                     },
                     {

@@ -6,7 +6,7 @@
 
         <title>Connect 4 Solver & Best Move Calculator - Free | JSreact</title>
         <meta name="description"
-            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare strategy lines, and analyze Red, Yellow, or the current player for free.">
+            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, cycle through equal-best suggestions, and analyze Red, Yellow, or the current player for free.">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
         <link rel="canonical" href="https://jsreact.com/connect4/">
@@ -16,14 +16,14 @@
         <meta property="og:locale" content="en_US">
         <meta property="og:title" content="Connect 4 Solver & Best Move Calculator - Free">
         <meta property="og:description"
-            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare strategy lines, and analyze Red, Yellow, or the current player for free.">
+            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, cycle through equal-best suggestions, and analyze Red, Yellow, or the current player for free.">
         <meta property="og:url" content="https://jsreact.com/connect4/">
         <meta property="og:image" content="https://jsreact.com/assets/images/og-image.png">
         <meta property="og:image:alt" content="Connect 4 board with recommended move highlighted">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="Connect 4 Solver & Best Move Calculator - Free">
         <meta name="twitter:description"
-            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare strategy lines, and analyze Red, Yellow, or the current player for free.">
+            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, cycle through equal-best suggestions, and analyze Red, Yellow, or the current player for free.">
         <meta name="twitter:image" content="https://jsreact.com/assets/images/og-image.png">
 
         <script type="application/ld+json">
@@ -42,9 +42,10 @@
                         "4 in a Row Solver",
                         "Connect 4 Calculator",
                         "Connect4 Solver",
-                        "Connect 4 Game Solver"
+                        "Connect 4 Game Solver",
+                        "Connect 4 Move Suggestions"
                     ],
-                    "description": "Analyze any Connect 4 position, highlight the strongest column, and explore alternate lines with free browser-based hints.",
+                    "description": "Analyze any Connect 4 position, highlight the strongest column, cycle through equal-best suggestions, and explore alternate lines with free browser-based hints.",
                     "applicationCategory": "GameApplication",
                     "operatingSystem": "Any",
                     "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
@@ -59,6 +60,7 @@
                         "Best-move recommendations for any board position",
                         "Board analysis for standard game positions",
                         "Whole-column move recommendations",
+                        "New suggestion cycling for equal-best moves",
                         "Undo and redo move analysis",
                         "Keyboard controls",
                         "Solver targeting for Red, Yellow, or the current player",
@@ -81,7 +83,7 @@
                             "name": "How do I use the Connect 4 solver?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and you can use Undo and Redo to explore alternative lines."
+                                "text": "Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and when multiple moves score equally well, New suggestion cycles to another top move without dropping to a weaker choice."
                             }
                         },
                         {
@@ -127,7 +129,7 @@
 
             createHead(
                 'Connect 4 Solver & Best Move Calculator - Free',
-                'Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare strategy lines, and analyze Red, Yellow, or the current player for free.',
+                'Find the best Connect 4 move for any board. Recreate a position, get instant hints, cycle through equal-best suggestions, and analyze Red, Yellow, or the current player for free.',
                 {
                     canonicalPath: '/connect4/',
                     keywords: [
@@ -145,7 +147,9 @@
                         '4 in a row solver',
                         'adjustable connect 4 AI',
                         'connect 4 AI difficulty',
-                        'human-like connect 4 AI'
+                        'human-like connect 4 AI',
+                        'connect 4 move suggestions',
+                        'alternate connect 4 best moves'
                     ],
                     ogImageAlt: 'Connect 4 board with recommended move highlighted',
                     structuredData: null

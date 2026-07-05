@@ -42,7 +42,7 @@
     {
         "id": "connect4",
         "title": "Free Connect 4 Solver",
-        "description": "Recreate any board and get an instant best-move recommendation.",
+        "description": "Recreate any board, get the best move, and cycle through equal suggestions.",
         "icon": "fas fa-brain",
         "color": "indigo",
         "link": "/connect4/",

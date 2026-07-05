@@ -1,4 +1,5 @@
 import React from 'react';
+import { Lightbulb, LoaderCircle, Redo2, RotateCcw, Undo2 } from 'lucide-react';
 import { PLAYER_1, EMPTY, COLS, getNextOpenRow } from '../utils/solver';
 import type { Board as BoardType, Player } from '../utils/solver';
 import GameStatus from './GameStatus';
@@ -14,6 +15,7 @@ interface BoardProps {
     setHoveredColumn: (col: number | null) => void;
     onColumnClick: (col: number, inputMethod?: 'pointer' | 'keyboard') => void;
     bestMove: { column: number; score: number } | null;
+    canRequestNewSuggestion: boolean;
     isCalculating: boolean;
     onCalculateBestMove: () => void;
     onUndo: () => void;
@@ -39,6 +41,7 @@ const Board: React.FC<BoardProps> = ({
     setHoveredColumn,
     onColumnClick,
     bestMove,
+    canRequestNewSuggestion,
     isCalculating,
     onCalculateBestMove,
     onUndo,
@@ -186,27 +189,30 @@ const Board: React.FC<BoardProps> = ({
             <div className="mt-3 w-full max-w-md flex flex-col gap-2 sm:mt-4 sm:gap-3">
                 <div className="grid grid-cols-[auto_auto_1fr_auto] gap-2 sm:gap-3">
                     <button onClick={onUndo} disabled={!canUndo} className="connect4-action-button" title="Undo move" aria-label="Undo move">
-                        <i className="fas fa-undo"></i>
+                        <Undo2 aria-hidden="true" size={20} strokeWidth={2.5} />
                     </button>
                     <button onClick={onRedo} disabled={!canRedo} className="connect4-action-button" title="Redo move" aria-label="Redo move">
-                        <i className="fas fa-redo"></i>
+                        <Redo2 aria-hidden="true" size={20} strokeWidth={2.5} />
                     </button>
                     <button
                         onClick={() => onCalculateBestMove()}
-                        disabled={!!winner || isCalculating}
+                        disabled={!!winner || isCalculating || !canRequestNewSuggestion}
                         className="h-11 rounded-xl bg-gradient-to-r from-secondary-600 to-secondary-700 px-3 font-bold text-white shadow-md transition hover:from-secondary-500 hover:to-secondary-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                             {isCalculating ? (
                                 <span className="flex items-center justify-center gap-2">
-                                    <i className="fas fa-spinner fa-spin"></i>
+                                    <LoaderCircle aria-hidden="true" className="animate-spin" size={18} />
                                     Thinking...
                                 </span>
                             ) : (
-                                <span><i className="fas fa-lightbulb mr-2"></i>{bestMove ? 'Refresh Hint' : 'Show Best Move'}</span>
+                                <span className="flex items-center justify-center gap-2">
+                                    <Lightbulb aria-hidden="true" size={18} />
+                                    {bestMove ? (canRequestNewSuggestion ? 'New suggestion' : 'Best move chosen') : 'Show Best Move'}
+                                </span>
                             )}
                     </button>
                     <button onClick={onReset} disabled={!canReset} className="connect4-action-button" title="Start a new board" aria-label="Start a new board">
-                        <i className="fas fa-rotate-left"></i>
+                        <RotateCcw aria-hidden="true" size={20} strokeWidth={2.5} />
                     </button>
                 </div>
 

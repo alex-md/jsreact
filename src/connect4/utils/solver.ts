@@ -2,6 +2,15 @@ import type { AiStrength } from './aiStrength';
 
 export type Player = 1 | 2;
 export type Board = number[][];
+export interface MoveSuggestion {
+    column: number;
+    score: number;
+}
+
+export interface MoveSuggestionResult {
+    move: MoveSuggestion;
+    suggestions: MoveSuggestion[];
+}
 
 export const ROWS = 6;
 export const COLS = 7;
@@ -459,20 +468,32 @@ class Connect4Engine {
         return near[0];
     }
 
-    public solve(strength: AiStrength = 'human'): { column: number; score: number } {
+    public suggest(strength: AiStrength = 'human'): MoveSuggestionResult {
         const remaining = 42 - this.movesPlayed;
         const rootMoves = this.orderedMoves();
-        if (rootMoves.length === 0) return { column: -1, score: 0 };
+        if (rootMoves.length === 0) {
+            const move = { column: -1, score: 0 };
+            return { move, suggestions: [move] };
+        }
 
         if (strength === 'random') {
             const column = rootMoves[Math.floor(Math.random() * rootMoves.length)];
-            return { column, score: 0 };
+            return {
+                move: { column, score: 0 },
+                suggestions: rootMoves.map((col) => ({ column: col, score: 0 }))
+            };
         }
 
         // Immediate tactical fast path
         for (const col of rootMoves) {
             if (this.isWinningMove(col)) {
-                return { column: col, score: Connect4Engine.WIN_SCORE };
+                const suggestions = rootMoves
+                    .filter((candidateCol) => this.isWinningMove(candidateCol))
+                    .map((candidateCol) => ({ column: candidateCol, score: Connect4Engine.WIN_SCORE }));
+                return {
+                    move: suggestions[0],
+                    suggestions
+                };
             }
         }
 
@@ -523,18 +544,35 @@ class Connect4Engine {
             }
         }
 
-        if (strength === 'casual' || strength === 'human') {
-            const picked = this.pickVariedMove(finalCandidates, strength);
+        finalCandidates.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return Math.abs(3 - a.col) - Math.abs(3 - b.col);
+        });
+
+        const topScore = finalCandidates[0]?.score ?? bestScore;
+        const suggestions = finalCandidates
+            .filter((candidate) => candidate.score === topScore)
+            .map((candidate) => ({ column: candidate.col, score: candidate.score }));
+
+        if (suggestions.length > 0) {
             return {
-                column: picked.col,
-                score: picked.score
+                move: suggestions[0],
+                suggestions
             };
         }
 
-        return {
+        const move = {
             column: bestCol,
             score: bestScore
         };
+        return {
+            move,
+            suggestions: [move]
+        };
+    }
+
+    public solve(strength: AiStrength = 'human'): MoveSuggestion {
+        return this.suggest(strength).move;
     }
 }
 
@@ -564,7 +602,16 @@ export function getBestMove(
     board: Board,
     currentPlayer: Player,
     strength: AiStrength = 'human'
-): { column: number; score: number } {
+): MoveSuggestion {
     const engine = new Connect4Engine(board, currentPlayer);
     return engine.solve(strength);
+}
+
+export function getMoveSuggestions(
+    board: Board,
+    currentPlayer: Player,
+    strength: AiStrength = 'human'
+): MoveSuggestionResult {
+    const engine = new Connect4Engine(board, currentPlayer);
+    return engine.suggest(strength);
 }

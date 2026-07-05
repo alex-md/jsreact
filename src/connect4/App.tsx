@@ -8,7 +8,7 @@ import {
     PLAYER_2,
     copyBoard,
 } from './utils/solver';
-import type { Board as BoardType, Player } from './utils/solver';
+import type { Board as BoardType, MoveSuggestion, Player } from './utils/solver';
 import useLocalStorage from './hooks/useLocalStorage';
 import GameHeader from './components/GameHeader';
 import Controls from './components/Controls';
@@ -36,13 +36,14 @@ function App() {
 
 
     // UI State
-    const [bestMove, setBestMove] = useState<{ column: number; score: number } | null>(null);
+    const [bestMove, setBestMove] = useState<MoveSuggestion | null>(null);
+    const [moveSuggestions, setMoveSuggestions] = useState<MoveSuggestion[]>([]);
     const [isCalculating, setIsCalculating] = useState(false);
     const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
     const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
     const solverWorkerRef = useRef<Worker | null>(null);
     const solverRequestIdRef = useRef(0);
-    const hintCacheRef = useRef(new Map<string, { column: number; score: number }>());
+    const hintCacheRef = useRef(new Map<string, { move: MoveSuggestion; suggestions: MoveSuggestion[] }>());
     const hintAnalyticsRef = useRef(new Map<number, {
         startedAt: number;
         trigger: HintTrigger;
@@ -59,6 +60,7 @@ function App() {
     const moveCount = currentStep;
     const canUndo = currentStep > 0;
     const canRedo = currentStep < history.length - 1;
+    const canRequestNewSuggestion = !bestMove || moveSuggestions.length > 1;
     const checkWinner = useCallback((board: BoardType, player: Player) => {
         if (checkWin(board, player)) return player;
         return null;
@@ -87,6 +89,7 @@ function App() {
         solverRequestIdRef.current++;
         setIsCalculating(false);
         setBestMove(null);
+        setMoveSuggestions([]);
 
         if (inputMethod === 'keyboard') {
             trackConnect4Event(CONNECT4_EVENTS.keyboardMove, {
@@ -151,6 +154,7 @@ function App() {
             solverRequestIdRef.current++;
             setIsCalculating(false);
             setBestMove(null);
+            setMoveSuggestions([]);
         }
     };
 
@@ -166,6 +170,7 @@ function App() {
             solverRequestIdRef.current++;
             setIsCalculating(false);
             setBestMove(null);
+            setMoveSuggestions([]);
 
             const nextState = history[nextStep];
             const prevPlayer = nextState.currentPlayer === PLAYER_1 ? PLAYER_2 : PLAYER_1;
@@ -198,6 +203,7 @@ function App() {
         setIsCalculating(false);
         setHoveredColumn(null);
         setBestMove(null);
+        setMoveSuggestions([]);
         firstMoveTrackedRef.current = false;
         engagedGameTrackedRef.current = false;
         gameNumberRef.current++;
@@ -207,12 +213,14 @@ function App() {
         const worker = new Worker(new URL('./solver.worker.ts', import.meta.url), { type: 'module' });
         solverWorkerRef.current = worker;
 
-        worker.onmessage = (event: MessageEvent<{ id: number; move: { column: number; score: number }; cacheKey: string }>) => {
-            hintCacheRef.current.set(event.data.cacheKey, event.data.move);
+        worker.onmessage = (event: MessageEvent<{ id: number; move: MoveSuggestion; suggestions: MoveSuggestion[]; cacheKey: string }>) => {
+            const suggestions = event.data.suggestions.length > 0 ? event.data.suggestions : [event.data.move];
+            hintCacheRef.current.set(event.data.cacheKey, { move: event.data.move, suggestions });
             const analytics = hintAnalyticsRef.current.get(event.data.id);
             hintAnalyticsRef.current.delete(event.data.id);
             if (event.data.id !== solverRequestIdRef.current) return;
             setBestMove(event.data.move);
+            setMoveSuggestions(suggestions);
             setIsCalculating(false);
             if (analytics) {
                 trackConnect4Event(CONNECT4_EVENTS.hintCalculated, {
@@ -245,10 +253,16 @@ function App() {
         const targetPlayer = solverTarget === 'current' ? currentPlayer : solverTarget;
         const cacheKey = `${aiStrength}:${targetPlayer}:${currentBoard.flat().join('')}`;
         const useCache = aiStrength === 'expert' || aiStrength === 'master';
-        const cachedMove = useCache ? hintCacheRef.current.get(cacheKey) : undefined;
+        const cachedResult = useCache ? hintCacheRef.current.get(cacheKey) : undefined;
+        const activeSuggestions = cachedResult?.suggestions ?? moveSuggestions;
 
-        if (cachedMove) {
-            setBestMove(cachedMove);
+        if (trigger === 'auto' && bestMove) return;
+
+        if (trigger !== 'auto' && bestMove && activeSuggestions.length > 1) {
+            const activeIndex = activeSuggestions.findIndex((suggestion) => suggestion.column === bestMove.column);
+            const nextMove = activeSuggestions[(activeIndex + 1) % activeSuggestions.length];
+            setBestMove(nextMove);
+            setMoveSuggestions(activeSuggestions);
             setIsCalculating(false);
             if (trigger !== 'auto' || moveCount > 0) {
                 trackConnect4Event(CONNECT4_EVENTS.hintCalculated, {
@@ -257,7 +271,29 @@ function App() {
                     move_count: moveCount,
                     target_player: targetPlayer === PLAYER_1 ? 'red' : 'yellow',
                     ai_strength: aiStrength,
-                    recommended_column: cachedMove.column + 1,
+                    recommended_column: nextMove.column + 1,
+                    cache_hit: 1,
+                    calculation_ms: 0,
+                    jsreact_key_event: trigger === 'button' || trigger === 'keyboard' ? 1 : 0
+                });
+            }
+            return;
+        }
+
+        if (trigger !== 'auto' && bestMove && activeSuggestions.length <= 1) return;
+
+        if (cachedResult) {
+            setBestMove(cachedResult.move);
+            setMoveSuggestions(cachedResult.suggestions);
+            setIsCalculating(false);
+            if (trigger !== 'auto' || moveCount > 0) {
+                trackConnect4Event(CONNECT4_EVENTS.hintCalculated, {
+                    game_number: gameNumberRef.current,
+                    trigger,
+                    move_count: moveCount,
+                    target_player: targetPlayer === PLAYER_1 ? 'red' : 'yellow',
+                    ai_strength: aiStrength,
+                    recommended_column: cachedResult.move.column + 1,
                     cache_hit: 1,
                     calculation_ms: 0,
                     jsreact_key_event: trigger === 'button' || trigger === 'keyboard' ? 1 : 0
@@ -278,7 +314,7 @@ function App() {
         }
         setIsCalculating(true);
         solverWorkerRef.current.postMessage({ id, board: currentBoard, player: targetPlayer, strength: aiStrength, cacheKey });
-    }, [aiStrength, currentBoard, currentPlayer, moveCount, winner, solverTarget]);
+    }, [aiStrength, bestMove, currentBoard, currentPlayer, moveCount, moveSuggestions, winner, solverTarget]);
 
     const handleAutoHintChange = (enabled: boolean) => {
         trackConnect4Event(CONNECT4_EVENTS.autoHintToggled, {
@@ -298,6 +334,10 @@ function App() {
             previous_target: solverTarget === 'current' ? 'current' : solverTarget === PLAYER_1 ? 'red' : 'yellow',
             target: target === 'current' ? 'current' : target === PLAYER_1 ? 'red' : 'yellow'
         });
+        solverRequestIdRef.current++;
+        setIsCalculating(false);
+        setBestMove(null);
+        setMoveSuggestions([]);
         setSolverTarget(target);
     };
 
@@ -312,6 +352,7 @@ function App() {
         solverRequestIdRef.current++;
         setIsCalculating(false);
         setBestMove(null);
+        setMoveSuggestions([]);
         setAiStrength(strength);
     };
 
@@ -324,6 +365,7 @@ function App() {
     };
 
     const handleManualHint = () => {
+        if (!canRequestNewSuggestion) return;
         trackConnect4Event(CONNECT4_EVENTS.manualHintRequested, {
             game_number: gameNumberRef.current,
             move_count: moveCount,
@@ -353,7 +395,7 @@ function App() {
 
             if (event.code === 'Space') {
                 event.preventDefault();
-                if (!winner && !isCalculating) {
+                if (!winner && !isCalculating && canRequestNewSuggestion) {
                     trackConnect4Event(CONNECT4_EVENTS.manualHintRequested, {
                         game_number: gameNumberRef.current,
                         move_count: moveCount,
@@ -395,7 +437,7 @@ function App() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [aiStrength, calculateBestMove, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen]);
+    }, [aiStrength, calculateBestMove, canRequestNewSuggestion, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen]);
 
     useEffect(() => {
         if (!isHowToPlayOpen) return;
@@ -451,6 +493,7 @@ function App() {
                             setHoveredColumn={setHoveredColumn}
                             onColumnClick={handleColumnClick}
                             bestMove={bestMove}
+                            canRequestNewSuggestion={canRequestNewSuggestion}
                             isCalculating={isCalculating}
                             onCalculateBestMove={handleManualHint}
                             onUndo={handleUndo}
@@ -516,10 +559,10 @@ function App() {
                             <div className="h-10 w-10 rounded-xl bg-primary-500/10 text-primary-600 flex items-center justify-center">
                                 <i className="fas fa-brain"></i>
                             </div>
-                            <h2 className="text-lg font-bold text-foreground">Adjustable analysis engine</h2>
+                        <h2 className="text-lg font-bold text-foreground">Adjustable analysis engine</h2>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
-                            Choose Random, Casual, Human, Expert, or Master strength. Use quick hints for casual positions or deeper analysis when the board needs a longer lookahead.
+                            Choose Random, Casual, Human, Expert, or Master strength. When several columns score the same, cycle through equal suggestions without settling for a weaker move.
                         </p>
                     </article>
                     <article className="rounded-2xl border border-border bg-card/90 p-6 shadow-sm">
