@@ -1,0 +1,78 @@
+/* 
+ * Critical CSS - extracted for performance optimization
+ * Contains only styles needed for above-the-fold content
+ */
+
+:root {
+    /* Base color tokens */
+    --header-bg: #1a1b26;
+    --accent-primary: oklch(65% 0.295 263);
+    --text-primary: oklch(85% 0.07 261);
+    --text-secondary: oklch(75% 0.06 261);
+    --surface-dark: oklch(30% 0.025 261);
+    --surface-1: oklch(98% 0.005 261);
+    --surface-2: oklch(95% 0.01 261);
+
+    /* Critical spacing - used in the header */
+    --space-6: 1.5rem;
+    --space-4: 1rem;
+
+    /* Critical typography */
+    --font-sans: 'InterVariable', system-ui, -apple-system, sans-serif;
+    --text-base: 1rem;
+    --leading-normal: 1.5;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    background-color: var(--surface-1);
+    color: var(--foreground);
+}
+
+/* Critical layout elements */
+#container,
+body,
+html {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header critical styles */
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Critical animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* InterVariable font preload in head */
+@supports (font-variation-settings: normal) {
+    @font-face {
+        font-family: 'InterVariable';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/assets/fonts/Inter-roman.var.woff2') format('woff2');
+        font-named-instance: 'Regular';
+    }
+}
