@@ -14,12 +14,14 @@ import GameHeader from './components/GameHeader';
 import Controls from './components/Controls';
 import Board from './components/Board';
 import HowToPlayModal from './components/HowToPlayModal';
+import SolverUpdateModal from './components/SolverUpdateModal';
 import { CONNECT4_EVENTS, trackConnect4Event } from './utils/analytics';
 import { DEFAULT_AI_STRENGTH } from './utils/aiStrength';
 import type { AiStrength } from './utils/aiStrength';
 import './App.css';
 
 type HintTrigger = 'auto' | 'button' | 'keyboard';
+const SOLVER_UPDATE_STORAGE_KEY = 'connect4-solver-update-2026-07-10-seen';
 
 function App() {
     // Game State
@@ -41,6 +43,13 @@ function App() {
     const [isCalculating, setIsCalculating] = useState(false);
     const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
     const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
+    const [isSolverUpdateOpen, setIsSolverUpdateOpen] = useState(() => {
+        try {
+            return localStorage.getItem(SOLVER_UPDATE_STORAGE_KEY) !== 'true';
+        } catch {
+            return true;
+        }
+    });
     const solverWorkerRef = useRef<Worker | null>(null);
     const solverRequestIdRef = useRef(0);
     const hintCacheRef = useRef(new Map<string, { move: MoveSuggestion; suggestions: MoveSuggestion[] }>());
@@ -313,7 +322,14 @@ function App() {
             });
         }
         setIsCalculating(true);
-        solverWorkerRef.current.postMessage({ id, board: currentBoard, player: targetPlayer, strength: aiStrength, cacheKey });
+        solverWorkerRef.current.postMessage({
+            id,
+            board: currentBoard,
+            player: targetPlayer,
+            strength: aiStrength,
+            cacheKey,
+            gameId: gameNumberRef.current,
+        });
     }, [aiStrength, bestMove, currentBoard, currentPlayer, moveCount, moveSuggestions, winner, solverTarget]);
 
     const handleAutoHintChange = (enabled: boolean) => {
@@ -364,6 +380,15 @@ function App() {
         setIsHowToPlayOpen(true);
     };
 
+    const handleCloseSolverUpdate = useCallback(() => {
+        try {
+            localStorage.setItem(SOLVER_UPDATE_STORAGE_KEY, 'true');
+        } catch {
+            // The modal can still be dismissed when storage is unavailable.
+        }
+        setIsSolverUpdateOpen(false);
+    }, []);
+
     const handleManualHint = () => {
         if (!canRequestNewSuggestion) return;
         trackConnect4Event(CONNECT4_EVENTS.manualHintRequested, {
@@ -389,7 +414,7 @@ function App() {
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (isHowToPlayOpen) return;
+            if (isHowToPlayOpen || isSolverUpdateOpen) return;
             const target = event.target as HTMLElement | null;
             if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;
 
@@ -437,7 +462,7 @@ function App() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [aiStrength, calculateBestMove, canRequestNewSuggestion, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen]);
+    }, [aiStrength, calculateBestMove, canRequestNewSuggestion, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen, isSolverUpdateOpen]);
 
     useEffect(() => {
         if (!isHowToPlayOpen) return;
@@ -632,6 +657,12 @@ function App() {
                             </p>
                         </article>
                         <article>
+                            <h3 className="text-base font-bold text-foreground">Does it use standard Connect Four rules?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Yes. The solver uses the standard seven-column, six-row board and checks horizontal, vertical, and diagonal wins.
+                            </p>
+                        </article>
+                        <article>
                             <h3 className="text-base font-bold text-foreground">Can I adjust the AI difficulty?</h3>
                             <p className="mt-2 text-sm text-muted-foreground">
                                 Yes. Pick Random, Casual, Human, Expert, or Master to control how far ahead the solver thinks and how consistently it chooses the top move.
@@ -650,6 +681,10 @@ function App() {
             <HowToPlayModal
                 isOpen={isHowToPlayOpen}
                 onClose={() => setIsHowToPlayOpen(false)}
+            />
+            <SolverUpdateModal
+                isOpen={isSolverUpdateOpen}
+                onClose={handleCloseSolverUpdate}
             />
         </div>
     );

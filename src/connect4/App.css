@@ -256,6 +256,21 @@
     color: hsl(var(--primary));
 }
 
+.connect4-winning-cell {
+    z-index: 1;
+}
+
+.connect4-winning-cell::after {
+    position: absolute;
+    inset: -0.2rem;
+    z-index: 30;
+    border: 3px solid white;
+    border-radius: 9999px;
+    box-shadow: 0 0 0 3px rgb(16 185 129), 0 0 18px rgb(16 185 129 / 0.75);
+    content: '';
+    pointer-events: none;
+}
+
 .connect4-strength.is-compact {
     gap: 0.4rem;
 }
@@ -278,13 +293,6 @@ button:focus-visible,
     outline: 2px solid #6366f1;
     /* Indigo-500 */
     outline-offset: 2px;
-}
-
-/* Smooth transitions */
-* {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
 }
 
 /* Keyboard shortcuts display */
@@ -382,5 +390,19 @@ kbd {
 
     .connect4-mobile-target [role="radio"] {
         min-height: 36px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-drop,
+    .animate-fade-in-up,
+    .animate-fade-in,
+    .animate-scale-in,
+    .connect4-column-recommended {
+        animation: none;
+    }
+
+    .connect4-switch-thumb {
+        transition: none;
     }
 }

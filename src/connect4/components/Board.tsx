@@ -1,6 +1,6 @@
 import React from 'react';
 import { Lightbulb, LoaderCircle, Redo2, RotateCcw, Undo2 } from 'lucide-react';
-import { PLAYER_1, EMPTY, COLS, getNextOpenRow } from '../utils/solver';
+import { PLAYER_1, EMPTY, COLS, getNextOpenRow, getWinningCells } from '../utils/solver';
 import type { Board as BoardType, Player } from '../utils/solver';
 import GameStatus from './GameStatus';
 import SolverTargetPicker from './SolverTargetPicker';
@@ -58,6 +58,8 @@ const Board: React.FC<BoardProps> = ({
     aiStrength,
     onAiStrengthChange,
 }) => {
+    const winningCells = winner ? new Set(getWinningCells(board, winner).map(([row, col]) => `${row}-${col}`)) : new Set<string>();
+
     return (
         <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full md:w-auto flex flex-col items-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-secondary-500/5 -z-10"></div>
@@ -148,10 +150,11 @@ const Board: React.FC<BoardProps> = ({
                         row.map((cell, colIndex) => {
                             const nextRow = getNextOpenRow(board, colIndex);
                             const isHoverPreview = hoveredColumn === colIndex && rowIndex === nextRow && !winner;
+                            const isWinningCell = winningCells.has(`${rowIndex}-${colIndex}`);
                             return (
                                 <div
                                     key={`${rowIndex}-${colIndex}`}
-                                    className="connect4-cell rounded-full relative flex items-center justify-center"
+                                    className={`connect4-cell rounded-full relative flex items-center justify-center ${isWinningCell ? 'connect4-winning-cell' : ''}`}
                                 >
                                     {/* The Hole Background */}
                                     <div className="absolute inset-0 bg-primary-950/60 rounded-full shadow-[inset_0_3px_6px_rgba(0,0,0,0.4)] border border-primary-900/50"></div>

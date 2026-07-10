@@ -15,7 +15,7 @@ export const AI_STRENGTHS = [
         id: 'human',
         label: 'Plays like a human',
         shortLabel: 'Human',
-        description: 'Looks 5 moves ahead with natural variation.',
+        description: 'Uses selective tactical search with a consistent game-by-game style.',
     },
     {
         id: 'expert',
@@ -27,7 +27,7 @@ export const AI_STRENGTHS = [
         id: 'master',
         label: 'Master',
         shortLabel: 'Master',
-        description: 'Uses the deepest practical search and solves late endgames completely.',
+        description: 'Attempts a full game-theory proof before using deep iterative analysis.',
     },
 ] as const;
 

@@ -88,8 +88,8 @@ const pageSeo = {
         }
     },
     '/connect4/': {
-        title: 'Connect 4 Solver & Best Move Calculator - Free',
-        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, cycle through equal-best suggestions, and analyze Red, Yellow, or the current player for free.',
+        title: 'Connect 4 Solver: Find the Best Move Free',
+        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare top moves, and analyze Red or Yellow free—no account needed.',
         keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 strategy, how to win connect 4, best first move connect 4, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI, connect 4 move suggestions, alternate connect 4 best moves',
         imageAlt: 'Connect 4 board with recommended move highlighted',
         structuredDataGraph: [

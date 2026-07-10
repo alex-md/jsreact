@@ -8,10 +8,11 @@ interface SolverRequest {
     player: Player;
     strength: AiStrength;
     cacheKey: string;
+    gameId?: number;
 }
 
 self.onmessage = (event: MessageEvent<SolverRequest>) => {
-    const { id, board, player, strength, cacheKey } = event.data;
-    const result = getMoveSuggestions(board, player, strength);
+    const { id, board, player, strength, cacheKey, gameId } = event.data;
+    const result = getMoveSuggestions(board, player, strength, { variationSeed: gameId });
     self.postMessage({ id, move: result.move, suggestions: result.suggestions, cacheKey });
 };
