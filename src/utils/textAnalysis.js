@@ -169,33 +169,66 @@ export function analyzeDocument(text, keywords, matchingStrategy = 'exact', wind
             occurrences.push({ index: match.index, wordIndex });
             if (match[0].length === 0) regex.lastIndex++;
         }
-        const targetWords = Math.max(1, _getTokens(keyword, true).length);
+        // Use the same tokenizer as the document denominator. This prevents
+        // hyphenated or apostrophized terms from being counted as several words
+        // in density while being counted as one word in the document.
+        const targetWords = Math.max(1, (keyword.match(/[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu) || []).length);
         return {
             keyword,
             count: occurrences.length,
             density: wordCount ? (occurrences.length * targetWords / wordCount) * 100 : 0,
-            occurrences
+            occurrences: occurrences.map(occurrence => ({ ...occurrence, wordLength: targetWords }))
         };
     });
 
-    const safeWindowSize = Math.max(10, Math.min(Number(windowSize) || 100, Math.max(10, wordCount)));
+    // Section size is intentionally user-controlled. Values larger than the
+    // document simply produce one section; only non-positive values fall back.
+    const requestedWindowSize = Number(windowSize);
+    const safeWindowSize = Number.isFinite(requestedWindowSize) && requestedWindowSize > 0
+        ? Math.floor(requestedWindowSize)
+        : 100;
     const windows = [];
     for (let start = 0; start < wordCount; start += safeWindowSize) {
         const end = Math.min(wordCount, start + safeWindowSize);
         const counts = stats.map(stat => stat.occurrences.filter(hit => hit.wordIndex >= start && hit.wordIndex < end).length);
+        const matchedWordIndices = new Set();
+        stats.forEach(stat => stat.occurrences.forEach(hit => {
+            // An occurrence belongs to the section in which it begins. Keep
+            // highlighting consistent with that attribution at boundaries.
+            if (hit.wordIndex < start || hit.wordIndex >= end) return;
+            for (let index = hit.wordIndex; index < hit.wordIndex + hit.wordLength; index++) {
+                if (index >= start && index < end) matchedWordIndices.add(index);
+            }
+        }));
         windows.push({
             start,
             end,
             count: counts.reduce((sum, count) => sum + count, 0),
             counts,
-            text: words.slice(start, end).map(word => word.value).join(' ')
+            text: words.slice(start, end).map(word => word.value).join(' '),
+            tokens: words.slice(start, end).map((word, index) => ({
+                text: word.value,
+                matched: matchedWordIndices.has(start + index)
+            }))
         });
     }
 
     const totalMatches = stats.reduce((sum, stat) => sum + stat.count, 0);
     const coveredKeywords = stats.filter(stat => stat.count > 0).length;
     const windowsWithMatches = windows.filter(window => window.count > 0).length;
-    const spreadScore = totalMatches ? calculateSpreadScore(windows) : 0;
+    // Compare the share of mentions in each section with the share of document
+    // words in that section. Total variation distance is normalized to 0..1,
+    // so the score does not change merely because every count is multiplied.
+    // One occurrence cannot establish a distribution pattern.
+    let spreadScore = null;
+    if (totalMatches >= 2 && windows.length > 1 && wordCount > 0) {
+        const totalVariation = windows.reduce((sum, window) => {
+            const observedShare = window.count / totalMatches;
+            const expectedShare = (window.end - window.start) / wordCount;
+            return sum + Math.abs(observedShare - expectedShare);
+        }, 0) / 2;
+        spreadScore = Math.max(0, Math.min(100, (1 - totalVariation) * 100));
+    }
     return {
         wordCount,
         stats,

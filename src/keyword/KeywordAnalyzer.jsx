@@ -42,6 +42,7 @@ const KeywordAnalyzer = () => {
         setActiveWindow(0);
     };
     const stale = analysisInput && (analysisInput.text !== text || analysisInput.keywords.join('\0') !== keywords.join('\0') || analysisInput.matchingStrategy !== matchingStrategy || analysisInput.windowSize !== windowSize);
+    const validWindowSize = Number.isInteger(Number(windowSize)) && Number(windowSize) > 0;
 
     return (
         <main className="container mx-auto max-w-7xl px-4 py-8 text-slate-900 sm:px-6 lg:py-12">
@@ -68,7 +69,7 @@ const KeywordAnalyzer = () => {
                         }} />
                         <button onClick={() => fileRef.current?.click()} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500"><Upload size={16} /> Upload</button>
                     </div>
-                    <textarea value={text} onChange={event => setText(event.target.value)} aria-label="Content to analyze" placeholder="Paste the page, article, or draft you want to evaluate…" className="min-h-[330px] w-full resize-y border-0 px-5 py-4 text-[15px] leading-7 text-slate-800 placeholder:text-slate-400 focus:ring-0" />
+                    <textarea value={text} onChange={event => setText(event.target.value)} aria-label="Content to analyze" placeholder="Paste the page, article, or draft you want to evaluate…" className="min-h-[330px] w-full resize-y border-0 bg-slate-50 px-5 py-4 text-[15px] leading-7 text-slate-900 shadow-inner placeholder:text-slate-500 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-primary-500" />
                     <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-sm text-slate-500"><span>{wordCount.toLocaleString()} words</span><span>{utils.calculateSpeakingTime(wordCount)} read</span></div>
                 </div>
 
@@ -76,7 +77,7 @@ const KeywordAnalyzer = () => {
                     <h2 className="font-semibold text-slate-950">Targets</h2>
                     <p className="mt-1 text-sm leading-6 text-slate-500">Add the terms this page should cover. Separate multiple terms with commas.</p>
                     <form className="mt-4 flex gap-2" onSubmit={event => { event.preventDefault(); addKeywords(); }}>
-                        <input value={keywordDraft} onChange={event => setKeywordDraft(event.target.value)} placeholder="e.g. content strategy" className="min-w-0 flex-1 rounded-lg border-slate-300 text-sm focus:border-primary-500 focus:ring-primary-500" />
+                        <input value={keywordDraft} onChange={event => setKeywordDraft(event.target.value)} placeholder="e.g. content strategy" className="min-w-0 flex-1 rounded-lg border-slate-400 bg-slate-50 text-sm text-slate-900 shadow-inner placeholder:text-slate-500 focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-500" />
                         <button disabled={!keywordDraft.trim()} className="rounded-lg bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40">Add</button>
                     </form>
                     <div className="mt-3 flex min-h-9 flex-wrap gap-2">
@@ -85,11 +86,11 @@ const KeywordAnalyzer = () => {
                     <details className="mt-5 border-t border-slate-100 pt-4">
                         <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-slate-700">Analysis settings <ChevronDown size={16} /></summary>
                         <div className="mt-4 space-y-4">
-                            <label className="block text-sm font-medium text-slate-700">Matching<select value={matchingStrategy} onChange={event => setMatchingStrategy(event.target.value)} className="mt-1.5 w-full rounded-lg border-slate-300 text-sm focus:border-primary-500 focus:ring-primary-500"><option value="exact">Whole term</option><option value="partial">Include word variations</option></select><span className="mt-1 block text-xs font-normal leading-5 text-slate-500">Whole term avoids matching “art” inside “article.” Variations also count partial word matches.</span></label>
-                            <label className="block text-sm font-medium text-slate-700">Section size <span className="float-right font-normal text-slate-500">{windowSize} words</span><input type="range" min="50" max="250" step="25" value={windowSize} onChange={event => setWindowSize(Number(event.target.value))} className="mt-2 w-full accent-primary-600" /></label>
+                            <label className="block text-sm font-medium text-slate-700">Matching<select value={matchingStrategy} onChange={event => setMatchingStrategy(event.target.value)} className="mt-1.5 w-full rounded-lg border-slate-400 bg-slate-50 text-sm text-slate-900 shadow-sm focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-500"><option value="exact">Whole term</option><option value="partial">Include word variations</option></select><span className="mt-1 block text-xs font-normal leading-5 text-slate-500">Whole term avoids matching “art” inside “article.” Variations also count partial word matches.</span></label>
+                            <label className="block text-sm font-medium text-slate-700">Section size<input type="number" inputMode="numeric" value={windowSize} onChange={event => setWindowSize(event.target.value)} aria-describedby="section-size-help" className="mt-1.5 w-full rounded-lg border-slate-400 bg-slate-50 text-sm text-slate-900 shadow-inner focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-500" /><span id="section-size-help" className={`mt-1 block text-xs font-normal leading-5 ${validWindowSize ? 'text-slate-500' : 'text-red-600'}`}>{validWindowSize ? 'Words per section. Use any positive whole number.' : 'Enter a positive whole number.'}</span></label>
                         </div>
                     </details>
-                    <button onClick={runAnalysis} disabled={!text.trim() || !keywords.length} className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-5 text-sm font-bold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"><Search size={17} /> Analyze content</button>
+                    <button onClick={runAnalysis} disabled={!text.trim() || !keywords.length || !validWindowSize} className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-5 text-sm font-bold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"><Search size={17} /> Analyze content</button>
                     {!text.trim() || !keywords.length ? <p className="mt-2 text-center text-xs text-slate-500">Add content and at least one target to continue.</p> : null}
                 </aside>
             </section>
@@ -109,13 +110,12 @@ const EmptyState = () => <section className="mt-8 rounded-xl border border-dashe
 const Results = ({ analysis, activeWindow, setActiveWindow, sort, setSort, stale, rerun }) => {
     const missing = analysis.stats.filter(item => item.count === 0);
     const found = analysis.stats.filter(item => item.count > 0);
-    const highest = [...found].sort((a, b) => b.density - a.density)[0];
     const sorted = [...analysis.stats].sort((a, b) => sort === 'keyword' ? a.keyword.localeCompare(b.keyword) : sort === 'density' ? b.density - a.density : b.count - a.count);
     const selected = analysis.windows[activeWindow] || analysis.windows[0];
     const actions = [];
     if (missing.length) actions.push({ kind: 'warn', title: `${missing.length} target${missing.length > 1 ? 's are' : ' is'} missing`, body: `Review ${missing.slice(0, 3).map(item => `“${item.keyword}”`).join(', ')}. Add only where it helps answer the reader’s question.` });
-    if (analysis.totalMatches && analysis.spreadScore < 65) actions.push({ kind: 'warn', title: 'Usage is concentrated in a few sections', body: 'Check the darkest sections below. Move or remove repetitions when nearby mentions do the same job.' });
-    if (!missing.length && analysis.spreadScore >= 65) actions.push({ kind: 'good', title: 'Targets are covered and reasonably distributed', body: 'No obvious structural issue stands out. Read for clarity before increasing frequency.' });
+    if (analysis.spreadScore !== null && analysis.spreadScore < 65) actions.push({ kind: 'warn', title: 'Usage is concentrated in a few sections', body: 'Check the darkest sections below. Move or remove repetitions when nearby mentions do the same job.' });
+    if (!missing.length && (analysis.spreadScore === null || analysis.spreadScore >= 65)) actions.push({ kind: 'good', title: analysis.spreadScore === null ? 'All targets are covered' : 'Targets are covered and reasonably distributed', body: analysis.spreadScore === null ? 'There are not enough mentions or sections to judge placement reliably.' : 'No obvious structural issue stands out. Read for clarity before increasing frequency.' });
     if (!analysis.totalMatches) actions.push({ kind: 'warn', title: 'None of the targets appear', body: 'Check spelling and matching settings, or add the terms naturally where they clarify the page topic.' });
 
     return <section aria-live="polite" className="mt-8 space-y-6">
@@ -123,7 +123,7 @@ const Results = ({ analysis, activeWindow, setActiveWindow, sort, setSort, stale
         <div className="grid gap-4 sm:grid-cols-3">
             <Summary label="Target coverage" value={`${analysis.coveredKeywords} of ${analysis.stats.length}`} note={missing.length ? `${missing.length} missing` : 'All targets found'} />
             <Summary label="Total mentions" value={analysis.totalMatches.toLocaleString()} note={analysis.wordCount ? `Across ${analysis.wordCount.toLocaleString()} words` : 'No content'} />
-            <Summary label="Placement" value={analysis.totalMatches ? `${Math.round(analysis.spreadScore)}/100` : '—'} note={analysis.totalMatches ? (analysis.spreadScore >= 65 ? 'Fairly even' : 'Concentrated') : 'No mentions to compare'} />
+            <Summary label="Placement" value={analysis.spreadScore === null ? '—' : `${Math.round(analysis.spreadScore)}/100`} note={analysis.spreadScore === null ? (analysis.totalMatches ? 'Not enough data to compare' : 'No mentions to compare') : (analysis.spreadScore >= 65 ? 'Fairly even' : 'Concentrated')} />
         </div>
         <div className="space-y-3">{actions.map((action, index) => <div key={index} className={`flex gap-3 rounded-xl border px-4 py-3 ${tone[action.kind]}`}>{action.kind === 'good' ? <CheckCircle2 className="mt-0.5 shrink-0" size={19} /> : <AlertCircle className="mt-0.5 shrink-0" size={19} />}<div><h3 className="font-semibold">{action.title}</h3><p className="mt-0.5 text-sm leading-6 opacity-90">{action.body}</p></div></div>)}</div>
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -132,12 +132,16 @@ const Results = ({ analysis, activeWindow, setActiveWindow, sort, setSort, stale
         </div>
         <div className="grid gap-6 lg:grid-cols-[1fr_1.05fr]">
             <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-start justify-between"><div><h3 className="font-semibold text-slate-950">Section map</h3><p className="mt-1 text-sm leading-6 text-slate-500">Each cell is up to {analysis.windows[0]?.end || 0} words. Select one to inspect it.</p></div><BarChart3 size={19} className="text-primary-600" /></div><div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-6">{analysis.windows.map((window, index) => { const intensity = analysis.totalMatches ? Math.min(4, Math.ceil(window.count / Math.max(...analysis.windows.map(item => item.count), 1) * 4)) : 0; const colors = ['bg-slate-100 text-slate-500', 'bg-primary-100 text-primary-800', 'bg-primary-300 text-primary-950', 'bg-primary-500 text-white', 'bg-primary-700 text-white']; return <button key={window.start} onClick={() => setActiveWindow(index)} aria-label={`Section ${index + 1}, ${window.count} mentions`} aria-pressed={activeWindow === index} className={`aspect-square rounded-lg border text-sm font-bold tabular-nums focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${colors[intensity]} ${activeWindow === index ? 'border-slate-900 ring-2 ring-slate-900 ring-offset-2' : 'border-transparent'}`}><span className="block text-xs font-medium opacity-70">{index + 1}</span>{window.count}</button>; })}</div><div className="mt-4 flex justify-between text-xs text-slate-500"><span>Fewer mentions</span><span>More mentions</span></div></div>
-            <div className="rounded-xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-primary-300">Section {activeWindow + 1}</p><h3 className="mt-1 font-semibold">Words {selected?.start + 1}–{selected?.end}</h3></div><span className="rounded-full bg-white/10 px-3 py-1 text-sm font-semibold">{selected?.count || 0} mentions</span></div><p className="mt-5 max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-7 text-slate-300">{selected?.text || 'No section available.'}</p>{selected && <div className="mt-5 flex flex-wrap gap-2">{analysis.stats.map((item, index) => selected.counts[index] ? <span key={item.keyword} className="rounded-full bg-white/10 px-2.5 py-1 text-xs text-slate-200">{item.keyword} · {selected.counts[index]}</span> : null)}</div>}</div>
+            <div className="rounded-xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-primary-300">Section {activeWindow + 1}</p><h3 className="mt-1 font-semibold">Words {selected?.start + 1}–{selected?.end}</h3></div><span className="rounded-full bg-white/10 px-3 py-1 text-sm font-semibold">{selected?.count || 0} mentions</span></div><HighlightedSection section={selected} />{selected && <div className="mt-5 flex flex-wrap gap-2">{analysis.stats.map((item, index) => selected.counts[index] ? <span key={item.keyword} className="rounded-full bg-white/10 px-2.5 py-1 text-xs text-slate-200">{item.keyword} · {selected.counts[index]}</span> : null)}</div>}</div>
         </div>
         <details className="rounded-xl border border-slate-200 bg-white px-5 py-4"><summary className="cursor-pointer list-none font-semibold text-slate-800">Additional content signals</summary><div className="mt-4 grid gap-4 border-t border-slate-100 pt-4 sm:grid-cols-3"><Summary label="Vocabulary variety" value={`${analysis.lexicalDiversity.toFixed(0)}%`} note="Unique words as a share of all words" compact /><Summary label="Word style" value={analysis.complexity} note="Estimated from average word length" compact /><Summary label="Repeated phrases" value={analysis.topPhrases[0]?.phrase || 'None'} note={analysis.topPhrases[0] ? `${analysis.topPhrases[0].count} occurrences` : 'No repeated non-target phrase'} compact /></div></details>
     </section>;
 };
 
 const Summary = ({ label, value, note, compact = false }) => <div className={`${compact ? '' : 'rounded-xl border border-slate-200 bg-white p-5 shadow-sm'}`}><p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">{label}</p><p className={`${compact ? 'text-lg' : 'text-3xl'} mt-2 font-bold tracking-tight text-slate-950`}>{value}</p><p className="mt-1 text-sm text-slate-500">{note}</p></div>;
+
+const HighlightedSection = ({ section }) => <p className="mt-5 max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-7 text-slate-300">
+    {section?.tokens?.length ? section.tokens.map((token, index) => <React.Fragment key={index}>{index > 0 ? ' ' : ''}{token.matched ? <mark className="rounded-sm bg-yellow-300 px-0.5 font-semibold text-slate-950">{token.text}</mark> : token.text}</React.Fragment>) : 'No section available.'}
+</p>;
 
 export default KeywordAnalyzer;
