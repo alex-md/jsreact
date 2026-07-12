@@ -142,6 +142,77 @@ export function analyzeKeywords(text, keywords, matchingStrategy = 'exact') {
 }
 
 /**
+ * Builds one coherent, user-facing analysis. Unlike the legacy token matcher,
+ * this supports multi-word targets and reports where each occurrence appears.
+ */
+export function analyzeDocument(text, keywords, matchingStrategy = 'exact', windowSize = 100) {
+    const source = typeof text === 'string' ? text : '';
+    const targets = (keywords || []).map(keyword => String(keyword).trim()).filter(Boolean);
+    const wordMatches = [...source.matchAll(/[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu)];
+    const words = wordMatches.map(match => ({ value: match[0], index: match.index }));
+    const wordCount = words.length;
+
+    const patternFor = (keyword) => {
+        const escaped = escapeRegExp(keyword).replace(/\s+/g, '\\s+');
+        if (matchingStrategy === 'partial') return new RegExp(escaped, 'giu');
+        return new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'giu');
+    };
+
+    const stats = targets.map(keyword => {
+        const occurrences = [];
+        let match;
+        const regex = patternFor(keyword);
+        while ((match = regex.exec(source)) !== null) {
+            const wordIndex = Math.max(0, words.findIndex((word, index) =>
+                word.index <= match.index && (index === words.length - 1 || words[index + 1].index > match.index)
+            ));
+            occurrences.push({ index: match.index, wordIndex });
+            if (match[0].length === 0) regex.lastIndex++;
+        }
+        const targetWords = Math.max(1, _getTokens(keyword, true).length);
+        return {
+            keyword,
+            count: occurrences.length,
+            density: wordCount ? (occurrences.length * targetWords / wordCount) * 100 : 0,
+            occurrences
+        };
+    });
+
+    const safeWindowSize = Math.max(10, Math.min(Number(windowSize) || 100, Math.max(10, wordCount)));
+    const windows = [];
+    for (let start = 0; start < wordCount; start += safeWindowSize) {
+        const end = Math.min(wordCount, start + safeWindowSize);
+        const counts = stats.map(stat => stat.occurrences.filter(hit => hit.wordIndex >= start && hit.wordIndex < end).length);
+        windows.push({
+            start,
+            end,
+            count: counts.reduce((sum, count) => sum + count, 0),
+            counts,
+            text: words.slice(start, end).map(word => word.value).join(' ')
+        });
+    }
+
+    const totalMatches = stats.reduce((sum, stat) => sum + stat.count, 0);
+    const coveredKeywords = stats.filter(stat => stat.count > 0).length;
+    const windowsWithMatches = windows.filter(window => window.count > 0).length;
+    const spreadScore = totalMatches ? calculateSpreadScore(windows) : 0;
+    return {
+        wordCount,
+        stats,
+        windows,
+        totalMatches,
+        coveredKeywords,
+        coverage: targets.length ? (coveredKeywords / targets.length) * 100 : 0,
+        spreadScore,
+        windowsWithMatches,
+        readingTime: calculateSpeakingTime(wordCount),
+        lexicalDiversity: calculateLexicalDiversity(source),
+        topPhrases: detectTopPhrases(source, targets, 6),
+        complexity: calculateComplexity(source)
+    };
+}
+
+/**
  * Calculates the occurrence count and density of a single keyword within a text.
  * @param {string} text The source text to analyze.
  * @param {string} keyword The keyword to search for.
@@ -455,6 +526,7 @@ const utils = {
     detectTopPhrases,
     calculateSpreadScore,
     calculateComplexity
+    ,analyzeDocument
 };
 
 /**
