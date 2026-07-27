@@ -153,6 +153,7 @@ const ensureGoogleAnalytics = (head, gaTrackingId, pageTitle, pageLocation) => {
  * @param {string} options.baseUrl - Base URL for canonical links and images
  * @param {string} options.publishDate - Publication date for JSON-LD
  * @param {string} options.modifiedDate - Last modified date for JSON-LD
+ * @param {boolean} options.appendSiteName - Append "| JSreact" to the page title (default: true)
  */
 export function createHead(title, description, options = {}) {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -184,8 +185,10 @@ export function createHead(title, description, options = {}) {
         ogImageWidth = '909',
         ogImageHeight = '303',
         additionalMeta = [],
+        appendSiteName = true,
         structuredData: structuredDataOverride
     } = options;
+    const fullTitle = appendSiteName ? `${title} | JSreact` : title;
 
     const defaultBaseUrl = providedBaseUrl ||
         (['localhost', '127.0.0.1'].includes(window.location.hostname)
@@ -310,7 +313,7 @@ export function createHead(title, description, options = {}) {
     };
 
     // Set document title
-    document.title = `${title} | JSreact`;
+    document.title = fullTitle;
 
     ensureCriticalStyles();
 
@@ -381,7 +384,7 @@ export function createHead(title, description, options = {}) {
         { name: 'googlebot', content: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' },
         { name: 'author', content: 'JSreact' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:title', content: `${title} | JSreact` },
+        { property: 'og:title', content: fullTitle },
         { property: 'og:description', content: description },
         { property: 'og:url', content: canonicalUrl },
         { property: 'og:site_name', content: 'JSreact' },
@@ -391,7 +394,7 @@ export function createHead(title, description, options = {}) {
         { property: 'og:image:height', content: ogImageHeight },
         { property: 'og:image:alt', content: ogImageAlt },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: `${title} | JSreact` },
+        { name: 'twitter:title', content: fullTitle },
         { name: 'twitter:description', content: description },
         { name: 'twitter:image', content: getFullUrl(ogImage) },
         { name: 'twitter:image:alt', content: ogImageAlt }
@@ -411,7 +414,7 @@ export function createHead(title, description, options = {}) {
     metaTags.forEach(setMetaTag);
 
     ensureGoogleTagManager(head, gtmContainerId);
-    ensureGoogleAnalytics(head, gaTrackingId, `${title} | JSreact`, canonicalUrl);
+    ensureGoogleAnalytics(head, gaTrackingId, fullTitle, canonicalUrl);
 
     const baseStructuredData = {
         '@context': 'https://schema.org',

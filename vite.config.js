@@ -88,8 +88,9 @@ const pageSeo = {
         }
     },
     '/connect4/': {
-        title: 'Connect 4 Solver: Find the Best Move Free',
-        description: 'Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare top moves, and analyze Red or Yellow free—no account needed.',
+        title: 'Connect 4 Solver & Best Move Calculator | AI Helper Tool',
+        description: 'Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, and play optimal strategy.',
+        appendSiteName: false,
         keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 strategy, how to win connect 4, best first move connect 4, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI, connect 4 move suggestions, alternate connect 4 best moves',
         imageAlt: 'Connect 4 board with recommended move highlighted',
         structuredDataGraph: [
@@ -110,7 +111,7 @@ const pageSeo = {
                     'Connect 4 Move Analyzer',
                     'Connect 4 Move Suggestions'
                 ],
-                description: 'Analyze any Connect 4 position, highlight the strongest column, cycle through equal-best suggestions, and explore alternate moves with free browser-based hints.',
+                description: 'Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, share positions, and practice against the AI.',
                 applicationCategory: 'GameApplication',
                 operatingSystem: 'Any',
                 browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
@@ -132,7 +133,9 @@ const pageSeo = {
                     'Five adjustable AI strength levels',
                     'Random, casual, human-like, expert, and master analysis',
                     'Complete late-game position analysis in Master mode',
-                    'Strategy links for opening moves, threats, and solver interpretation'
+                    'Practice against an automatic AI opponent',
+                    'Shareable board-position links',
+                    'Win, draw, and loss annotations for valid columns'
                 ],
                 publisher: {
                     '@type': 'Organization',
@@ -146,59 +149,26 @@ const pageSeo = {
                 mainEntity: [
                     {
                         '@type': 'Question',
-                        name: 'How do I use the Connect 4 solver?',
+                        name: 'Is Connect 4 mathematically solved?',
                         acceptedAnswer: {
                             '@type': 'Answer',
-                            text: 'Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and when multiple moves score equally well, New suggestion cycles to another top move without dropping to a weaker choice.'
+                            text: 'Yes. With perfect play, the first player can force a win on the standard seven-column by six-row board.'
                         }
                     },
                     {
                         '@type': 'Question',
-                        name: 'Does it work with standard Connect Four rules?',
+                        name: 'What is the best opening move in Connect 4?',
                         acceptedAnswer: {
                             '@type': 'Answer',
-                            text: 'Yes. Enter the moves in column order and the solver analyzes the standard seven-column, six-row game board directly in your browser.'
+                            text: 'The middle column is the strongest opening move because it participates in more horizontal and diagonal winning lines than an edge column.'
                         }
                     },
                     {
                         '@type': 'Question',
-                        name: 'Can the solver analyze a move for either player?',
+                        name: 'How does a Connect 4 solver engine calculate moves?',
                         acceptedAnswer: {
                             '@type': 'Answer',
-                            text: 'Yes. Choose Current, Red, or Yellow in Solver Options to control which player receives the recommendation.'
-                        }
-                    },
-                    {
-                        '@type': 'Question',
-                        name: 'Can I adjust the Connect 4 AI difficulty?',
-                        acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Yes. Use the AI strength slider to choose Random, Casual, Human, Expert, or Master analysis. Lower levels add natural variation, while Expert and Master search deeper and choose deterministic moves.'
-                        }
-                    },
-                    {
-                        '@type': 'Question',
-                        name: 'Is the Connect 4 solver free?',
-                        acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Yes. The solver is free to use online and does not require an account.'
-                        }
-                    }
-                    ,
-                    {
-                        '@type': 'Question',
-                        name: 'What is the best first move in Connect 4?',
-                        acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'The center column is usually the strongest first move because it creates the most horizontal, vertical, and diagonal connection paths. The solver can still evaluate the exact position after each move.'
-                        }
-                    },
-                    {
-                        '@type': 'Question',
-                        name: 'How can I get better at Connect 4?',
-                        acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Use the solver to test real board positions, then study center control, immediate threats, double threats, and forced blocks so the same patterns become easier to spot without help.'
+                            text: 'The engine searches future move sequences, rejects lines that allow immediate replies, and scores the remaining positions. Deeper settings calculate farther ahead.'
                         }
                     }
                 ]
@@ -560,7 +530,9 @@ const createSeoPlugin = () => ({
                 return html;
             }
 
-            const fullTitle = `${metadata.title} | JSreact`;
+            const fullTitle = metadata.appendSiteName === false
+                ? metadata.title
+                : `${metadata.title} | JSreact`;
             const canonicalUrl = `${siteUrl}${route}`;
             const structuredData = JSON.stringify(createStructuredData(route, metadata));
             const keywords = metadata.keywords

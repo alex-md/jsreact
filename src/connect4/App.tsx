@@ -13,23 +13,37 @@ import useLocalStorage from './hooks/useLocalStorage';
 import GameHeader from './components/GameHeader';
 import Controls from './components/Controls';
 import Board from './components/Board';
+import SolverToolbar from './components/SolverToolbar';
+import type { Connect4Mode, PracticeDifficulty } from './components/SolverToolbar';
 import HowToPlayModal from './components/HowToPlayModal';
 import SolverUpdateModal from './components/SolverUpdateModal';
 import { CONNECT4_EVENTS, trackConnect4Event } from './utils/analytics';
 import { DEFAULT_AI_STRENGTH } from './utils/aiStrength';
 import type { AiStrength } from './utils/aiStrength';
+import {
+    hydrateMoveSequence,
+    serializeHistory,
+} from './utils/boardState';
+import type { GameSnapshot, HydratedBoardState } from './utils/boardState';
 import './App.css';
 
 type HintTrigger = 'auto' | 'button' | 'keyboard';
 const SOLVER_UPDATE_STORAGE_KEY = 'connect4-solver-update-2026-07-10-seen';
 
 function App() {
+    const initialGameRef = useRef<HydratedBoardState | null>(null);
+    if (!initialGameRef.current) {
+        const boardParam = typeof window === 'undefined'
+            ? null
+            : new URLSearchParams(window.location.search).get('board');
+        initialGameRef.current = hydrateMoveSequence(boardParam)
+            ?? hydrateMoveSequence('');
+    }
+
     // Game State
-    const [history, setHistory] = useState<{ board: BoardType; currentPlayer: Player }[]>([
-        { board: createBoard(), currentPlayer: PLAYER_1 },
-    ]);
-    const [currentStep, setCurrentStep] = useState(0);
-    const [winner, setWinner] = useState<Player | null>(null);
+    const [history, setHistory] = useState<GameSnapshot[]>(initialGameRef.current!.history);
+    const [currentStep, setCurrentStep] = useState(initialGameRef.current!.currentStep);
+    const [winner, setWinner] = useState<Player | null>(initialGameRef.current!.winner);
 
     // Settings (Persisted)
     const [autoHint, setAutoHint] = useLocalStorage<boolean>('connect4-autoHint', true);
@@ -40,19 +54,23 @@ function App() {
     // UI State
     const [bestMove, setBestMove] = useState<MoveSuggestion | null>(null);
     const [moveSuggestions, setMoveSuggestions] = useState<MoveSuggestion[]>([]);
+    const [moveEvaluations, setMoveEvaluations] = useState<MoveSuggestion[]>([]);
     const [isCalculating, setIsCalculating] = useState(false);
+    const [mode, setMode] = useState<Connect4Mode>('solver');
+    const [practiceDifficulty, setPracticeDifficulty] = useLocalStorage<PracticeDifficulty>('connect4-practiceDifficulty', 'standard');
+    const [isAiThinking, setIsAiThinking] = useState(false);
+    const [aiMoveToPlay, setAiMoveToPlay] = useState<number | null>(null);
+    const [shareCopied, setShareCopied] = useState(false);
     const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
     const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
-    const [isSolverUpdateOpen, setIsSolverUpdateOpen] = useState(() => {
-        try {
-            return localStorage.getItem(SOLVER_UPDATE_STORAGE_KEY) !== 'true';
-        } catch {
-            return true;
-        }
-    });
+    const [isSolverUpdateOpen, setIsSolverUpdateOpen] = useState(false);
     const solverWorkerRef = useRef<Worker | null>(null);
     const solverRequestIdRef = useRef(0);
-    const hintCacheRef = useRef(new Map<string, { move: MoveSuggestion; suggestions: MoveSuggestion[] }>());
+    const hintCacheRef = useRef(new Map<string, {
+        move: MoveSuggestion;
+        suggestions: MoveSuggestion[];
+        evaluations: MoveSuggestion[];
+    }>());
     const hintAnalyticsRef = useRef(new Map<number, {
         startedAt: number;
         trigger: HintTrigger;
@@ -77,10 +95,10 @@ function App() {
 
     const handleColumnClick = useCallback((
         col: number,
-        inputMethod: 'pointer' | 'keyboard' = 'pointer',
+        inputMethod: 'pointer' | 'keyboard' | 'ai' = 'pointer',
         keyboardMethod?: 'number' | 'arrow_enter'
     ) => {
-        if (winner) return;
+        if (winner || (mode === 'practice' && currentPlayer === PLAYER_2 && inputMethod !== 'ai') || (isAiThinking && inputMethod !== 'ai')) return;
 
         const row = getNextOpenRow(currentBoard, col);
         if (row === -1) return; // Column full
@@ -91,7 +109,7 @@ function App() {
         const nextPlayer = currentPlayer === PLAYER_1 ? PLAYER_2 : PLAYER_1;
         const newHistory = history.slice(0, currentStep + 1);
 
-        newHistory.push({ board: newBoard, currentPlayer: nextPlayer });
+        newHistory.push({ board: newBoard, currentPlayer: nextPlayer, move: col });
 
         setHistory(newHistory);
         setCurrentStep(newHistory.length - 1);
@@ -99,6 +117,7 @@ function App() {
         setIsCalculating(false);
         setBestMove(null);
         setMoveSuggestions([]);
+        setMoveEvaluations([]);
 
         if (inputMethod === 'keyboard') {
             trackConnect4Event(CONNECT4_EVENTS.keyboardMove, {
@@ -148,7 +167,7 @@ function App() {
                 value: 3
             });
         }
-    }, [aiStrength, autoHint, checkWinner, currentBoard, currentPlayer, currentStep, history, winner]);
+    }, [aiStrength, autoHint, checkWinner, currentBoard, currentPlayer, currentStep, history, isAiThinking, mode, winner]);
 
     const handleUndo = () => {
         if (currentStep > 0) {
@@ -164,6 +183,9 @@ function App() {
             setIsCalculating(false);
             setBestMove(null);
             setMoveSuggestions([]);
+            setMoveEvaluations([]);
+            setAiMoveToPlay(null);
+            setIsAiThinking(false);
         }
     };
 
@@ -180,6 +202,9 @@ function App() {
             setIsCalculating(false);
             setBestMove(null);
             setMoveSuggestions([]);
+            setMoveEvaluations([]);
+            setAiMoveToPlay(null);
+            setIsAiThinking(false);
 
             const nextState = history[nextStep];
             const prevPlayer = nextState.currentPlayer === PLAYER_1 ? PLAYER_2 : PLAYER_1;
@@ -213,6 +238,9 @@ function App() {
         setHoveredColumn(null);
         setBestMove(null);
         setMoveSuggestions([]);
+        setMoveEvaluations([]);
+        setAiMoveToPlay(null);
+        setIsAiThinking(false);
         firstMoveTrackedRef.current = false;
         engagedGameTrackedRef.current = false;
         gameNumberRef.current++;
@@ -222,14 +250,44 @@ function App() {
         const worker = new Worker(new URL('./solver.worker.ts', import.meta.url), { type: 'module' });
         solverWorkerRef.current = worker;
 
-        worker.onmessage = (event: MessageEvent<{ id: number; move: MoveSuggestion; suggestions: MoveSuggestion[]; cacheKey: string }>) => {
+        worker.onmessage = (event: MessageEvent<{
+            id: number;
+            move: MoveSuggestion;
+            suggestions: MoveSuggestion[];
+            evaluations: MoveSuggestion[];
+            cacheKey: string;
+            purpose: 'hint' | 'practice';
+        }>) => {
             const suggestions = event.data.suggestions.length > 0 ? event.data.suggestions : [event.data.move];
-            hintCacheRef.current.set(event.data.cacheKey, { move: event.data.move, suggestions });
+            const evaluations = event.data.evaluations ?? suggestions;
+            if (event.data.purpose === 'hint') {
+                hintCacheRef.current.set(event.data.cacheKey, {
+                    move: event.data.move,
+                    suggestions,
+                    evaluations,
+                });
+            }
             const analytics = hintAnalyticsRef.current.get(event.data.id);
             hintAnalyticsRef.current.delete(event.data.id);
             if (event.data.id !== solverRequestIdRef.current) return;
+
+            if (event.data.purpose === 'practice') {
+                setIsAiThinking(false);
+                if (event.data.move.column >= 0) {
+                    // Keep the worker response outside the user's click presentation
+                    // window so the human move can paint immediately and INP stays low.
+                    window.setTimeout(() => {
+                        if (event.data.id === solverRequestIdRef.current) {
+                            setAiMoveToPlay(event.data.move.column);
+                        }
+                    }, 80);
+                }
+                return;
+            }
+
             setBestMove(event.data.move);
             setMoveSuggestions(suggestions);
+            setMoveEvaluations(evaluations);
             setIsCalculating(false);
             if (analytics) {
                 trackConnect4Event(CONNECT4_EVENTS.hintCalculated, {
@@ -247,6 +305,7 @@ function App() {
         };
         worker.onerror = () => {
             setIsCalculating(false);
+            setIsAiThinking(false);
             hintAnalyticsRef.current.clear();
         };
 
@@ -294,6 +353,7 @@ function App() {
         if (cachedResult) {
             setBestMove(cachedResult.move);
             setMoveSuggestions(cachedResult.suggestions);
+            setMoveEvaluations(cachedResult.evaluations);
             setIsCalculating(false);
             if (trigger !== 'auto' || moveCount > 0) {
                 trackConnect4Event(CONNECT4_EVENTS.hintCalculated, {
@@ -329,6 +389,7 @@ function App() {
             strength: aiStrength,
             cacheKey,
             gameId: gameNumberRef.current,
+            purpose: 'hint',
         });
     }, [aiStrength, bestMove, currentBoard, currentPlayer, moveCount, moveSuggestions, winner, solverTarget]);
 
@@ -354,6 +415,7 @@ function App() {
         setIsCalculating(false);
         setBestMove(null);
         setMoveSuggestions([]);
+        setMoveEvaluations([]);
         setSolverTarget(target);
     };
 
@@ -369,6 +431,7 @@ function App() {
         setIsCalculating(false);
         setBestMove(null);
         setMoveSuggestions([]);
+        setMoveEvaluations([]);
         setAiStrength(strength);
     };
 
@@ -402,15 +465,111 @@ function App() {
         calculateBestMove('button');
     };
 
+    const clearSolverResult = useCallback(() => {
+        solverRequestIdRef.current++;
+        setIsCalculating(false);
+        setIsAiThinking(false);
+        setAiMoveToPlay(null);
+        setBestMove(null);
+        setMoveSuggestions([]);
+        setMoveEvaluations([]);
+    }, []);
+
+    const handleModeChange = (nextMode: Connect4Mode) => {
+        if (nextMode === mode) return;
+        clearSolverResult();
+        setMode(nextMode);
+    };
+
+    const handlePreset = (sequence: string) => {
+        const preset = hydrateMoveSequence(sequence);
+        if (!preset) return;
+        clearSolverResult();
+        setHistory(preset.history);
+        setCurrentStep(preset.currentStep);
+        setWinner(preset.winner);
+        setHoveredColumn(null);
+    };
+
+    const handlePracticeDifficultyChange = (difficulty: PracticeDifficulty) => {
+        if (difficulty === practiceDifficulty) return;
+        clearSolverResult();
+        setPracticeDifficulty(difficulty);
+    };
+
+    const handleShare = async () => {
+        const url = window.location.href;
+        try {
+            await navigator.clipboard.writeText(url);
+        } catch {
+            const input = document.createElement('textarea');
+            input.value = url;
+            input.setAttribute('readonly', '');
+            input.style.position = 'fixed';
+            input.style.opacity = '0';
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            input.remove();
+        }
+        setShareCopied(true);
+        window.setTimeout(() => setShareCopied(false), 1800);
+    };
+
+    useEffect(() => {
+        const sequence = serializeHistory(history, currentStep);
+        const url = new URL(window.location.href);
+        if (sequence) url.searchParams.set('board', sequence);
+        else url.searchParams.delete('board');
+        window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    }, [currentStep, history]);
+
+    useEffect(() => {
+        if (
+            mode !== 'practice'
+            || winner
+            || currentPlayer !== PLAYER_2
+            || !solverWorkerRef.current
+            || isAiThinking
+            || aiMoveToPlay !== null
+        ) return;
+
+        const strengthByDifficulty: Record<PracticeDifficulty, AiStrength> = {
+            easy: 'casual',
+            standard: 'human',
+            optimal: 'master',
+        };
+        const strength = strengthByDifficulty[practiceDifficulty];
+        const id = ++solverRequestIdRef.current;
+        const cacheKey = `practice:${strength}:${currentBoard.flat().join('')}`;
+        setIsAiThinking(true);
+        solverWorkerRef.current.postMessage({
+            id,
+            board: currentBoard,
+            player: PLAYER_2,
+            strength,
+            cacheKey,
+            gameId: gameNumberRef.current,
+            purpose: 'practice',
+        });
+    }, [aiMoveToPlay, currentBoard, currentPlayer, isAiThinking, mode, practiceDifficulty, winner]);
+
+    useEffect(() => {
+        if (aiMoveToPlay === null) return;
+        const column = aiMoveToPlay;
+        setAiMoveToPlay(null);
+        handleColumnClick(column, 'ai');
+    }, [aiMoveToPlay, handleColumnClick]);
+
     // Auto Hint Effect
     useEffect(() => {
-        if (autoHint && !winner) {
+        if (mode === 'solver' && autoHint && !winner) {
             calculateBestMove('auto');
-        } else if (!autoHint) {
+        } else if (mode === 'solver' && !autoHint) {
             solverRequestIdRef.current++;
             setIsCalculating(false);
         }
-    }, [autoHint, calculateBestMove, winner]);
+    }, [autoHint, calculateBestMove, mode, winner]);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -420,7 +579,7 @@ function App() {
 
             if (event.code === 'Space') {
                 event.preventDefault();
-                if (!winner && !isCalculating && canRequestNewSuggestion) {
+                if (mode === 'solver' && !winner && !isCalculating && canRequestNewSuggestion) {
                     trackConnect4Event(CONNECT4_EVENTS.manualHintRequested, {
                         game_number: gameNumberRef.current,
                         move_count: moveCount,
@@ -462,7 +621,7 @@ function App() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [aiStrength, calculateBestMove, canRequestNewSuggestion, handleColumnClick, hoveredColumn, isCalculating, moveCount, solverTarget, winner, isHowToPlayOpen, isSolverUpdateOpen]);
+    }, [aiStrength, calculateBestMove, canRequestNewSuggestion, handleColumnClick, hoveredColumn, isCalculating, mode, moveCount, solverTarget, winner, isHowToPlayOpen, isSolverUpdateOpen]);
 
     useEffect(() => {
         if (!isHowToPlayOpen) return;
@@ -498,8 +657,19 @@ function App() {
                     onOpenHowToPlay={handleOpenHowToPlay}
                 />
 
-                <div className="flex flex-col md:flex-row gap-4 lg:gap-8 items-start justify-center w-full max-w-6xl">
-                    <div className="order-2 hidden w-full md:order-1 md:block md:w-auto">
+                <SolverToolbar
+                    mode={mode}
+                    onModeChange={handleModeChange}
+                    practiceDifficulty={practiceDifficulty}
+                    onPracticeDifficultyChange={handlePracticeDifficultyChange}
+                    onPreset={handlePreset}
+                    onReset={handleReset}
+                    onShare={handleShare}
+                    shareCopied={shareCopied}
+                />
+
+                <div className="connect4-workspace flex flex-col md:flex-row gap-4 lg:gap-8 items-start justify-center w-full max-w-6xl">
+                    {mode === 'solver' && <div className="order-2 hidden w-full md:order-1 md:block md:w-auto">
                         <Controls
                             moveCount={moveCount}
                             solverTarget={solverTarget}
@@ -507,7 +677,7 @@ function App() {
                             aiStrength={aiStrength}
                             onAiStrengthChange={handleAiStrengthChange}
                         />
-                    </div>
+                    </div>}
 
                     <div className="order-1 w-full md:order-2 md:w-auto">
                         <Board
@@ -518,6 +688,7 @@ function App() {
                             setHoveredColumn={setHoveredColumn}
                             onColumnClick={handleColumnClick}
                             bestMove={bestMove}
+                            moveEvaluations={moveEvaluations}
                             canRequestNewSuggestion={canRequestNewSuggestion}
                             isCalculating={isCalculating}
                             onCalculateBestMove={handleManualHint}
@@ -534,6 +705,8 @@ function App() {
                             onSolverTargetChange={handleSolverTargetChange}
                             aiStrength={aiStrength}
                             onAiStrengthChange={handleAiStrengthChange}
+                            mode={mode}
+                            isAiThinking={isAiThinking}
                         />
                     </div>
                 </div>
@@ -571,9 +744,9 @@ function App() {
 
                 <section aria-labelledby="connect4-features-title" className="mt-10 w-full max-w-6xl">
                     <div className="mx-auto mb-5 max-w-3xl text-center">
-                        <h1 id="connect4-features-title" className="connect4-seo-heading text-2xl font-heading font-bold sm:text-3xl">
-                            Free Connect 4 Solver & Best Move Calculator
-                        </h1>
+                        <h2 id="connect4-features-title" className="connect4-seo-heading text-2xl font-heading font-bold sm:text-3xl">
+                            How to Use the Connect 4 Helper
+                        </h2>
                         <p className="mt-2 text-sm text-muted-foreground">
                             Recreate any board, compare candidate moves, and see the strongest column for Red, Yellow, or whoever moves next.
                         </p>
@@ -584,7 +757,7 @@ function App() {
                             <div className="h-10 w-10 rounded-xl bg-primary-500/10 text-primary-600 flex items-center justify-center">
                                 <i className="fas fa-brain"></i>
                             </div>
-                        <h2 className="text-lg font-bold text-foreground">Adjustable analysis engine</h2>
+                        <h3 className="text-lg font-bold text-foreground">Adjustable analysis engine</h3>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
                             Choose Random, Casual, Human, Expert, or Master strength. When several columns score the same, cycle through equal suggestions without settling for a weaker move.
@@ -595,7 +768,7 @@ function App() {
                             <div className="h-10 w-10 rounded-xl bg-secondary-500/10 text-secondary-600 flex items-center justify-center">
                                 <i className="fas fa-bolt"></i>
                             </div>
-                            <h2 className="text-lg font-bold text-foreground">Fast tactical checks</h2>
+                            <h3 className="text-lg font-bold text-foreground">Fast tactical checks</h3>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
                             Tap a column or press 1-7, then use Undo and Redo to compare alternative responses without rebuilding the position.
@@ -606,7 +779,7 @@ function App() {
                             <div className="h-10 w-10 rounded-xl bg-accent-500/10 text-accent-600 flex items-center justify-center">
                                 <i className="fas fa-lightbulb"></i>
                             </div>
-                            <h2 className="text-lg font-bold text-foreground">Strategy refresher</h2>
+                            <h3 className="text-lg font-bold text-foreground">Strategy refresher</h3>
                         </div>
                         <p className="mt-3 text-sm text-muted-foreground">
                             Practice center control, forced blocks, double threats, vertical setups, and diagonal traps with clear move feedback.
@@ -641,9 +814,27 @@ function App() {
 
                 <section aria-labelledby="connect4-faq-title" className="mt-8 w-full max-w-4xl rounded-2xl border border-border bg-card/80 p-6 shadow-sm">
                     <h2 id="connect4-faq-title" className="text-2xl font-heading font-bold text-foreground">
-                        Connect 4 solver questions
+                        Frequently Asked Questions &amp; Game Mechanics
                     </h2>
                     <div className="mt-5 grid gap-5 md:grid-cols-2">
+                        <article>
+                            <h3 className="text-base font-bold text-foreground">Is Connect 4 mathematically solved?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Yes. With perfect play, the first player can force a win on the standard 7 × 6 board. Starting in the center column preserves the strongest winning routes.
+                            </p>
+                        </article>
+                        <article>
+                            <h3 className="text-base font-bold text-foreground">What is the best opening move in Connect 4?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                The middle column is the strongest opening because it participates in more horizontal and diagonal four-in-a-row lines than an edge column.
+                            </p>
+                        </article>
+                        <article>
+                            <h3 className="text-base font-bold text-foreground">How does a Connect 4 solver engine calculate moves?</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                It searches future move sequences, rejects lines that allow an immediate reply, and scores the remaining positions. Deeper settings calculate farther ahead.
+                            </p>
+                        </article>
                         <article>
                             <h3 className="text-base font-bold text-foreground">How do I analyze a position?</h3>
                             <p className="mt-2 text-sm text-muted-foreground">

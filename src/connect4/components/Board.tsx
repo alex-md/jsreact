@@ -1,11 +1,12 @@
 import React from 'react';
 import { Lightbulb, LoaderCircle, Redo2, RotateCcw, Undo2 } from 'lucide-react';
 import { PLAYER_1, EMPTY, COLS, getNextOpenRow, getWinningCells } from '../utils/solver';
-import type { Board as BoardType, Player } from '../utils/solver';
+import type { Board as BoardType, MoveSuggestion, Player } from '../utils/solver';
 import GameStatus from './GameStatus';
 import SolverTargetPicker from './SolverTargetPicker';
 import AiStrengthControl from './AiStrengthControl';
 import type { AiStrength } from '../utils/aiStrength';
+import type { Connect4Mode } from './SolverToolbar';
 
 interface BoardProps {
     board: BoardType;
@@ -15,6 +16,7 @@ interface BoardProps {
     setHoveredColumn: (col: number | null) => void;
     onColumnClick: (col: number, inputMethod?: 'pointer' | 'keyboard') => void;
     bestMove: { column: number; score: number } | null;
+    moveEvaluations: MoveSuggestion[];
     canRequestNewSuggestion: boolean;
     isCalculating: boolean;
     onCalculateBestMove: () => void;
@@ -31,6 +33,24 @@ interface BoardProps {
     onSolverTargetChange: (value: 'current' | Player) => void;
     aiStrength: AiStrength;
     onAiStrengthChange: (value: AiStrength) => void;
+    mode: Connect4Mode;
+    isAiThinking: boolean;
+}
+
+const MATE_SCORE = 1_000_000;
+const MATE_THRESHOLD = MATE_SCORE - 42;
+
+function getMoveAnnotation(score: number) {
+    if (Math.abs(score) >= MATE_THRESHOLD) {
+        const result = score > 0 ? 'win' : 'loss';
+        const turns = Math.max(1, MATE_SCORE - Math.abs(score) + 1);
+        return { result, label: `${score > 0 ? '+' : '-'}${turns}`, exact: true };
+    }
+    return {
+        result: 'draw',
+        label: '=',
+        exact: false,
+    };
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -41,6 +61,7 @@ const Board: React.FC<BoardProps> = ({
     setHoveredColumn,
     onColumnClick,
     bestMove,
+    moveEvaluations,
     canRequestNewSuggestion,
     isCalculating,
     onCalculateBestMove,
@@ -57,8 +78,11 @@ const Board: React.FC<BoardProps> = ({
     onSolverTargetChange,
     aiStrength,
     onAiStrengthChange,
+    mode,
+    isAiThinking,
 }) => {
     const winningCells = winner ? new Set(getWinningCells(board, winner).map(([row, col]) => `${row}-${col}`)) : new Set<string>();
+    const evaluationsByColumn = new Map(moveEvaluations.map((evaluation) => [evaluation.column, evaluation]));
 
     return (
         <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full md:w-auto flex flex-col items-center relative overflow-hidden">
@@ -76,30 +100,32 @@ const Board: React.FC<BoardProps> = ({
                 <div className="absolute -bottom-6 -left-4 w-6 h-20 bg-primary-900 rounded-b-xl transform rotate-12 -z-10 border-2 border-primary-800"></div>
                 <div className="absolute -bottom-6 -right-4 w-6 h-20 bg-primary-900 rounded-b-xl transform -rotate-12 -z-10 border-2 border-primary-800"></div>
 
-                {/* Column Hover Indicators */}
-                <div className="grid grid-cols-7 gap-2 sm:gap-2.5 mb-2" aria-hidden="true">
+                {/* Solver results sit directly above their playable drop targets. */}
+                <div className="connect4-evaluation-row grid grid-cols-7 gap-2 sm:gap-2.5 mb-2">
                     {Array(COLS)
                         .fill(null)
                         .map((_, colIndex) => {
                             const nextRow = getNextOpenRow(board, colIndex);
                             const isPlayable = nextRow !== -1 && !winner;
                             const isBestMove = bestMove?.column === colIndex;
+                            const evaluation = evaluationsByColumn.get(colIndex);
+                            const annotation = evaluation ? getMoveAnnotation(evaluation.score) : null;
 
                             return (
                                 <div
                                     key={`indicator-${colIndex}`}
-                                    className={`h-8 w-8 mx-auto rounded-full flex items-center justify-center text-sm font-bold transition-all transform duration-200 ${isPlayable
-                                        ? hoveredColumn === colIndex
-                                            ? currentPlayer === PLAYER_1
-                                                ? 'bg-red-500 text-white scale-110 shadow-lg ring-2 ring-red-300'
-                                                : 'bg-yellow-400 text-white scale-110 shadow-lg ring-2 ring-yellow-200'
-                                            : isBestMove
-                                                ? 'bg-secondary-500 text-white animate-pulse-short scale-110 shadow-lg ring-2 ring-secondary-300'
-                                                : 'bg-primary-100/20 text-transparent hover:bg-primary-100/40'
-                                        : 'opacity-0 cursor-not-allowed'
-                                        }`}
+                                    className={`connect4-evaluation ${annotation ? `is-${annotation.result}` : ''} ${isBestMove ? 'is-best' : ''} ${isPlayable ? '' : 'is-disabled'}`}
+                                    title={annotation
+                                        ? `${annotation.result === 'win' ? 'Win' : annotation.result === 'loss' ? 'Loss' : 'Draw'} ${annotation.exact ? `in ${annotation.label.slice(1)} turns` : '(search estimate)'}`
+                                        : `Column ${colIndex + 1}`}
+                                    aria-label={annotation
+                                        ? `Column ${colIndex + 1}: ${annotation.result}, ${annotation.exact ? annotation.label : 'estimate'}`
+                                        : `Column ${colIndex + 1}: calculating`}
                                 >
-                                    {colIndex + 1}
+                                    <span className="connect4-evaluation-score">
+                                        {isCalculating && !annotation ? '··' : annotation?.label ?? colIndex + 1}
+                                    </span>
+                                    <span className="connect4-evaluation-column">{colIndex + 1}</span>
                                 </div>
                             );
                         })}
@@ -197,11 +223,12 @@ const Board: React.FC<BoardProps> = ({
                     <button onClick={onRedo} disabled={!canRedo} className="connect4-action-button" title="Redo move" aria-label="Redo move">
                         <Redo2 aria-hidden="true" size={20} strokeWidth={2.5} />
                     </button>
-                    <button
-                        onClick={() => onCalculateBestMove()}
-                        disabled={!!winner || isCalculating || !canRequestNewSuggestion}
-                        className="h-11 rounded-xl bg-gradient-to-r from-secondary-600 to-secondary-700 px-3 font-bold text-white shadow-md transition hover:from-secondary-500 hover:to-secondary-600 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
+                    {mode === 'solver' ? (
+                        <button
+                            onClick={() => onCalculateBestMove()}
+                            disabled={!!winner || isCalculating || !canRequestNewSuggestion}
+                            className="connect4-primary-action"
+                        >
                             {isCalculating ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <LoaderCircle aria-hidden="true" className="animate-spin" size={18} />
@@ -213,12 +240,24 @@ const Board: React.FC<BoardProps> = ({
                                     {bestMove ? (canRequestNewSuggestion ? 'New suggestion' : 'Best move chosen') : 'Show Best Move'}
                                 </span>
                             )}
-                    </button>
+                        </button>
+                    ) : (
+                        <div className="connect4-ai-status" role="status" aria-live="polite">
+                            {winner
+                                ? 'Game complete'
+                                : isAiThinking
+                                    ? <><LoaderCircle aria-hidden="true" className="animate-spin" size={17} /> AI is choosing…</>
+                                    : currentPlayer === PLAYER_1
+                                        ? 'Your move — play Red'
+                                        : 'AI turn'}
+                        </div>
+                    )}
                     <button onClick={onReset} disabled={!canReset} className="connect4-action-button" title="Start a new board" aria-label="Start a new board">
                         <RotateCcw aria-hidden="true" size={20} strokeWidth={2.5} />
                     </button>
                 </div>
 
+                {mode === 'solver' && (
                 <div className="connect4-mobile-target rounded-xl border border-border bg-card/80 px-3 py-2 shadow-sm md:hidden">
                     <SolverTargetPicker
                         solverTarget={solverTarget}
@@ -233,10 +272,15 @@ const Board: React.FC<BoardProps> = ({
                         />
                     </div>
                 </div>
+                )}
 
-                <div className="flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border bg-card/80 px-4 py-3 text-sm shadow-sm" aria-live="polite">
+                <div className="connect4-result-strip flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border bg-card/80 px-4 py-3 text-sm shadow-sm" aria-live="polite">
                     <div className="min-w-0">
-                        {bestMove ? (
+                        {mode === 'practice' ? (
+                            <p className="truncate text-muted-foreground">
+                                You are <strong className="text-red-600">Red</strong>. The AI replies automatically.
+                            </p>
+                        ) : bestMove ? (
                             <p className="truncate text-foreground">
                                 <span className="font-semibold text-secondary-700">Recommended:</span> column <strong>{bestMove.column + 1}</strong>
                                 <span className="ml-2 hidden text-xs text-muted-foreground sm:inline">
@@ -247,7 +291,7 @@ const Board: React.FC<BoardProps> = ({
                             <p className="truncate text-muted-foreground">Choose a column, or press 1–7 on your keyboard.</p>
                         )}
                     </div>
-                    <div className="flex shrink-0 items-center gap-2">
+                    {mode === 'solver' && <div className="flex shrink-0 items-center gap-2">
                         <span className="hidden text-xs font-semibold text-muted-foreground sm:inline">Auto hints</span>
                         <button
                             type="button"
@@ -261,7 +305,7 @@ const Board: React.FC<BoardProps> = ({
                             <span className="connect4-switch-label connect4-switch-on">ON</span>
                             <span className="connect4-switch-thumb" aria-hidden="true"></span>
                         </button>
-                    </div>
+                    </div>}
                 </div>
             </div>
         </div>

@@ -10,6 +10,7 @@ export interface MoveSuggestion {
 export interface MoveSuggestionResult {
     move: MoveSuggestion;
     suggestions: MoveSuggestion[];
+    evaluations: MoveSuggestion[];
 }
 
 export const ROWS = 6;
@@ -779,20 +780,23 @@ class Connect4Engine {
         const remaining = 42 - this.movesPlayed;
         if (this.hasWon(this.currentPosition) || this.hasWon(this.getOpponentPosition()) || this.isDraw()) {
             const move = { column: -1, score: 0 };
-            return { move, suggestions: [move] };
+            return { move, suggestions: [move], evaluations: [] };
         }
 
         let rootMoves = this.orderedMoves();
+        const legalRootMoves = [...rootMoves];
         if (rootMoves.length === 0) {
             const move = { column: -1, score: 0 };
-            return { move, suggestions: [move] };
+            return { move, suggestions: [move], evaluations: [] };
         }
 
         if (strength === 'random') {
             const column = rootMoves[Math.floor(Math.random() * rootMoves.length)];
+            const evaluations = rootMoves.map((col) => ({ column: col, score: 0 }));
             return {
                 move: { column, score: 0 },
-                suggestions: rootMoves.map((col) => ({ column: col, score: 0 }))
+                suggestions: evaluations,
+                evaluations,
             };
         }
 
@@ -804,7 +808,13 @@ class Connect4Engine {
                     .map((candidateCol) => ({ column: candidateCol, score: Connect4Engine.WIN_SCORE }));
                 return {
                     move: suggestions[0],
-                    suggestions
+                    suggestions,
+                    evaluations: legalRootMoves.map((column) => ({
+                        column,
+                        score: suggestions.some((suggestion) => suggestion.column === column)
+                            ? Connect4Engine.WIN_SCORE
+                            : 0,
+                    })),
                 };
             }
         }
@@ -818,7 +828,14 @@ class Connect4Engine {
         if (mandatoryBlocks.length > 0) rootMoves = mandatoryBlocks;
         if (mandatoryBlocks.length === 1) {
             const move = { column: mandatoryBlocks[0], score: 0 };
-            return { move, suggestions: [move] };
+            return {
+                move,
+                suggestions: [move],
+                evaluations: legalRootMoves.map((column) => ({
+                    column,
+                    score: column === move.column ? 0 : -Connect4Engine.WIN_SCORE + 1,
+                })),
+            };
         }
 
         if (strength === 'master') {
@@ -859,10 +876,8 @@ class Connect4Engine {
                 humanProfile = this.humanProfile();
                 maxDepth = humanProfile.depth;
                 policy = { candidateLimit: humanProfile.candidateLimit };
-                rootMoves = this.applySearchPolicy(rootMoves, [], [], [], rootMoves, [], policy);
             } else if (strength === 'casual') {
                 policy = { candidateLimit: DIFFICULTY_CONFIG.casual!.candidateLimit };
-                rootMoves = this.applySearchPolicy(rootMoves, [], [], [], rootMoves, [], policy);
             }
 
             finalCandidates = this.iterativeCandidates(rootMoves, maxDepth, policy);
@@ -870,7 +885,7 @@ class Connect4Engine {
 
         if (finalCandidates.length === 0) {
             const move = { column: rootMoves[0], score: 0 };
-            return { move, suggestions: [move] };
+            return { move, suggestions: [move], evaluations: [move] };
         }
 
         finalCandidates.sort((a, b) => {
@@ -879,6 +894,12 @@ class Connect4Engine {
         });
 
         const topScore = finalCandidates[0].score;
+        const evaluatedColumns = new Map(finalCandidates.map((candidate) => [candidate.col, candidate.score]));
+        const evaluations = legalRootMoves.map((column) => ({
+            column,
+            score: evaluatedColumns.get(column)
+                ?? (opponentWins.length > 0 ? -Connect4Engine.WIN_SCORE + 1 : 0),
+        }));
         const suggestions = finalCandidates
             .filter((candidate) => candidate.score === topScore)
             .map((candidate) => ({ column: candidate.col, score: candidate.score }));
@@ -892,11 +913,16 @@ class Connect4Engine {
             return {
                 move,
                 suggestions: [move, ...plausible.filter((candidate) => candidate.column !== move.column)],
+                evaluations,
             };
         }
 
         const move = suggestions[0] ?? { column: rootMoves[0], score: topScore };
-        return { move, suggestions: suggestions.length > 0 ? suggestions : [move] };
+        return {
+            move,
+            suggestions: suggestions.length > 0 ? suggestions : [move],
+            evaluations,
+        };
     }
 
     public solve(strength: AiStrength = 'human'): MoveSuggestion {

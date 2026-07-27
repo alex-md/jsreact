@@ -82,6 +82,140 @@
     padding: 0;
 }
 
+.connect4-game-header h1 {
+    margin: 0;
+    color: hsl(var(--foreground));
+    font-family: "Libre Franklin", "Source Sans 3", system-ui, sans-serif;
+    font-size: clamp(1.3rem, 3.2vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1.05;
+}
+
+.connect4-kicker {
+    margin: 0 0 0.15rem;
+    color: hsl(var(--primary));
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.connect4-tool-rail {
+    display: flex;
+    width: 100%;
+    max-width: 72rem;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    background: hsl(var(--card) / 0.88);
+    box-shadow: 0 10px 28px rgb(15 23 42 / 0.07);
+    backdrop-filter: blur(14px);
+}
+
+.connect4-mode-toggle,
+.connect4-difficulty-picker {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    flex-shrink: 0;
+    padding: 0.2rem;
+    border-radius: 0.75rem;
+    background: hsl(var(--muted));
+}
+
+.connect4-mode-toggle button,
+.connect4-difficulty-picker button {
+    min-height: 2.25rem;
+    padding: 0.4rem 0.7rem;
+    border: 0;
+    border-radius: 0.58rem;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.connect4-mode-toggle button.is-active,
+.connect4-difficulty-picker button.is-active {
+    background: hsl(var(--card));
+    color: hsl(var(--foreground));
+    box-shadow: 0 1px 4px rgb(15 23 42 / 0.12);
+}
+
+.connect4-difficulty-picker button {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.connect4-difficulty-picker span {
+    margin-top: 0.18rem;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.52rem;
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+.connect4-presets {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.connect4-rail-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding-inline: 0.35rem;
+    color: hsl(var(--muted-foreground));
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.connect4-presets button,
+.connect4-share-button {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.7rem;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-size: 0.67rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.connect4-presets button:hover,
+.connect4-share-button:hover {
+    border-color: hsl(var(--primary) / 0.45);
+    background: hsl(var(--primary) / 0.05);
+}
+
+.connect4-share-button {
+    margin-left: auto;
+    color: hsl(var(--primary));
+}
+
+.connect4-share-clipboard {
+    opacity: 0.45;
+}
+
 .connect4-seo-heading {
     display: inline-block;
     color: transparent;
@@ -112,6 +246,101 @@
     background: linear-gradient(180deg, rgb(16 185 129 / 0.08), rgb(16 185 129 / 0.24));
     box-shadow: inset 0 0 0 2px rgb(52 211 153 / 0.45);
     animation: column-breathe 2.2s ease-in-out infinite;
+}
+
+.connect4-evaluation {
+    position: relative;
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    margin-inline: auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(255 255 255 / 0.28);
+    border-radius: 0.58rem;
+    background: rgb(255 255 255 / 0.12);
+    color: rgb(255 255 255 / 0.82);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.67rem;
+    font-weight: 600;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.connect4-evaluation.is-win {
+    border-color: rgb(134 239 172 / 0.7);
+    background: rgb(22 163 74);
+    color: white;
+}
+
+.connect4-evaluation.is-draw {
+    border-color: rgb(254 240 138 / 0.75);
+    background: rgb(234 179 8);
+    color: rgb(66 32 6);
+}
+
+.connect4-evaluation.is-loss {
+    border-color: rgb(254 202 202 / 0.7);
+    background: rgb(220 38 38);
+    color: white;
+}
+
+.connect4-evaluation.is-best {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 2px white, 0 6px 14px rgb(15 23 42 / 0.34);
+}
+
+.connect4-evaluation.is-disabled {
+    opacity: 0;
+}
+
+.connect4-evaluation-column {
+    position: absolute;
+    right: -0.18rem;
+    bottom: -0.24rem;
+    display: grid;
+    width: 0.8rem;
+    height: 0.8rem;
+    place-items: center;
+    border-radius: 50%;
+    background: rgb(15 23 42 / 0.88);
+    color: white;
+    font-size: 0.48rem;
+}
+
+.connect4-primary-action,
+.connect4-ai-status {
+    display: inline-flex;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: 0.75rem;
+    padding-inline: 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.connect4-primary-action {
+    border: 1px solid rgb(30 41 59);
+    background: rgb(30 41 59);
+    color: white;
+    box-shadow: 0 4px 10px rgb(15 23 42 / 0.16);
+}
+
+.connect4-primary-action:hover:not(:disabled) {
+    background: rgb(51 65 85);
+}
+
+.connect4-primary-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.connect4-ai-status {
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
 }
 
 .connect4-action-button {
@@ -304,6 +533,74 @@ kbd {
 
 /* Mobile responsive improvements */
 @media (max-width: 640px) {
+    .connect4-game-header {
+        margin-bottom: 0.35rem;
+        padding-inline: 0.25rem;
+    }
+
+    .connect4-game-header h1 {
+        max-width: 17rem;
+        font-size: clamp(1.05rem, 5vw, 1.3rem);
+    }
+
+    .connect4-game-header button {
+        min-height: 2.25rem;
+        padding: 0.4rem 0.65rem;
+    }
+
+    .connect4-tool-rail {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 0.4rem;
+        padding: 0.35rem;
+        border-radius: 0.85rem;
+    }
+
+    .connect4-mode-toggle {
+        flex: 1;
+    }
+
+    .connect4-mode-toggle button {
+        padding-inline: 0.35rem;
+        font-size: 0.63rem;
+    }
+
+    .connect4-presets,
+    .connect4-difficulty-picker {
+        order: 3;
+        flex: 0 0 100%;
+        width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .connect4-presets::-webkit-scrollbar {
+        display: none;
+    }
+
+    .connect4-presets button {
+        flex: 1;
+        min-width: 0;
+        min-height: 2rem;
+        padding: 0.35rem 0.48rem;
+        font-size: 0.59rem;
+        line-height: 1.15;
+        white-space: normal;
+    }
+
+    .connect4-rail-label {
+        display: none;
+    }
+
+    .connect4-share-button {
+        min-height: 2.25rem;
+        padding-inline: 0.6rem;
+    }
+
+    .connect4-cell {
+        width: clamp(1.9rem, 9vw, 2.25rem);
+    }
+
     .grid-cols-7 {
         gap: 0.375rem;
     }
@@ -327,15 +624,15 @@ kbd {
         margin-top: 0.75rem;
     }
 
-    .connect4-board-card [aria-hidden="true"].grid {
+    .connect4-evaluation-row {
         gap: 0.375rem;
         margin-bottom: 0.25rem;
     }
 
-    .connect4-board-card [aria-hidden="true"].grid > div {
-        width: 1.5rem;
-        height: 1.5rem;
-        font-size: 0.6875rem;
+    .connect4-evaluation {
+        width: 1.65rem;
+        height: 1.65rem;
+        font-size: 0.58rem;
     }
 
     .connect4-inline-status {
@@ -356,6 +653,36 @@ kbd {
 
     .connect4-auto-switch.is-on .connect4-switch-thumb {
         transform: translateX(3rem);
+    }
+}
+
+@media (max-width: 420px) and (max-height: 740px) {
+    .connect4-result-strip,
+    .connect4-mobile-target {
+        display: none;
+    }
+
+    .connect4-board-card {
+        padding-bottom: 0.4rem;
+    }
+}
+
+@media (max-width: 350px) {
+    .navbar > div:last-child {
+        flex-wrap: nowrap;
+        gap: 0.2rem;
+        padding: 0.2rem 0.45rem;
+        overflow-x: auto;
+    }
+
+    .navbar > div:last-child button {
+        min-width: 0;
+        min-height: 2.25rem;
+        padding: 0.35rem 0.55rem;
+    }
+
+    .connect4-tool-rail {
+        margin-bottom: 0.1rem;
     }
 }
 

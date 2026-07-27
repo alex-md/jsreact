@@ -4,9 +4,9 @@
     <head>
         <meta charset="UTF-8">
 
-        <title>Connect 4 Solver: Find the Best Move Free | JSreact</title>
+        <title>Connect 4 Solver &amp; Best Move Calculator | AI Helper Tool</title>
         <meta name="description"
-            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare top moves, and analyze Red or Yellow free—no account needed.">
+            content="Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, and play optimal strategy.">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
         <link rel="canonical" href="https://jsreact.com/connect4/">
@@ -14,16 +14,16 @@
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="JSreact">
         <meta property="og:locale" content="en_US">
-        <meta property="og:title" content="Connect 4 Solver: Find the Best Move Free">
+        <meta property="og:title" content="Connect 4 Solver &amp; Best Move Calculator | AI Helper Tool">
         <meta property="og:description"
-            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare top moves, and analyze Red or Yellow free—no account needed.">
+            content="Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, and play optimal strategy.">
         <meta property="og:url" content="https://jsreact.com/connect4/">
         <meta property="og:image" content="https://jsreact.com/assets/images/og-image.png">
         <meta property="og:image:alt" content="Connect 4 board with recommended move highlighted">
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Connect 4 Solver: Find the Best Move Free">
+        <meta name="twitter:title" content="Connect 4 Solver &amp; Best Move Calculator | AI Helper Tool">
         <meta name="twitter:description"
-            content="Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare top moves, and analyze Red or Yellow free—no account needed.">
+            content="Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, and play optimal strategy.">
         <meta name="twitter:image" content="https://jsreact.com/assets/images/og-image.png">
 
         <script type="application/ld+json">
@@ -45,7 +45,7 @@
                         "Connect 4 Game Solver",
                         "Connect 4 Move Suggestions"
                     ],
-                    "description": "Analyze any Connect 4 position, highlight the strongest column, cycle through equal-best suggestions, and explore alternate lines with free browser-based hints.",
+                    "description": "Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, share positions, and practice against the AI.",
                     "applicationCategory": "GameApplication",
                     "operatingSystem": "Any",
                     "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
@@ -66,7 +66,10 @@
                         "Solver targeting for Red, Yellow, or the current player",
                         "Five adjustable AI strength levels",
                         "Random, casual, human-like, expert, and master analysis",
-                        "Complete late-game position analysis in Master mode"
+                        "Complete late-game position analysis in Master mode",
+                        "Practice against an automatic AI opponent",
+                        "Shareable board-position links",
+                        "Win, draw, and loss annotations for valid columns"
                     ],
                     "publisher": {
                         "@type": "Organization",
@@ -80,42 +83,26 @@
                     "mainEntity": [
                         {
                             "@type": "Question",
-                            "name": "How do I use the Connect 4 solver?",
+                            "name": "Is Connect 4 mathematically solved?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Recreate your position by selecting columns in move order. The recommended column is highlighted automatically, and when multiple moves score equally well, New suggestion cycles to another top move without dropping to a weaker choice."
+                                "text": "Yes. With perfect play, the first player can force a win on the standard seven-column by six-row board."
                             }
                         },
                         {
                             "@type": "Question",
-                            "name": "Does it work with standard Connect Four rules?",
+                            "name": "What is the best opening move in Connect 4?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Yes. Enter the moves in column order and the solver analyzes the standard seven-column, six-row game board directly in your browser."
+                                "text": "The middle column is the strongest opening move because it participates in more horizontal and diagonal winning lines than an edge column."
                             }
                         },
                         {
                             "@type": "Question",
-                            "name": "Can the solver analyze a move for either player?",
+                            "name": "How does a Connect 4 solver engine calculate moves?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Yes. Choose Current, Red, or Yellow in Solver Options to control which player receives the recommendation."
-                            }
-                        },
-                        {
-                            "@type": "Question",
-                            "name": "Can I adjust the Connect 4 AI difficulty?",
-                            "acceptedAnswer": {
-                                "@type": "Answer",
-                                "text": "Yes. Use the AI strength slider to choose Random, Casual, Human, Expert, or Master analysis. Lower levels add natural variation, while Expert and Master search deeper and choose deterministic moves."
-                            }
-                        },
-                        {
-                            "@type": "Question",
-                            "name": "Is the Connect 4 solver free?",
-                            "acceptedAnswer": {
-                                "@type": "Answer",
-                                "text": "Yes. The solver is free to use online and does not require an account."
+                                "text": "The engine searches future move sequences, rejects lines that allow immediate replies, and scores the remaining positions. Deeper settings calculate farther ahead."
                             }
                         }
                     ]
@@ -128,8 +115,8 @@
             import { createHead } from '@components/head.js';
 
             createHead(
-                'Connect 4 Solver: Find the Best Move Free',
-                'Find the best Connect 4 move for any board. Recreate a position, get instant hints, compare top moves, and analyze Red or Yellow free—no account needed.',
+                'Connect 4 Solver & Best Move Calculator | AI Helper Tool',
+                'Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, and play optimal strategy.',
                 {
                     canonicalPath: '/connect4/',
                     keywords: [
@@ -152,6 +139,7 @@
                         'alternate connect 4 best moves'
                     ],
                     ogImageAlt: 'Connect 4 board with recommended move highlighted',
+                    appendSiteName: false,
                     structuredData: null
                 }
             );
