@@ -683,6 +683,7 @@ export default defineConfig({
             },
             output: {
                 manualChunks(id) {
+                    if (id.includes('commonjsHelpers') || id.includes('vite/preload-helper')) return 'commonjs-runtime';
                     if (id.includes('node_modules')) {
                         if (id.includes('monaco-editor')) {
                             return 'monaco';
@@ -690,10 +691,11 @@ export default defineConfig({
                         if (id.includes('@mui') || id.includes('@emotion')) {
                             return 'mui';
                         }
-                        if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+                        if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) {
                             return 'react';
                         }
-                        return 'vendor';
+                        // Let Rollup keep unrelated tools and deferred measurements separate.
+                        return undefined;
                     }
                 }
             }

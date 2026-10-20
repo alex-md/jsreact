@@ -1,10 +1,10 @@
 // filepath: /Users/alex/Documents/GitHub/jsreact/src/pages/playground/App.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Package, X } from 'lucide-react';
 import Split from 'split.js';
 import Editor from './components/Editor';
 import Preview from './components/Preview';
-import PackageManager from './components/PackageManager';
+const PackageManager = lazy(() => import('./components/PackageManager'));
 import { showToast } from '@components/toast.js';
 
 function App() {
@@ -277,13 +277,14 @@ console.log("Hello from the playground!");
             </div>
 
             {showPackageManager && (
+                <Suspense fallback={<p role="status">Loading package manager…</p>}>
                 <PackageManager
                     packages={packages}
                     addPackage={addPackage}
                     removePackage={removePackage}
                     onClose={() => setShowPackageManager(false)}
-
                 />
+                </Suspense>
             )}
         </div>
     );

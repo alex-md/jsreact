@@ -35,15 +35,13 @@
                             <div class="space-y-4 lg:max-w-2xl">
                                 <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
                                     <span class="h-2 w-2 rounded-full bg-emerald-300 animate-pulse"></span>
-                                    Deterministic logic puzzle generator
+                                    Number deduction puzzles
                                 </div>
                                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                                    Numigma — Reverse Number Puzzle Lab
+                                    Find the secret number
                                 </h1>
                                 <p class="text-base sm:text-lg text-white/90 leading-relaxed">
-                                    Assemble clue packs, set a deterministic seed, and let Numigma craft a uniquely solvable
-                                    number deduction challenge. Tune the range, difficulty, and mathematical flavors to share
-                                    endlessly replayable puzzles with friends or students.
+                                    Generate a number puzzle, read the clues, and work out the hidden answer. Start with the default settings, then change the range or clue packs for a different challenge.
                                 </p>
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 text-sm text-white/80">
                                     <div class="flex items-center gap-2">
@@ -52,7 +50,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <i class="fas fa-puzzle-piece"></i>
-                                        <span>Guaranteed unique-solution search</span>
+                                        <span>Checks whether one answer remains</span>
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <i class="fas fa-sliders-h"></i>
@@ -71,40 +69,9 @@
                     </div>
                 </section>
 
-                <section class="numigma-section numigma-step-panel bg-white numigma-surface">
-                    <div class="p-5 sm:p-6 lg:p-8 space-y-5">
-                        <div class="numigma-section-header space-y-2">
-                            <div class="numigma-section-kicker">Quick start</div>
-                            <h2 class="text-xl font-semibold text-gray-900">Find a puzzle flow in minutes</h2>
-                            <p class="text-sm text-gray-600">Use the generator controls and clue packs below, then hit
-                                generate to craft a unique logic puzzle with a shareable link.</p>
-                        </div>
-                        <div class="numigma-step-grid">
-                            <div class="numigma-step-card">
-                                <div class="numigma-step-number">1</div>
-                                <div>
-                                    <div class="numigma-step-title">Define the range</div>
-                                    <p>Set the minimum, maximum, and difficulty to bound the search.</p>
-                                </div>
-                            </div>
-                            <div class="numigma-step-card">
-                                <div class="numigma-step-number">2</div>
-                                <div>
-                                    <div class="numigma-step-title">Pick clue packs</div>
-                                    <p>Toggle mathematical themes to shape the logic flavor and tone.</p>
-                                </div>
-                            </div>
-                            <div class="numigma-step-card">
-                                <div class="numigma-step-number">3</div>
-                                <div>
-                                    <div class="numigma-step-title">Generate &amp; share</div>
-                                    <p>Review diagnostics, copy clues, and share the deterministic link.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
+                <p class="text-gray-700">Try this: a number between 1 and 20 is even, greater than 10, and a multiple of 7. The answer is 14. Generate a puzzle to try more clues, then use Reveal to check your answer.</p>
+                <details class="numigma-surface bg-white">
+                    <summary class="p-5 cursor-pointer font-semibold">Customize range, difficulty, and clue packs</summary>
                 <section
                     class="numigma-section bg-white numigma-surface overflow-hidden divide-y divide-gray-100">
                     <div class="p-5 sm:p-6 lg:p-8 space-y-6">
@@ -128,7 +95,7 @@
                             </label>
                             <label class="block space-y-2">
                                 <span class="text-sm font-medium text-gray-700">Maximum value</span>
-                                <input type="number" id="max-value" min="10" value="9999"
+                                <input type="number" id="max-value" min="10" value="999"
                                     class="numigma-input" />
                             </label>
                             <label class="block space-y-2 lg:col-span-1">
@@ -186,6 +153,8 @@
                     </div>
                 </section>
 
+                </details>
+
                 <div id="warning-banner"
                     class="hidden numigma-callout border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                     <div class="flex items-start gap-3">
@@ -197,7 +166,7 @@
                     </div>
                 </div>
 
-                <section class="grid gap-6 lg:grid-cols-5">
+                <section id="puzzle-results" aria-live="polite" aria-label="Generated puzzle" class="grid gap-6 lg:grid-cols-5 scroll-mt-24">
                     <div class="lg:col-span-3 space-y-6">
                         <div class="bg-white numigma-surface">
                             <div

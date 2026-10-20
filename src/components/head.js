@@ -233,8 +233,6 @@ export function createHead(title, description, options = {}) {
             body {
                 margin: 0;
                 font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-                opacity: 0;
-                transition: opacity 0.3s;
             }
             @keyframes spin { to { transform: rotate(360deg); } }
             @keyframes slide-up {

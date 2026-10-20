@@ -1,3 +1,4 @@
+import { trackAnalyticsEvent } from '@components/analytics.js';
 import React, { useState, useEffect } from "react";
 
 // Helper function to format currency
@@ -23,9 +24,9 @@ export function DomainApp() {
     useEffect(() => {
         const domains = domainsInput
             .split(/[\n,\s]+/)
-            .map(domain => domain.trim())
+            .map(domain => domain.trim().toLowerCase())
             .filter(domain => domain.length > 0);
-        setDomainList(domains);
+        setDomainList([...new Set(domains)]);
     }, [domainsInput]);
 
     // Update requestsLeft every second
@@ -51,13 +52,26 @@ export function DomainApp() {
 
         if (domainList.length === 0) {
             setError("Please enter at least one domain name.");
+            setSubmitted(false);
             return;
         }
         if (domainList.length > 20) {
             setError("Maximum 20 domains allowed per request.");
+            setSubmitted(false);
             return;
         }
 
+        if (domainList.some(domain => !/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(domain))) {
+            setError('Enter bare domain names such as example.com, without https:// or a path.');
+            setSubmitted(false);
+            return;
+        }
+        if (requestTimestamps.filter(ts => ts > Date.now() - 60000).length >= 60) {
+            setError('Please wait a minute before requesting another appraisal.');
+            setSubmitted(false);
+            return;
+        }
+        trackAnalyticsEvent('appraisal_start', { item_count: domainList.length });
         // Track this request
         setRequestTimestamps(prev => {
             const now = Date.now();
@@ -72,17 +86,20 @@ export function DomainApp() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ domains: domainList }),
+                signal: AbortSignal.timeout(15000),
             });
             const data = await response.json();
 
             if (!response.ok || data.error) {
                 throw new Error(data.error || "Failed to fetch domain valuations");
             } else {
-                setResults(data.valuations || []); // <-- use 'valuations' per API docs
+                if (!Array.isArray(data.valuations) || data.valuations.length === 0) throw new Error('No valuations returned');
+                setResults(data.valuations);
+                trackAnalyticsEvent('appraisal_complete', { item_count: data.valuations.length, result_status: 'success' });
             }
         } catch (err) {
-            console.error("Fetch Error:", err);
-            setError("Failed to connect to the appraisal service. Please check your connection and try again.");
+            trackAnalyticsEvent('appraisal_complete', { result_status: 'error' });
+            setError("Failed to connect to the appraisal service. Try again shortly, or open Humbleworth directly.");
             setResults([]);
         }
         setLoading(false);
@@ -103,17 +120,19 @@ export function DomainApp() {
                         rows={6}
                         value={domainsInput}
                         onChange={(e) => setDomainsInput(e.target.value)}
-                        placeholder="example.com\nexample.net"
+                        placeholder={'example.com\nexample.net'}
+                        autoCapitalize="none"
+                        spellCheck={false}
                         aria-describedby="domain-count-help"
                     />
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500">
                         <span id="domain-count-help">{domainList.length} / 20 domains entered.</span>
                         <span className="italic">Requests left this minute: {requestsLeft}</span>
                     </div>
                     <button
                         type="submit"
                         className="w-full py-3 rounded-md bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-base shadow-sm hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                        disabled={loading || submitted}
+                        disabled={loading || submitted || requestsLeft <= 0}
                     >
                         {loading ? (
                             <span className="flex items-center justify-center">
@@ -126,13 +145,15 @@ export function DomainApp() {
                         )}
                     </button>
                     {error && (
-                        <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm shadow-sm">
+                        <div role="alert" className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm shadow-sm">
                             <i className="fas fa-exclamation-triangle mr-2"></i>{error}
+                            {error.includes("Humbleworth") && <a className="block mt-2 underline" href="https://humbleworth.com/" target="_blank" rel="noopener noreferrer">Open Humbleworth</a>}
                         </div>
                     )}
                 </form>
             </div>
 
+            <div role="status" aria-live="polite" className="sr-only">{loading ? "Appraising domains" : results.length ? `${results.length} appraisals ready` : ""}</div>
             {results.length > 0 && (
                 <div className="rounded-lg shadow-md border border-gray-200 bg-white p-6 md:p-8 animate-fade-in-up">
                     <h2 className="text-lg font-semibold mb-5 text-gray-800 flex items-center gap-2">

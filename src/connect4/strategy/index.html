@@ -42,14 +42,17 @@
             <section class="max-w-3xl">
                 <p class="text-sm font-semibold uppercase tracking-wide text-primary">Connect 4 strategy</p>
                 <h1 class="mt-3 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">How to win more Connect 4 games</h1>
-                <p class="mt-4 text-lg leading-8 text-gray-700">Good Connect 4 play starts with center control, then shifts into threat management. The solver is useful because it turns those ideas into a concrete column choice for the board in front of you.</p>
+                <p class="mt-4 text-lg leading-8 text-gray-700">Check for your own immediate win first, then block an opponent’s immediate win. If neither exists, build center control and look for two playable winning threats. The solver is useful because it turns those ideas into a concrete column choice for the board in front of you.</p>
                 <div class="mt-6 flex flex-wrap gap-3">
                     <a href="/connect4/" class="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700">Open the solver</a>
                     <a href="/connect4/best-first-move/" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Best first move</a>
                 </div>
             </section>
 
-            <section class="mt-12 grid gap-5 md:grid-cols-2">
+            <nav aria-label="On this page" class="mt-8 flex flex-wrap gap-4 text-primary underline">
+                <a href="#key-ideas">Key ideas</a><a href="#practice">Try it in the solver</a>
+            </nav>
+            <section id="key-ideas" class="mt-12 grid gap-5 md:grid-cols-2">
                 <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                     <h2 class="text-xl font-bold text-gray-950">Control the center</h2>
                     <p class="mt-3 leading-7 text-gray-700">The center column touches more possible four-in-a-row lines than an edge column. Early center pieces keep horizontal, vertical, and diagonal options open.</p>
@@ -60,7 +63,7 @@
                 </article>
                 <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                     <h2 class="text-xl font-bold text-gray-950">Create double threats</h2>
-                    <p class="mt-3 leading-7 text-gray-700">A double threat gives you two winning squares on the next turn. If the opponent can block only one, the second line wins.</p>
+                    <p class="mt-3 leading-7 text-gray-700">A double threat gives you two distinct, immediately playable winning squares on the next turn. A square floating above an empty space is not yet playable. If the opponent can block only one, the second line wins.</p>
                 </article>
                 <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                     <h2 class="text-xl font-bold text-gray-950">Avoid helping the opponent</h2>
@@ -68,9 +71,9 @@
                 </article>
             </section>
 
-            <section class="mt-12 border-t border-gray-200 pt-8">
+            <section id="practice" class="mt-12 border-t border-gray-200 pt-8">
                 <h2 class="text-2xl font-bold text-gray-950">Practice with a real board</h2>
-                <p class="mt-3 max-w-3xl leading-7 text-gray-700">Enter a position in the Connect 4 solver, ask for the best move, then ask why that column works. Look for center access, a forced block, or a threat that cannot be stopped cleanly.</p>
+                <p class="mt-3 max-w-3xl leading-7 text-gray-700">Try columns 4, 1, 4, 1, 4, 2 in order. Red can now win by playing column 4. Recreate the position and compare the highlighted move. Look for center access, a forced block, or a threat that cannot be stopped cleanly.</p>
                 <a href="/connect4/solver-guide/" class="mt-5 inline-flex rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Read the solver guide</a>
             </section>
         </main>

@@ -7,19 +7,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-        <!-- Tailwind CSS is handled by Vite/PostCSS, CDN removed -->
-        <!-- Tailwind CSS (if not already included globally) -->
-        <script src="https://cdn.tailwindcss.com"></script>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-        <!-- Font Awesome 6 Free CDN for icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-            crossorigin="anonymous" referrerpolicy="no-referrer" />
-
         <script type="module">
             import { createHead } from '@components/head.js';
             createHead(
@@ -49,14 +36,26 @@
             document.getElementById('header').appendChild(header);
         </script> -->
 
-        <main class="container mx-auto px-4 py-8 flex-grow relative z-10">
-            <div id="root"></div>
+        <main class="mx-auto w-full max-w-5xl px-4 py-8 flex-grow relative z-10">
+            <section class="max-w-3xl mx-auto mb-8">
+                <p class="text-sm font-semibold text-indigo-700">Domain appraisal</p>
+                <h1 class="mt-3 text-3xl sm:text-4xl font-bold text-gray-950">Estimate what a domain could sell for</h1>
+                <p class="mt-4 text-lg text-gray-700">Enter up to 20 domain names to compare estimated auction, marketplace, and brokerage values. Use bare domains such as example.com.</p>
+                <p class="mt-3 text-sm text-gray-600">Estimates come from Humbleworth and are not offers or guaranteed sale prices. Submitted domain names are sent to that service.</p>
+            </section>
+            <div id="root" style="min-height:360px"><p class="max-w-3xl mx-auto" role="status">Loading appraisal form…</p></div>
+            <section class="max-w-3xl mx-auto mt-10 space-y-4">
+                <h2 class="text-2xl font-bold">How to read your appraisal</h2>
+                <p><strong>Auction:</strong> compare with a competitive auction sale. <strong>Marketplace:</strong> compare with a direct listing. <strong>Brokerage:</strong> compare with a broker-assisted sale.</p>
+                <p>Use recent comparable sales, the name’s length, extension, and buyer demand alongside these estimates. An appraisal does not check availability or trademark rights.</p>
+                <a class="inline-flex py-3 text-indigo-700 underline" href="/generator/">Need name ideas? Try the name generator</a>
+            </section>
         </main>
 
 
         <script type="module" src="./main.jsx"></script>
         <!-- Global styles -->
-        <link rel="stylesheet" href="/assets/styles/global.css">
+
         <script type="module" src="@components/toast.js"></script>
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
