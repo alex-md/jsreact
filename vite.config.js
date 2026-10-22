@@ -89,7 +89,7 @@ const pageSeo = {
     },
     '/connect4/': {
         title: 'Connect 4 Solver & Best Move Calculator | AI Helper Tool',
-        description: 'Free Connect 4 solver and AI calculator. Analyze board positions, calculate best moves, and play optimal strategy.',
+        description: 'Free Connect 4 solver and AI opponent. Analyze positions, compare move suggestions, practice at three difficulty levels, and share your board.',
         appendSiteName: false,
         keywords: 'connect 4 solver, connect 4 best move calculator, connect four solver, four in a row solver, connect 4 calculator, connect 4 strategy, how to win connect 4, best first move connect 4, connect 4 cheat bot, connect4 solver, connect 4 game solver, 4 in a row solver, adjustable connect 4 AI, connect 4 AI difficulty, human-like connect 4 AI, connect 4 move suggestions, alternate connect 4 best moves',
         imageAlt: 'Connect 4 board with recommended move highlighted',
@@ -126,7 +126,7 @@ const pageSeo = {
                     'Best-move recommendations for any board position',
                     'Board analysis for standard game positions',
                     'Whole-column move recommendations',
-                    'New suggestion cycling for equal-best moves',
+                    'Alternative move suggestions and equal-score cycling in Expert and Master',
                     'Undo and redo move analysis',
                     'Keyboard controls',
                     'Solver targeting for Red, Yellow, or the current player',
@@ -135,7 +135,7 @@ const pageSeo = {
                     'Complete late-game position analysis in Master mode',
                     'Practice against an automatic AI opponent',
                     'Shareable board-position links',
-                    'Win, draw, and loss annotations for valid columns'
+                    'Proven win and loss annotations with clearly marked search estimates'
                 ],
                 publisher: {
                     '@type': 'Organization',

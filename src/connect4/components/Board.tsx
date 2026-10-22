@@ -12,6 +12,7 @@ interface BoardProps {
     board: BoardType;
     currentPlayer: Player;
     winner: Player | null;
+    isDraw: boolean;
     hoveredColumn: number | null;
     setHoveredColumn: (col: number | null) => void;
     onColumnClick: (col: number, inputMethod?: 'pointer' | 'keyboard') => void;
@@ -47,8 +48,8 @@ function getMoveAnnotation(score: number) {
         return { result, label: `${score > 0 ? '+' : '-'}${turns}`, exact: true };
     }
     return {
-        result: 'draw',
-        label: '=',
+        result: 'estimate',
+        label: '~',
         exact: false,
     };
 }
@@ -57,6 +58,7 @@ const Board: React.FC<BoardProps> = ({
     board,
     currentPlayer,
     winner,
+    isDraw,
     hoveredColumn,
     setHoveredColumn,
     onColumnClick,
@@ -81,6 +83,7 @@ const Board: React.FC<BoardProps> = ({
     mode,
     isAiThinking,
 }) => {
+    const canPlay = !winner && !isDraw && !(mode === 'practice' && (currentPlayer !== PLAYER_1 || isAiThinking));
     const winningCells = winner ? new Set(getWinningCells(board, winner).map(([row, col]) => `${row}-${col}`)) : new Set<string>();
     const evaluationsByColumn = new Map(moveEvaluations.map((evaluation) => [evaluation.column, evaluation]));
 
@@ -89,7 +92,7 @@ const Board: React.FC<BoardProps> = ({
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-secondary-500/5 -z-10"></div>
 
             <div className="connect4-inline-status mb-2 flex w-full max-w-md items-center justify-between gap-3 sm:mb-3">
-                <GameStatus currentPlayer={currentPlayer} winner={winner} compact />
+                <GameStatus currentPlayer={currentPlayer} winner={winner} isDraw={isDraw} compact />
                 <span className="shrink-0 text-xs font-semibold text-muted-foreground">
                     Move <strong className="text-base text-primary-600">{moveCount}</strong>
                 </span>
@@ -106,7 +109,7 @@ const Board: React.FC<BoardProps> = ({
                         .fill(null)
                         .map((_, colIndex) => {
                             const nextRow = getNextOpenRow(board, colIndex);
-                            const isPlayable = nextRow !== -1 && !winner;
+                            const isPlayable = nextRow !== -1 && canPlay;
                             const isBestMove = bestMove?.column === colIndex;
                             const evaluation = evaluationsByColumn.get(colIndex);
                             const annotation = evaluation ? getMoveAnnotation(evaluation.score) : null;
@@ -116,11 +119,13 @@ const Board: React.FC<BoardProps> = ({
                                     key={`indicator-${colIndex}`}
                                     className={`connect4-evaluation ${annotation ? `is-${annotation.result}` : ''} ${isBestMove ? 'is-best' : ''} ${isPlayable ? '' : 'is-disabled'}`}
                                     title={annotation
-                                        ? `${annotation.result === 'win' ? 'Win' : annotation.result === 'loss' ? 'Loss' : 'Draw'} ${annotation.exact ? `in ${annotation.label.slice(1)} turns` : '(search estimate)'}`
+                                        ? annotation.exact
+                                            ? `${annotation.result === 'win' ? 'Win' : 'Loss'} in ${annotation.label.slice(1)} turns`
+                                            : `Search estimate: ${evaluation!.score}; outcome unproven`
                                         : `Column ${colIndex + 1}`}
                                     aria-label={annotation
                                         ? `Column ${colIndex + 1}: ${annotation.result}, ${annotation.exact ? annotation.label : 'estimate'}`
-                                        : `Column ${colIndex + 1}: calculating`}
+                                        : `Column ${colIndex + 1}${isCalculating ? ": calculating" : ""}`}
                                 >
                                     <span className="connect4-evaluation-score">
                                         {isCalculating && !annotation ? '··' : annotation?.label ?? colIndex + 1}
@@ -138,7 +143,7 @@ const Board: React.FC<BoardProps> = ({
                         .fill(null)
                         .map((_, colIndex) => {
                             const nextRow = getNextOpenRow(board, colIndex);
-                            const isPlayable = nextRow !== -1 && !winner;
+                            const isPlayable = nextRow !== -1 && canPlay;
                             const isBestMove = bestMove?.column === colIndex;
 
                             return (
@@ -175,7 +180,7 @@ const Board: React.FC<BoardProps> = ({
                     {board.map((row, rowIndex) =>
                         row.map((cell, colIndex) => {
                             const nextRow = getNextOpenRow(board, colIndex);
-                            const isHoverPreview = hoveredColumn === colIndex && rowIndex === nextRow && !winner;
+                            const isHoverPreview = hoveredColumn === colIndex && rowIndex === nextRow && canPlay;
                             const isWinningCell = winningCells.has(`${rowIndex}-${colIndex}`);
                             return (
                                 <div
@@ -226,7 +231,7 @@ const Board: React.FC<BoardProps> = ({
                     {mode === 'solver' ? (
                         <button
                             onClick={() => onCalculateBestMove()}
-                            disabled={!!winner || isCalculating || !canRequestNewSuggestion}
+                            disabled={!!winner || isDraw || isCalculating || !canRequestNewSuggestion}
                             className="connect4-primary-action"
                         >
                             {isCalculating ? (
@@ -243,7 +248,7 @@ const Board: React.FC<BoardProps> = ({
                         </button>
                     ) : (
                         <div className="connect4-ai-status" role="status" aria-live="polite">
-                            {winner
+                            {winner || isDraw
                                 ? 'Game complete'
                                 : isAiThinking
                                     ? <><LoaderCircle aria-hidden="true" className="animate-spin" size={17} /> AI is choosing…</>
@@ -284,7 +289,7 @@ const Board: React.FC<BoardProps> = ({
                             <p className="truncate text-foreground">
                                 <span className="font-semibold text-secondary-700">Recommended:</span> column <strong>{bestMove.column + 1}</strong>
                                 <span className="ml-2 hidden text-xs text-muted-foreground sm:inline">
-                                    for {solverTarget === 'current' ? 'current player' : solverTarget === PLAYER_1 ? 'Red' : 'Yellow'}
+                                    for {(solverTarget === 'current' ? currentPlayer : solverTarget) === PLAYER_1 ? 'Red' : 'Yellow'}
                                 </span>
                             </p>
                         ) : (

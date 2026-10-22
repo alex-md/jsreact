@@ -6,9 +6,14 @@ interface GameStatusProps {
     currentPlayer: Player;
     winner: Player | null;
     compact?: boolean;
+    isDraw?: boolean;
 }
 
-const GameStatus: React.FC<GameStatusProps> = ({ currentPlayer, winner, compact = false }) => {
+const GameStatus: React.FC<GameStatusProps> = ({ currentPlayer, winner, isDraw = false, compact = false }) => {
+    if (isDraw) {
+        return <div role="status" className="rounded-full bg-card px-3 py-1.5 text-sm font-bold">Draw — board full</div>;
+    }
+
     if (compact) {
         return (
             <div

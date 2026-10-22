@@ -216,10 +216,6 @@ class Connect4Engine {
         this.loadBoard(board, currentPlayer);
     }
 
-    private opponent(player: Player): Player {
-        return player === PLAYER_1 ? PLAYER_2 : PLAYER_1;
-    }
-
     private loadBoard(board: Board, currentPlayer: Player): void {
         let p1 = 0n;
         let p2 = 0n;

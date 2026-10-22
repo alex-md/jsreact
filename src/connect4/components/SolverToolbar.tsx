@@ -22,7 +22,7 @@ const DIFFICULTIES: Array<{
 }> = [
     { id: 'easy', label: 'Easy', detail: 'depth 3' },
     { id: 'standard', label: 'Standard', detail: 'depth 4–5' },
-    { id: 'optimal', label: 'Optimal', detail: 'max depth' },
+    { id: 'optimal', label: 'Master', detail: 'deep analysis' },
 ];
 
 const SolverToolbar: React.FC<SolverToolbarProps> = ({

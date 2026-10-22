@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {
+function useLocalStorage<T>(key: string, initialValue: T, isValid: (value: unknown) => boolean = () => true): [T, (value: T | ((val: T) => T)) => void] {
     // Get from local storage then
     // parse stored json or if none return initialValue
     const readValue = (): T => {
@@ -10,7 +10,8 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val
 
         try {
             const item = window.localStorage.getItem(key);
-            return item ? (JSON.parse(item) as T) : initialValue;
+            const parsed: unknown = item ? JSON.parse(item) : initialValue;
+            return isValid(parsed) ? parsed as T : initialValue;
         } catch (error) {
             console.warn(`Error reading localStorage key “${key}”:`, error);
             return initialValue;

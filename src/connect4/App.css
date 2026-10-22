@@ -657,11 +657,6 @@ kbd {
 }
 
 @media (max-width: 420px) and (max-height: 740px) {
-    .connect4-result-strip,
-    .connect4-mobile-target {
-        display: none;
-    }
-
     .connect4-board-card {
         padding-bottom: 0.4rem;
     }

@@ -9,7 +9,7 @@ export const AI_STRENGTHS = [
         id: 'casual',
         label: 'Casual',
         shortLabel: 'Casual',
-        description: 'Looks 2 moves ahead and makes occasional mistakes.',
+        description: 'Looks 3 moves ahead and makes occasional mistakes.',
     },
     {
         id: 'human',
