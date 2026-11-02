@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSreact API documentation</title>
+</head>
+<body>
+  <main>
+    <h1>JSreact Image Hosting API</h1>
+    <p>The <a href="/qr/">QR code tool</a> uses this API to host images.</p>
+    <p>Base URL: <code>https://image-host.vs.workers.dev</code></p>
+    <h2>Upload an image</h2>
+    <p>Send <code>POST /upload</code> with a multipart form field named <code>file</code>.</p>
+    <pre>curl https://image-host.vs.workers.dev/upload -F 'file=@image.png'</pre>
+    <p>A successful response is HTTP 200 JSON containing the public image URL:</p>
+    <pre>{"url":"https://image-host.vs.workers.dev/image/UUID.png"}</pre>
+    <p>A missing file returns HTTP 400. Storage or processing failures return HTTP 500.</p>
+    <h2>Retrieve an image</h2>
+    <p>Send <code>GET /image/{key}</code> using the key returned by the upload.
+      HTTP 200 returns image bytes with the uploaded content type and a one-year cache lifetime.
+      Missing images return HTTP 404.</p>
+    <p>No API key is required. CORS permits cross-origin requests. There is no health endpoint.</p>
+    <p><a href="/api/image-host.openapi.json">OpenAPI specification</a> ·
+      <a href="/.well-known/api-catalog">API catalog</a> · <a href="/">JSreact</a></p>
+  </main>
+</body>
+</html>

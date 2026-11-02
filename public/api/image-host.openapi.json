@@ -1,0 +1,99 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "JSreact Image Hosting API",
+    "version": "1.0.0",
+    "description": "Upload images and retrieve them by key. Used by the JSreact QR code tool."
+  },
+  "servers": [
+    {
+      "url": "https://image-host.vs.workers.dev"
+    }
+  ],
+  "paths": {
+    "/upload": {
+      "post": {
+        "summary": "Upload an image",
+        "operationId": "uploadImage",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Public image URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No file provided"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/image/{key}": {
+      "get": {
+        "summary": "Retrieve an uploaded image",
+        "operationId": "getImage",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image bytes; Content-Type matches the uploaded file",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Image not found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  }
+}

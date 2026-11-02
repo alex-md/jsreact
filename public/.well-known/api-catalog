@@ -1,0 +1,28 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://jsreact.com/.well-known/api-catalog",
+      "item": [
+        {
+          "href": "https://image-host.vs.workers.dev/",
+          "title": "JSreact Image Hosting API"
+        }
+      ]
+    },
+    {
+      "anchor": "https://image-host.vs.workers.dev/",
+      "service-desc": [
+        {
+          "href": "https://jsreact.com/api/image-host.openapi.json",
+          "type": "application/vnd.oai.openapi+json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://jsreact.com/api/",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}

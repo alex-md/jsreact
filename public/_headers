@@ -1,0 +1,11 @@
+/*
+  Link: <https://jsreact.com/.well-known/api-catalog>; rel="api-catalog"
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"
+
+/api/*.openapi.json
+  Content-Type: application/vnd.oai.openapi+json
