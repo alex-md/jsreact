@@ -10,6 +10,7 @@ import type { Connect4Mode } from './SolverToolbar';
 
 interface BoardProps {
     board: BoardType;
+    lastMoveColumn: number | null;
     currentPlayer: Player;
     winner: Player | null;
     isDraw: boolean;
@@ -56,6 +57,7 @@ function getMoveAnnotation(score: number) {
 
 const Board: React.FC<BoardProps> = ({
     board,
+    lastMoveColumn,
     currentPlayer,
     winner,
     isDraw,
@@ -86,6 +88,7 @@ const Board: React.FC<BoardProps> = ({
     const canPlay = !winner && !isDraw && !(mode === 'practice' && (currentPlayer !== PLAYER_1 || isAiThinking));
     const winningCells = winner ? new Set(getWinningCells(board, winner).map(([row, col]) => `${row}-${col}`)) : new Set<string>();
     const evaluationsByColumn = new Map(moveEvaluations.map((evaluation) => [evaluation.column, evaluation]));
+    const lastMoveRow = lastMoveColumn === null ? -1 : getNextOpenRow(board, lastMoveColumn) + 1;
 
     return (
         <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full md:w-auto flex flex-col items-center relative overflow-hidden">
@@ -137,7 +140,7 @@ const Board: React.FC<BoardProps> = ({
                 </div>
 
                 {/* Game Board Grid */}
-                <div className="connect4-grid grid grid-cols-7 gap-2 sm:gap-2.5 relative bg-primary-800/50 p-2 sm:p-2.5 rounded-xl shadow-inner border border-primary-700/50">
+                <div role="group" aria-label="Connect 4 board, 7 columns and 6 rows" aria-describedby="connect4-board-instructions" className="connect4-grid grid grid-cols-7 gap-2 sm:gap-2.5 relative bg-primary-800/50 p-2 sm:p-2.5 rounded-xl shadow-inner border border-primary-700/50">
                     {/* Full-height Clickable Column Overlays */}
                     {Array(COLS)
                         .fill(null)
@@ -162,6 +165,7 @@ const Board: React.FC<BoardProps> = ({
                                     data-analytics-click="connect4-column"
                                     data-analytics-label={`Connect4 column ${colIndex + 1}`}
                                     aria-label={`Drop ${currentPlayer === PLAYER_1 ? 'red' : 'yellow'} disc in column ${colIndex + 1}${isBestMove ? ', recommended' : ''}`}
+                                    aria-describedby={`connect4-column-description-${colIndex}`}
                                     disabled={!isPlayable}
                                     style={{
                                         left: `calc(${colIndex} * (100% / 7))`,
@@ -171,7 +175,12 @@ const Board: React.FC<BoardProps> = ({
                                     onMouseLeave={() => setHoveredColumn(null)}
                                     onFocus={() => isPlayable && setHoveredColumn(colIndex)}
                                     onBlur={() => setHoveredColumn(null)}
-                                    onClick={() => isPlayable && onColumnClick(colIndex, 'pointer')}
+                                    onClick={(event) => isPlayable && onColumnClick(colIndex, event.detail === 0 ? 'keyboard' : 'pointer')}
+                                    onKeyDown={(event) => {
+                                        if (event.repeat && (event.key === 'Enter' || event.code === 'Space')) {
+                                            event.preventDefault();
+                                        }
+                                    }}
                                 />
                             );
                         })}
@@ -182,9 +191,11 @@ const Board: React.FC<BoardProps> = ({
                             const nextRow = getNextOpenRow(board, colIndex);
                             const isHoverPreview = hoveredColumn === colIndex && rowIndex === nextRow && canPlay;
                             const isWinningCell = winningCells.has(`${rowIndex}-${colIndex}`);
+                            const isLastMove = colIndex === lastMoveColumn && rowIndex === lastMoveRow;
                             return (
                                 <div
                                     key={`${rowIndex}-${colIndex}`}
+                                    aria-hidden="true"
                                     className={`connect4-cell rounded-full relative flex items-center justify-center ${isWinningCell ? 'connect4-winning-cell' : ''}`}
                                 >
                                     {/* The Hole Background */}
@@ -206,6 +217,7 @@ const Board: React.FC<BoardProps> = ({
                                     </div>
 
                                     {/* Hover Preview */}
+                                    {isLastMove && <span className="connect4-last-move" />}
                                     {isHoverPreview && (
                                         <div
                                             className={`absolute inset-0 rounded-full opacity-40 ${currentPlayer === PLAYER_1 ? 'bg-red-500' : 'bg-yellow-400'
@@ -219,6 +231,19 @@ const Board: React.FC<BoardProps> = ({
                     )}
                 </div>
             </div>
+
+            <p id="connect4-board-instructions" className="sr-only">Choose a column to drop a disc. Column contents are described from bottom to top. Use keys 1 through 7, or Tab to a column and press Enter.</p>
+            {Array.from({ length: COLS }, (_, col) => {
+                const discs = board.map((row) => row[col]).reverse().filter((cell) => cell !== EMPTY);
+                return <span key={col} id={`connect4-column-description-${col}`} className="sr-only">
+                    {discs.length ? `Bottom to top: ${discs.map((cell) => cell === PLAYER_1 ? 'Red' : 'Yellow').join(', ')}. ${6 - discs.length} spaces available.` : 'Empty column. 6 spaces available.'}
+                    {col === lastMoveColumn ? ' Last move was in this column.' : ''}
+                </span>;
+            })}
+
+            <p className="connect4-move-caption text-xs text-muted-foreground mt-6" role="status">
+                {lastMoveColumn === null ? 'Tap a column to start. Red plays first.' : `Move ${moveCount}: ${currentPlayer === PLAYER_1 ? 'Yellow' : 'Red'} played column ${lastMoveColumn + 1}.`}
+            </p>
 
             <div className="mt-3 w-full max-w-md flex flex-col gap-2 sm:mt-4 sm:gap-3">
                 <div className="grid grid-cols-[auto_auto_1fr_auto] gap-2 sm:gap-3">

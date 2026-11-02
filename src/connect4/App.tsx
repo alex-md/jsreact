@@ -62,6 +62,8 @@ function App() {
     const [isAiThinking, setIsAiThinking] = useState(false);
     const [aiMoveToPlay, setAiMoveToPlay] = useState<number | null>(null);
     const [shareCopied, setShareCopied] = useState(false);
+    const [shareFallbackUrl, setShareFallbackUrl] = useState<string | null>(null);
+    const shareTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
     const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
     const [isSolverUpdateOpen, setIsSolverUpdateOpen] = useState(false);
@@ -510,22 +512,37 @@ function App() {
 
     const handleShare = async () => {
         const url = window.location.href;
+        let copied = false;
         try {
             await navigator.clipboard.writeText(url);
+            copied = true;
         } catch {
+            const previousFocus = document.activeElement as HTMLElement | null;
             const input = document.createElement('textarea');
             input.value = url;
             input.setAttribute('readonly', '');
             input.style.position = 'fixed';
             input.style.opacity = '0';
             document.body.appendChild(input);
-            input.select();
-            document.execCommand('copy');
-            input.remove();
+            try {
+                input.select();
+                copied = document.execCommand('copy');
+            } catch {
+                // Offer a selectable link when clipboard access is unavailable.
+            } finally {
+                input.remove();
+                previousFocus?.focus();
+            }
         }
-        setShareCopied(true);
-        window.setTimeout(() => setShareCopied(false), 1800);
+        if (shareTimerRef.current) clearTimeout(shareTimerRef.current);
+        setShareCopied(copied);
+        setShareFallbackUrl(copied ? null : url);
+        if (copied) shareTimerRef.current = setTimeout(() => setShareCopied(false), 2500);
     };
+
+    useEffect(() => () => {
+        if (shareTimerRef.current) clearTimeout(shareTimerRef.current);
+    }, []);
 
     useEffect(() => {
         const sequence = serializeHistory(history, currentStep);
@@ -533,6 +550,8 @@ function App() {
         if (sequence) url.searchParams.set('board', sequence);
         else url.searchParams.delete('board');
         window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+        setShareCopied(false);
+        setShareFallbackUrl(null);
     }, [currentStep, history]);
 
     useEffect(() => {
@@ -585,9 +604,14 @@ function App() {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (isHowToPlayOpen || isSolverUpdateOpen) return;
+            if (event.defaultPrevented || event.isComposing || event.ctrlKey || event.metaKey || event.altKey) return;
             const target = event.target as HTMLElement | null;
             if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
             if ((event.code === 'Space' || event.key === 'Enter' || event.key.startsWith('Arrow')) && target?.closest('button, a')) return;
+            if (event.repeat && (event.code === 'Space' || event.key === 'Enter' || /^[1-7]$/.test(event.key))) {
+                event.preventDefault();
+                return;
+            }
 
             if (event.code === 'Space') {
                 event.preventDefault();
@@ -680,6 +704,17 @@ function App() {
                     shareCopied={shareCopied}
                 />
 
+                <p className="sr-only" role="status">{shareCopied ? 'Board link copied to clipboard.' : ''}</p>
+                {shareFallbackUrl && (
+                    <div className="mb-3 w-full max-w-6xl rounded-xl border border-border bg-card p-3 text-sm">
+                        <label htmlFor="connect4-share-link" className="block font-semibold">Copy this link to share your board</label>
+                        <p id="connect4-share-help" className="my-1 text-muted-foreground">Clipboard access is unavailable. Select and copy the link below.</p>
+                        <input id="connect4-share-link" type="url" readOnly value={shareFallbackUrl} aria-describedby="connect4-share-help"
+                            autoFocus onFocus={(event) => event.currentTarget.select()}
+                            className="w-full rounded-lg border border-border bg-background p-2 text-foreground" />
+                    </div>
+                )}
+
                 {solverError && (
                     <div role="alert" className="mb-4 rounded-xl border border-border bg-card p-4 text-sm">
                         Move analysis stopped unexpectedly.{' '}
@@ -705,6 +740,7 @@ function App() {
                     <div className="order-1 w-full md:order-2 md:w-auto">
                         <Board
                             board={currentBoard}
+                            lastMoveColumn={history[currentStep].move ?? null}
                             currentPlayer={currentPlayer}
                             winner={winner}
                             isDraw={isDraw}

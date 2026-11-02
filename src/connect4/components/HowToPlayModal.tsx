@@ -71,6 +71,8 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose }) => {
                             <li><strong>Auto Hint:</strong> Toggle this to automatically see the best move after every turn.</li>
                             <li><strong>Solver Target:</strong> Choose who the solver should help. "Current" helps whoever's turn it is.</li>
                             <li><strong>Undo/Redo:</strong> Step back and forward through the move timeline to explore lines.</li>
+                            <li><strong>Last move:</strong> A small ring marks the most recently played disc.</li>
+                            <li><strong>Keyboard:</strong> Press 1–7 to drop a disc. You can also Tab to a column and press Enter. Arrow keys select a column when no button is focused.</li>
                             <li><strong>Practice vs AI:</strong> You play Red. The AI plays Yellow automatically. Undo and Redo include the AI reply when available.</li>
                             <li><strong>Move labels:</strong> + or − marks a proven win or loss. ~ means the outcome is still a search estimate.</li>
                             <li><strong>Master:</strong> Attempts to prove the outcome within a time budget, then uses deeper search if needed.</li>

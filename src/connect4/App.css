@@ -78,6 +78,22 @@
     aspect-ratio: 1;
 }
 
+.connect4-last-move {
+    position: absolute;
+    inset: 29%;
+    border: 2px solid rgb(15 23 42 / 0.85);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.9);
+    pointer-events: none;
+}
+
+.connect4-move-caption {
+    max-width: 28rem;
+    min-height: 1.5em;
+    text-align: center;
+    text-wrap: pretty;
+}
+
 .connect4-game-header {
     padding: 0;
 }
@@ -713,9 +729,21 @@ kbd {
     .connect4-mobile-target [role="radio"] {
         min-height: 36px;
     }
+
+    /* Each column already has a full-height target. Keep adjacent targets separate. */
+    .connect4-grid .connect4-column {
+        min-width: 0;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    #root *,
+    #root *::before,
+    #root *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
     .animate-drop,
     .animate-fade-in-up,
     .animate-fade-in,

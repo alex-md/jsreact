@@ -21,6 +21,15 @@ Thumbs.db
 /build
 /out
 
+# Playwright browser artifacts and local tool state
+.playwright/
+.playwright-mcp/
+/output/playwright/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
 # IDE specific files
 .idea
 .vscode
