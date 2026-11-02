@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "generate-sitemap": "node ./scripts/generate-sitemap.js",
     "postbuild": "npm run generate-sitemap",
+    "test:oeis": "node --test tests/oeis.test.mjs",
     "test:connect4": "node --test tests/connect4.test.mjs"
   },
   "repository": {

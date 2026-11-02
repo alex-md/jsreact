@@ -273,3 +273,11 @@ body {
     opacity: 1;
     visibility: visible;
 }
+
+.stream-tile .tile-tooltip { white-space: pre-line; min-width: 150px; }
+
+.forecast-result { min-width: 0; }
+.forecast-result-heading { display: flex; align-items: baseline; gap: 0.75rem; min-width: 0; }
+.forecast-result-heading > :first-child { flex-shrink: 0; }
+.forecast-result-value { display: block; min-width: 0; overflow-x: auto; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.forecast-result-range { margin-top: 0.5rem; overflow-wrap: anywhere; }

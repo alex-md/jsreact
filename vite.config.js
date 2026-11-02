@@ -355,7 +355,7 @@ const pageSeo = {
     },
     '/oeis/': {
         title: 'Sequence Extrapolator - Number Sequence Predictor',
-        description: 'Analyze numeric sequences and forecast likely next values with ensemble models, confidence ranges, and OEIS-inspired sequence exploration.',
+        description: 'Find exact polynomial and recurrence patterns, forecast numeric sequences with statistical models, and search integer sequences on OEIS.',
         keywords: 'oeis, sequence extrapolator, number sequence predictor, sequence calculator, next number in sequence, forecasting, time series, predictive analytics',
         structuredData: {
             alternateName: ['Number Sequence Predictor', 'Next Number Calculator', 'Sequence Calculator'],
@@ -363,8 +363,8 @@ const pageSeo = {
             featureList: [
                 'Predict next values in a number sequence',
                 'Compare multiple statistical models',
-                'Show confidence ranges',
-                'Explore OEIS-inspired sequence patterns'
+                'Show approximate forecast ranges',
+                'Detect exact polynomial and linear recurrence patterns'
             ]
         }
     },

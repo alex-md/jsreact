@@ -43,7 +43,7 @@
             import { createHead } from '@components/head.js';
             createHead(
                 'Sequence Extrapolator - Number Sequence Predictor',
-                'Analyze numeric sequences and forecast likely next values with ensemble models, confidence ranges, and OEIS-inspired sequence exploration.',
+                'Find exact polynomial and recurrence patterns, forecast numeric sequences with statistical models, and search integer sequences on OEIS.',
                 {
                     canonicalPath: '/oeis/',
                     keywords: 'oeis, sequence extrapolator, number sequence predictor, sequence calculator, next number in sequence, forecasting, time series, predictive analytics'
@@ -72,16 +72,15 @@
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">AI-Powered &
-                        Cross-Validated</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Exact Patterns &amp; Statistical Forecasts</span>
                 </div>
                 <h1
                     class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
                     Smart Sequence <br class="md:hidden" /> Extrapolator
                 </h1>
                 <p class="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                    Paste your number sequence below. We analyze it with multiple statistical models, detect
-                    seasonality, and project the most likely future values.
+                    Find polynomial and recurrence rules, or compare statistical forecasts for noisy data.
+                    A finite sequence can have many valid continuations.
                 </p>
             </header>
 
@@ -95,7 +94,7 @@
                                     Sequence</label>
                                 <div class="flex items-center gap-2">
                                     <span id="parseWarning"
-                                        class="text-xs font-medium text-amber-500 animate-pulse"></span>
+                                        role="status" aria-live="polite" class="text-xs font-medium text-amber-500"></span>
                                     <button id="clearBtn"
                                         class="text-xs text-muted-foreground hover:text-foreground transition-colors"
                                         title="Clear input">Clear</button>
@@ -104,7 +103,7 @@
                             <div class="relative group">
                                 <textarea id="seqInput" rows="8"
                                     class="textarea font-mono text-sm leading-relaxed resize-none bg-muted/20 focus:bg-background transition-all"
-                                    placeholder="e.g. 1, 2, 4, 8, 16..."></textarea>
+                                    placeholder="e.g. 0, 1, 1, 2, 3, 5, 8, 13"></textarea>
                                 <div
                                     class="absolute bottom-2 right-2 text-[10px] text-muted-foreground/60 pointer-events-none group-focus-within:text-muted-foreground transition-colors">
                                     Cmd + Enter to run
@@ -150,7 +149,7 @@
                                     class="bg-muted text-[10px] px-1.5 py-0.5 rounded text-muted-foreground border border-border">?</span>
                                 <div
                                     class="invisible group-hover:visible absolute right-0 bottom-full mb-2 w-48 p-2 bg-popover text-popover-foreground text-xs rounded shadow-lg border border-border z-20">
-                                    Lower Error Rating (RMSE) indicates better fit to historical data.
+                                    Lower validation RMSE means smaller errors on held-out next terms. Exact rules are checked separately.
                                 </div>
                             </div>
                         </div>
@@ -179,7 +178,7 @@
                                 class="flex-1 w-full flex flex-wrap items-center justify-center gap-2 content-center">
                                 <div id="streamPlaceholder"
                                     class="text-muted-foreground/40 text-sm italic text-center py-8 w-full">
-                                    Enter a sequence to see the magic ✨
+                                    Enter 3–200 numbers to explore possible continuations.
                                 </div>
                             </div>
                         </div>
@@ -239,7 +238,7 @@
 
             <footer class="py-12 text-center space-y-2">
                 <p class="text-sm text-muted-foreground">Tip: Hover/click on any result value to copy it.</p>
-                <p class="text-xs text-muted-foreground/60">&copy; 2024 OEIS Extrapolator. Local-first analysis.</p>
+                <p class="text-xs text-muted-foreground/60">Local analysis. Independent tool; not affiliated with the OEIS Foundation.</p>
             </footer>
         </main>
 
