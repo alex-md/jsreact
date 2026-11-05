@@ -1,7 +1,7 @@
 // KeywordAnalyzer.jsx
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import {
-    Search, Settings, Clock, Info, BarChart3, ListRestart,
+    Search, Settings, Info, BarChart3, ListRestart,
     Hash, Zap, MousePointer2, ChevronRight, BrainCircuit,
     Activity, BookOpen, Layers, FileText, Upload as UploadIcon
 } from 'lucide-react';
@@ -784,13 +784,5 @@ const KeywordPrevalence = ({ text, keywords, matchingStrategy, utils }) => {
         </div>
     );
 };
-
-const StatBox = ({ label, value, color, subtext }) => (
-    <div className={`bg-${color}-50/50 p-4 rounded-2xl border border-${color}-100 transition-all hover:shadow-md hover:bg-white`}>
-        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 leading-none">{label}</div>
-        <div className="text-2xl font-black text-gray-900 tracking-tight leading-none mb-1">{value}</div>
-        {subtext && <div className={`text-[10px] font-bold text-${color}-600/60 uppercase tracking-widest`}>{subtext}</div>}
-    </div>
-);
 
 export default KeywordAnalyzer;

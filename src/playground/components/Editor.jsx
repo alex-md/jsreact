@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as monaco from 'monaco-editor';
 import 'monaco-editor/min/vs/editor/editor.main.css';
 

@@ -1,5 +1,5 @@
 import { trackAnalyticsEvent } from '@components/analytics.js';
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Helper function to format currency
 const formatCurrency = (value) => {

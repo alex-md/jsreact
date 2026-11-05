@@ -145,19 +145,6 @@ function createFloatingGenerateButton(anchor) {
     }
     return button;
 }
-function escapeHTML(str) {
-    if (typeof str !== 'string') return str;
-    return str.replace(/[&<>"']/g, function (char) {
-        const esc = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        };
-        return esc[char];
-    });
-}
 const checkboxMap = new Map();
 const packCardMap = new Map();
 function renderCluePacks() {

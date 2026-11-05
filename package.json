@@ -10,7 +10,9 @@
     "generate-sitemap": "node ./scripts/generate-sitemap.js",
     "postbuild": "npm run generate-sitemap",
     "test:oeis": "node --test tests/oeis.test.mjs",
-    "test:connect4": "node --test tests/connect4.test.mjs"
+    "test:connect4": "node --test tests/connect4.test.mjs",
+    "test:numigma": "node --test tests/numigma.test.mjs",
+    "audit:codebase": "npx --yes jscpd@5.4.2 --dashboard ."
   },
   "repository": {
     "type": "git",

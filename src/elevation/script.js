@@ -18,15 +18,6 @@ const CORS_PROXIES = [
     'https://cors-anywhere.herokuapp.com/'
 ];
 
-// Alternative elevation APIs
-const ALTERNATIVE_APIS = [
-    {
-        name: 'Open Elevation',
-        url: 'https://api.open-elevation.com/api/v1/lookup',
-        method: 'POST'
-    }
-];
-
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function () {
     initializeMap();
@@ -522,17 +513,4 @@ function showError(message) {
     document.getElementById('error').classList.remove('hidden');
     hideCopyStatus('copyStatus');
     hideCopyStatus('quickCopyStatus');
-}
-
-// Utility function to debounce function calls
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
 }

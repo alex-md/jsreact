@@ -1,4 +1,3 @@
-import React from 'react';
 
 const ItemLookupResult = ({ data, formatPrice }) => {
     const { item, buyData, sellData, wiki } = data;

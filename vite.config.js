@@ -2,7 +2,6 @@
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,9 +11,6 @@ const siteUrl = 'https://jsreact.com';
 const siteLogoUrl = `${siteUrl}/assets/images/logo.png`;
 const googleTagId = 'G-ZEFG04PXR7';
 const gtmContainerId = 'GTM-NF9TL7G';
-
-// Define directories that should not be treated as pages
-const nonPageDirs = ['components', 'utils', 'assets'];
 
 const pageSeo = {
     '/': {
@@ -603,40 +599,6 @@ const createSeoPlugin = () => ({
         }
     }
 });
-
-const getPageInputs = () => {
-    const entries = {};
-
-    // Add the main entry point
-    const mainHtmlPath = path.resolve(srcDir, 'index.html');
-    if (fs.existsSync(mainHtmlPath)) {
-        entries.index = mainHtmlPath;
-    }
-
-    // Add other pages
-    if (fs.existsSync(srcDir)) {
-        fs.readdirSync(srcDir, { withFileTypes: true })
-            .filter(d => d.isDirectory() && !nonPageDirs.includes(d.name))
-            .forEach(d => {
-                const pagePath = path.resolve(srcDir, d.name);
-                const htmlPath = path.resolve(pagePath, 'index.html');
-
-                if (fs.existsSync(htmlPath)) {
-                    const entryPoints = ['main.tsx', 'main.jsx', 'main.ts', 'main.js', 'index.tsx', 'index.jsx', 'index.ts', 'index.js']
-                        .map(file => path.resolve(pagePath, file))
-                        .find(file => fs.existsSync(file));
-
-                    if (entryPoints) {
-                        entries[d.name] = entryPoints;
-                    } else {
-                        entries[d.name] = htmlPath;
-                    }
-                }
-            });
-    }
-
-    return entries;
-};
 
 export default defineConfig({
     root: srcDir,

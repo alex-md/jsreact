@@ -270,19 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cleanText();
         showToast('Text cleaned successfully');
     });
-    copyButton.addEventListener('click', async () => {
-        if (!outputText.value) {
-            showToast('No text to copy');
-            return;
-        }
-        try {
-            await navigator.clipboard.writeText(outputText.value);
-            showToast('Text copied to clipboard');
-        } catch (error) {
-            showToast('Failed to copy text');
-            console.error('Copy error:', error);
-        }
-    });
+    copyButton.addEventListener('click', copyOutput);
     clearButton.addEventListener('click', () => {
         clearAll();
         showToast('All text cleared');

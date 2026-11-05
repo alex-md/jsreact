@@ -1,8 +1,3 @@
-export interface ViewData {
-  count: number;
-  date: Date;
-}
-
 export interface AnalyticsPeriod {
   current: number;
   previous: number;

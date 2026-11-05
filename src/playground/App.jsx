@@ -1,6 +1,6 @@
 // filepath: /Users/alex/Documents/GitHub/jsreact/src/pages/playground/App.jsx
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Package, X } from 'lucide-react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { Package } from 'lucide-react';
 import Split from 'split.js';
 import Editor from './components/Editor';
 import Preview from './components/Preview';

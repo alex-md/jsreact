@@ -1,0 +1,20 @@
+{
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/output/**",
+    "**/.git/**",
+    "**/.wrangler/**",
+    "**/.playwright-mcp/**",
+    "**/package-lock.json"
+  ],
+  "entry": [
+    "src/**/{main,index,script}.{js,jsx,ts,tsx}",
+    "src/components/{head,header,navbar,footer,pageShell,toolCards}.js",
+    "src/numigma/generator.worker.js",
+    "src/connect4/solver.worker.ts",
+    "src/workers/*.js",
+    "functions/**/*.js"
+  ],
+  "includeTests": true
+}

@@ -513,6 +513,27 @@ class Connect4Engine {
         return score;
     }
 
+    private storeSearchResult(
+        state: { key: bigint; mirrored: boolean },
+        depth: number,
+        score: number,
+        bestMove: number,
+        alpha: number,
+        beta: number,
+    ): void {
+        let flag: TTEntry['flag'] = 0;
+        if (score <= alpha) flag = 2;
+        else if (score >= beta) flag = 1;
+
+        if (this.tt.size >= Connect4Engine.MAX_TRANSPOSITION_ENTRIES) this.tt.clear();
+        this.tt.set(state.key, {
+            depth,
+            score,
+            bestMove: state.mirrored ? COLS - 1 - bestMove : bestMove,
+            flag,
+        });
+    }
+
     private negamax(depth: number, alpha: number, beta: number, policy?: SearchPolicy): number {
         this.checkSearchDeadline();
         const originalAlpha = alpha;
@@ -563,17 +584,7 @@ class Connect4Engine {
             if (alpha >= beta) break;
         }
 
-        let flag: 0 | 1 | 2 = 0;
-        if (bestScore <= originalAlpha) flag = 2;
-        else if (bestScore >= originalBeta) flag = 1;
-
-        if (this.tt.size >= Connect4Engine.MAX_TRANSPOSITION_ENTRIES) this.tt.clear();
-        this.tt.set(state.key, {
-            depth,
-            score: bestScore,
-            bestMove: state.mirrored ? COLS - 1 - bestMove : bestMove,
-            flag
-        });
+        this.storeSearchResult(state, depth, bestScore, bestMove, originalAlpha, originalBeta);
 
         return bestScore;
     }
@@ -630,17 +641,7 @@ class Connect4Engine {
             if (alpha >= beta) break;
         }
 
-        let flag: 0 | 1 | 2 = 0;
-        if (bestScore <= originalAlpha) flag = 2;
-        else if (bestScore >= originalBeta) flag = 1;
-
-        if (this.tt.size >= Connect4Engine.MAX_TRANSPOSITION_ENTRIES) this.tt.clear();
-        this.tt.set(state.key, {
-            depth: remaining,
-            score: bestScore,
-            bestMove: state.mirrored ? COLS - 1 - bestMove : bestMove,
-            flag,
-        });
+        this.storeSearchResult(state, remaining, bestScore, bestMove, originalAlpha, originalBeta);
 
         return bestScore;
     }

@@ -1,6 +1,5 @@
 // filepath: /Users/alex/Documents/GitHub/jsreact/src/pages/playground/components/Preview.jsx
 import React from 'react';
-import { css } from '@emotion/react';
 import { Smartphone, Tablet, Monitor, RefreshCw, XCircle, Terminal } from 'lucide-react';
 
 const DevicePreview = {
