@@ -1,5 +1,6 @@
 import { randomInt } from './random.js';
 import {
+    carmichaelLambda, multiplicativeOrder, jacobiSymbol, quadraticFormValues, isPellSolutionX,
     digitSum,
     digitProduct,
     isPalindrome,
@@ -48,7 +49,17 @@ function createClue(packId, packLabel, complexity, text, predicate, meta = {}) {
         complexity,
         text,
         predicate,
-        meta
+        meta: { ...meta, help: meta.help || ({
+            'primes': 'A prime has exactly two positive divisors. Proper divisors exclude the number itself; prime factors are the primes in its factorization.',
+            'figurate': 'Triangular numbers are k(k + 1)/2 for a positive integer k. Fibonacci numbers start 1, 1, 2, 3, 5, 8, with each the sum of the previous two.',
+            'binary': 'Write the number in base 2, using only 0 and 1. The number of ones is its binary weight; bit length counts all binary digits.',
+            'gcd': 'The GCD is the greatest positive integer dividing both values. A quadratic residue modulo m is a remainder of x² for some integer x (including 0).',
+            'polynomial': 'A perfect square is k²; a cube is k³; a fourth power is k⁴. Other clues describe the difference between the secret number and a given value.',
+            'bases': 'In base b, place values are 1, b, b², and so on. Convert the number to that base before checking its digits.',
+            'transformations': 'Reverse decimal digits from right to left. In an arithmetic progression, consecutive digits have equal differences. Digit factorials use 0! = 1 and k! = 1 × 2 × … × k.',
+            'combinatorial': 'Factorials are 1, 2, 6, 24, 120, …; Catalan numbers are 1, 2, 5, 14, 42, …; Bell numbers are 1, 2, 5, 15, 52, … (counts of set partitions).',
+            'advanced': 'φ(n) counts integers from 1 to n coprime to n. A happy number reaches 1 by repeatedly summing squared digits. An Armstrong number equals the sum of its digits raised to the number of digits. Highly composite numbers have more divisors than every smaller positive integer.'
+        })[packId] }
     };
 }
 const cluePackDefinitions = [
@@ -101,7 +112,7 @@ const cluePackDefinitions = [
                 ];
                 const modulus = moduli[Math.floor(ctx.rng() * moduli.length)];
                 const remainder = ctx.target % modulus;
-                const text = `It is congruent to ${remainder} modulo ${modulus}.`;
+                const text = `Dividing it by ${modulus} leaves a remainder of ${remainder}.`;
                 return createClue('basic', 'Basic', 2, text, (n) => n % modulus === remainder, {
                     key: `mod-${modulus}-${remainder}`
                 });
@@ -229,9 +240,10 @@ const cluePackDefinitions = [
         default: true,
         factories: [
             (ctx) => {
+                if (ctx.target < 2) return null;
                 if (!isPrime(ctx.target)) {
                     const text = 'The number is composite.';
-                    return createClue('primes', 'Primes & Factorization', 2, text, (n) => !isPrime(n), {
+                    return createClue('primes', 'Primes & Factorization', 2, text, (n) => n > 1 && !isPrime(n), {
                         key: 'composite'
                     });
                 }
@@ -273,8 +285,7 @@ const cluePackDefinitions = [
         factories: [
             (ctx) => {
                 if (!isPerfectSquare(ctx.target)) return null;
-                const root = Math.round(Math.sqrt(ctx.target));
-                const text = `It is a perfect square (${root}²).`;
+                const text = 'It is a perfect square.';
                 return createClue('figurate', 'Figurate & Sequences', 2, text, (n) => isPerfectSquare(n), {
                     key: 'perfect-square'
                 });
@@ -312,7 +323,7 @@ const cluePackDefinitions = [
             (ctx) => {
                 const length = binaryLength(ctx.target);
                 const text = `It needs ${length} bit${length === 1 ? '' : 's'} in binary.`;
-                return createClue('binary', 'Binary & Bits', 2, text, (n) => binaryLength(n) === length, {
+                return createClue('binary', 'Binary & Bits', 3, text, (n) => binaryLength(n) === length, {
                     key: `bin-length-${length}`
                 });
             },
@@ -388,16 +399,14 @@ const cluePackDefinitions = [
         factories: [
             (ctx) => {
                 if (!isPerfectCube(ctx.target)) return null;
-                const root = Math.round(Math.cbrt(ctx.target));
-                const text = `It is a perfect cube (${root}³).`;
+                const text = 'It is a perfect cube.';
                 return createClue('polynomial', 'Polynomial & Algebraic', 3, text, (n) => isPerfectCube(n), {
                     key: 'cube'
                 });
             },
             (ctx) => {
                 if (!isPerfectFourthPower(ctx.target)) return null;
-                const root = Math.round(Math.pow(ctx.target, 0.25));
-                const text = `It is a perfect fourth power (${root}⁴).`;
+                const text = 'It is a perfect fourth power.';
                 return createClue('polynomial', 'Polynomial & Algebraic', 4, text, (n) => isPerfectFourthPower(n), {
                     key: 'fourth-power'
                 });
@@ -409,7 +418,7 @@ const cluePackDefinitions = [
                 const baseDescriptor = describeBaseNumber(base);
                 const deltaDescriptor = describeDeltaAmount(delta);
                 const text = `It exceeds ${base}, ${baseDescriptor}, by ${deltaDescriptor.text}.`;
-                return createClue('polynomial', 'Polynomial & Algebraic', 2, text, (n) => n > base && deltaDescriptor.predicate(n - base), {
+                return createClue('polynomial', 'Polynomial & Algebraic', 3, text, (n) => n > base && deltaDescriptor.predicate(n - base), {
                     key: `affine-${base}-${delta}`
                 });
             }
@@ -464,10 +473,10 @@ const cluePackDefinitions = [
             (ctx) => {
                 const reversed = reverseNumber(ctx.target);
                 if (!isPrime(reversed)) return null;
-                const text = `Reversing its digits yields the prime ${reversed}.`;
+                const text = 'Reversing its digits gives a prime number.';
                 return createClue('transformations', 'Transformations & Patterns', 4, text, (n) => {
                     const reversedValue = reverseNumber(n);
-                    return reversedValue === reversed && isPrime(reversedValue);
+                    return isPrime(reversedValue);
                 }, {
                     key: `reverse-prime-${reversed}`
                 });
@@ -595,6 +604,57 @@ const cluePackDefinitions = [
                 return createClue('advanced', 'Advanced Number Theory', 5, text, (n) => isHighlyComposite(n), {
                     key: 'highly-composite'
                 });
+            }
+        ]
+    },
+    {
+        id: 'modular', label: 'Deep Modular Arithmetic',
+        description: 'Multiplicative orders, Carmichael exponents, and Jacobi symbols.',
+        default: true,
+        factories: [
+            (ctx) => {
+                const modulus = [17, 23, 31, 41][Math.floor(ctx.rng() * 4)];
+                const order = multiplicativeOrder(ctx.target, modulus);
+                if (order === null) return null;
+                return createClue('modular', 'Deep Modular Arithmetic', 6,
+                    `Its multiplicative order modulo ${modulus} is ${order}.`,
+                    n => multiplicativeOrder(n, modulus) === order,
+                    { key: `order-${modulus}-${order}`, help: `The smallest positive exponent k for which nᵏ leaves remainder 1 when divided by ${modulus} is ${order}.` });
+            },
+            (ctx) => {
+                const value = carmichaelLambda(ctx.target);
+                return createClue('modular', 'Deep Modular Arithmetic', 6,
+                    `Its Carmichael function λ(n) equals ${value}.`, n => carmichaelLambda(n) === value,
+                    { key: `lambda-${value}`, help: 'λ(n) is the smallest positive exponent k such that aᵏ ≡ 1 (mod n) for every integer a coprime to n. For prime powers, combine their exponents with an LCM.' });
+            },
+            (ctx) => {
+                const modulus = [15, 21, 33, 35, 55, 77][Math.floor(ctx.rng() * 6)];
+                const symbol = jacobiSymbol(ctx.target, modulus);
+                return createClue('modular', 'Deep Modular Arithmetic', 6,
+                    `The Jacobi symbol (n/${modulus}) is ${symbol}.`, n => jacobiSymbol(n, modulus) === symbol,
+                    { key: `jacobi-${modulus}-${symbol}`, help: `Factor ${modulus} into primes. For each prime p, the Legendre symbol is 0 if p divides n, 1 if n is a nonzero square modulo p, and −1 otherwise. Multiply those symbols, counting repeated factors. A Jacobi symbol of 1 alone does not guarantee a square modulo a composite number.` });
+            }
+        ]
+    },
+    {
+        id: 'diophantine', label: 'Diophantine Equations',
+        description: 'Integer solutions of quadratic forms and Pell equations.',
+        default: true,
+        factories: [
+            (ctx) => {
+                const coefficient = [1, 2, 3, 5, 7][Math.floor(ctx.rng() * 5)];
+                const values = quadraticFormValues(ctx.max, coefficient);
+                if (!values.has(ctx.target)) return null;
+                return createClue('diophantine', 'Diophantine Equations', 6,
+                    `It can be written as x² + ${coefficient === 1 ? '' : coefficient}y², where x and y are positive integers.`,
+                    n => values.has(n), { key: `quadratic-${coefficient}`, help: 'Both variables must be whole numbers greater than zero. Look for a representation of n as this sum; the variables do not have to be distinct.' });
+            },
+            (ctx) => {
+                const coefficient = [2, 3, 5, 6, 7, 10, 11, 13][Math.floor(ctx.rng() * 8)];
+                if (!isPellSolutionX(ctx.target, coefficient)) return null;
+                return createClue('diophantine', 'Diophantine Equations', 6,
+                    `There is a positive integer y such that n² − ${coefficient}y² = 1.`,
+                    n => isPellSolutionX(n, coefficient), { key: `pell-${coefficient}`, help: `This is a Pell equation. Equivalently, (n² − 1)/${coefficient} must be the square of a positive integer.` });
             }
         ]
     }

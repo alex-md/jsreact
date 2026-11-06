@@ -229,24 +229,16 @@ export function catalanNumbersUpTo(limit) {
 }
 export function bellNumbersUpTo(limit) {
     return memoize(`bell:${limit}`, () => {
-        const bells = [
-            1
-        ];
-        let n = 1;
+        const values = new Set([1]);
+        let row = [1];
         while (true) {
-            const row = [
-                bells[n - 1]
-            ];
-            for (let k = 1; k <= n; k += 1) {
-                const value = row[k - 1] + (bells[k - 1] ?? 0);
-                row.push(value);
-            }
-            const next = row[n];
-            if (next > limit) break;
-            bells.push(next);
-            n += 1;
+            const next = [row[row.length - 1]];
+            for (let k = 1; k <= row.length; k++) next.push(next[k - 1] + row[k - 1]);
+            if (next[0] > limit) break;
+            values.add(next[0]);
+            row = next;
         }
-        return new Set(bells);
+        return values;
     });
 }
 function sumOfProperDivisors(n) {
@@ -358,7 +350,7 @@ export function isHappyNumber(n) {
         let value = n;
         while (value !== 1 && !seen.has(value)) {
             seen.add(value);
-            value = digitSum(value ** 2);
+            value = digitsOf(value).reduce((sum, digit) => sum + digit * digit, 0);
         }
         return value === 1;
     });
@@ -420,3 +412,62 @@ export function sumDigitsInBase(n, base) {
 export function binaryLength(n) {
     return memoize(`binary-length:${n}`, () => n.toString(2).length);
 }
+
+// Least universal exponent, from the LCM of the prime-power components.
+export function carmichaelLambda(n) {
+    return memoize(`carmichael:${n}`, () => {
+        let result = 1;
+        for (const [prime, exponent] of primeFactors(n)) {
+            const component = prime === 2 && exponent >= 3 ? 2 ** (exponent - 2) : (prime - 1) * prime ** (exponent - 1);
+            result = lcm(result, component);
+        }
+        return result;
+    });
+}
+
+export function multiplicativeOrder(base, modulus) {
+    if (gcd(base, modulus) !== 1 || modulus < 2) return null;
+    return memoize(`order:${base % modulus}:${modulus}`, () => {
+        let residue = 1;
+        for (let exponent = 1; exponent <= modulus; exponent++) {
+            residue = residue * (base % modulus) % modulus;
+            if (residue === 1) return exponent;
+        }
+        return null;
+    });
+}
+
+export function jacobiSymbol(numerator, denominator) {
+    if (denominator <= 0 || denominator % 2 === 0) throw new RangeError('The denominator must be positive and odd.');
+    let a = ((numerator % denominator) + denominator) % denominator;
+    let n = denominator;
+    let sign = 1;
+    while (a !== 0) {
+        while (a % 2 === 0) {
+            a /= 2;
+            if (n % 8 === 3 || n % 8 === 5) sign = -sign;
+        }
+        [a, n] = [n, a];
+        if (a % 4 === 3 && n % 4 === 3) sign = -sign;
+        a %= n;
+    }
+    return n === 1 ? sign : 0;
+}
+
+// Positive x and y, so trivial representations with a zero term are excluded.
+export function quadraticFormValues(limit, coefficient) {
+    return memoize(`quadratic-form:${limit}:${coefficient}`, () => {
+        const values = new Set();
+        for (let y = 1; coefficient * y * y < limit; y++) {
+            for (let x = 1; x * x + coefficient * y * y <= limit; x++) values.add(x * x + coefficient * y * y);
+        }
+        return values;
+    });
+}
+
+export function isPellSolutionX(n, coefficient) {
+    const square = (n * n - 1) / coefficient;
+    return square >= 1 && Number.isInteger(square) && isPerfectSquare(square);
+}
+
+export function clearMathCache() { mathCache.clear(); }

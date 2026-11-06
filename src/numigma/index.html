@@ -1,245 +1,103 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
-    <head>
-        <meta charset="UTF-8">
-
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-        <script type="module">
-            import { createHead } from '@components/head.js';
-            createHead(
-                'Numigma Puzzle Generator - Reverse Number Logic Puzzles',
-                'Create deterministic reverse-number logic puzzles with configurable clue packs, shareable puzzle states, and browser-based solving.',
-                {
-                    canonicalPath: '/numigma/',
-                    keywords: 'numigma, number puzzle generator, logic puzzle generator, reverse number puzzle, puzzle maker, math puzzle generator, deduction puzzle'
-                }
-            );
-        </script>
-    </head>
-
-    <body class="bg-gray-50 numigma-bg">
-        <script type="module">
-            import { initPageShell } from '@components/pageShell.js';
-            initPageShell();
-        </script>
-
-        <main
-            class="numigma-layout container mx-auto px-3 py-6 sm:px-4 sm:py-8 md:py-12 max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
-            <div class="space-y-8 md:space-y-10">
-                <section
-                    class="numigma-hero bg-gradient-to-br from-violet-600 via-indigo-500 to-blue-500 text-white rounded-3xl shadow-xl overflow-hidden">
-                    <div class="p-6 sm:p-8 lg:p-10">
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                            <div class="space-y-4 lg:max-w-2xl">
-                                <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
-                                    <span class="h-2 w-2 rounded-full bg-emerald-300 animate-pulse"></span>
-                                    Number deduction puzzles
-                                </div>
-                                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                                    Find the secret number
-                                </h1>
-                                <p class="text-base sm:text-lg text-white/90 leading-relaxed">
-                                    Generate a number puzzle, read the clues, and work out the hidden answer. Start with the default settings, then change the range or clue packs for a different challenge.
-                                </p>
-                                <div class="flex flex-col sm:flex-row sm:items-center gap-3 text-sm text-white/80">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-seedling"></i>
-                                        <span>Seed-driven &amp; sharable</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-puzzle-piece"></i>
-                                        <span>Checks whether one answer remains</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-sliders-h"></i>
-                                        <span>13 mix-and-match clue packs</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lg:self-start">
-                                <button id="generate-button"
-                                    class="numigma-hero-button inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/95 text-indigo-600 font-semibold rounded-2xl shadow-lg shadow-indigo-900/20 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-all">
-                                    <i class="fas fa-dice"></i>
-                                    Generate puzzle
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <p class="text-gray-700">Try this: a number between 1 and 20 is even, greater than 10, and a multiple of 7. The answer is 14. Generate a puzzle to try more clues, then use Reveal to check your answer.</p>
-                <details class="numigma-surface bg-white">
-                    <summary class="p-5 cursor-pointer font-semibold">Customize range, difficulty, and clue packs</summary>
-                <section
-                    class="numigma-section bg-white numigma-surface overflow-hidden divide-y divide-gray-100">
-                    <div class="p-5 sm:p-6 lg:p-8 space-y-6">
-                        <div class="numigma-section-header space-y-3">
-                            <div class="numigma-section-kicker">Start here</div>
-                            <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                                <i class="fas fa-tuning-fork text-indigo-500"></i>
-                                Generator controls
-                            </h2>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                Configure the search space, deterministic seed, and difficulty profile. The difficulty level
-                                dynamically balances clue complexity, quantity, and solver strictness.
-                            </p>
-                        </div>
-
-                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                            <label class="block space-y-2">
-                                <span class="text-sm font-medium text-gray-700">Minimum value</span>
-                                <input type="number" id="min-value" min="1" value="1"
-                                    class="numigma-input" />
-                            </label>
-                            <label class="block space-y-2">
-                                <span class="text-sm font-medium text-gray-700">Maximum value</span>
-                                <input type="number" id="max-value" min="10" value="999"
-                                    class="numigma-input" />
-                            </label>
-                            <label class="block space-y-2 lg:col-span-1">
-                                <span class="text-sm font-medium text-gray-700">Difficulty</span>
-                                <select id="difficulty" class="numigma-input">
-                                    <option value="easy">Easy</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="hard">Hard</option>
-                                    <option value="extreme">Extreme</option>
-                                </select>
-                            </label>
-                        </div>
-                        <input type="hidden" id="seed" />
-
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-sm">
-                            <div class="flex items-center gap-3">
-                                <button id="copy-share-link"
-                                    class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 share-link-button numigma-inline-button">
-                                    <i class="fas fa-link"></i>
-                                    Copy link to current puzzle
-                                </button>
-                            </div>
-                            <div class="numigma-info-chip text-sm" id="range-stats">
-                                <i class="fas fa-chart-area"></i>
-                                <span>Range size: 0</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-5 sm:p-6 lg:p-8 space-y-5" id="clue-pack-container">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div class="numigma-section-header space-y-2">
-                                <h3 class="text-lg font-semibold text-gray-900">Clue packs</h3>
-                                <p class="text-sm text-gray-600">Toggle mathematical themes to shape the flavor of the
-                                    generated puzzle.</p>
-                                <div id="pack-count-indicator" class="numigma-info-chip text-sm" data-variant="accent">
-                                    <i class="fas fa-boxes-stacked"></i>
-                                    <span>0 of 0 packs enabled</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm">
-                                <button id="select-all-packs"
-                                    class="inline-flex items-center gap-2 text-indigo-600 font-semibold numigma-inline-button">
-                                    <i class="fas fa-check-double"></i>
-                                    Select all
-                                </button>
-                                <button id="clear-all-packs"
-                                    class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 numigma-inline-button">
-                                    <i class="fas fa-eraser"></i>
-                                    Clear
-                                </button>
-                            </div>
-                        </div>
-                        <div id="clue-pack-list" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"></div>
-                    </div>
-                </section>
-
-                </details>
-
-                <div id="warning-banner"
-                    class="hidden numigma-callout border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    <div class="flex items-start gap-3">
-                        <i class="fas fa-exclamation-triangle mt-1"></i>
-                        <div>
-                            <div class="font-semibold">Performance warning</div>
-                            <div id="warning-text" class="text-amber-700/90"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <section id="puzzle-results" aria-live="polite" aria-label="Generated puzzle" class="grid gap-6 lg:grid-cols-5 scroll-mt-24">
-                    <div class="lg:col-span-3 space-y-6">
-                        <div class="bg-white numigma-surface">
-                            <div
-                                class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between gap-3">
-                                <h3 class="text-lg font-semibold text-gray-900">Active clues</h3>
-                                <div class="flex items-center gap-3">
-                                    <button id="copy-clues-button" class="copy-clues-button" type="button" disabled>
-                                        <i class="fas fa-copy"></i>
-                                        Copy
-                                    </button>
-                                    <div id="clue-count" class="text-sm text-gray-500">0 clues</div>
-                                </div>
-                            </div>
-                            <div class="p-5 sm:p-6" id="clue-list">
-                                <div class="text-sm text-gray-500">Generate a puzzle to see clue statements.</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white numigma-surface">
-                            <div class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6">
-                                <h3 class="text-lg font-semibold text-gray-900">Candidate inspector</h3>
-                            </div>
-                            <div class="p-5 sm:p-6 space-y-4 text-sm text-gray-600" id="candidate-details">
-                                <p>Run the generator to analyze candidate reductions after each clue.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-white numigma-surface">
-                            <div
-                                class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
-                                <h3 class="text-lg font-semibold text-gray-900">Puzzle diagnostics</h3>
-                                <div class="flex items-center gap-3">
-                                    <span id="status-badge"
-                                        class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">
-                                        Awaiting generation
-                                    </span>
-                                    <button id="deepen-button" type="button"
-                                        class="deepen-button hidden"
-                                        aria-hidden="true" disabled>
-                                        <i class="fas fa-magnifying-glass-plus"></i>
-                                        <span>Go deeper</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="p-5 sm:p-6 space-y-4 text-sm text-gray-600" id="diagnostics-panel">
-                                <p>The diagnostics panel summarizes solver progress, including whether a unique solution was
-                                    found for the chosen configuration.</p>
-                            </div>
-                        </div>
-
-                        <div class="bg-white numigma-surface">
-                            <div class="numigma-section-header border-b border-gray-100 px-5 py-4 sm:px-6 flex items-center justify-between">
-                                <h3 class="text-lg font-semibold text-gray-900">Solution reveal</h3>
-                                <button id="toggle-solution"
-                                    class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">Reveal</button>
-                            </div>
-                            <div class="p-5 sm:p-6">
-                                <div id="solution-card"
-                                    class="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6 text-center shadow-inner">
-                                    <p class="text-sm text-slate-300">The secret number remains hidden until you generate a
-                                        puzzle.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#182730">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script type="module">
+        import { createHead } from '@components/head.js';
+        createHead('Numigma — Every Clue Counts', 'Find one secret number with exactly the clues you choose. Verified number deduction puzzles, from everyday arithmetic to advanced number theory.', { canonicalPath: '/numigma/' });
+    </script>
+</head>
+<body class="page-numigma">
+    <a class="n-skip" href="#puzzle-workspace">Skip to puzzle</a>
+    <script type="module">
+        import { initPageShell } from '@components/pageShell.js';
+        initPageShell();
+    </script>
+    <main class="n-page" id="main-content">
+        <header class="n-intro">
+            <div>
+                <p class="n-eyebrow"><span class="n-mark" aria-hidden="true">N<span>°</span></span> Numigma <span class="n-divider">/</span> Number deduction</p>
+                <h1>One number.<br><em>Every clue counts.</em></h1>
+                <p class="n-lede">Follow the clues. Find the only number that fits.<br>Choose how many pieces your puzzle needs.</p>
             </div>
-        </main>
+            <div class="n-rule"><span aria-hidden="true">∩</span><p>One answer. No spare clues.<small>Remove any clue and more than one answer remains.</small></p></div>
+        </header>
 
-        <script type="module" src="./script.js"></script>
-    </body>
+        <div class="n-workspace" id="puzzle-workspace">
+            <aside class="n-setup" aria-labelledby="setup-title">
+                <details class="n-setup-disclosure" id="setup-disclosure" open>
+                <summary>Customize puzzle <span id="setup-summary" class="n-caption">3 clues · Easy</span></summary>
+                <form id="puzzle-form">
+                    <div class="n-panel-heading"><h2 id="setup-title">Build your puzzle</h2><span class="n-caption">Your rules</span></div>
+                    <fieldset class="n-count-field">
+                        <legend>How many clues?</legend>
+                        <div class="n-count-options">
+                            <label><input type="radio" name="clueCount" value="2"><span>2</span></label>
+                            <label><input type="radio" name="clueCount" value="3" checked><span>3</span></label>
+                            <label><input type="radio" name="clueCount" value="4"><span>4</span></label>
+                            <label><input type="radio" name="clueCount" value="5"><span>5</span></label>
+                            <label><input type="radio" name="clueCount" value="6"><span>6</span></label>
+                        </div>
+                        <p class="n-help">Exactly this many. Each one must matter.</p>
+                    </fieldset>
+                    <label class="n-field" for="difficulty">Mathematical difficulty
+                        <select id="difficulty" name="difficulty" aria-describedby="difficulty-help">
+                            <option value="easy">Easy · everyday arithmetic</option>
+                            <option value="medium">Medium · factors & patterns</option>
+                            <option value="hard">Hard · bases & number theory</option>
+                            <option value="extreme">Extreme · deeper mathematics</option>
+                        </select>
+                    </label>
+                    <p id="difficulty-help" class="n-help">Everyday arithmetic, remainders, and digit sums.</p>
+                    <div class="n-range">
+                        <label class="n-field" for="min-value">From<input id="min-value" name="min" type="number" min="1" max="999999" step="1" value="1" required autocomplete="off"></label>
+                        <span aria-hidden="true">–</span>
+                        <label class="n-field" for="max-value">To<input id="max-value" name="max" type="number" min="2" max="1000000" step="1" value="999" required autocomplete="off"></label>
+                    </div>
+                    <details class="n-themes">
+                        <summary>Clue themes <span id="pack-count"></span></summary>
+                        <p class="n-help">Difficulty filters the themes below. For the widest variety, leave them all on.</p>
+                        <div class="n-theme-actions"><button type="button" id="select-all-packs">Select all</button><button type="button" id="clear-all-packs">Clear</button></div>
+                        <div id="clue-pack-list"></div>
+                    </details>
+                    <button class="n-primary" id="generate-button" type="submit">New puzzle <span aria-hidden="true">↗</span></button>
+                    <button class="n-secondary" id="cancel-button" type="button" hidden>Cancel generation</button>
+                    <p id="setup-message" class="n-message" role="status" aria-live="polite"></p>
+                </form>
+                </details>
+                <button class="n-primary n-mobile-new" id="quick-generate-button" type="button">New puzzle ↗</button>
+                <details class="n-how">
+                    <summary>How to play</summary>
+                    <p>The secret is a whole number in the displayed range. Every clue describes it. Combine them until only one number fits, then check your answer.</p>
+                    <p>Clue count sets the length; difficulty sets the mathematics. More clues do not automatically mean an easier puzzle.</p>
+                    <p>Every published puzzle is checked across its entire range. Any subset missing a clue still has multiple possible answers.</p>
+                </details>
+            </aside>
 
+            <section class="n-puzzle" aria-labelledby="puzzle-title" aria-busy="false">
+                <div class="n-puzzle-top"><p class="n-eyebrow">The deduction</p><span id="puzzle-status" class="n-status" role="status">Preparing puzzle…</span></div>
+                <h2 id="puzzle-title">Find the secret number.</h2>
+                <p id="puzzle-description" class="n-puzzle-description">Your clues will appear here.</p>
+                <ol id="clue-list" class="n-clues"></ol>
+                <div id="solve-area" hidden>
+                    <form id="answer-form" class="n-answer-form">
+                        <label for="answer">Your number</label>
+                        <div class="n-answer-row"><input id="answer" aria-describedby="answer-feedback" name="answer" type="number" step="1" required inputmode="numeric" autocomplete="off" placeholder="Enter your answer…"><button class="n-primary" type="submit">Check answer</button></div>
+                        <p id="answer-feedback" class="n-message" role="status" aria-live="polite"></p>
+                    </form>
+                    <div class="n-puzzle-actions"><button type="button" id="toggle-solution" class="n-text-button" aria-expanded="false" aria-controls="solution">Reveal answer</button><span class="n-action-spacer"></span><button type="button" id="copy-clues-button" class="n-text-button">Copy puzzle</button><button type="button" id="copy-share-link" class="n-text-button">Share link</button></div>
+                    <div id="solution" class="n-solution" hidden></div>
+                    <details class="n-notes"><summary>Scratchpad</summary><label class="n-sr-only" for="notes">Your working notes</label><textarea id="notes" name="notes" rows="4" placeholder="Keep your working here…" autocomplete="off"></textarea><p class="n-help">Notes stay here until you create another puzzle.</p></details>
+                    <details class="n-analysis" id="analysis"><summary>Explore the logic <span class="n-caption">Contains hints</span></summary><p class="n-help">See how the possibilities narrow down. The answer stays hidden until you reveal it.</p><div id="candidate-details"></div><p class="n-proof">Checked: exactly one answer, and every clue is necessary.</p></details>
+                </div>
+                <noscript><p>Please enable JavaScript to generate and solve puzzles.</p></noscript>
+            </section>
+        </div>
+        <p class="n-footnote">A little arithmetic. A little persistence. A single satisfying answer.</p>
+    </main>
+    <script type="module" src="./script.js"></script>
+</body>
 </html>
-
