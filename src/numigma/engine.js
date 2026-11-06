@@ -6,10 +6,10 @@ import { cluePackDefinitions, cluePackMap } from './cluePacks.js';
 const difficultySettings = {
     easy: { label: 'Easy', minComplexity: 1, maxComplexity: 2, requiredComplexity: 1, description: 'Everyday arithmetic, remainders, and digit sums.' },
     medium: { label: 'Medium', minComplexity: 1, maxComplexity: 3, requiredComplexity: 3, description: 'Combine arithmetic with factors and number patterns.' },
-    hard: { label: 'Hard', minComplexity: 2, maxComplexity: 4, requiredComplexity: 4, description: 'Work with bases, GCDs, and richer number properties.' },
-    extreme: { label: 'Extreme', minComplexity: 3, maxComplexity: 6, requiredComplexity: 6, description: 'Combine deeper number theory with modular or Diophantine constraints.' }
+    hard: { label: 'Hard', minComplexity: 2, maxComplexity: 4, requiredComplexity: 4, description: 'Distinct deductions with bases and number theory; every subset leaves room to reason.' },
+    extreme: { label: 'Extreme', minComplexity: 3, maxComplexity: 6, requiredComplexity: 6, description: 'Combine distinct number-theory deductions, with every subset checked for shortcuts.' }
 };
-const GENERATOR_VERSION = '2';
+const GENERATOR_VERSION = '3';
 const limits = { maxValue: 1000000, maxRange: 50000, minClues: 2, maxClues: 6 };
 
 function validateSettings(settings) {
@@ -35,11 +35,14 @@ function buildClueLibrary(settings, target, rng, profile) {
     // Vary anchors, moduli, and bounds rather than repeatedly searching one tiny library.
     for (let variant = 0; variant < 10; variant++) {
         for (const id of settings.packs) {
-            for (const factory of cluePackMap.get(id).factories) {
+            for (const [family, factory] of cluePackMap.get(id).factories.entries()) {
                 const result = factory(context);
                 for (const clue of (Array.isArray(result) ? result : [result])) {
                     if (clue && clue.complexity >= profile.minComplexity && clue.complexity <= profile.maxComplexity
-                        && clue.predicate(target)) clues.set(clue.id, clue);
+                        && clue.predicate(target)) {
+                        clue.meta.family = `${id}:${family}`;
+                        clues.set(clue.id, clue);
+                    }
                 }
             }
         }
@@ -62,6 +65,7 @@ function searchExact(library, universe, count, profile, rng) {
         truthTables.add(signature);
         pool.push({ clue, matches });
     }
+    const strongSubsets = profile.requiredComplexity >= 4;
     const requiredAdvanced = profile.requiredComplexity <= 2 ? 0 : Math.ceil(count / 2);
     let nodes = 0;
     const visit = (survivors, selected, witnesses, available) => {
@@ -77,9 +81,11 @@ function searchExact(library, universe, count, profile, rng) {
         const choices = [];
         for (const entry of available) {
             if (advancedNeeded >= slots && entry.clue.complexity < profile.requiredComplexity) continue;
+            if (strongSubsets && selected.some(item => item.clue.meta.family === entry.clue.meta.family)) continue;
             const kept = survivors.filter(i => entry.matches[i]);
             if (!kept.length || kept.length === survivors.length || (slots > 1 && kept.length <= slots - 1)
                 || (slots === 1 && kept.length !== 1)) continue;
+            if (strongSubsets && !hasSubsetRoom([...selected, entry], universe.length, count)) continue;
             const nextWitnesses = witnesses.map(list => list.filter(i => entry.matches[i]));
             if (nextWitnesses.some(list => !list.length)) continue;
             nextWitnesses.push(survivors.filter(i => !entry.matches[i]));
@@ -98,6 +104,25 @@ function searchExact(library, universe, count, profile, rng) {
     return { result, librarySize: pool.length, nodes };
 }
 
+// Check every order of attack, not just the displayed order. With r clues still
+// missing, retain at least 2^r candidates on Hard/Extreme. This is a measurable
+// anti-shortcut rule, not a claim to model human solving time.
+function hasSubsetRoom(entries, size, clueCount) {
+    // Older subsets were certified before this entry was added.
+    for (let mask = 1 << (entries.length - 1); mask < 2 ** entries.length; mask++) {
+        const subset = entries.filter((_, i) => mask & (1 << i));
+        const missing = clueCount - subset.length;
+        if (!missing) continue;
+        const minimum = 2 ** missing;
+        let matches = 0;
+        for (let i = 0; i < size && matches < minimum; i++) {
+            if (subset.every(entry => entry.matches[i])) matches++;
+        }
+        if (matches < minimum) return false;
+    }
+    return true;
+}
+
 function generatePuzzle(input) {
     const settings = { ...input, clueCount: input?.clueCount ?? 3 };
     const error = validateSettings(settings);
@@ -113,8 +138,15 @@ function generatePuzzle(input) {
         const { result, librarySize, nodes } = searchExact(library, universe, settings.clueCount, profile, rng);
         searchedNodes += nodes;
         if (!result) continue;
+        // Present a usable starting point before the advanced verification.
+        // Essentiality guarantees every order still needs the final clue.
+        const ordered = result.selected.map((entry, i) => ({ ...entry, witnesses: result.witnesses[i] }))
+            .sort((a, b) => {
+                const rank = ({ clue }) => clue.meta.key?.startsWith('affine-') ? 0 : clue.complexity;
+                return rank(a) - rank(b);
+            });
         let candidates = universe;
-        const steps = result.selected.map(({ clue }) => {
+        const steps = ordered.map(({ clue }) => {
             const previous = candidates.length;
             candidates = candidates.filter(clue.predicate);
             return { clue, remaining: candidates.length, reduction: previous - candidates.length,
@@ -124,10 +156,11 @@ function generatePuzzle(input) {
             remainingCount: 1, totalCandidates: universe.length, usedClues: steps.length, librarySize,
             attempts: attempt + 1, searchedNodes, settings, difficultyProfile: profile,
             // A concrete certificate for every leave-one-out check, also used by tests.
-            essentialWitnesses: result.witnesses.map(list => universe[list[0]]) };
+            essentialWitnesses: ordered.map(({ witnesses }) => universe[witnesses[0]]),
+            alternativesWithoutClue: ordered.map(({ witnesses }) => witnesses.length + 1) };
     }
     return { success: false, steps: [], settings,
-        error: `Could not build ${settings.clueCount} essential clues with these settings within the search limit. Try fewer clues, a wider range, or more themes.` };
+        error: `Could not build ${settings.clueCount} essential clues with these settings within the search limit. Try fewer clues, a wider range, or more themes. Hard and Extreme also require distinct clue types and stronger subsets.` };
 }
 
 export { difficultySettings, cluePackDefinitions, cluePackMap, generatePuzzle, validateSettings, limits, GENERATOR_VERSION };

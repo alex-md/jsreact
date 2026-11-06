@@ -30,6 +30,17 @@ function certify(result, settings) {
         assert.equal(step.clue.predicate(witness), false);
         assert.ok(range.filter(step.clue.predicate).length > 1, 'no single-clue giveaways');
     });
+    assert.deepEqual(result.alternativesWithoutClue, result.steps.map((_, index) =>
+        range.filter(n => result.steps.every(({ clue }, j) => j === index || clue.predicate(n))).length));
+    if (['hard', 'extreme'].includes(settings.difficulty)) {
+        assert.equal(new Set(result.steps.map(({ clue }) => clue.meta.family)).size, settings.clueCount);
+        for (let mask = 1; mask < 2 ** settings.clueCount - 1; mask++) {
+            const subset = result.steps.filter((_, i) => mask & (1 << i));
+            const remaining = range.filter(n => subset.every(({ clue }) => clue.predicate(n)));
+            assert.ok(remaining.length >= 2 ** (settings.clueCount - subset.length),
+                `subset ${mask} must not provide a shortcut`);
+        }
+    }
     assert.ok(result.steps.filter(({ clue }) => clue.complexity >= difficultySettings[settings.difficulty].requiredComplexity).length >= Math.ceil(settings.clueCount / 2));
 }
 
@@ -136,4 +147,37 @@ test('clue text does not print hidden roots or reversed target numbers; 1 is not
             }
         }
     }
+});
+
+
+test('835 feedback: check the full range rather than only the first prime offsets', () => {
+    const clues = [n => multiplicativeOrder(n, 17) === 8, n => n % 6 === 1,
+        n => jacobiSymbol(n, 55) === 0, n => jacobiSymbol(n, 77) === -1,
+        n => n > 816 && isPrime(n - 816)];
+    const range = Array.from({ length: 999 }, (_, i) => i + 1);
+    assert.deepEqual(range.filter(n => clues.every(f => f(n))), [835]);
+    assert.deepEqual(clues.map((_, index) => range.filter(n => clues.every((f, j) => j === index || f(n)))),
+        [[835, 895, 955], [835], [835, 859, 967], [835], [355, 655, 835, 865]]);
+});
+
+test('difficulty reflects simplified operations rather than advanced terminology', () => {
+    const ctx = { target: 835, min: 1, max: 999, rng: () => 0.7 };
+    const jacobi = cluePackDefinitions.find(pack => pack.id === 'modular').factories[2](ctx);
+    assert.equal(jacobi.complexity, 3);
+    assert.match(jacobi.meta.deduction, /gcd/);
+    const lastDigit = cluePackDefinitions.find(pack => pack.id === 'bases').factories[2](ctx);
+    assert.equal(lastDigit.complexity, 2);
+    for (let n = 1; n <= 999; n++) assert.equal(lastDigit.predicate(n), n % 6 === 1);
+    const orderOne = cluePackDefinitions.find(pack => pack.id === 'modular').factories[0]({ ...ctx, target: 18, rng: () => 0 });
+    assert.equal(orderOne.complexity, 2);
+});
+
+
+test('shifted-property anchors can sit well beyond twenty below the answer', () => {
+    const clue = cluePackDefinitions.find(pack => pack.id === 'polynomial').factories[2](
+        { target: 835, min: 1, max: 999, rng: () => 0.5 });
+    const anchor = Number(clue.text.match(/exceeds (\d+)/)[1]);
+    assert.ok(835 - anchor > 20);
+    assert.equal(clue.predicate(835), true);
+    assert.equal(clue.predicate(anchor), false);
 });

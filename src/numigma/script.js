@@ -195,6 +195,20 @@ function renderPuzzle(result) {
         value.textContent = step.remaining.toLocaleString();
         row.append(label, bar, value);
         $('candidate-details').append(row);
+        if (i) {
+            const explanation = document.createElement('p');
+            explanation.className = 'n-help';
+            explanation.textContent = step.clue.meta?.deduction || step.clue.meta?.help || 'Combine this condition with the preceding clues to narrow the possibilities.';
+            $('candidate-details').append(explanation);
+            const necessity = document.createElement('details');
+            necessity.className = 'n-definition';
+            const summary = document.createElement('summary');
+            summary.textContent = `Why clue ${i} matters`;
+            const proof = document.createElement('p');
+            proof.textContent = `Without this clue, ${result.alternativesWithoutClue[i - 1].toLocaleString()} numbers satisfy every other clue. For example, ${result.essentialWitnesses[i - 1].toLocaleString()} passes all the others but fails this one.`;
+            necessity.append(summary, proof);
+            $('candidate-details').append(necessity);
+        }
     });
 }
 

@@ -17,7 +17,6 @@ import {
     isPerfectFourthPower,
     isTriangular,
     isFibonacci,
-    describeBaseNumber,
     describeDeltaAmount,
     factorialNumbersUpTo,
     catalanNumbersUpTo,
@@ -167,7 +166,7 @@ const cluePackDefinitions = [
                 const factorCount = primeFactors(ctx.target).size;
                 const text = `It has ${factorCount} distinct prime factor${factorCount === 1 ? '' : 's'}.`;
                 return createClue('divisibility', 'Divisibility', 3, text, (n) => primeFactors(n).size === factorCount, {
-                    key: `prime-factor-count-${factorCount}`
+                    key: `prime-factor-count-${factorCount}`, deduction: `Factor candidates into primes and count distinct factors only. Repeated powers of a prime count once. Combine this with any divisibility clues before trying complete factorizations.`
                 });
             },
             (ctx) => {
@@ -385,7 +384,7 @@ const cluePackDefinitions = [
                 if (!quadraticResidueRemainders(modulus).has(residue)) return null;
                 const text = `It is a quadratic residue modulo ${modulus}.`;
                 return createClue('gcd', 'GCD & Residues', 4, text, (n) => quadraticResidueRemainders(modulus).has(n % modulus), {
-                    key: `qr-${modulus}-${residue}`
+                    key: `qr-${modulus}-${residue}`, deduction: `Square the residues 0 through ${Math.floor(modulus / 2)} modulo ${modulus} and keep their distinct remainders. The number must lie in one of those residue classes; intersect them with the other clues.`
                 });
             }
         ]
@@ -412,14 +411,14 @@ const cluePackDefinitions = [
                 });
             },
             (ctx) => {
-                const base = Math.max(ctx.min, ctx.target - randomInt(ctx.rng, 5, 20));
+                if (ctx.target <= ctx.min) return null;
+                const base = randomInt(ctx.rng, ctx.min, ctx.target - 1);
                 const delta = ctx.target - base;
                 if (delta <= 0) return null;
-                const baseDescriptor = describeBaseNumber(base);
                 const deltaDescriptor = describeDeltaAmount(delta);
-                const text = `It exceeds ${base}, ${baseDescriptor}, by ${deltaDescriptor.text}.`;
+                const text = `It exceeds ${base} by ${deltaDescriptor.text}.`;
                 return createClue('polynomial', 'Polynomial & Algebraic', 3, text, (n) => n > base && deltaDescriptor.predicate(n - base), {
-                    key: `affine-${base}-${delta}`
+                    key: `affine-${base}-${delta}`, deduction: `Write n = ${base} + d, where d is ${deltaDescriptor.text}. Combine this with remainder or factor clues before testing possible offsets. This gives a lower bound, not an upper bound.`
                 });
             }
         ]
@@ -457,8 +456,8 @@ const cluePackDefinitions = [
                 const representation = ctx.target.toString(base);
                 const last = representation[representation.length - 1];
                 const text = `In base ${base}, it ends with digit ${last}.`;
-                return createClue('bases', 'Base Conversions', 3, text, (n) => n.toString(base).endsWith(last), {
-                    key: `base${base}-end-${last}`
+                return createClue('bases', 'Base Conversions', 2, text, (n) => n % base === Number(last), {
+                    key: `base${base}-end-${last}`, deduction: `A final digit ${last} in base ${base} means n ≡ ${last} (mod ${base}). Use this remainder directly; a full base conversion is unnecessary.`
                 });
             }
         ]
@@ -573,7 +572,7 @@ const cluePackDefinitions = [
                 const tot = eulerTotient(ctx.target);
                 const text = `Its Euler totient φ(n) equals ${tot}.`;
                 return createClue('advanced', 'Advanced Number Theory', 5, text, (n) => eulerTotient(n) === tot, {
-                    key: `totient-${tot}`
+                    key: `totient-${tot}`, deduction: `Use φ(n) = n ∏(1 − 1/p), over distinct prime factors p. Factor ${tot} and combine possible prime factors of n with the other clues; avoid computing a totient for every integer.`
                 });
             },
             (ctx) => {
@@ -616,23 +615,23 @@ const cluePackDefinitions = [
                 const modulus = [17, 23, 31, 41][Math.floor(ctx.rng() * 4)];
                 const order = multiplicativeOrder(ctx.target, modulus);
                 if (order === null) return null;
-                return createClue('modular', 'Deep Modular Arithmetic', 6,
+                return createClue('modular', 'Deep Modular Arithmetic', order <= 2 ? 2 : 6,
                     `Its multiplicative order modulo ${modulus} is ${order}.`,
                     n => multiplicativeOrder(n, modulus) === order,
-                    { key: `order-${modulus}-${order}`, help: `The smallest positive exponent k for which nᵏ leaves remainder 1 when divided by ${modulus} is ${order}.` });
+                    { key: `order-${modulus}-${order}`, deduction: `Work with residues modulo ${modulus}, not the full number. The residue must have order exactly ${order}: its ${order}th power is 1, and no proper divisor of ${order} gives power 1. Intersect those residues with the other clues.`, help: `The smallest positive exponent k for which nᵏ leaves remainder 1 when divided by ${modulus} is ${order}.` });
             },
             (ctx) => {
                 const value = carmichaelLambda(ctx.target);
                 return createClue('modular', 'Deep Modular Arithmetic', 6,
                     `Its Carmichael function λ(n) equals ${value}.`, n => carmichaelLambda(n) === value,
-                    { key: `lambda-${value}`, help: 'λ(n) is the smallest positive exponent k such that aᵏ ≡ 1 (mod n) for every integer a coprime to n. For prime powers, combine their exponents with an LCM.' });
+                    { key: `lambda-${value}`, deduction: `For each prime-power factor of n, its Carmichael exponent must divide ${value}; their LCM must equal ${value}. Use this to restrict possible factorizations, then combine the other clues.`, help: 'λ(n) is the smallest positive exponent k such that aᵏ ≡ 1 (mod n) for every integer a coprime to n. For prime powers, combine their exponents with an LCM.' });
             },
             (ctx) => {
                 const modulus = [15, 21, 33, 35, 55, 77][Math.floor(ctx.rng() * 6)];
                 const symbol = jacobiSymbol(ctx.target, modulus);
-                return createClue('modular', 'Deep Modular Arithmetic', 6,
+                return createClue('modular', 'Deep Modular Arithmetic', symbol === 0 ? 3 : 6,
                     `The Jacobi symbol (n/${modulus}) is ${symbol}.`, n => jacobiSymbol(n, modulus) === symbol,
-                    { key: `jacobi-${modulus}-${symbol}`, help: `Factor ${modulus} into primes. For each prime p, the Legendre symbol is 0 if p divides n, 1 if n is a nonzero square modulo p, and −1 otherwise. Multiply those symbols, counting repeated factors. A Jacobi symbol of 1 alone does not guarantee a square modulo a composite number.` });
+                    { key: `jacobi-${modulus}-${symbol}`, deduction: symbol === 0 ? `A zero Jacobi symbol means gcd(n, ${modulus}) > 1. At least one prime factor of ${modulus} must divide n; use divisibility to filter candidates.` : `Factor ${modulus}, then list the square residues for each prime factor. Combine the signs to get ${symbol}; translate this into allowed residues before combining clues.`, help: `Factor ${modulus} into primes. For each prime p, the Legendre symbol is 0 if p divides n, 1 if n is a nonzero square modulo p, and −1 otherwise. Multiply those symbols, counting repeated factors. A Jacobi symbol of 1 alone does not guarantee a square modulo a composite number.` });
             }
         ]
     },
@@ -647,14 +646,14 @@ const cluePackDefinitions = [
                 if (!values.has(ctx.target)) return null;
                 return createClue('diophantine', 'Diophantine Equations', 6,
                     `It can be written as x² + ${coefficient === 1 ? '' : coefficient}y², where x and y are positive integers.`,
-                    n => values.has(n), { key: `quadratic-${coefficient}`, help: 'Both variables must be whole numbers greater than zero. Look for a representation of n as this sum; the variables do not have to be distinct.' });
+                    n => values.has(n), { key: `quadratic-${coefficient}`, deduction: `First inspect which residues x² + ${coefficient}y² can have modulo small numbers. Combine these restrictions with the other clues, then test positive x and y only for surviving candidates.`, help: 'Both variables must be whole numbers greater than zero. Look for a representation of n as this sum; the variables do not have to be distinct.' });
             },
             (ctx) => {
                 const coefficient = [2, 3, 5, 6, 7, 10, 11, 13][Math.floor(ctx.rng() * 8)];
                 if (!isPellSolutionX(ctx.target, coefficient)) return null;
                 return createClue('diophantine', 'Diophantine Equations', 6,
                     `There is a positive integer y such that n² − ${coefficient}y² = 1.`,
-                    n => isPellSolutionX(n, coefficient), { key: `pell-${coefficient}`, help: `This is a Pell equation. Equivalently, (n² − 1)/${coefficient} must be the square of a positive integer.` });
+                    n => isPellSolutionX(n, coefficient), { key: `pell-${coefficient}`, deduction: `List x-coordinates of solutions to x² − ${coefficient}y² = 1 inside the displayed range, or test whether (n² − 1)/${coefficient} is a positive square after applying the other clues.`, help: `This is a Pell equation. Equivalently, (n² − 1)/${coefficient} must be the square of a positive integer.` });
             }
         ]
     }
