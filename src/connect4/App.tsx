@@ -27,6 +27,7 @@ import {
 } from './utils/boardState';
 import type { GameSnapshot, HydratedBoardState } from './utils/boardState';
 import './App.css';
+import './polish.css';
 
 type HintTrigger = 'auto' | 'button' | 'keyboard';
 const SOLVER_UPDATE_STORAGE_KEY = 'connect4-solver-update-2026-07-10-seen';
@@ -683,11 +684,9 @@ function App() {
 
 
     return (
-        <div className="relative min-h-screen bg-background text-foreground font-sans selection:bg-primary-500 selection:text-white pb-6 overflow-hidden">
-            <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-primary-500/10 blur-3xl"></div>
-            <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-secondary-500/10 blur-3xl"></div>
+        <div className="connect4-app relative min-h-screen bg-background text-foreground font-sans pb-6">
 
-            <div className="relative container mx-auto px-0 py-1 sm:px-2 sm:py-3 flex flex-col items-center max-w-7xl">
+            <div className="connect4-shell">
 
                 <GameHeader
                     onOpenHowToPlay={handleOpenHowToPlay}
@@ -699,7 +698,6 @@ function App() {
                     practiceDifficulty={practiceDifficulty}
                     onPracticeDifficultyChange={handlePracticeDifficultyChange}
                     onPreset={handlePreset}
-                    onReset={handleReset}
                     onShare={handleShare}
                     shareCopied={shareCopied}
                 />
@@ -710,7 +708,7 @@ function App() {
                         <label htmlFor="connect4-share-link" className="block font-semibold">Copy this link to share your board</label>
                         <p id="connect4-share-help" className="my-1 text-muted-foreground">Clipboard access is unavailable. Select and copy the link below.</p>
                         <input id="connect4-share-link" type="url" readOnly value={shareFallbackUrl} aria-describedby="connect4-share-help"
-                            autoFocus onFocus={(event) => event.currentTarget.select()}
+                            onFocus={(event) => event.currentTarget.select()}
                             className="w-full rounded-lg border border-border bg-background p-2 text-foreground" />
                     </div>
                 )}
@@ -727,17 +725,9 @@ function App() {
                 )}
 
                 <div className="connect4-workspace flex flex-col md:flex-row gap-4 lg:gap-8 items-start justify-center w-full max-w-6xl">
-                    {mode === 'solver' && <div className="order-2 hidden w-full md:order-1 md:block md:w-auto">
-                        <Controls
-                            moveCount={moveCount}
-                            solverTarget={solverTarget}
-                            onSolverTargetChange={handleSolverTargetChange}
-                            aiStrength={aiStrength}
-                            onAiStrengthChange={handleAiStrengthChange}
-                        />
-                    </div>}
 
-                    <div className="order-1 w-full md:order-2 md:w-auto">
+
+                    <div className="connect4-board-area">
                         <Board
                             board={currentBoard}
                             lastMoveColumn={history[currentStep].move ?? null}
@@ -769,6 +759,14 @@ function App() {
                             isAiThinking={isAiThinking}
                         />
                     </div>
+                    {mode === 'solver' && <aside className="connect4-settings-desktop" aria-label="Analysis settings">
+                        <Controls
+                            solverTarget={solverTarget}
+                            onSolverTargetChange={handleSolverTargetChange}
+                            aiStrength={aiStrength}
+                            onAiStrengthChange={handleAiStrengthChange}
+                        />
+                    </aside>}
                 </div>
 
                 {(winner || bestMove) && (

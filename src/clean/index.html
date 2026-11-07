@@ -3,6 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
+        <meta name="theme-color" content="#182730">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -29,23 +30,16 @@
         <meta property="article:tag" content="Text Cleaning">
         <meta property="article:tag" content="Content Formatting">
         <meta property="article:tag" content="Text Tools">
+        <link rel="stylesheet" href="/assets/styles/global.css">
     </head>
 
-    <body class="bg-gray-50 page-clean">
+    <body class="bg-background page-clean">
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
-            initPageShell();
+            initPageShell({ title: 'Online Text Cleaner & Formatter', description: 'Clean and format text with our advanced text processing tool' });
         </script>
 
         <div id="header"></div>
-        <!-- <script type="module">
-            import { createHeader } from '@components/header.js';
-            const header = createHeader(
-                'Online Text Cleaner & Formatter',
-                'Clean and format text with our advanced text processing tool'
-            );
-            document.getElementById('header').appendChild(header);
-        </script> -->
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="grid grid-cols-1 lg:grid-cols-[1fr_minmax(300px,400px)] gap-6">
@@ -54,22 +48,22 @@
                     <div class="code-container space-y-6">
                         <!-- Input Box -->
                         <div
-                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            class="code-box bg-card rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
                             <div class="p-6 space-y-4">
-                                <label for="input-text" class="block text-sm font-medium text-gray-700">
+                                <label for="input-text" class="block text-sm font-medium text-foreground">
                                     Input Text
                                 </label>
                                 <textarea id="input-text" rows="12" placeholder="Paste your text here..."
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                    class="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-foreground font-mono"></textarea>
                                 <div class="flex justify-between items-center">
                                     <button id="clear-button"
-                                        class="tooltip px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                        class="tooltip px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted transition-colors flex items-center gap-2">
                                         <i class="fas fa-trash-alt"></i>
                                         Clear All
                                         <span class="tooltip-text">Clear all input and output text</span>
                                     </button>
                                     <button id="clean-button"
-                                        class="tooltip px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors flex items-center gap-2">
+                                        class="tooltip px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors flex items-center gap-2">
                                         <i class="fas fa-magic"></i>
                                         Clean Text
                                         <span class="tooltip-text">Apply selected cleaning options to the text</span>
@@ -80,16 +74,16 @@
 
                         <!-- Output Box -->
                         <div
-                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            class="code-box bg-card rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
                             <div class="p-6 space-y-4">
-                                <label for="output-text" class="block text-sm font-medium text-gray-700">
+                                <label for="output-text" class="block text-sm font-medium text-foreground">
                                     Output Text
                                 </label>
                                 <textarea id="output-text" rows="12" readonly
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                    class="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-foreground font-mono"></textarea>
                                 <div class="flex justify-end">
                                     <button id="copy-button"
-                                        class="tooltip px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                        class="tooltip px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted transition-colors flex items-center gap-2">
                                         <i class="fas fa-copy"></i>
                                         Copy Output
                                         <span class="tooltip-text">Copy cleaned text to clipboard</span>
@@ -104,9 +98,9 @@
                 <div class="options-sidebar space-y-6">
                     <!-- Find and Replace -->
                     <section
-                        class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                        <div class="border-b border-gray-200 px-6 py-4">
-                            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        class="bg-card rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
+                        <div class="border-b border-border px-6 py-4">
+                            <h2 class="text-lg font-semibold text-foreground flex items-center gap-2">
                                 <i class="fas fa-search-replace text-primary"></i>
                                 Find and Replace
                             </h2>
@@ -116,13 +110,13 @@
                                 <!-- Find Input -->
                                 <div class="space-y-2">
                                     <div class="flex items-center justify-between">
-                                        <label for="find-text" class="block text-sm font-medium text-gray-700">
+                                        <label for="find-text" class="block text-sm font-medium text-foreground">
                                             Find
                                         </label>
                                         <div class="tooltip">
-                                            <label class="flex items-center space-x-2 text-sm text-gray-600">
+                                            <label class="flex items-center space-x-2 text-sm text-muted-foreground">
                                                 <input type="checkbox" id="use-regex"
-                                                    class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <span>Use Regex</span>
                                             </label>
                                             <span class="tooltip-text">Enable regular expressions for advanced pattern
@@ -131,21 +125,21 @@
                                     </div>
                                     <div class="relative">
                                         <input type="text" id="find-text"
-                                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                                            class="w-full px-4 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
                                             placeholder="Text to find...">
                                         <span id="match-count"
-                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500"></span>
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"></span>
                                     </div>
                                 </div>
 
                                 <!-- Replace Input -->
                                 <div class="space-y-2">
-                                    <label for="replace-text" class="block text-sm font-medium text-gray-700">
+                                    <label for="replace-text" class="block text-sm font-medium text-foreground">
                                         Replace With
                                     </label>
                                     <div class="relative">
                                         <input type="text" id="replace-text"
-                                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                                            class="w-full px-4 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
                                             placeholder="Replacement text...">
                                     </div>
                                 </div>
@@ -154,19 +148,19 @@
                             <!-- Action Buttons -->
                             <div class="flex flex-wrap gap-4 mt-6">
                                 <button id="find-next"
-                                    class="tooltip px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                    class="tooltip px-6 py-2 bg-muted text-foreground rounded-lg hover:bg-muted transition-colors flex items-center gap-2">
                                     <i class="fas fa-search"></i>
                                     Find Next
                                     <span class="tooltip-text">Find the next match (Ctrl+F)</span>
                                 </button>
                                 <button id="replace-next"
-                                    class="tooltip px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                    class="tooltip px-6 py-2 bg-muted text-foreground rounded-lg hover:bg-muted transition-colors flex items-center gap-2">
                                     <i class="fas fa-exchange-alt"></i>
                                     Replace
                                     <span class="tooltip-text">Replace the current match</span>
                                 </button>
                                 <button id="replace-all"
-                                    class="tooltip px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2">
+                                    class="tooltip px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary transition-colors flex items-center gap-2">
                                     <i class="fas fa-sync"></i>
                                     Replace All
                                     <span class="tooltip-text">Replace all matches</span>
@@ -177,9 +171,9 @@
 
                     <!-- Cleaning Options -->
                     <section
-                        class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                        <div class="border-b border-gray-200 px-6 py-4">
-                            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        class="bg-card rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
+                        <div class="border-b border-border px-6 py-4">
+                            <h2 class="text-lg font-semibold text-foreground flex items-center gap-2">
                                 <i class="fas fa-sliders-h text-primary"></i>
                                 Cleaning Options
                             </h2>
@@ -188,12 +182,12 @@
                             <div class="cleaning-options-grid">
                                 <!-- Basic Cleaning -->
                                 <div class="option-group">
-                                    <h3 class="text-sm font-medium text-gray-900 mb-4">Basic Cleaning</h3>
+                                    <h3 class="text-sm font-medium text-foreground mb-4">Basic Cleaning</h3>
                                     <div class="space-y-3">
                                         <div class="checkbox-wrapper">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="remove-extra-spaces" checked
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
                                                     <span class="block font-medium">Remove Extra Spaces</span>
                                                     <span class="description">Consolidates multiple spaces into
@@ -204,7 +198,7 @@
                                         <div class="checkbox-wrapper">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="remove-empty-lines" checked
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
                                                     <span class="block font-medium">Remove Empty Lines</span>
                                                     <span class="description">Removes blank lines and whitespace</span>
@@ -214,7 +208,7 @@
                                         <div class="checkbox-wrapper">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="trim-lines" checked
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
                                                     <span class="block font-medium">Trim Line Spaces</span>
                                                     <span class="description">Removes leading/trailing spaces</span>
@@ -226,12 +220,12 @@
 
                                 <!-- Text Formatting -->
                                 <div class="option-group">
-                                    <h3 class="text-sm font-medium text-gray-900 mb-4">Text Formatting</h3>
+                                    <h3 class="text-sm font-medium text-foreground mb-4">Text Formatting</h3>
                                     <div class="space-y-3">
                                         <div class="checkbox-wrapper">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="normalize-quotes" checked
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
                                                     <span class="block font-medium">Convert Smart Quotes</span>
                                                     <span class="description">Standardizes quote marks</span>
@@ -241,7 +235,7 @@
                                         <div class="checkbox-wrapper">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="normalize-whitespace" checked
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
                                                     <span class="block font-medium">Normalize Whitespace</span>
                                                     <span class="description">Standardizes spaces and line
@@ -252,11 +246,11 @@
                                         <div class="checkbox-wrapper tooltip">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="normalize-dashes" checked
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
-                                                    <span class="text-sm font-medium text-gray-700 block">Convert Em/En
+                                                    <span class="text-sm font-medium text-foreground block">Convert Em/En
                                                         Dashes</span>
-                                                    <span class="text-xs text-gray-500">Standardizes dash types</span>
+                                                    <span class="text-xs text-muted-foreground">Standardizes dash types</span>
                                                 </div>
                                             </label>
                                         </div>
@@ -265,12 +259,12 @@
 
                                 <!-- Advanced Options -->
                                 <div class="option-group">
-                                    <h3 class="text-sm font-medium text-gray-900 mb-4">Advanced Options</h3>
+                                    <h3 class="text-sm font-medium text-foreground mb-4">Advanced Options</h3>
                                     <div class="space-y-3">
                                         <div class="checkbox-wrapper">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="remove-punctuation"
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
                                                     <span class="block font-medium">Remove Punctuation</span>
                                                     <span class="description">Strips all punctuation marks</span>
@@ -280,7 +274,7 @@
                                         <div class="checkbox-wrapper">
                                             <label class="flex items-start gap-3 cursor-pointer">
                                                 <input type="checkbox" id="convert-newlines"
-                                                    class="w-4 h-4 mt-0.5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
+                                                    class="w-4 h-4 mt-0.5 text-primary bg-muted border-border rounded focus:ring-primary">
                                                 <div>
                                                     <span class="block font-medium">Convert Newlines</span>
                                                     <span class="description">Changes line breaks to spaces</span>
@@ -296,17 +290,17 @@
             </div>
 
             <section class="mt-12 space-y-8">
-                <article class="bg-white border border-gray-200 rounded-2xl shadow-md p-8">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+                <article class="bg-card border border-border rounded-2xl shadow-md p-8">
+                    <h2 class="text-2xl font-semibold text-foreground mb-4">
                         Why our text cleaner beats copy-paste fixes
                     </h2>
-                    <p class="text-gray-600 leading-relaxed">
+                    <p class="text-muted-foreground leading-relaxed">
                         Copying text from documents, emails, or PDFs usually drags in messy formatting. Our clean text tool
                         removes invisible characters, tames whitespace, and normalizes punctuation so your content is ready for
                         CMS editors, newsletters, and code repositories. Instead of manually cleaning copy-pasted text, toggle the
                         options you need and watch the output update instantly.
                     </p>
-                    <ul class="mt-5 grid gap-3 sm:grid-cols-2 list-disc list-inside text-gray-600">
+                    <ul class="mt-5 grid gap-3 sm:grid-cols-2 list-disc list-inside text-muted-foreground">
                         <li>One-click removal of stray spaces, tabs, and extra line breaks</li>
                         <li>Optional smart punctuation fixes for quotes, dashes, and ellipses</li>
                         <li>Regex powered find-and-replace for surgical content edits</li>
@@ -314,15 +308,15 @@
                     </ul>
                 </article>
 
-                <article class="bg-white border border-gray-200 rounded-2xl shadow-md p-8">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+                <article class="bg-card border border-border rounded-2xl shadow-md p-8">
+                    <h2 class="text-2xl font-semibold text-foreground mb-4">
                         How to clean copy-pasted text before publishing
                     </h2>
                     <div class="grid gap-6 lg:grid-cols-2">
-                        <div class="space-y-3 text-gray-600">
+                        <div class="space-y-3 text-muted-foreground">
                             <p>
                                 Paste your content into the input panel, enable the cleaning steps you want, and click
-                                <span class="font-medium text-gray-900">Clean Text</span>. The output panel keeps formatting you
+                                <span class="font-medium text-foreground">Clean Text</span>. The output panel keeps formatting you
                                 intentionally applied while stripping the junk. Use the live counters to verify how many matches were
                                 replaced so you know every instance was handled.
                             </p>
@@ -332,8 +326,8 @@
                                 effortless.
                             </p>
                         </div>
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 space-y-4 text-gray-700">
-                            <h3 class="text-lg font-semibold text-gray-900">Popular use cases</h3>
+                        <div class="bg-background border border-border rounded-xl p-6 space-y-4 text-foreground">
+                            <h3 class="text-lg font-semibold text-foreground">Popular use cases</h3>
                             <ul class="list-disc list-inside space-y-2">
                                 <li>Preparing email newsletters copied from Word or Google Docs</li>
                                 <li>Cleaning blog posts before pasting into CMS editors</li>
@@ -344,26 +338,26 @@
                     </div>
                 </article>
 
-                <article class="bg-white border border-gray-200 rounded-2xl shadow-md p-8">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Frequently asked questions</h2>
-                    <div class="space-y-6 text-gray-600">
+                <article class="bg-card border border-border rounded-2xl shadow-md p-8">
+                    <h2 class="text-2xl font-semibold text-foreground mb-4">Frequently asked questions</h2>
+                    <div class="space-y-6 text-muted-foreground">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Can I keep intentional spacing and indentation?</h3>
+                            <h3 class="text-lg font-semibold text-foreground">Can I keep intentional spacing and indentation?</h3>
                             <p>
-                                Yes. Disable the <span class="font-medium text-gray-900">Remove Extra Spaces</span> option to preserve
+                                Yes. Disable the <span class="font-medium text-foreground">Remove Extra Spaces</span> option to preserve
                                 indentation while still trimming stray whitespace at the ends of lines. Developers often pair this with
                                 punctuation normalization for clean, readable snippets.
                             </p>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Does the cleaner support accented characters?</h3>
+                            <h3 class="text-lg font-semibold text-foreground">Does the cleaner support accented characters?</h3>
                             <p>
                                 All operations run on Unicode-safe utilities, so characters from non-English languages, emojis, and
                                 mathematical symbols remain intact while the tool removes only the unwanted formatting noise.
                             </p>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900">How is this different from basic text editors?</h3>
+                            <h3 class="text-lg font-semibold text-foreground">How is this different from basic text editors?</h3>
                             <p>
                                 Editors like Notepad can strip formatting, but they do not normalize quotes, whitespace, or hyphen types.
                                 JSreact's cleaner bundles these adjustments, offers instant previews, and lets you copy the cleaned text
@@ -375,7 +369,7 @@
             </section>
         </main>
 
-        <script type="module" src="@components/toast.js"></script>
+        <script type="module" src="/components/toast.js"></script>
         <script type="module" src="./index.js"></script>
     </body>
 

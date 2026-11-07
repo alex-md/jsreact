@@ -21,7 +21,7 @@ h3 {
 }
 
 :root {
-	--font-sans: "Libre Franklin", "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+	--font-sans: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
 	--font-serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", serif;
 	--font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 	--text-xs: 0.75rem;
@@ -53,60 +53,60 @@ h3 {
 	--radius-xl: 1rem;
 	--radius-2xl: 1.5rem;
 	--radius-full: 9999px;
-	--radius: 0.75rem;
-	--background: 40 25% 97%;
-	--foreground: 220 20% 12%;
-	--card: 0 0% 100%;
-	--card-foreground: 220 20% 12%;
-	--popover: 0 0% 100%;
-	--popover-foreground: 220 20% 12%;
-	--primary: 215 90% 50%;
-	--primary-light: 215 90% 70%;
-	--primary-dark: 215 90% 42%;
-	--primary-foreground: 0 0% 100%;
-	--secondary: 220 11% 18%;
-	--secondary-light: 220 11% 28%;
-	--secondary-dark: 220 11% 12%;
-	--secondary-foreground: 0 0% 98%;
-	--accent: 8 78% 52%;
-	--accent-light: 8 78% 70%;
-	--accent-dark: 8 78% 44%;
-	--accent-foreground: 0 0% 100%;
-	--success: 142 55% 35%;
-	--warning: 38 92% 45%;
-	--destructive: 0 72% 52%;
-	--destructive-foreground: 0 0% 100%;
-	--muted: 35 25% 92%;
-	--muted-foreground: 220 9% 40%;
-	--border: 30 15% 86%;
-	--input: 30 20% 94%;
-	--ring: 215 90% 50%;
+	--radius: 0.375rem;
+	--background: 202 33% 14%;
+	--foreground: 161 17% 90%;
+	--card: 201 28% 19%;
+	--card-foreground: 161 17% 90%;
+	--popover: 201 28% 19%;
+	--popover-foreground: 161 17% 90%;
+	--primary: 160 31% 76%;
+	--primary-light: 160 35% 84%;
+	--primary-dark: 160 35% 84%;
+	--primary-foreground: 202 33% 14%;
+	--secondary: 201 23% 24%;
+	--secondary-light: 200 22% 30%;
+	--secondary-dark: 202 30% 16%;
+	--secondary-foreground: 161 17% 90%;
+	--accent: 160 31% 76%;
+	--accent-light: 160 35% 84%;
+	--accent-dark: 160 30% 65%;
+	--accent-foreground: 202 33% 14%;
+	--success: 160 38% 70%;
+	--warning: 38 75% 72%;
+	--destructive: 12 70% 80%;
+	--destructive-foreground: 202 33% 14%;
+	--muted: 201 23% 24%;
+	--muted-foreground: 199 17% 72%;
+	--border: 200 19% 31%;
+	--input: 202 30% 16%;
+	--ring: 160 31% 76%;
 	--shadow: 220 40% 15%;
-	--shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
-	--shadow-md: 0 6px 16px rgba(16, 24, 40, 0.08);
-	--shadow-lg: 0 16px 32px rgba(16, 24, 40, 0.12);
-	--shadow-xl: 0 24px 48px rgba(16, 24, 40, 0.16);
+	--shadow-sm: none;
+	--shadow-md: none;
+	--shadow-lg: none;
+	--shadow-xl: none;
 	--accent-primary: hsl(var(--primary));
 	--accent-secondary: hsl(var(--accent));
-	--text-primary: hsl(var(--foreground));
+	--text-primary: hsl(var(--primary));
 	--text-secondary: hsl(var(--muted-foreground));
 	--text-muted: hsl(var(--muted-foreground));
 	--text-white: #ffffff;
 	--surface-dark: hsl(220 13% 14%);
 	--surface-muted: hsl(var(--muted));
-	--surface-bg-raw: 40 25% 97%;
+	--surface-bg-raw: 202 33% 14%;
 	--header-bg: hsl(var(--background));
 	--header-overlay: hsla(var(--background) / 0.95);
 	--header-text: hsl(var(--foreground));
 	--header-grid-color: hsl(var(--border));
 	--header-grid-opacity: 0.4;
-	--primary-hue: 215;
-	--primary-saturation: 90%;
-	--primary-lightness: 50%;
-	--background-hsl: 40 25% 97%;
+	--primary-hue: 160;
+	--primary-saturation: 31%;
+	--primary-lightness: 76%;
+	--background-hsl: 202 33% 14%;
 	--primary-hsl: var(--primary-hue) var(--primary-saturation) var(--primary-lightness);
 	--container-padding: 1.5rem;
-	color-scheme: light;
+	color-scheme: dark;
 }
 
 .input,
@@ -126,7 +126,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	background-color: hsl(var(--background));
-	background-image: radial-gradient(circle at top, rgba(15, 23, 42, .04), transparent 55%), linear-gradient(180deg, hsl(var(--background)) 0, hsl(var(--background) / .9) 100%);
+	background-image: none;
 	display: flex;
 	flex-direction: column;
 }
@@ -366,7 +366,7 @@ pre {
 	background: hsl(var(--primary));
 	color: hsl(var(--primary-foreground));
 	border-color: transparent;
-	box-shadow: 0 10px 20px rgba(0, 118, 255, .18);
+	box-shadow: none;
 }
 
 .btn-primary:hover {
@@ -577,7 +577,7 @@ select {
 
 .btn-modern,
 .tag:hover {
-	color: var(--primary-foreground);
+	color: hsl(var(--primary-foreground));
 }
 
 .tooltip:after {
@@ -1386,9 +1386,6 @@ select {
 		padding-right: var(--container-padding);
 	}
 
-	header {
-		padding: 4rem var(--container-padding);
-	}
 }
 
 @media screen and (max-width:640px) {
@@ -1422,3 +1419,93 @@ select {
 		padding-bottom: max(env(safe-area-inset-bottom), 1rem);
 	}
 }
+
+/* Shared blue-slate workspace, derived from Numigma. Keep the tool itself in focus. */
+html { background: hsl(var(--background)); }
+body { font-size: 17px; }
+body :is(button, input, select) { font-family: var(--font-sans); }
+body :is(button, summary, input[type=checkbox], input[type=radio]) { touch-action: manipulation; }
+body :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+	outline: 2px solid hsl(var(--ring));
+	outline-offset: 4px;
+}
+body :is(input, textarea)::placeholder { color: hsl(var(--muted-foreground)); opacity: 1; }
+body :is(input[type=checkbox], input[type=radio], input[type=range]) { accent-color: hsl(var(--primary)); }
+body h1 { font-family: var(--font-serif); font-weight: 400; font-size: clamp(2.25rem, 4.3vw, 3.625rem); line-height: 1.1; letter-spacing: -.035em; text-wrap: balance; }
+body h2 { font-weight: 400; }
+body h3 { font-family: var(--font-sans); }
+.navbar { background: hsl(var(--background) / .97); box-shadow: none; backdrop-filter: blur(12px); }
+.navbar > .container { max-width: 1180px; }
+body :is(.container, .container-custom) { max-width: 1180px; }
+body .header-banner { width: min(1180px, 100%); margin: 0 auto; padding: 48px 32px 36px; }
+body .header-content {
+	position: static; display: flex; align-items: flex-start; gap: 16px; text-align: left;
+	padding: 0; margin: 0; background: none; border: 0; border-radius: 0; box-shadow: none;
+}
+body .header-badge {
+	padding: 0; margin: 0; background: none; border: 0; box-shadow: none; border-radius: 0;
+	color: hsl(var(--muted-foreground)); font-size: 12px; font-weight: 600;
+	letter-spacing: .12em; text-transform: uppercase; animation: none; backdrop-filter: none;
+}
+body .header-title { margin: 0; color: hsl(var(--foreground)); font-weight: 400; animation: none; }
+body .header-description { margin: 0; max-width: 48rem; font-size: 17px; line-height: 1.6; animation: none; }
+body :is(.header-grid, .header-accent, .header-accent-container, .bg-grid-pattern, .bg-grid, .osrs-grid, .osrs-glow) { display: none; }
+body :is(.card, .card-modern, .result-card, .stat-card, .tool-card, .option-group, .generator-panel) {
+	box-shadow: none; border-color: hsl(var(--border)); border-radius: 14px;
+}
+body :is(.card-modern, .result-card, .stat-card, .tool-card, .option-group):hover {
+	transform: none; box-shadow: none; border-color: hsl(var(--primary) / .55);
+}
+body :is(.btn, .btn-modern, .btn-primary, .btn-secondary) { min-height: 46px; border-radius: 6px; box-shadow: none; font-size: 14px; }
+body :is(.btn, .btn-modern, .btn-primary, .btn-secondary):hover { transform: none; box-shadow: none; }
+body :is(.input, select, textarea) { border-radius: 6px; }
+body .text-muted-dark { color: hsl(var(--muted-foreground)); }
+body.page-domain, body.page-osrs { background: hsl(var(--background)); color: hsl(var(--foreground)); }
+.page-clean .checkbox-wrapper .description { color: hsl(var(--muted-foreground)); font-size: 12px; line-height: 1.5; }
+.page-clean .checkbox-wrapper label { font-size: 14px; line-height: 1.5; }
+.page-clean .option-group h3::before { background: hsl(var(--primary)); }
+.page-clean .option-group { backdrop-filter: none; }
+.page-clean .option-group:hover { transform: none; }
+.page-home .tool-card h2 { font-family: var(--font-sans); font-weight: 600; font-size: 19px; }
+.page-home .tool-card { min-height: 13rem; }
+.page-home .tool-card p { color: hsl(var(--muted-foreground)); font-size: 15px; line-height: 1.6; }
+.page-home main > .container { padding-top: 0; }
+.page-home .home-intro { width: min(1180px, 100%); margin: 0 auto; padding: 28px 24px 24px; }
+.page-home .home-intro h1 { margin: 0; font-size: 28px; }
+.page-playground .gutter { background-color: hsl(var(--border)); }
+body.page-playground main { padding: 0 24px 32px; }
+.page-playground main > #root { max-width: 1180px; border-color: hsl(var(--border)); border-radius: 14px; }
+/* The board keeps red/yellow discs and a blue playing field as game information. */
+.connect4-board-card { background: hsl(var(--card)); box-shadow: none; border-radius: 14px; }
+body .connect4-board-card .text-primary-600 { color: hsl(var(--primary)); }
+@media (max-width: 650px) {
+	body { font-size: 16px; }
+	body .header-banner { padding: 28px 16px; }
+	body .header-description { font-size: 16px; }
+	.page-home .home-intro { padding: 20px 16px; }
+	body.page-playground main { padding: 0 12px 24px; }
+}
+.page-home .tool-card-icon { color: hsl(var(--primary)); }
+/* Keep third-party widgets and editors on their own internal layout rules. */
+.page-playground .monaco-editor :is(textarea, .input) { border-radius: 0; padding: 0; }
+.page-playground iframe { background: white; color-scheme: light; }
+.page-oeis .card { box-shadow: none; background: hsl(var(--card)); }
+body[class] h1 { font-family: var(--font-serif); font-weight: 400; letter-spacing: -.035em; }
+.page-oeis #horizon { width: 72px; min-width: 0; flex: 0 0 72px; }
+.page-oeis #runBtn { min-width: 0; padding-inline: 10px; gap: 6px; }
+.page-oeis #runBtn svg { flex-shrink: 0; }
+.page-oeis #runBtnText { white-space: nowrap; }
+.page-connect4 .connect4-game-header { margin: 32px 0 24px; }
+.page-connect4 .connect4-game-header h1 { font-size: clamp(2rem, 3.5vw, 3rem); }
+.page-connect4 .connect4-board-card { border-radius: 14px; }
+@media (max-width: 800px) {
+	.page-playground .playground-app { height: 100%; overflow-y: auto; }
+	.page-playground .playground-workspace,
+	.page-playground .editors-block-split-target { flex-direction: column; flex: 0 0 auto !important; }
+	.page-playground .editors-block-split-target > .editor-container { flex: 0 0 240px !important; height: 240px; }
+	.page-playground .preview-pane-split-target { flex: 0 0 460px !important; height: 460px; }
+	.page-playground .gutter { display: none; }
+}
+.site-brand-icon { width: 40px; height: 40px; max-width: none; object-fit: cover; object-position: left; }
+.site-wordmark { color: hsl(var(--foreground)); font: 600 24px/1 var(--font-sans); letter-spacing: -.04em; }
+.page-keyword mark { color: #182730; }

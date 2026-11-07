@@ -184,7 +184,7 @@ console.log("Hello from the playground!");
                 <p>The playground is currently in debug mode due to rendering issues.</p>
                 <button
                     onClick={() => setIsSimplifiedMode(false)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    className="bg-primary text-primary-foreground px-4 py-2 rounded"
                 >
                     Try Normal Mode
                 </button>
@@ -193,9 +193,9 @@ console.log("Hello from the playground!");
     }
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="playground-app flex flex-col h-full">
             {/* Main Split Container: lays out [Editors Block] and [Preview Pane] side-by-side */}
-            <div className="flex-1 flex flex-row min-h-0"> {/* flex-row for side-by-side children */}
+            <div className="playground-workspace flex-1 flex flex-row min-h-0"> {/* flex-row for side-by-side children */}
 
                 {/* Editors Block: Contains HTML, CSS, JS editors. It's a target for the main split.
                     Itself lays out its children (HTML, CSS, JS editors) side-by-side.
@@ -209,7 +209,7 @@ console.log("Hello from the playground!");
                         `flex flex-col` for its internal layout (header + editor content).
                         `min-h-0` for vertical flexibility. */}
                     <div className="html-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
-                        <div className="px-4 py-2 border-b border-gray-200 bg-white">
+                        <div className="px-4 py-2 border-b border-border bg-card">
                             <h2 className="text-sm font-medium">HTML</h2>
                         </div>
                         <div className="editor-content flex-1 min-h-0">
@@ -217,14 +217,13 @@ console.log("Hello from the playground!");
                                 language="html"
                                 value={html}
                                 onChange={setHtml}
-                                theme="vs"
                             />
                         </div>
                     </div>
 
                     {/* CSS Editor Pane: Target for the inner "editors split". */}
                     <div className="css-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
-                        <div className="px-4 py-2 border-b border-gray-200 bg-white">
+                        <div className="px-4 py-2 border-b border-border bg-card">
                             <h2 className="text-sm font-medium">CSS</h2>
                         </div>
                         <div className="editor-content flex-1 min-h-0">
@@ -232,14 +231,13 @@ console.log("Hello from the playground!");
                                 language="css"
                                 value={cssText}
                                 onChange={setCss}
-                                theme="vs"
                             />
                         </div>
                     </div>
 
                     {/* JS Editor Pane: Target for the inner "editors split". */}
                     <div className="js-editor-split-target editor-container flex flex-col grow min-w-0 min-h-0">
-                        <div className="px-4 py-2 border-b border-gray-200 bg-white">
+                        <div className="px-4 py-2 border-b border-border bg-card">
                             <h2 className="text-sm font-medium">JavaScript</h2>
                         </div>
                         <div className="editor-content flex-1 min-h-0">
@@ -247,7 +245,6 @@ console.log("Hello from the playground!");
                                 language="javascript"
                                 value={js}
                                 onChange={setJs}
-                                theme="vs"
                             />
                         </div>
                     </div>
@@ -258,12 +255,12 @@ console.log("Hello from the playground!");
                     `flex flex-col` for its internal layout (header + preview content).
                     `min-h-0` for vertical flexibility. */}
                 <div className="preview-pane-split-target flex flex-col grow min-w-0 min-h-0">
-                    <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-white">
+                    <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-card">
                         <h2 className="text-sm font-medium">Preview</h2>
                         <div className="flex items-center space-x-2">
                             <button
                                 onClick={() => setShowPackageManager(true)}
-                                className="p-2 rounded-md hover:bg-gray-100"
+                                className="p-2 rounded-md hover:bg-muted"
                                 title="Manage packages"
                             >
                                 <Package className="h-5 w-5" />

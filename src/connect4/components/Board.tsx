@@ -91,20 +91,20 @@ const Board: React.FC<BoardProps> = ({
     const lastMoveRow = lastMoveColumn === null ? -1 : getNextOpenRow(board, lastMoveColumn) + 1;
 
     return (
-        <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-white/20 w-full md:w-auto flex flex-col items-center relative overflow-hidden">
+        <div className="connect4-board-card bg-card/30 backdrop-blur-md p-4 sm:p-5 rounded-[2rem] shadow-2xl border border-border/20 w-full md:w-auto flex flex-col items-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-secondary-500/5 -z-10"></div>
 
             <div className="connect4-inline-status mb-2 flex w-full max-w-md items-center justify-between gap-3 sm:mb-3">
                 <GameStatus currentPlayer={currentPlayer} winner={winner} isDraw={isDraw} compact />
                 <span className="shrink-0 text-xs font-semibold text-muted-foreground">
-                    Move <strong className="text-base text-primary-600">{moveCount}</strong>
+                    Move <strong className="text-base text-primary">{moveCount}</strong>
                 </span>
             </div>
 
-            <div className="relative bg-gradient-to-b from-primary-600 to-primary-800 p-3 rounded-2xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.5)] inline-block border-4 border-primary-700">
+            <div className="connect4-board-stage relative bg-gradient-to-b from-primary-600 to-primary-800 p-3 rounded-2xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.5)] inline-block border-4 border-primary-700">
                 {/* Board Feet/Stand */}
-                <div className="absolute -bottom-6 -left-4 w-6 h-20 bg-primary-900 rounded-b-xl transform rotate-12 -z-10 border-2 border-primary-800"></div>
-                <div className="absolute -bottom-6 -right-4 w-6 h-20 bg-primary-900 rounded-b-xl transform -rotate-12 -z-10 border-2 border-primary-800"></div>
+                <div className="connect4-board-foot absolute -bottom-6 -left-4 w-6 h-20 bg-primary-900 rounded-b-xl transform rotate-12 -z-10 border-2 border-primary-800"></div>
+                <div className="connect4-board-foot absolute -bottom-6 -right-4 w-6 h-20 bg-primary-900 rounded-b-xl transform -rotate-12 -z-10 border-2 border-primary-800"></div>
 
                 {/* Solver results sit directly above their playable drop targets. */}
                 <div className="connect4-evaluation-row grid grid-cols-7 gap-2 sm:gap-2.5 mb-2">
@@ -199,11 +199,11 @@ const Board: React.FC<BoardProps> = ({
                                     className={`connect4-cell rounded-full relative flex items-center justify-center ${isWinningCell ? 'connect4-winning-cell' : ''}`}
                                 >
                                     {/* The Hole Background */}
-                                    <div className="absolute inset-0 bg-primary-950/60 rounded-full shadow-[inset_0_3px_6px_rgba(0,0,0,0.4)] border border-primary-900/50"></div>
+                                    <div className="connect4-hole absolute inset-0 bg-primary-950/60 rounded-full shadow-[inset_0_3px_6px_rgba(0,0,0,0.4)] border border-primary-900/50"></div>
 
                                     {/* The Piece */}
                                     <div
-                                        className={`w-full h-full rounded-full shadow-[inset_0_-4px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(0,0,0,0.3)] transition-all duration-500 ${cell === EMPTY
+                                        className={`connect4-disc ${cell === EMPTY ? 'is-empty' : cell === PLAYER_1 ? 'is-red' : 'is-yellow'} w-full h-full rounded-full shadow-[inset_0_-4px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(0,0,0,0.3)] transition-transform duration-200 ${cell === EMPTY
                                             ? 'bg-transparent'
                                             : cell === PLAYER_1
                                                 ? 'bg-gradient-to-br from-red-400 via-red-500 to-red-700 animate-drop'
@@ -245,8 +245,8 @@ const Board: React.FC<BoardProps> = ({
                 {lastMoveColumn === null ? 'Tap a column to start. Red plays first.' : `Move ${moveCount}: ${currentPlayer === PLAYER_1 ? 'Yellow' : 'Red'} played column ${lastMoveColumn + 1}.`}
             </p>
 
-            <div className="mt-3 w-full max-w-md flex flex-col gap-2 sm:mt-4 sm:gap-3">
-                <div className="grid grid-cols-[auto_auto_1fr_auto] gap-2 sm:gap-3">
+            <div className="connect4-board-controls mt-3 w-full max-w-md flex flex-col gap-2 sm:mt-4 sm:gap-3">
+                <div className="connect4-action-row grid grid-cols-[auto_auto_1fr_auto] gap-2 sm:gap-3">
                     <button onClick={onUndo} disabled={!canUndo} className="connect4-action-button" title="Undo move" aria-label="Undo move">
                         <Undo2 aria-hidden="true" size={20} strokeWidth={2.5} />
                     </button>
@@ -262,12 +262,12 @@ const Board: React.FC<BoardProps> = ({
                             {isCalculating ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <LoaderCircle aria-hidden="true" className="animate-spin" size={18} />
-                                    Thinking...
+                                    Thinking…
                                 </span>
                             ) : (
                                 <span className="flex items-center justify-center gap-2">
                                     <Lightbulb aria-hidden="true" size={18} />
-                                    {bestMove ? (canRequestNewSuggestion ? 'New suggestion' : 'Best move chosen') : 'Show Best Move'}
+                                    {bestMove ? (canRequestNewSuggestion ? 'New hint' : 'Best move found') : 'Find best move'}
                                 </span>
                             )}
                         </button>
@@ -301,19 +301,25 @@ const Board: React.FC<BoardProps> = ({
                             compact
                         />
                     </div>
+                    <details className="connect4-mobile-guide">
+                        <summary>What do the move labels mean?</summary>
+                        <p><strong>+N</strong> is a proven win in N turns. <strong>−N</strong> is a proven loss. <strong>~</strong> is a search estimate. The outlined column is the recommended move.</p>
+                    </details>
                 </div>
                 )}
 
-                <div className="connect4-result-strip flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border bg-card/80 px-4 py-3 text-sm shadow-sm" aria-live="polite">
-                    <div className="min-w-0">
-                        {mode === 'practice' ? (
-                            <p className="truncate text-muted-foreground">
+                <div className="connect4-result-strip flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border bg-card/80 px-4 py-3 text-sm shadow-sm">
+                    <div className="connect4-result-copy min-w-0" role="status" aria-live="polite" aria-atomic="true">
+                        {winner || isDraw ? (
+                            <p className="text-foreground"><strong>{isDraw ? 'Draw.' : `${winner === PLAYER_1 ? 'Red' : 'Yellow'} wins.`}</strong> Start a new board to play again.</p>
+                        ) : mode === 'practice' ? (
+                            <p className="text-muted-foreground">
                                 You are <strong className="text-red-600">Red</strong>. The AI replies automatically.
                             </p>
                         ) : bestMove ? (
-                            <p className="truncate text-foreground">
-                                <span className="font-semibold text-secondary-700">Recommended:</span> column <strong>{bestMove.column + 1}</strong>
-                                <span className="ml-2 hidden text-xs text-muted-foreground sm:inline">
+                            <p className="text-foreground">
+                                <span className="connect4-result-label">Recommended move</span><strong className="connect4-result-column">Column {bestMove.column + 1}</strong>
+                                <span className="connect4-result-player">
                                     for {(solverTarget === 'current' ? currentPlayer : solverTarget) === PLAYER_1 ? 'Red' : 'Yellow'}
                                 </span>
                             </p>
@@ -322,7 +328,7 @@ const Board: React.FC<BoardProps> = ({
                         )}
                     </div>
                     {mode === 'solver' && <div className="flex shrink-0 items-center gap-2">
-                        <span className="hidden text-xs font-semibold text-muted-foreground sm:inline">Auto hints</span>
+                        <span className="connect4-auto-label text-xs font-semibold text-muted-foreground">Auto hints</span>
                         <button
                             type="button"
                             role="switch"
@@ -331,8 +337,8 @@ const Board: React.FC<BoardProps> = ({
                             onClick={() => setAutoHint(!autoHint)}
                             className={`connect4-auto-switch ${autoHint ? 'is-on' : 'is-off'}`}
                         >
-                            <span className="connect4-switch-label connect4-switch-off">OFF</span>
-                            <span className="connect4-switch-label connect4-switch-on">ON</span>
+                            <span aria-hidden="true" className="connect4-switch-label connect4-switch-off">OFF</span>
+                            <span aria-hidden="true" className="connect4-switch-label connect4-switch-on">ON</span>
                             <span className="connect4-switch-thumb" aria-hidden="true"></span>
                         </button>
                     </div>}

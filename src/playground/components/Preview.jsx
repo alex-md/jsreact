@@ -106,9 +106,9 @@ if (packagesToLoad.length === 0) {
 const getButtonClasses = (isActive) => {
     const baseClasses = 'p-1.5 rounded-md transition-colors';
     if (isActive) {
-        return `${baseClasses} bg-gray-200 text-gray-800`;
+        return `${baseClasses} bg-muted text-foreground`;
     }
-    return `${baseClasses} text-gray-500 hover:text-gray-700`;
+    return `${baseClasses} text-muted-foreground hover:text-foreground`;
 };
 
 const Preview = ({ html, cssCode = '', js, packages = [] }) => {
@@ -208,8 +208,8 @@ const Preview = ({ html, cssCode = '', js, packages = [] }) => {
     const iconMap = { DESKTOP: Monitor, TABLET: Tablet, MOBILE: Smartphone };
 
     return (
-        <div className="h-full flex flex-col bg-white">
-            <div className="flex items-center justify-between p-2 border-b border-gray-200">
+        <div className="h-full flex flex-col bg-card">
+            <div className="flex items-center justify-between p-2 border-b border-border">
                 <div className="flex items-center space-x-1 sm:space-x-2">
                     {deviceOptions.map((dev) => (
                         <button
@@ -233,26 +233,26 @@ const Preview = ({ html, cssCode = '', js, packages = [] }) => {
                     <button
                         onClick={refreshPreview}
                         disabled={isLoading}
-                        className={`p-1.5 rounded-md text-gray-500 hover:text-gray-700 ${isLoading ? 'animate-spin' : ''}`}
+                        className={`p-1.5 rounded-md text-muted-foreground hover:text-foreground ${isLoading ? 'animate-spin' : ''}`}
                         title="Refresh preview"
                     >
                         <RefreshCw size={16} />
                     </button>
                 </div>
             </div>
-            <div className="flex-1 overflow-auto p-4 relative bg-gray-100">
+            <div className="flex-1 overflow-auto p-4 relative bg-muted">
                 <div className="h-full flex items-center justify-center transition-colors">
                     <div
                         style={deviceStyle}
-                        className="relative overflow-hidden bg-white"
+                        className="relative overflow-hidden bg-card"
                     >
                         {isLoading && (
-                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-opacity-50 bg-gray-500">
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-opacity-50 bg-card">
                                 <RefreshCw size={24} className="animate-spin text-white" />
                             </div>
                         )}
                         {error && (
-                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-opacity-80 bg-white">
+                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-opacity-80 bg-card">
                                 <div className="p-4 rounded-lg bg-red-100 border border-red-300 flex items-center space-x-2 text-red-600 max-w-md">
                                     <XCircle size={20} className="flex-shrink-0" />
                                     <span className="text-sm whitespace-pre-wrap break-all">{error}</span>
@@ -270,9 +270,9 @@ const Preview = ({ html, cssCode = '', js, packages = [] }) => {
                 </div>
             </div>
             {showConsole && (
-                <div className="h-48 overflow-y-auto border-t text-xs font-mono bg-gray-50 border-gray-200">
+                <div className="h-48 overflow-y-auto border-t text-xs font-mono bg-background border-border">
                     {consoleMessages.length === 0 ? (
-                        <div className="p-3 text-center text-gray-400">
+                        <div className="p-3 text-center text-muted-foreground">
                             Console is empty.
                         </div>
                     ) : (
@@ -281,7 +281,7 @@ const Preview = ({ html, cssCode = '', js, packages = [] }) => {
                                 {consoleMessages.map((msg, i) => (
                                     <div
                                         key={`${msg.type}-${i}-${msg.timestamp}`}
-                                        className={`p-1.5 rounded-sm flex items-start ${msg.type === 'error' ? 'text-red-500 bg-red-500/10' : msg.type === 'warn' ? 'text-yellow-500 bg-yellow-500/10' : 'text-gray-700'}`}
+                                        className={`p-1.5 rounded-sm flex items-start ${msg.type === 'error' ? 'text-red-500 bg-red-500/10' : msg.type === 'warn' ? 'text-yellow-500 bg-yellow-500/10' : 'text-foreground'}`}
                                     >
                                         <span className="opacity-60 mr-2 select-none">{msg.timestamp}</span>
                                         <span className="flex-1 whitespace-pre-wrap break-all">{msg.content}</span>
@@ -291,7 +291,7 @@ const Preview = ({ html, cssCode = '', js, packages = [] }) => {
                             <button
                                 onClick={() => setConsoleMessages([])}
                                 title="Clear console"
-                                className="sticky bottom-2 right-2 p-1 text-xs rounded bg-gray-200 hover:bg-gray-300 text-gray-600 m-1 float-right"
+                                className="sticky bottom-2 right-2 p-1 text-xs rounded bg-muted hover:bg-card text-muted-foreground m-1 float-right"
                             >
                                 Clear
                             </button>

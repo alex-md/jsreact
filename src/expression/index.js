@@ -1,4 +1,6 @@
 import '@styles/global.css';
+import './styles.css';
+import { renderEquation } from './equation.js';
 import { showToast } from '@/components/toast.js';
 document.addEventListener("DOMContentLoaded", () => {
     let descriptionTimeout, infoButton = document.getElementById("info-toggle"), calculatorDescription = document.getElementById("calculator-description");
@@ -41,11 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // robust input parsing: allows commas, spaces, newlines
         let rawInput = document.getElementById("numbers-input").value;
-        let numbers = rawInput.split(/[\s,]+/).filter(s => s.trim().length > 0).map(num => parseInt(num));
-        let target = parseInt(document.getElementById("target-input").value);
+        let numbers = rawInput.split(/[\s,]+/).filter(s => s.trim().length > 0).map(Number);
+        let targetText = document.getElementById("target-input").value.trim();
+        let target = Number(targetText);
 
-        if (!numbers.every((n) => !isNaN(n)) || isNaN(target)) {
-            showToast('Please enter valid numbers');
+        if (!numbers.length || !numbers.every(Number.isSafeInteger) || !targetText || !Number.isSafeInteger(target)) {
+            showToast('Enter whole numbers and a whole-number target.');
             submitButton.innerHTML = originalButtonText;
             submitButton.disabled = false;
             return;
@@ -54,13 +57,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Initialize Worker
         currentWorker = new Worker(new URL('../workers/expressionSolver.js', import.meta.url), { type: 'module' });
 
+        const stepByStep = document.getElementById("no-parentheses-checkbox").checked;
         currentWorker.postMessage({
             numbers,
             target,
             config: {
                 useExponents: document.getElementById("exponents-checkbox").checked,
                 useSqrt: document.getElementById("sqrt-checkbox").checked,
-                noParentheses: document.getElementById("no-parentheses-checkbox").checked
+                stepByStep
             }
         });
 
@@ -74,74 +78,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Save to History (LocalStorage)
                 saveToHistory({ numbers, target, expr, date: Date.now() });
 
-                // Render Logic (Reused)
-                let latexExpression = (function (expr) {
-                    try {
-                        if (typeof math !== 'undefined') return math.parse(expr).toTex({ parenthesis: 'keep' });
-                        throw new Error("Math.js not found");
-                    } catch (err) {
-                        console.warn("Math.js fallback active:", err);
-                        let tex = expr.replace(/\*\*/g, '^');
-                        while (tex.includes('sqrt(')) {
-                            let startIndex = tex.indexOf('sqrt(');
-                            let openParens = 0;
-                            let endIndex = -1;
-                            for (let i = startIndex + 4; i < tex.length; i++) {
-                                if (tex[i] === '(') openParens++;
-                                else if (tex[i] === ')') {
-                                    openParens--;
-                                    if (openParens === 0) {
-                                        endIndex = i;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (endIndex !== -1) {
-                                let content = tex.substring(startIndex + 5, endIndex);
-                                tex = tex.substring(0, startIndex) + `\\sqrt{${content}}` + tex.substring(endIndex + 1);
-                            } else {
-                                break;
-                            }
-                        }
-                        return tex.replace(/\*/g, ' \\times ').replace(/\//g, ' \\div ');
-                    }
-                })(expr) + ` = ${target}`;
-
                 try {
                     solutionOutput.innerHTML = '';
 
                     // Main Result Card
                     let resultCard = document.createElement('div');
-                    resultCard.className = 'bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6 flex justify-center items-center relative overflow-hidden';
-                    resultCard.innerHTML = '<div class="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 opacity-100 z-0"></div>';
+                    resultCard.className = 'expression-result-card';
 
                     let katexDiv = document.createElement('div');
-                    katexDiv.className = 'katex-display relative z-10 transform transition-transform hover:scale-105 duration-300 cursor-default';
+                    katexDiv.className = 'expression-equation';
                     resultCard.appendChild(katexDiv);
                     solutionOutput.appendChild(resultCard);
 
-                    solutionOutput.style.fontSize = "1.3em";
-                    solutionOutput.style.overflowX = "visible"; // Allow shadows/scales to overflow if needed, or handle scrolling differently
-                    // Reset padding as we are using internal cards
-                    solutionOutput.style.padding = "0";
-
-                    if (typeof katex !== 'undefined') {
-                        katex.render(latexExpression, katexDiv, {
-                            displayMode: true,
-                            throwOnError: false,
-                            trust: true
-                        });
+                    if (stepByStep && steps.length) {
+                        const lastStep = steps[steps.length - 1];
+                        const separator = lastStep.lastIndexOf(' = ');
+                        renderEquation(katexDiv, lastStep.slice(0, separator), lastStep.slice(separator + 3));
+                        const note = document.createElement('p');
+                        note.className = 'expression-working-note';
+                        note.textContent = 'Final move · follow the 24-style working below.';
+                        resultCard.appendChild(note);
+                        const fullEquation = document.createElement('details');
+                        fullEquation.className = 'expression-full-equation';
+                        const summary = document.createElement('summary');
+                        summary.textContent = 'View the full equation';
+                        const fullMath = document.createElement('div');
+                        fullMath.className = 'expression-equation';
+                        renderEquation(fullMath, expr, target);
+                        fullEquation.append(summary, fullMath);
+                        resultCard.appendChild(fullEquation);
                     } else {
-                        katexDiv.textContent = `${expr} = ${target}`;
+                        renderEquation(katexDiv, expr, target);
                     }
 
                     if (steps && steps.length > 0) {
                         let stepsContainer = document.createElement('div');
-                        stepsContainer.className = 'mt-8 border-t border-gray-100 pt-6';
+                        stepsContainer.className = 'mt-8 border-t border-border pt-6';
 
                         let stepsHeader = document.createElement('h3');
-                        stepsHeader.className = 'flex items-center gap-2 font-bold mb-4 text-sm uppercase tracking-wider text-gray-500';
-                        stepsHeader.innerHTML = '<i class="fas fa-stream"></i> Solution Path';
+                        stepsHeader.className = 'flex items-center gap-2 font-bold mb-4 text-sm uppercase tracking-wider text-muted-foreground';
+                        stepsHeader.innerHTML = `<i class="fas fa-stream" aria-hidden="true"></i> ${stepByStep ? '24-style working' : 'Solution path'}`;
                         stepsContainer.appendChild(stepsHeader);
 
                         let ul = document.createElement('ul');
@@ -149,34 +125,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         // Vertical Line
                         let line = document.createElement('div');
-                        line.className = 'absolute left-[1.125rem] top-4 bottom-4 w-0.5 bg-gray-100 -z-10';
+                        line.className = 'absolute left-[1.125rem] top-4 bottom-4 w-0.5 bg-muted -z-10';
                         ul.appendChild(line);
 
                         steps.forEach((step, index) => {
                             let li = document.createElement('li');
-                            li.className = 'flex items-center gap-4 opacity-0 transform translate-y-4 animate-slide-in';
+                            li.className = 'flex items-center gap-4';
                             li.style.animationDelay = `${index * 100}ms`;
                             li.style.animationFillMode = 'forwards';
 
                             // Step Badge
                             let badge = document.createElement('div');
-                            badge.className = 'w-9 h-9 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm border-4 border-white shadow-sm shrink-0';
+                            badge.className = 'w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm border-4 border-border shadow-sm shrink-0';
                             badge.textContent = index + 1;
                             li.appendChild(badge);
 
                             // Step Content Card
                             let content = document.createElement('div');
-                            content.className = 'flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100/50 hover:bg-white hover:shadow-md hover:border-indigo-100 transition-all duration-300';
+                            content.className = 'flex-1 bg-background rounded-xl px-4 py-3 border border-border/50 hover:bg-card hover:shadow-md hover:border-primary/30 transition-all duration-300';
 
-                            // Format the math safely using a single-pass replacement to avoid recursive matching of HTML tags
-                            let mathContent = step.replace(/(\d+)|([+\-*/^])|(=)/g, (match, num, op, eq) => {
-                                if (num) return `<span class="font-semibold text-gray-800">${num}</span>`;
-                                if (op) return `<span class="text-indigo-400 font-bold mx-1">${op}</span>`;
-                                if (eq) return `<span class="text-gray-400 mx-2">=</span>`;
-                                return match;
-                            });
-
-                            content.innerHTML = `<div class="font-mono text-base text-gray-600">${mathContent}</div>`;
+                            const separator = step.lastIndexOf(' = ');
+                            const stepMath = document.createElement('div');
+                            stepMath.className = 'expression-step-equation';
+                            renderEquation(stepMath, step.slice(0, separator), step.slice(separator + 3));
+                            content.appendChild(stepMath);
                             li.appendChild(content);
 
                             ul.appendChild(li);
@@ -204,9 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     let copyButton = document.createElement('button');
-                    copyButton.className = 'group absolute top-4 right-4 p-2 bg-white text-gray-400 rounded-lg hover:text-primary hover:bg-indigo-50 transition-all shadow-sm border border-gray-100';
+                    copyButton.className = 'expression-copy-button';
+                    copyButton.setAttribute('aria-label', 'Copy expression');
                     copyButton.title = 'Copy Expression';
-                    copyButton.innerHTML = '<i class="fas fa-copy text-lg"></i><span class="absolute right-full mr-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Copy</span>';
+                    copyButton.innerHTML = '<i class="fas fa-copy text-lg"></i><span class="absolute right-full mr-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-card text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Copy</span>';
 
                     copyButton.addEventListener('click', () => {
                         let copyText = `${expr} `;
@@ -225,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Ensure container is relative for absolute positioning
                     solutionOutput.classList.add('relative');
-                    solutionOutput.appendChild(copyButton);
+                    resultCard.appendChild(copyButton);
 
                 } catch (err) {
                     console.error('KaTeX error:', err);
@@ -265,21 +238,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // for now just saving data
     }
     let advancedSettings = document.querySelector("#advanced-settings"), advancedSettingsToggle = document.querySelector("#advanced-settings-toggle");
-    if (advancedSettingsToggle && advancedSettings && (advancedSettingsToggle.addEventListener("click", () => {
-        advancedSettings.classList.toggle("hidden");
-    }), advancedSettings.querySelectorAll('input[type="number"]').forEach((input) => {
-        input.addEventListener("click", (event) => event.stopPropagation());
-    })), !document.getElementById("sqrt-checkbox")) {
-        let exponentsCheckbox = document.getElementById("exponents-checkbox");
-        if (exponentsCheckbox && exponentsCheckbox.parentNode) {
-            let sqrtCheckboxContainer = document.createElement("div");
-            sqrtCheckboxContainer.className = "form-control", sqrtCheckboxContainer.innerHTML = `
-                <label class="flex items-center space-x-2">
-                    <input type="checkbox" id="sqrt-checkbox" class="toggle toggle-sm">
-                    <span>Allow Square Roots</span>
-                </label>
-            `, exponentsCheckbox.closest('.form-control') ? exponentsCheckbox.closest('.form-control').parentNode.appendChild(sqrtCheckboxContainer) : exponentsCheckbox.parentNode.parentNode.appendChild(sqrtCheckboxContainer);
-        }
+    if (advancedSettings && advancedSettingsToggle) {
+        advancedSettingsToggle.setAttribute('aria-expanded', 'false');
+        advancedSettingsToggle.setAttribute('aria-controls', 'advanced-settings');
+        advancedSettingsToggle.addEventListener('click', () => {
+            const hidden = advancedSettings.classList.toggle('hidden');
+            advancedSettingsToggle.setAttribute('aria-expanded', String(!hidden));
+        });
     }
 
     // --- Challenge Mode Logic ---
@@ -293,13 +258,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function switchTab(tab) {
         if (tab === 'solver') {
-            tabSolver.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-gray-800";
-            tabChallenge.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-100";
+            tabSolver.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-card text-foreground";
+            tabChallenge.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all text-muted-foreground hover:text-foreground hover:bg-muted";
             viewSolver.classList.remove("hidden");
             viewChallenge.classList.add("hidden");
         } else {
-            tabChallenge.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-gray-800";
-            tabSolver.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-100";
+            tabChallenge.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-card text-foreground";
+            tabSolver.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all text-muted-foreground hover:text-foreground hover:bg-muted";
             viewChallenge.classList.remove("hidden");
             viewSolver.classList.add("hidden");
         }
@@ -346,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (lastToken.type === 'num') {
             const numBtn = document.getElementById(lastToken.id);
             if (numBtn) {
-                numBtn.classList.remove("opacity-30", "cursor-not-allowed", "border-gray-100");
+                numBtn.classList.remove("opacity-30", "cursor-not-allowed", "border-border");
                 numBtn.disabled = false;
             }
         }
@@ -366,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
         gameState.active = true;
 
         gameActionBtn.textContent = "Submit Answer";
-        gameActionBtn.className = "w-full py-4 bg-primary text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all";
+        gameActionBtn.className = "w-full py-4 bg-primary text-primary-foreground font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all";
 
         startTimer();
         nextRound();
@@ -400,8 +365,8 @@ document.addEventListener("DOMContentLoaded", () => {
         gameState.active = false;
         showToast(`Game Over! Score: ${gameState.score}`);
         gameActionBtn.textContent = "Play Again";
-        gameActionBtn.className = "w-full py-4 bg-gray-800 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all";
-        builderZone.innerHTML = `<span class="text-gray-400 font-bold">Time's Up! Final Score: ${gameState.score}</span>`;
+        gameActionBtn.className = "w-full py-4 bg-card text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all";
+        builderZone.innerHTML = `<span class="text-muted-foreground font-bold">Time's Up! Final Score: ${gameState.score}</span>`;
         gameNumbersDiv.innerHTML = '';
         gameTargetDisplay.textContent = '-';
         timerBar.style.width = '0%';
@@ -467,13 +432,13 @@ document.addEventListener("DOMContentLoaded", () => {
         gameNumbersDiv.innerHTML = '';
         gameState.numbers.forEach((num, idx) => {
             const btn = document.createElement("button");
-            btn.className = "h-14 w-14 bg-white border-2 border-gray-200 text-gray-800 rounded-xl font-bold text-xl hover:border-primary hover:text-primary transition-all shadow-sm";
+            btn.className = "h-14 w-14 bg-card border-2 border-border text-foreground rounded-xl font-bold text-xl hover:border-primary hover:text-primary transition-all shadow-sm";
             btn.textContent = num;
             btn.id = `num-${idx}`;
             btn.addEventListener("click", () => {
                 if (!gameState.active || btn.disabled) return;
                 addToken('num', num, btn.id);
-                btn.classList.add("opacity-30", "cursor-not-allowed", "border-gray-100");
+                btn.classList.add("opacity-30", "cursor-not-allowed", "border-border");
                 btn.disabled = true;
             });
             gameNumbersDiv.appendChild(btn);
@@ -505,15 +470,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateBuilderUI() {
         if (gameState.expression.length === 0) {
-            builderZone.innerHTML = '<span class="text-gray-400 pointer-events-none select-none text-sm">Tap numbers and operators</span>';
+            builderZone.innerHTML = '<span class="text-muted-foreground pointer-events-none select-none text-sm">Tap numbers and operators</span>';
             return;
         }
         builderZone.innerHTML = '';
         gameState.expression.forEach(token => {
             const span = document.createElement("span");
             span.className = token.type === 'num'
-                ? "bg-white border border-gray-200 px-3 py-1 rounded-lg font-bold shadow-sm"
-                : "text-indigo-600 font-bold text-lg px-1";
+                ? "bg-card border border-border px-3 py-1 rounded-lg font-bold shadow-sm"
+                : "text-primary font-bold text-lg px-1";
             span.textContent = token.val;
             builderZone.appendChild(span);
         });

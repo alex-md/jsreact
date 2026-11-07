@@ -11,11 +11,25 @@ const Editor = ({ language = 'javascript', value = '', onChange }) => {
     useEffect(() => {
         if (!containerRef.current) return;
 
+        monaco.editor.defineTheme('jsreact-desk', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [],
+            colors: {
+                'editor.background': '#182b35',
+                'editor.foreground': '#e0e9e7',
+                'editorLineNumber.foreground': '#789b99',
+                'editorCursor.foreground': '#b5d8cc',
+                'editor.selectionBackground': '#3b505b',
+                'editor.lineHighlightBackground': '#22343f',
+            },
+        });
+
         // create the editor
         editorRef.current = monaco.editor.create(containerRef.current, {
             value,
             language,
-            theme: 'vs',
+            theme: 'jsreact-desk',
             automaticLayout: true,       // let Monaco re-layout on its own
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
@@ -66,13 +80,6 @@ const Editor = ({ language = 'javascript', value = '', onChange }) => {
             if (model) monaco.editor.setModelLanguage(model, language);
         }
     }, [language]);
-
-    // Theme is now fixed to 'vs' (light theme)
-    useEffect(() => {
-        if (editorRef.current) {
-            monaco.editor.setTheme('vs');
-        }
-    }, []);
 
     // the wrapper
     return (

@@ -3,6 +3,7 @@
 
   <head>
     <meta charset="UTF-8">
+        <meta name="theme-color" content="#182730">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OSRS Flip Finder &amp; Flipping Tool - Maximize Grand Exchange Profits | JSreact</title>
@@ -13,11 +14,9 @@
     <!-- Styles -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/assets/styles/global.css">
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <meta name="keywords"
       content="osrs flip finder, osrs flipping tool, grand exchange flipping, osrs profit calculator, osrs trading strategies, runescape flipping, osrs ge tool, osrs money making">
@@ -56,11 +55,12 @@
     </script>
   </head>
 
-  <body class="bg-background text-foreground flex flex-col min-h-screen">
+  <body class="page-osrs bg-background text-foreground flex flex-col min-h-screen">
     <script type="module">
       import { initPageShell } from '@components/pageShell.js';
       initPageShell();
     </script>
+    <a class="osrs-skip" href="#osrs-main">Skip to the flip finder</a>
     <div id="osrs-root"></div>
     <script type="module" src="./main.jsx"></script>
   </body>

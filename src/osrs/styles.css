@@ -1,0 +1,181 @@
+/* A Grand Exchange ledger on the shared blue-slate workbench. */
+body.page-osrs { background: #182730; color: #e0e9e7; overflow: visible; }
+.page-osrs #osrs-root { flex: 1; }
+.page-osrs .osrs-app { width: min(1180px, 100%); margin: 0 auto; padding: 32px 24px 48px; scroll-margin-top: 80px; }
+.page-osrs .osrs-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 36px; padding: 0 0 28px; border-bottom: 1px solid #3b505b; margin-bottom: 28px; }
+.page-osrs .osrs-kicker { color: #a6b8bf; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 12px; }
+body.page-osrs .osrs-intro h1 { margin: 0; font: 400 clamp(34px, 4vw, 48px)/1.1 var(--font-serif); letter-spacing: -.035em; }
+.page-osrs .osrs-intro h1 em { font-weight: 400; color: #b5d8cc; }
+.page-osrs .osrs-intro-copy { color: #a6b8bf; font-size: 15px; line-height: 1.6; max-width: 540px; margin: 14px 0 0; }
+.page-osrs .osrs-data-status { display: grid; justify-items: end; gap: 8px; min-width: 180px; font-size: 12px; }
+.page-osrs .osrs-status { display: flex; align-items: center; gap: 7px; color: #b5d8cc; }
+.page-osrs .osrs-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.page-osrs .osrs-status.is-loading { color: #e4c47e; }
+.page-osrs .osrs-status.is-error { color: #f1a99e; }
+.page-osrs .osrs-update-time { color: #a6b8bf; font-size: 11px; }
+.page-osrs .osrs-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 9px 14px; border: 1px solid #526773; border-radius: 6px; color: #e0e9e7; background: transparent; font-size: 13px; font-weight: 600; cursor: pointer; transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease; }
+.page-osrs .osrs-button:hover:not(:disabled) { border-color: #b5d8cc; background: #b5d8cc0a; }
+.page-osrs .osrs-primary { background: #b5d8cc; color: #182730; border-color: #b5d8cc; }
+.page-osrs .osrs-primary:hover:not(:disabled) { background: #c9e5dc; }
+.page-osrs button:disabled { opacity: .55; cursor: not-allowed; }
+.page-osrs .osrs-error { background: #593b3a40; color: #f1b7a8; border: 1px solid #a66f654f; border-radius: 8px; padding: 14px 18px; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+.page-osrs .osrs-workspace { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 28px; align-items: start; }
+.page-osrs .osrs-setup { position: sticky; top: 88px; min-width: 0; }
+.page-osrs .osrs-budget-panel { padding: 22px; background: #1d2e38; border: 1px solid #3b505b; border-radius: 14px; }
+.page-osrs .osrs-panel-heading { display: flex; align-items: center; gap: 10px; }
+.page-osrs .osrs-panel-heading > svg { color: #b5d8cc; }
+.page-osrs .osrs-panel-heading h2 { font: 600 17px var(--font-sans); margin: 0; }
+.page-osrs .osrs-help { color: #a6b8bf; font-size: 13px; line-height: 1.6; margin: 8px 0 20px; }
+.page-osrs .osrs-budget-panel > label { display: block; color: #e0e9e7; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.page-osrs .osrs-budget-inputs { display: grid; grid-template-columns: minmax(0, 1fr) 112px; gap: 8px; }
+.page-osrs .osrs-budget-inputs :is(input, select) { min-width: 0; width: 100%; height: 46px; border: 1px solid #526773; border-radius: 6px; background-color: #182b35; color: #e0e9e7; padding: 10px; margin: 0; font-size: 14px; }
+.page-osrs .osrs-budget-inputs input { font-family: var(--font-mono); font-size: 18px; }
+.page-osrs .osrs-budget-inputs select { padding-right: 25px; font-size: 12px; }
+.page-osrs .osrs-field-error { color: #f1b7a8; font-size: 12px; margin: 8px 0; line-height: 1.5; }
+.page-osrs input[aria-invalid=true] { border-color: #f1b7a8; }
+.page-osrs .osrs-presets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin: 14px 0 20px; }
+.page-osrs .osrs-presets button { min-height: 40px; border: 1px solid #526773; border-radius: 5px; background: transparent; color: #a6b8bf; font: 12px var(--font-mono); cursor: pointer; }
+.page-osrs .osrs-presets button[aria-pressed=true] { color: #182730; border-color: #b5d8cc; background: #b5d8cc; }
+.page-osrs .osrs-presets button:hover:not([aria-pressed=true]) { border-color: #b5d8cc; color: #e0e9e7; }
+.page-osrs .osrs-budget-total { margin: 0; padding-top: 16px; border-top: 1px solid #3b505b; display: grid; gap: 7px; }
+.page-osrs .osrs-budget-total > span { font-size: 12px; color: #a6b8bf; }
+.page-osrs .osrs-budget-total strong { font: 500 19px var(--font-mono); overflow-wrap: anywhere; }
+.page-osrs .osrs-budget-total small { font: 11px var(--font-sans); color: #a6b8bf; }
+.page-osrs .osrs-allocation { display: grid; gap: 6px; padding-top: 18px; font-size: 12px; color: #a6b8bf; }
+.page-osrs .osrs-allocation strong { color: #e0e9e7; font-weight: 500; font-variant-numeric: tabular-nums; }
+.page-osrs .osrs-allocation small { line-height: 1.6; font-size: 12px; margin-top: 3px; }
+.page-osrs .osrs-method { padding: 18px 4px; }
+.page-osrs .osrs-method summary { cursor: pointer; font-size: 13px; color: #e0e9e7; padding: 4px 0; }
+.page-osrs .osrs-method p { color: #a6b8bf; font-size: 12px; line-height: 1.7; margin: 14px 0; }
+.page-osrs .osrs-method strong { color: #e0e9e7; font-weight: 500; }
+.page-osrs .osrs-method a { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #b5d8cc; text-decoration: underline; text-underline-offset: 3px; }
+.page-osrs .osrs-results-area { min-width: 0; }
+.page-osrs .osrs-view-tabs { display: flex; gap: 24px; border-bottom: 1px solid #3b505b; margin-bottom: 24px; }
+.page-osrs .osrs-view-tabs button { display: inline-flex; align-items: center; gap: 8px; padding: 10px 0 15px; min-height: 46px; border-bottom: 2px solid transparent; color: #a6b8bf; font-size: 14px; font-weight: 600; cursor: pointer; }
+.page-osrs .osrs-view-tabs button[aria-pressed=true] { color: #b5d8cc; border-bottom-color: #b5d8cc; }
+.page-osrs .osrs-view-tabs button:hover { color: #e0e9e7; }
+.page-osrs .osrs-results-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 20px; }
+.page-osrs .osrs-results-heading h2 { font: 400 25px/1.25 var(--font-serif); letter-spacing: -.02em; margin: 0; }
+.page-osrs .osrs-results-heading p { color: #a6b8bf; font-size: 13px; margin: 5px 0 0; }
+.page-osrs .osrs-result-count { color: #a6b8bf; font-size: 12px; white-space: nowrap; }
+.page-osrs .osrs-flip-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.page-osrs :is(.osrs-flip-card, .osrs-lookup-card) { min-width: 0; border: 1px solid #3b505b; border-radius: 12px; background: #22343f; overflow: hidden; }
+.page-osrs .osrs-item-heading { display: flex; align-items: center; gap: 10px; padding: 18px 18px 0; }
+.page-osrs .osrs-item-icon { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid #3b505b; border-radius: 8px; background: #182b35; flex-shrink: 0; }
+.page-osrs .osrs-item-icon img { width: 32px; height: 32px; object-fit: contain; }
+.page-osrs .osrs-item-title { min-width: 0; flex: 1; }
+.page-osrs .osrs-rank { display: block; color: #a6b8bf; font-size: 11px; line-height: 1.5; margin-bottom: 3px; }
+.page-osrs .osrs-rank > span { margin-left: 4px; }
+.page-osrs .osrs-item-title h3 { font: 600 16px/1.35 var(--font-sans); margin: 0; overflow-wrap: anywhere; }
+.page-osrs .osrs-item-title a { color: #e0e9e7; }
+.page-osrs .osrs-item-title a:hover { color: #b5d8cc; }
+.page-osrs .osrs-item-title a svg { display: inline; margin-left: 5px; color: #a6b8bf; vertical-align: baseline; }
+.page-osrs .osrs-copy { display: inline-grid; place-items: center; align-self: start; flex: 0 0 36px; width: 36px; height: 44px; background: transparent; color: #a6b8bf; border-radius: 6px; cursor: pointer; }
+.page-osrs .osrs-copy:hover { color: #b5d8cc; background: #b5d8cc0d; }
+.page-osrs .osrs-copy-status:empty { display: none; }
+.page-osrs .osrs-copy-status { display: block; padding: 6px 18px 0; font-size: 12px; color: #b5d8cc; }
+.page-osrs .osrs-item-meta { display: flex; flex-wrap: wrap; column-gap: 12px; row-gap: 4px; margin: 15px 18px; font-size: 11px; color: #a6b8bf; }
+.page-osrs .osrs-item-meta strong { color: #d0deda; font-weight: 500; margin-left: 3px; font-variant-numeric: tabular-nums; }
+.page-osrs .osrs-price-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 18px; border-top: 1px solid #3b505b; border-bottom: 1px solid #3b505b; }
+.page-osrs .osrs-price-pair > div { min-width: 0; padding: 14px 0; }
+.page-osrs .osrs-price-pair > div + div { border-left: 1px solid #3b505b; padding-left: 14px; }
+.page-osrs .osrs-price-label { display: block; color: #a6b8bf; font-size: 11px; margin-bottom: 5px; }
+.page-osrs .osrs-price { display: block; color: #e0e9e7; font: 500 clamp(16px, 1.8vw, 21px)/1.4 var(--font-mono); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.page-osrs .osrs-price small { color: #a6b8bf; font: 10px var(--font-sans); }
+.page-osrs .osrs-price-total { display: block; color: #a6b8bf; font-size: 10px; margin-top: 6px; line-height: 1.6; }
+.page-osrs .osrs-price-total b { display: block; color: #d0deda; font-weight: 500; font-variant-numeric: tabular-nums; }
+.page-osrs .osrs-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 18px; }
+.page-osrs .osrs-metrics dt { color: #a6b8bf; font-size: 11px; }
+.page-osrs .osrs-metrics dd { color: #e0e9e7; font: 500 13px var(--font-mono); margin: 7px 0 0; overflow-wrap: anywhere; }
+.page-osrs .osrs-metrics small { font: 10px var(--font-sans); color: #a6b8bf; }
+.page-osrs .osrs-profit { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 16px 18px; background: #1d2e38; border-top: 1px solid #3b505b; }
+.page-osrs .osrs-profit span { display: block; color: #e0e9e7; font-size: 12px; }
+.page-osrs .osrs-profit > div > small { display: block; color: #a6b8bf; font-size: 10px; margin-top: 4px; }
+.page-osrs .osrs-profit > strong { color: #e4c47e; font: 500 21px var(--font-mono); text-align: right; white-space: nowrap; }
+.page-osrs .osrs-profit strong small { font: 10px var(--font-sans); }
+.page-osrs .osrs-profit.is-negative > strong { color: #f1a99e; }
+.page-osrs .osrs-volatility { display: flex; align-items: center; gap: 7px; color: #a6b8bf; font-size: 10px; padding: 10px 18px; margin: 0; }
+.page-osrs .osrs-volatility strong { font-weight: 500; }
+.page-osrs .osrs-volatility.is-high { color: #e4c47e; flex-wrap: wrap; }
+.page-osrs .osrs-volatility > span { margin-left: auto; font-size: 10px; }
+.page-osrs .osrs-search-form { padding: 22px; margin-bottom: 24px; border: 1px solid #3b505b; border-radius: 12px; background: #1d2e38; }
+.page-osrs .osrs-search-form > label { font: 600 17px var(--font-sans); }
+.page-osrs .osrs-search-form > p { color: #a6b8bf; font-size: 13px; line-height: 1.6; margin: 8px 0 18px; }
+.page-osrs .osrs-search-row { display: flex; gap: 10px; align-items: stretch; }
+.page-osrs .osrs-search-field { position: relative; flex: 1; min-width: 0; }
+.page-osrs .osrs-search-field > svg { position: absolute; left: 12px; top: 15px; color: #a6b8bf; pointer-events: none; }
+.page-osrs .osrs-search-field input { min-width: 0; width: 100%; height: 46px; padding: 10px 44px 10px 38px; background: #182b35; border: 1px solid #526773; border-radius: 6px; color: #e0e9e7; font-size: 14px; }
+.page-osrs .osrs-search-field input::-webkit-search-cancel-button { display: none; }
+.page-osrs .osrs-search-field button { position: absolute; right: 1px; top: 1px; width: 42px; height: 44px; display: grid; place-items: center; color: #a6b8bf; border-radius: 6px; }
+.page-osrs .osrs-search-field button:hover { color: #b5d8cc; }
+.page-osrs .osrs-lookup-card .osrs-price-pair { margin-top: 18px; }
+.page-osrs .osrs-lookup-card .osrs-price { font-size: 17px; }
+.page-osrs .osrs-lookup-metrics { margin: 14px 0 0; padding-right: 10px; font-size: 11px; }
+.page-osrs .osrs-lookup-metrics div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.page-osrs .osrs-lookup-metrics dt { color: #a6b8bf; }
+.page-osrs .osrs-lookup-metrics dd { color: #e0e9e7; margin: 0; font-variant-numeric: tabular-nums; }
+.page-osrs .osrs-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 48px 24px; text-align: center; border: 1px dashed #526773; border-radius: 12px; background: #1d2e38; }
+.page-osrs .osrs-empty > svg { color: #b5d8cc; }
+.page-osrs .osrs-empty h3 { font-size: 18px; font-weight: 600; margin: 0; }
+.page-osrs .osrs-empty p { max-width: 380px; font-size: 14px; line-height: 1.6; color: #a6b8bf; margin: 0; overflow-wrap: anywhere; }
+.page-osrs .osrs-skeleton { height: 390px; border: 1px solid #3b505b; border-radius: 12px; background: #22343f; }
+.page-osrs .osrs-spin { animation: osrs-spin 1s linear infinite; }
+@keyframes osrs-spin { to { transform: rotate(360deg); } }
+.osrs-skip:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.osrs-skip:focus { position: fixed; top: 12px; left: 12px; z-index: 100; border-radius: 6px; padding: 12px; background: #b5d8cc; color: #182730; }
+@media (max-width: 1050px) {
+    .page-osrs .osrs-workspace { grid-template-columns: 250px minmax(0, 1fr); gap: 22px; }
+    .page-osrs .osrs-flip-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+    .page-osrs .osrs-app { padding: 22px 16px 32px; }
+    .page-osrs .osrs-intro { align-items: flex-start; flex-direction: column; gap: 18px; padding-bottom: 20px; margin-bottom: 20px; }
+    body.page-osrs .osrs-intro h1 { font-size: 36px; }
+    .page-osrs .osrs-kicker { font-size: 10px; margin-bottom: 8px; }
+    .page-osrs .osrs-intro-copy { font-size: 14px; margin-top: 10px; }
+    .page-osrs .osrs-data-status { width: 100%; display: grid; grid-template-columns: 1fr auto; justify-items: start; gap: 4px 12px; align-items: center; }
+    .page-osrs .osrs-refresh { grid-column: 2; grid-row: 1 / 3; }
+    .page-osrs .osrs-workspace { display: block; }
+    .page-osrs .osrs-setup { position: static; margin-bottom: 22px; }
+    .page-osrs .osrs-budget-panel { padding: 18px; }
+    .page-osrs .osrs-budget-panel .osrs-help { margin-bottom: 14px; }
+    .page-osrs .osrs-budget-inputs { grid-template-columns: minmax(0, 1fr) 124px; }
+    .page-osrs .osrs-budget-inputs :is(input, select) { font-size: 16px; }
+    .page-osrs .osrs-budget-inputs select { font-size: 13px; }
+    .page-osrs .osrs-presets { margin: 12px 0 14px; }
+    .page-osrs .osrs-presets button { min-height: 44px; }
+    .page-osrs .osrs-budget-total { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-top: 12px; }
+    .page-osrs .osrs-budget-total strong { font-size: 16px; }
+    .page-osrs .osrs-allocation { display: none; }
+    .page-osrs .osrs-method { padding: 8px 4px 0; }
+    .page-osrs .osrs-view-tabs { gap: 22px; margin-bottom: 20px; }
+    .page-osrs .osrs-view-tabs button { font-size: 13px; }
+    .page-osrs .osrs-results-heading h2 { font-size: 23px; }
+    .page-osrs .osrs-result-count { font-size: 11px; }
+    .page-osrs .osrs-item-title h3 { font-size: 17px; }
+    .page-osrs .osrs-price { font-size: 21px; }
+    .page-osrs .osrs-search-form { padding: 18px; }
+    .page-osrs .osrs-search-row { flex-direction: column; }
+    .page-osrs .osrs-search-field input { font-size: 16px; }
+    .page-osrs .osrs-copy { flex-basis: 44px; }
+}
+@media (max-width: 360px) {
+    .page-osrs .osrs-app { padding-inline: 12px; }
+    body.page-osrs .osrs-intro h1 { font-size: 32px; }
+    .page-osrs .osrs-budget-panel { padding: 14px; }
+    .page-osrs .osrs-profit { flex-wrap: wrap; }
+    .page-osrs .osrs-profit > strong { text-align: left; }
+    .page-osrs .osrs-view-tabs { gap: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .page-osrs .osrs-spin { animation: none; } }
+@media (max-width: 700px) {
+    .page-osrs .navbar > .container .h-16 { height: 52px; }
+    .page-osrs .osrs-kicker { display: none; }
+    .page-osrs .osrs-intro { gap: 12px; padding-bottom: 16px; margin-bottom: 16px; }
+    .page-osrs .osrs-intro-copy { font-size: 13px; margin-top: 8px; }
+    .page-osrs .osrs-budget-panel .osrs-help { display: none; }
+    .page-osrs .osrs-panel-heading { margin-bottom: 14px; }
+    .page-osrs .osrs-budget-panel { padding: 16px; }
+    .page-osrs .osrs-setup { margin-bottom: 16px; }
+    .page-osrs .osrs-view-tabs { margin-bottom: 16px; }
+}

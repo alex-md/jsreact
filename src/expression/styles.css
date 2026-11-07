@@ -1,0 +1,49 @@
+.page-expression .expression-result-card {
+    position: relative;
+    margin: 0 0 24px;
+    border: 1px solid #526773;
+    border-radius: 10px;
+    padding: 28px 64px 28px 24px;
+    background: #182b35;
+    color: #e0e9e7;
+    min-width: 0;
+}
+.page-expression .expression-equation {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px;
+    color: inherit;
+    font-size: clamp(18px, 2vw, 24px);
+}
+.page-expression .expression-equation .katex-display { margin: 0; overflow: visible; }
+.page-expression .expression-equation .katex { color: inherit; white-space: nowrap; }
+.page-expression .expression-equation[data-rendering=plain] { font-family: var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; }
+.page-expression .expression-copy-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 44px;
+    border: 1px solid #526773;
+    border-radius: 6px;
+    background: #22343f;
+    color: #b5d8cc;
+    cursor: pointer;
+}
+.page-expression .expression-copy-button:hover { background: #2d424d; border-color: #b5d8cc; }
+.page-expression #solution-output { font-size: 1rem; min-width: 0; padding: 0; }
+.page-expression #solution-output li > div:last-child { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 650px) {
+    .page-expression .expression-result-card { padding: 54px 14px 18px; }
+}
+.page-expression .expression-settings-help { color: #a6b8bf; font-size: 12px; line-height: 1.6; padding: 0 8px; }
+.page-expression .expression-working-note { color: #a6b8bf; font-size: 12px; text-align: center; margin-top: 12px; }
+.page-expression .expression-full-equation { border-top: 1px solid #3b505b; margin-top: 18px; padding-top: 12px; min-width: 0; }
+.page-expression .expression-full-equation summary { color: #b5d8cc; font-size: 13px; cursor: pointer; padding: 4px; }
+.page-expression .expression-step-equation { color: #e0e9e7; font-size: 16px; overflow-x: auto; padding: 6px 0; }
+.page-expression .expression-step-equation .katex-display { text-align: left; margin: 0; overflow: visible; }
+.page-expression .expression-step-equation .katex-display > .katex { text-align: left; }

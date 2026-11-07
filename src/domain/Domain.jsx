@@ -108,15 +108,15 @@ export function DomainApp() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
-            <div className="rounded-lg shadow-md border border-gray-200 bg-white p-6 md:p-8">
+            <div className="rounded-lg shadow-md border border-border bg-card p-6 md:p-8">
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    <label className="block text-md font-medium mb-2 text-gray-700" htmlFor="domain-input">
-                        <i className="fas fa-globe text-indigo-500 mr-2"></i>
-                        Enter domain names <span className="font-normal text-sm text-gray-500">(up to 20, separated by line, space, or comma)</span>
+                    <label className="block text-md font-medium mb-2 text-foreground" htmlFor="domain-input">
+                        <i className="fas fa-globe text-primary mr-2"></i>
+                        Enter domain names <span className="font-normal text-sm text-muted-foreground">(up to 20, separated by line, space, or comma)</span>
                     </label>
                     <textarea
                         id="domain-input"
-                        className="w-full rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono text-sm p-3 bg-gray-50 shadow-sm transition-all min-h-[140px] resize-none"
+                        className="w-full rounded-md border border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono text-sm p-3 bg-background shadow-sm transition-all min-h-[140px] resize-none"
                         rows={6}
                         value={domainsInput}
                         onChange={(e) => setDomainsInput(e.target.value)}
@@ -125,7 +125,7 @@ export function DomainApp() {
                         spellCheck={false}
                         aria-describedby="domain-count-help"
                     />
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-xs text-muted-foreground">
                         <span id="domain-count-help">{domainList.length} / 20 domains entered.</span>
                         <span className="italic">Requests left this minute: {requestsLeft}</span>
                     </div>
@@ -155,27 +155,27 @@ export function DomainApp() {
 
             <div role="status" aria-live="polite" className="sr-only">{loading ? "Appraising domains" : results.length ? `${results.length} appraisals ready` : ""}</div>
             {results.length > 0 && (
-                <div className="rounded-lg shadow-md border border-gray-200 bg-white p-6 md:p-8 animate-fade-in-up">
-                    <h2 className="text-lg font-semibold mb-5 text-gray-800 flex items-center gap-2">
+                <div className="rounded-lg shadow-md border border-border bg-card p-6 md:p-8 animate-fade-in-up">
+                    <h2 className="text-lg font-semibold mb-5 text-foreground flex items-center gap-2">
                         <i className="fas fa-coins text-green-500"></i> Appraisal Results
                     </h2>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
                             <thead>
-                                <tr className="border-b border-gray-200">
-                                    <th className="text-left py-3 px-4 font-medium text-gray-600">Domain</th>
-                                    <th className="text-right py-3 px-4 font-medium text-gray-600 whitespace-nowrap" title="Estimated value if sold in a competitive auction setting.">Auction Value</th>
-                                    <th className="text-right py-3 px-4 font-medium text-gray-600 whitespace-nowrap" title="Estimated value for direct sales on domain marketplaces.">Marketplace Value</th>
-                                    <th className="text-right py-3 px-4 font-medium text-gray-600 whitespace-nowrap" title="Estimated value if sold through a domain brokerage service.">Brokerage Value</th>
+                                <tr className="border-b border-border">
+                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">Domain</th>
+                                    <th className="text-right py-3 px-4 font-medium text-muted-foreground whitespace-nowrap" title="Estimated value if sold in a competitive auction setting.">Auction Value</th>
+                                    <th className="text-right py-3 px-4 font-medium text-muted-foreground whitespace-nowrap" title="Estimated value for direct sales on domain marketplaces.">Marketplace Value</th>
+                                    <th className="text-right py-3 px-4 font-medium text-muted-foreground whitespace-nowrap" title="Estimated value if sold through a domain brokerage service.">Brokerage Value</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {results.map((val, index) => (
-                                    <tr key={val.domain} className={`border-b border-gray-100 ${index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-indigo-50/50 transition-colors`}>
-                                        <td className="py-3 px-4 font-mono text-indigo-700 font-medium">{val.domain}</td>
-                                        <td className="py-3 px-4 text-right text-gray-700">{formatCurrency(val.auction)}</td>
-                                        <td className="py-3 px-4 text-right text-gray-700">{formatCurrency(val.marketplace)}</td>
-                                        <td className="py-3 px-4 text-right text-gray-700">{formatCurrency(val.brokerage)}</td>
+                                    <tr key={val.domain} className={`border-b border-border ${index % 2 === 0 ? 'bg-background/50' : 'bg-card'} hover:bg-primary/10 transition-colors`}>
+                                        <td className="py-3 px-4 font-mono text-primary font-medium">{val.domain}</td>
+                                        <td className="py-3 px-4 text-right text-foreground">{formatCurrency(val.auction)}</td>
+                                        <td className="py-3 px-4 text-right text-foreground">{formatCurrency(val.marketplace)}</td>
+                                        <td className="py-3 px-4 text-right text-foreground">{formatCurrency(val.brokerage)}</td>
                                     </tr>
                                 ))}
                             </tbody>

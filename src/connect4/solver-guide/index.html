@@ -3,6 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
+        <meta name="theme-color" content="#182730">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>How to Use a Connect 4 Solver | JSreact</title>
         <script type="module">
@@ -26,9 +27,10 @@
                 }
             );
         </script>
+        <link rel="stylesheet" href="/assets/styles/global.css">
     </head>
 
-    <body class="bg-gray-50 text-gray-900">
+    <body class="page-solver-guide bg-background text-foreground">
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
             initPageShell();
@@ -39,8 +41,8 @@
         <main class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
             <section class="max-w-3xl">
                 <p class="text-sm font-semibold uppercase tracking-wide text-primary">Solver guide</p>
-                <h1 class="mt-3 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">How to use the Connect 4 solver</h1>
-                <p class="mt-4 text-lg leading-8 text-gray-700">The calculator works best when you enter the position exactly as it happened. Add each move in order, choose the player you want to analyze, and compare the recommended column with the threats on the board.</p>
+                <h1 class="mt-3 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">How to use the Connect 4 solver</h1>
+                <p class="mt-4 text-lg leading-8 text-foreground">The calculator works best when you enter the position exactly as it happened. Add each move in order, choose the player you want to analyze, and compare the recommended column with the threats on the board.</p>
                 <a href="/connect4/" class="mt-6 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700">Open the solver</a>
             </section>
 
@@ -48,28 +50,28 @@
                 <a href="#key-ideas">Key ideas</a><a href="#practice">Try it in the solver</a>
             </nav>
             <section id="key-ideas" class="mt-12 grid gap-5 md:grid-cols-3">
-                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                    <h2 class="text-xl font-bold text-gray-950">1. Enter moves</h2>
-                    <p class="mt-3 leading-7 text-gray-700">Click the columns in the same order they were played. Use Undo and Redo if you need to fix a position.</p>
+                <article class="rounded-lg border border-border bg-card p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-foreground">1. Enter moves</h2>
+                    <p class="mt-3 leading-7 text-foreground">Click the columns in the same order they were played. Use Undo and Redo if you need to fix a position.</p>
                 </article>
-                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                    <h2 class="text-xl font-bold text-gray-950">2. Pick a target</h2>
-                    <p class="mt-3 leading-7 text-gray-700">Analyze the current player, Red, or Yellow. This helps when you are studying a position from one side's point of view.</p>
+                <article class="rounded-lg border border-border bg-card p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-foreground">2. Pick a target</h2>
+                    <p class="mt-3 leading-7 text-foreground">Analyze the current player, Red, or Yellow. This helps when you are studying a position from one side's point of view.</p>
                 </article>
-                <article class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                    <h2 class="text-xl font-bold text-gray-950">3. Read the result</h2>
-                    <p class="mt-3 leading-7 text-gray-700">The highlighted column is the recommended move. A + or − number marks a proven win or loss in that many turns. A ~ is a search estimate, not a proven draw. Check whether the move blocks a threat, creates a fork, or improves center control.</p>
+                <article class="rounded-lg border border-border bg-card p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-foreground">3. Read the result</h2>
+                    <p class="mt-3 leading-7 text-foreground">The highlighted column is the recommended move. A + or − number marks a proven win or loss in that many turns. A ~ is a search estimate, not a proven draw. Check whether the move blocks a threat, creates a fork, or improves center control.</p>
                 </article>
             </section>
 
-            <section id="practice" class="mt-12 border-t border-gray-200 pt-8">
-                <h2 class="text-2xl font-bold text-gray-950">What to study after the result</h2>
-                <p class="mt-3 max-w-3xl leading-7 text-gray-700">In Practice vs AI, you play Red and the AI plays Yellow. Undo and Redo step through a full turn, including the AI reply when available. Master attempts a full proof within a time budget, then uses deeper search if the outcome remains unproven.</p>
-                <p class="mt-3 max-w-3xl leading-7 text-gray-700">Try columns 4, 1, 4, 1, 4, 2. Red has three discs stacked in the center and can win in column 4. Check that the recommendation completes that line. Look for immediate wins, forced blocks, diagonal support, and moves that create two winning threats on the next turn.</p>
+            <section id="practice" class="mt-12 border-t border-border pt-8">
+                <h2 class="text-2xl font-bold text-foreground">What to study after the result</h2>
+                <p class="mt-3 max-w-3xl leading-7 text-foreground">In Practice vs AI, you play Red and the AI plays Yellow. Undo and Redo step through a full turn, including the AI reply when available. Master attempts a full proof within a time budget, then uses deeper search if the outcome remains unproven.</p>
+                <p class="mt-3 max-w-3xl leading-7 text-foreground">Try columns 4, 1, 4, 1, 4, 2. Red has three discs stacked in the center and can win in column 4. Check that the recommendation completes that line. Look for immediate wins, forced blocks, diagonal support, and moves that create two winning threats on the next turn.</p>
                 <div class="mt-5 flex flex-wrap gap-3">
                     <a href="/connect4/?board=414142" class="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700">Try this winning position</a>
-                    <a href="/connect4/strategy/" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Strategy guide</a>
-                    <a href="/connect4/best-first-move/" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-900 hover:border-primary hover:text-primary">Best first move</a>
+                    <a href="/connect4/strategy/" class="rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground hover:border-primary hover:text-primary">Strategy guide</a>
+                    <a href="/connect4/best-first-move/" class="rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground hover:border-primary hover:text-primary">Best first move</a>
                 </div>
             </section>
         </main>

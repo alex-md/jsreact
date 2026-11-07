@@ -1,4 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
+import { RefreshCw, Search, TrendingUp, Coins, ArrowUpRight } from 'lucide-react';
+import './styles.css';
 
 // Local Imports
 import { useOsrsData } from './hooks/useOsrsData';
@@ -24,11 +26,11 @@ export default function OSRSFlipper() {
     const [budget, setBudget] = useState(10_000_000);
     const [budgetUnit, setBudgetUnit] = useState('M');
     const [budgetValue, setBudgetValue] = useState('10');
-    const [showSidebar, setShowSidebar] = useState(false);
+    const [activeTab, setActiveTab] = useState('flips');
+    const [submittedQuery, setSubmittedQuery] = useState('');
 
     // Search State
     const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState(null); // null: not searched, []: no results
 
     // === Hooks ===
     const {
@@ -48,41 +50,20 @@ export default function OSRSFlipper() {
         hasData,
     } = useFlipCalculation(mapping, fiveMin, latestPrices, hourlyPrices, budget, dataLoading);
 
-    const statusPill = useMemo(() => {
-        if (dataError) {
-            return {
-                label: 'Data error',
-                className: 'bg-red-100 text-red-700 border-red-200',
-            };
-        }
-        if (dataLoading) {
-            return {
-                label: 'Syncing live prices',
-                className: 'bg-amber-100 text-amber-700 border-amber-200',
-            };
-        }
-        if (hasData) {
-            return {
-                label: 'Live pricing',
-                className: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-            };
-        }
-        return {
-            label: 'Waiting for data',
-            className: 'bg-slate-100 text-slate-600 border-slate-200',
-        };
-    }, [dataError, dataLoading, hasData]);
-
+    const budgetNumber = Number(budgetValue);
+    const budgetError = budgetValue !== '' && (!Number.isFinite(budgetNumber) || budgetNumber < 0 || budgetNumber * (budgetUnit === 'M' ? 1_000_000 : 1_000) > Number.MAX_SAFE_INTEGER)
+        ? 'Enter a positive amount within the supported GP range.' : '';
+    const statusLabel = dataError ? 'Price update failed' : dataLoading ? 'Updating prices…' : hasData ? 'Prices loaded' : 'Waiting for prices';
 
     // === Event Handlers ===
     const handleBudgetChange = useCallback((value, unit) => {
-        const numValue = parseFloat(value);
+        const numValue = Number(value);
         setBudgetValue(value);
         setBudgetUnit(unit);
 
-        if (!isNaN(numValue) && numValue >= 0) {
+        if (Number.isFinite(numValue) && numValue >= 0 && numValue * (unit === 'M' ? 1_000_000 : 1_000) <= Number.MAX_SAFE_INTEGER) {
             setBudget(Math.floor(numValue * (unit === 'M' ? 1_000_000 : 1_000)));
-        } else if (value === '') {
+        } else {
             setBudget(0);
         }
     }, []);
@@ -95,18 +76,20 @@ export default function OSRSFlipper() {
         const value = event.target.value;
         setSearchQuery(value);
         if (!value.trim()) {
-            setSearchResults(null);
+            setSubmittedQuery('');
         }
     }, []);
 
     const handleSearch = useCallback(() => {
-        if (!searchQuery.trim() || !hasData) {
-            setSearchResults(searchQuery.trim() ? [] : null);
-            return;
-        }
-        const lowerCaseQuery = searchQuery.toLowerCase();
+        setSubmittedQuery(searchQuery.trim());
+    }, [searchQuery]);
+
+    // Derive results from the current price snapshot, including after a refresh.
+    const searchResults = useMemo(() => {
+        if (!submittedQuery || !hasData) return null;
+        const lowerCaseQuery = submittedQuery.toLowerCase();
         // Filter first, then slice, then map to avoid calculating expensive metrics for all items
-        const results = mapping
+        return mapping
             .filter(item => item && item.name && item.name.toLowerCase().includes(lowerCaseQuery))
             .slice(0, 20) // Limit to top 20 matches
             .map(item => {
@@ -126,321 +109,79 @@ export default function OSRSFlipper() {
                 };
             })
             .filter(Boolean);
-        setSearchResults(results);
-    }, [searchQuery, hasData, mapping, latestPrices, fiveMin, hourlyPrices]);
+    }, [submittedQuery, hasData, mapping, latestPrices, fiveMin, hourlyPrices]);
 
-    // === Render ===
+    const busy = dataLoading || calculatingFlips;
     return (
-        <div className="page-osrs relative min-h-screen text-slate-900">
-            <div className="osrs-grid" aria-hidden="true"></div>
-            <div className="osrs-glow" aria-hidden="true"></div>
-            <div className="relative mx-auto w-full max-w-7xl px-4 py-10 lg:px-8">
-                <header className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-blue-50/60"></div>
-                    <div className="relative px-6 py-8 md:px-10">
-                        <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
-                            <div className="max-w-2xl">
-                                <div className="inline-flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                                    OSRS Flip Finder
-                                    <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${statusPill.className}`}>
-                                        {statusPill.label}
-                                    </span>
-                                </div>
-                                <h1 className="mt-4 text-3xl font-semibold text-slate-950 md:text-4xl lg:text-[2.75rem]">
-                                    Start with your budget. We’ll surface the best flips.
-                                </h1>
-                                <p className="mt-3 text-sm text-slate-600 md:text-base">
-                                    Enter your GP, refresh prices, and review the ranked list. Simple, fast, and focused.
-                                </p>
-                                <div className="mt-6 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
-                                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Step 1</p>
-                                        <p className="font-semibold text-slate-800">Set your budget</p>
-                                    </div>
-                                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Step 2</p>
-                                        <p className="font-semibold text-slate-800">Refresh live prices</p>
-                                    </div>
-                                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Step 3</p>
-                                        <p className="font-semibold text-slate-800">Pick a top flip</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-full max-w-sm space-y-4">
-                                <div className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm">
-                                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                        Live Prices
-                                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400">
-                                            <span className={`h-2 w-2 rounded-full ${dataLoading ? 'bg-amber-400 animate-pulse' : dataError ? 'bg-red-500' : 'bg-emerald-500'}`}></span>
-                                            {dataLoading ? 'Updating' : dataError ? 'Issues' : 'Stable'}
-                                        </span>
-                                    </div>
-                                    <div className="mt-3 flex items-end justify-between">
-                                        <div>
-                                            <p className="text-2xl font-semibold text-slate-900">{formatTimeSince(lastUpdate)}</p>
-                                            <p className="text-xs text-slate-500">Last refresh</p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={refreshData}
-                                            disabled={dataLoading}
-                                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-                                        >
-                                            {dataLoading ? (
-                                                <span className="h-3 w-3 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
-                                            ) : (
-                                                <i className="fas fa-sync-alt"></i>
-                                            )}
-                                            {dataLoading ? 'Refreshing' : 'Refresh'}
-                                        </button>
-                                    </div>
-                                </div>
-                                {dataError && (
-                                    <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                        <strong className="block text-xs uppercase tracking-wide text-red-500">Data error</strong>
-                                        {dataError}
-                                    </div>
-                                )}
-                            </div>
+        <main className="osrs-app" id="osrs-main" tabIndex={-1}>
+            <header className="osrs-intro">
+                <div>
+                    <p className="osrs-kicker">The Grand Exchange workbench</p>
+                    <h1>OSRS <em>flip finder.</em></h1>
+                    <p className="osrs-intro-copy">Find a flip that fits your cash stack. Compare prices, margins, and recent trade volume.</p>
+                </div>
+                <div className="osrs-data-status">
+                    <span className={`osrs-status ${dataError ? 'is-error' : dataLoading ? 'is-loading' : ''}`} role="status">{statusLabel}</span>
+                    <span className="osrs-update-time">{lastUpdate ? `Fetched ${formatTimeSince(lastUpdate)}` : 'RuneScape Wiki price data'}</span>
+                    <button type="button" onClick={refreshData} disabled={dataLoading} className="osrs-button osrs-refresh">
+                        <RefreshCw aria-hidden="true" size={15} className={dataLoading ? 'osrs-spin' : ''} />
+                        {dataLoading ? 'Refreshing…' : 'Refresh prices'}
+                    </button>
+                </div>
+            </header>
+
+            {dataError && <div className="osrs-error" role="alert"><strong>Prices could not be refreshed.</strong> Check your connection and try Refresh prices again.</div>}
+
+            <div className="osrs-workspace">
+                <aside className="osrs-setup" aria-labelledby="osrs-budget-heading">
+                    <section className="osrs-budget-panel">
+                        <div className="osrs-panel-heading"><Coins aria-hidden="true" size={18} /><h2 id="osrs-budget-heading">Your cash stack</h2></div>
+                        <p className="osrs-help">Set your budget to size each flip.</p>
+                        <label htmlFor="osrs-budget">Budget amount</label>
+                        <div className="osrs-budget-inputs">
+                            <input id="osrs-budget" name="budget" type="number" inputMode="decimal" min="0" step="any" autoComplete="off" value={budgetValue}
+                                onChange={(event) => handleBudgetChange(event.target.value, budgetUnit)} aria-invalid={!!budgetError} aria-describedby={budgetError ? 'osrs-budget-error' : 'osrs-budget-total'} />
+                            <select name="budget-unit" aria-label="Budget unit" value={budgetUnit} onChange={(event) => handleBudgetChange(budgetValue, event.target.value)}>
+                                <option value="K">K · thousand</option><option value="M">M · million</option>
+                            </select>
                         </div>
+                        {budgetError && <p id="osrs-budget-error" className="osrs-field-error" role="alert">{budgetError}</p>}
+                        <div className="osrs-presets" role="group" aria-label="Budget presets">
+                            {BUDGET_PRESETS.map((preset) => <button key={preset.label} type="button" aria-pressed={budgetUnit === preset.unit && budgetValue === preset.value} onClick={() => applyBudgetPreset(preset)}>{preset.label}</button>)}
+                        </div>
+                        <p className="osrs-budget-total" id="osrs-budget-total"><span>Total budget</span><strong>{budget.toLocaleString()} <small>GP</small></strong></p>
+                        <div className="osrs-allocation"><span>Maximum per item</span><strong>{Math.floor(budget * 0.25).toLocaleString()} GP</strong><small>Up to 25% of your budget, capped by the buy limit and estimated liquidity.</small></div>
+                    </section>
+                    <details className="osrs-method">
+                        <summary>How to read your results</summary>
+                        <p>Suggestions are ranked by a score combining liquidity, turnover, margin, and price stability.</p>
+                        <p><strong>Buy / sell</strong> are suggested prices per item. <strong>Estimated profit</strong> uses the suggested quantity after the tool’s 2% tax calculation.</p>
+                        <p>Prices and volumes come from recent trades. They do not guarantee that an offer will fill.</p>
+                        <a href="https://prices.runescape.wiki/osrs" target="_blank" rel="noopener noreferrer">Price data on RuneScape Wiki <ArrowUpRight aria-hidden="true" size={13} /></a>
+                    </details>
+                </aside>
+
+                <div className="osrs-results-area">
+                    <div className="osrs-view-tabs" role="group" aria-label="Choose a tool">
+                        <button type="button" aria-pressed={activeTab === 'flips'} aria-controls={activeTab === 'flips' ? 'osrs-flips' : undefined} onClick={() => setActiveTab('flips')}><TrendingUp aria-hidden="true" size={16} />Flip opportunities</button>
+                        <button type="button" aria-pressed={activeTab === 'lookup'} aria-controls={activeTab === 'lookup' ? 'osrs-lookup' : undefined} onClick={() => setActiveTab('lookup')}><Search aria-hidden="true" size={16} />Item lookup</button>
                     </div>
-                </header>
 
-                <div className={`mt-8 grid gap-6 ${showSidebar ? 'lg:grid-cols-[1fr_minmax(280px,360px)]' : 'grid-cols-1'}`}>
-                    <main className="space-y-6">
-                        <section className="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm">
-                            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                                <div>
-                                    <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-                                        Capital Settings
-                                    </div>
-                                    <h2 className="mt-3 text-2xl font-semibold text-slate-900">Set your trading budget</h2>
-                                    <p className="mt-1 text-sm text-slate-600">
-                                        Enter your GP once. Everything below updates to match your budget.
-                                    </p>
-                                </div>
-                                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-right shadow-sm">
-                                    <p className="text-[10px] uppercase tracking-widest text-slate-400">Total GP</p>
-                                    <p className="text-base font-semibold text-slate-900">{budget.toLocaleString()}</p>
-                                </div>
-                            </div>
-
-                            <div className="mt-6 space-y-4">
-                                <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Budget amount</label>
-                                <div className="grid gap-3 md:grid-cols-[1fr_180px]">
-                                    <div className="relative">
-                                        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">GP</span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="0.1"
-                                            value={budgetValue}
-                                            onChange={(e) => handleBudgetChange(e.target.value, budgetUnit)}
-                                            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-lg font-semibold text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white"
-                                            placeholder="Amount"
-                                            aria-label="Budget amount"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleBudgetChange(budgetValue, 'K')}
-                                            aria-pressed={budgetUnit === 'K'}
-                                            className={`rounded-xl border px-3 py-2 text-xs font-semibold uppercase tracking-widest transition ${budgetUnit === 'K'
-                                                ? 'border-slate-900 bg-slate-900 text-white'
-                                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            K
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleBudgetChange(budgetValue, 'M')}
-                                            aria-pressed={budgetUnit === 'M'}
-                                            className={`rounded-xl border px-3 py-2 text-xs font-semibold uppercase tracking-widest transition ${budgetUnit === 'M'
-                                                ? 'border-slate-900 bg-slate-900 text-white'
-                                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            M
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-5 flex flex-wrap items-center gap-2">
-                                {BUDGET_PRESETS.map((preset) => {
-                                    const isActive = budgetUnit === preset.unit && budgetValue === preset.value;
-                                    return (
-                                        <button
-                                            key={preset.label}
-                                            type="button"
-                                            onClick={() => applyBudgetPreset(preset)}
-                                            aria-pressed={isActive}
-                                            className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition ${isActive
-                                                ? 'border-slate-900 bg-slate-900 text-white'
-                                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            {preset.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
-                            <div className="mt-4 grid gap-2 text-xs text-slate-500 sm:grid-cols-2">
-                                <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
-                                    <p className="text-[10px] uppercase tracking-widest text-slate-400">Auto allocation cap</p>
-                                    <p className="mt-1 font-semibold text-slate-700">25% per item</p>
-                                </div>
-                                <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
-                                    <p className="text-[10px] uppercase tracking-widest text-slate-400">Ideal flip range</p>
-                                    <p className="mt-1 font-semibold text-slate-700">
-                                        {Math.max(1, Math.round(budget * 0.08)).toLocaleString()} – {Math.max(1, Math.round(budget * 0.25)).toLocaleString()} gp
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
-                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                    <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Optional Tools</h2>
-                                    <p className="mt-1 text-sm text-slate-600">
-                                        Need instant price checks? Open the sidebar search when you want it.
-                                    </p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowSidebar((prev) => !prev)}
-                                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-900"
-                                >
-                                    <i className={`fas ${showSidebar ? 'fa-eye-slash' : 'fa-search'}`}></i>
-                                    {showSidebar ? 'Hide Tools' : 'Show Tools'}
-                                </button>
-                            </div>
-                        </section>
-
-                        <section aria-live="polite" className="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm">
-                            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                <div>
-                                    <h2 className="text-xl font-semibold text-slate-900">Top Opportunities</h2>
-                                    <p className="text-sm text-slate-500">
-                                        Curated for a {budgetUnit === 'M' ? `${budgetValue}M` : `${budgetValue}K`} budget.
-                                    </p>
-                                </div>
-                                {calculatingFlips && (
-                                    <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                                        <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500"></span>
-                                        Updating recommendations
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="mt-6">
-                                {calculatingFlips && flips.length === 0 ? (
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        {[1, 2, 3, 4].map(i => (
-                                            <div key={i} className="h-52 rounded-2xl border border-slate-200 bg-slate-50 animate-pulse"></div>
-                                        ))}
-                                    </div>
-                                ) : hasData && flips.length === 0 ? (
-                                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
-                                        <div className="mb-3 text-3xl">🔎</div>
-                                        <p className="text-base font-semibold text-slate-900">No flips found</p>
-                                        <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
-                                            Increase your budget or refresh the data to surface new opportunities.
-                                        </p>
-                                    </div>
-                                ) : !hasData && !dataLoading ? (
-                                    <div className="rounded-2xl border border-red-200 bg-red-50 py-10 text-center text-sm font-semibold text-red-600">
-                                        Data unavailable. Please refresh.
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        {flips.map((flip, index) => (
-                                            <div key={flip.id} className="relative animate-fade-in" style={{ animationDelay: `${index * 60}ms` }}>
-                                                <div className="absolute -top-3 left-4 z-10">
-                                                    <span className="rounded-full border border-slate-800 bg-slate-950 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-white shadow">
-                                                        #{index + 1}
-                                                    </span>
-                                                </div>
-                                                <FlipCard flip={{ ...flip, wiki: getWikiLink(flip.name) }} />
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </section>
-                    </main>
-
-                    {showSidebar && (
-                        <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
-                            <section className="rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Optional Tools</p>
-                                        <p className="text-sm font-semibold text-slate-800">Search & price lookup</p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowSidebar(false)}
-                                        className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
-                                    >
-                                        Hide
-                                    </button>
-                                </div>
-                            </section>
-
-                            <SearchForms
-                                searchQuery={searchQuery}
-                                onSearchQueryChange={handleSearchQueryChange}
-                                onSearchSubmit={handleSearch}
-                                loading={dataLoading || !hasData}
-                            />
-
-                            <section className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
-                                <div className="flex items-center justify-between">
-                                    <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Instant Price Results</h2>
-                                    {searchResults && (
-                                        <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-                                            {searchResults.length}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="mt-4 space-y-4">
-                                    {dataLoading && !searchResults ? (
-                                        <div className="flex items-center justify-center py-6">
-                                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"></div>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            {searchResults && searchResults.length > 0 && (
-                                                <div className="space-y-3">
-                                                    {searchResults.map((result) => (
-                                                        <ItemLookupResult
-                                                            key={result.item.id}
-                                                            data={result}
-                                                            formatPrice={formatGrandExchangePrice}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            )}
-
-                                            {searchResults && searchResults.length === 0 && !dataLoading && (
-                                                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-                                                    No items found for "{searchQuery}".
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            </section>
-                        </aside>
-                    )}
+                    {activeTab === 'flips' ? <section id="osrs-flips" aria-labelledby="osrs-results-heading" aria-busy={busy}>
+                        <div className="osrs-results-heading"><div><h2 id="osrs-results-heading">Top opportunities</h2><p>{budgetError ? 'Check your budget to see matching flips.' : `For your ${budget.toLocaleString()} GP budget`}</p></div><span className="osrs-result-count" role="status">{busy ? 'Finding flips…' : `${flips.length} suggestions`}</span></div>
+                        {budgetError ? <div className="osrs-empty"><Coins aria-hidden="true" size={24} /><h3>Check your cash stack</h3><p>Enter a valid budget to calculate opportunities.</p></div>
+                        : busy ? <div className="osrs-flip-grid osrs-skeletons" aria-hidden="true">{[1, 2, 3, 4].map(i => <div key={i} className="osrs-skeleton" />)}</div>
+                        : !hasData ? <div className="osrs-empty"><RefreshCw aria-hidden="true" size={24} /><h3>Price data unavailable</h3><p>Refresh prices to load the latest market data.</p><button className="osrs-button" onClick={refreshData} type="button">Try again</button></div>
+                        : flips.length === 0 ? <div className="osrs-empty"><Search aria-hidden="true" size={24} /><h3>{budget === 0 ? 'Set a budget to get started' : 'No matching flips right now'}</h3><p>{budget === 0 ? 'Enter your cash stack or choose a budget preset.' : 'Try a larger budget or refresh prices for a new set of trades.'}</p></div>
+                        : <div className="osrs-flip-grid">{flips.map((flip, index) => <FlipCard key={flip.id} rank={index + 1} flip={{ ...flip, wiki: getWikiLink(flip.name) }} />)}</div>}
+                    </section> : <section id="osrs-lookup" aria-labelledby="osrs-lookup-heading">
+                        <SearchForms searchQuery={searchQuery} onSearchQueryChange={handleSearchQueryChange} onSearchSubmit={handleSearch} loading={dataLoading || !hasData} />
+                        <div className="osrs-results-heading"><h2 id="osrs-lookup-heading">Price lookup results</h2><span role="status" className="osrs-result-count">{searchResults ? `${searchResults.length} matches` : 'Search by item name'}</span></div>
+                        {searchResults?.length ? <div className="osrs-flip-grid">{searchResults.map(result => <ItemLookupResult key={result.item.id} data={result} formatPrice={formatGrandExchangePrice} />)}</div>
+                        : <div className="osrs-empty"><Search aria-hidden="true" size={24} /><h3>{dataLoading ? 'Updating item prices…' : !hasData ? 'Price data unavailable' : searchResults ? 'No matching items' : 'Check an item’s prices'}</h3><p>{dataLoading ? 'The latest prices will appear here when loading finishes.' : !hasData ? 'Refresh prices to load the data for item lookup.' : searchResults ? `No priced items found for “${submittedQuery}”. Try a shorter name or a different spelling.` : 'Search for an item such as Blood rune or Abyssal whip to compare its buy and sell estimates.'}</p></div>}
+                    </section>}
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

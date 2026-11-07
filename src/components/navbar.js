@@ -81,6 +81,7 @@ export function createNavbar() {
 
     const logoLink = document.createElement("a");
     logoLink.href = "/";
+    logoLink.setAttribute("aria-label", "JSreact home");
     logoLink.className = "flex items-center gap-2";
 
     const logoImage = document.createElement("img");
@@ -89,9 +90,13 @@ export function createNavbar() {
     logoImage.width = 2172;
     logoImage.height = 724;
     logoImage.decoding = 'async';
-    logoImage.className = "h-12 w-auto max-w-[11rem] object-contain";
+    logoImage.className = "site-brand-icon";
 
-    logoLink.append(logoImage);
+    const wordmark = document.createElement("span");
+    wordmark.className = "site-wordmark";
+    wordmark.textContent = "jsreact";
+    wordmark.setAttribute("aria-hidden", "true");
+    logoLink.append(logoImage, wordmark);
     logoSection.appendChild(logoLink);
 
     const menuSection = document.createElement("div");

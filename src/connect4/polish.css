@@ -1,0 +1,195 @@
+/* Connect 4: a focused game table within the shared Numigma workspace. */
+body.page-connect4 {
+    --c4-board: #2c4c60;
+    --c4-edge: #527185;
+    --c4-hole: #142630;
+    --c4-red: #ed786e;
+    --c4-yellow: #edca78;
+}
+.page-connect4 .connect4-shell { width: min(1100px, 100%); margin: 0 auto; padding: 24px 24px 48px; }
+.page-connect4 .connect4-game-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; margin: 0 0 20px; }
+.page-connect4 .connect4-kicker { margin: 0 0 10px; color: hsl(var(--muted-foreground)); font: 600 11px/1.4 var(--font-sans); letter-spacing: .14em; text-transform: uppercase; }
+body.page-connect4 .connect4-game-header h1 { font: 400 clamp(32px, 3.8vw, 44px)/1.12 var(--font-serif); letter-spacing: -.035em; }
+.page-connect4 .connect4-game-header h1 em { font-weight: 400; color: hsl(var(--primary)); }
+.page-connect4 .connect4-intro { margin: 10px 0 0; color: hsl(var(--muted-foreground)); font-size: 15px; line-height: 1.6; }
+.page-connect4 .connect4-help-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-height: 44px; padding: 9px 12px; border: 1px solid hsl(var(--border)); border-radius: 6px; color: hsl(var(--muted-foreground)); font-size: 13px; }
+.page-connect4 .connect4-help-button:hover { color: hsl(var(--foreground)); border-color: hsl(var(--primary)); }
+.page-connect4 .connect4-tool-rail { display: flex; flex-wrap: wrap; width: 100%; max-width: none; gap: 16px; margin: 0 0 16px; padding: 0 0 16px; border: 0; border-bottom: 1px solid hsl(var(--border)); border-radius: 0; background: none; box-shadow: none; backdrop-filter: none; }
+.page-connect4 .connect4-mode-toggle { padding: 4px; border: 1px solid hsl(var(--border)); border-radius: 8px; background: hsl(var(--card)); }
+.page-connect4 .connect4-mode-toggle button { display: inline-flex; gap: 7px; align-items: center; justify-content: center; min-height: 40px; padding: 8px 14px; border-radius: 5px; font-size: 13px; color: hsl(var(--muted-foreground)); }
+.page-connect4 .connect4-mode-toggle button.is-active { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); box-shadow: none; }
+.page-connect4 .connect4-mode-toggle button:hover:not(.is-active) { color: hsl(var(--foreground)); background: hsl(var(--muted)); }
+.page-connect4 .connect4-presets { display: flex; align-items: center; gap: 8px; flex: 1; }
+.page-connect4 .connect4-rail-label { color: hsl(var(--muted-foreground)); font: 12px var(--font-sans); text-transform: none; letter-spacing: 0; }
+.page-connect4 .connect4-presets button { min-height: 44px; padding: 8px; border: 0; background: none; font-size: 12px; color: hsl(var(--muted-foreground)); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: hsl(var(--border)); }
+.page-connect4 .connect4-presets button:hover { color: hsl(var(--primary)); }
+.page-connect4 .connect4-share-button { margin-left: auto; min-height: 44px; padding: 10px 12px; border-radius: 6px; color: hsl(var(--primary)); background: transparent; font-size: 13px; }
+.page-connect4 .connect4-share-button:hover { border-color: hsl(var(--primary)); background: hsl(var(--primary) / .07); }
+.page-connect4 .connect4-difficulty-picker { flex: 1; padding: 3px; background: hsl(var(--card)); }
+.page-connect4 .connect4-difficulty-picker button { min-height: 44px; }
+.page-connect4 .connect4-difficulty-picker button.is-active { color: hsl(var(--primary)); background: hsl(var(--background)); }
+.page-connect4 .connect4-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 280px; align-items: start; gap: 24px; }
+.page-connect4 .connect4-settings-desktop { display: block; grid-column: 2; grid-row: 1; }
+.page-connect4 .connect4-board-area { grid-column: 1; grid-row: 1; min-width: 0; width: 100%; }
+.page-connect4 .connect4-settings-panel { padding: 22px; display: flex; flex-direction: column; gap: 22px; border: 1px solid hsl(var(--border)); border-radius: 14px; background: #1d2e38; }
+.page-connect4 .connect4-settings-panel > div:first-child { padding-bottom: 14px; }
+.page-connect4 .connect4-settings-panel h2 { font: 600 16px var(--font-sans); }
+.page-connect4 .connect4-settings-panel > div:first-child > div { display: none; }
+.page-connect4 .connect4-reading-guide { padding-top: 20px; border-top: 1px solid hsl(var(--border)); }
+.page-connect4 .connect4-reading-guide h3 { margin: 0 0 14px; font: 600 13px var(--font-sans); color: hsl(var(--foreground)); }
+.page-connect4 .connect4-reading-guide dl { margin: 0; }
+.page-connect4 .connect4-reading-guide dl > div { display: flex; align-items: baseline; gap: 14px; margin: 10px 0; }
+.page-connect4 .connect4-reading-guide dt { width: 24px; flex-shrink: 0; color: hsl(var(--primary)); font: 13px var(--font-mono); }
+.page-connect4 .connect4-reading-guide dd { margin: 0; font-size: 12px; color: hsl(var(--muted-foreground)); }
+.page-connect4 .connect4-reading-guide p { margin: 18px 0 0; font-size: 12px; line-height: 1.6; color: hsl(var(--muted-foreground)); }
+.page-connect4 .connect4-keyboard-note { margin: 0; color: hsl(var(--muted-foreground)); font-size: 11px; line-height: 2; }
+.page-connect4 .connect4-keyboard-note span { padding-inline: 5px; }
+.page-connect4 kbd { font: 11px var(--font-mono); border: 1px solid hsl(var(--border)); border-radius: 3px; padding: 2px 4px; }
+.page-connect4 .connect4-target-option { position: relative; flex: 1; display: grid; place-items: center; cursor: pointer; border-radius: 5px; min-height: 40px; padding: 6px; color: hsl(var(--muted-foreground)); font-size: 12px; }
+.page-connect4 .connect4-target-option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.page-connect4 .connect4-target-option:has(input:focus-visible) { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
+.page-connect4 .connect4-target-option:hover { background: hsl(var(--background) / .5); }
+.page-connect4 .connect4-target-option.is-selected { background: hsl(var(--background)); box-shadow: inset 0 0 0 1px hsl(var(--border)); }
+.page-connect4 .connect4-target-option .text-red-600 { color: #f1a39b; }
+.page-connect4 .connect4-target-option .text-yellow-600 { color: #edca78; }
+.page-connect4 .connect4-strength-slider { height: 28px; margin-block: 9px 0; background: transparent; cursor: pointer; }
+.page-connect4 .connect4-strength-slider::-webkit-slider-runnable-track { height: 5px; border-radius: 3px; background: #527185; }
+.page-connect4 .connect4-strength-slider::-webkit-slider-thumb { background: hsl(var(--primary)); border: 3px solid #1d2e38; box-shadow: 0 0 0 1px hsl(var(--primary)); margin-top: -6px; }
+.page-connect4 .connect4-strength-slider::-moz-range-track { height: 5px; background: #527185; }
+.page-connect4 .connect4-strength-slider::-moz-range-thumb { background: hsl(var(--primary)); border: 3px solid #1d2e38; box-shadow: 0 0 0 1px hsl(var(--primary)); }
+.page-connect4 .connect4-strength-labels { font-size: 10px; margin-bottom: 12px; }
+body.page-connect4 .connect4-board-card { width: 100%; display: flex; align-items: center; border-radius: 14px; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); box-shadow: none; padding: 20px 24px; overflow: visible; backdrop-filter: none; }
+.page-connect4 .connect4-board-card > .absolute { display: none; }
+.page-connect4 .connect4-inline-status { width: 100%; max-width: 440px; margin-bottom: 16px; }
+.page-connect4 .connect4-inline-status > div { background: transparent; padding: 0; font-weight: 600; }
+.page-connect4 .connect4-inline-status .text-red-700 { color: #f1a39b; }
+.page-connect4 .connect4-inline-status .text-yellow-700 { color: #edca78; }
+body.page-connect4 .connect4-board-stage { width: min(100%, 440px); padding: 12px; border: 1px solid var(--c4-edge); border-radius: 12px; background: var(--c4-board); box-shadow: 0 8px 20px #0d1c2530, inset 0 1px 0 #a6b8bf20; }
+.page-connect4 .connect4-board-foot { display: none; }
+.page-connect4 .connect4-grid { width: 100%; gap: 8px; padding: 8px; border: 0; border-radius: 6px; background: transparent; box-shadow: none; }
+.page-connect4 .connect4-cell { width: 100%; min-width: 0; aspect-ratio: 1; }
+.page-connect4 .connect4-hole { border-color: #10212d80; background: var(--c4-hole); box-shadow: inset 0 2px 4px #08182270, 0 1px 0 #7592a12b; }
+.page-connect4 .connect4-disc { transition: transform 180ms ease, opacity 180ms ease; box-shadow: none; }
+.page-connect4 .connect4-disc.is-red { background: var(--c4-red); box-shadow: inset 0 -3px 0 #903b3b50, inset 0 2px 0 #ffd6c95c; }
+.page-connect4 .connect4-disc.is-yellow { background: var(--c4-yellow); box-shadow: inset 0 -3px 0 #916a2750, inset 0 2px 0 #fff3c970; }
+.page-connect4 .connect4-disc.is-empty { background: transparent; }
+.page-connect4 .connect4-disc > div { border: 1px solid #18273020; }
+.page-connect4 .connect4-evaluation-row { width: 100%; gap: 8px; margin-bottom: 8px; padding-inline: 8px; }
+.page-connect4 .connect4-evaluation { justify-self: stretch; width: 100%; margin-inline: 0; height: 34px; border-radius: 5px; border-color: #a6b8bf35; background: #14263050; color: #dce6e8; font-size: 13px; }
+.page-connect4 .connect4-evaluation.is-best { outline: 2px solid hsl(var(--primary)); outline-offset: 1px; box-shadow: none; }
+.page-connect4 .connect4-evaluation.is-win { background: #25614e; color: #e0f6e9; }
+.page-connect4 .connect4-evaluation.is-loss { background: #7d3a3a; color: #fff0e9; }
+.page-connect4 .connect4-evaluation-column { background: #142630; color: #c4d6df; }
+.page-connect4 .connect4-column-recommended { box-shadow: inset 0 0 0 2px hsl(var(--primary) / .7); background: hsl(var(--primary) / .08); }
+.page-connect4 .connect4-last-move { border-color: #182730; box-shadow: 0 0 0 1px #ffffff90; }
+.page-connect4 .connect4-move-caption { width: 100%; max-width: none; margin-top: 12px; font-size: 12px; }
+.page-connect4 .connect4-board-controls { width: 100%; max-width: 440px; margin-top: 14px; gap: 12px; }
+.page-connect4 .connect4-action-row { order: 1; gap: 8px; }
+.page-connect4 .connect4-primary-action { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border: 1px solid hsl(var(--primary)); border-radius: 6px; min-height: 46px; font-size: 13px; font-weight: 600; box-shadow: none; }
+.page-connect4 .connect4-primary-action:hover:not(:disabled) { background: #c9e5dc; border-color: #c9e5dc; }
+.page-connect4 .connect4-action-button { border-radius: 6px; height: 46px; background: transparent; box-shadow: none; }
+.page-connect4 .connect4-result-strip { order: 2; border-radius: 8px; background: #1d2e38; padding: 12px 14px; gap: 12px; }
+.page-connect4 .connect4-result-label { display: block; color: hsl(var(--muted-foreground)); font-size: 11px; line-height: 1.3; }
+.page-connect4 .connect4-result-column { display: inline-block; color: hsl(var(--primary)); font-size: 17px; font-weight: 600; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.page-connect4 .connect4-result-player { margin-left: 8px; color: hsl(var(--muted-foreground)); font-size: 12px; }
+.page-connect4 .connect4-auto-label { display: block; }
+.page-connect4 .connect4-result-strip > div:last-child:not(.connect4-result-copy) { flex-direction: column; gap: 5px; }
+.page-connect4 .connect4-auto-switch { width: 48px; height: 26px; min-width: 48px; min-height: 26px; border-color: #78968d; background: hsl(var(--muted)); overflow: visible; }
+.page-connect4 .connect4-auto-switch::after { content: ''; position: absolute; inset: -9px -2px; }
+.page-connect4 .connect4-auto-switch.is-on { background: hsl(var(--primary)); border-color: hsl(var(--primary)); box-shadow: none; }
+.page-connect4 .connect4-switch-label { display: none; }
+.page-connect4 .connect4-switch-thumb { width: 18px; height: 18px; top: 3px; left: 3px; background: #e0e9e7; box-shadow: 0 1px 3px #10212d30; }
+.page-connect4 .connect4-auto-switch.is-on .connect4-switch-thumb { transform: translateX(22px); background: #182730; }
+.page-connect4 .connect4-mobile-target { order: 3; padding: 14px 0 0; margin-top: 2px; border: 0; border-top: 1px solid hsl(var(--border)); border-radius: 0; background: none; box-shadow: none; }
+.page-connect4 .connect4-ai-status { border-radius: 6px; font-size: 12px; }
+.page-connect4 dialog { overscroll-behavior: contain; }
+.connect4-skip:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.connect4-skip:focus { position: fixed; z-index: 100; top: 12px; left: 12px; padding: 12px 16px; border-radius: 6px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+#connect4-main { scroll-margin-top: 80px; }
+.page-connect4 .connect4-shell > section:not(.connect4-tool-rail) { max-width: none; }
+.page-connect4 .connect4-shell > section h2 { font-weight: 400; }
+@media (max-width: 1000px) {
+    .page-connect4 .connect4-presets { order: 3; flex-basis: 100%; }
+    .page-connect4 .connect4-tool-rail { gap: 10px; }
+    .page-connect4 .connect4-workspace { grid-template-columns: minmax(0, 1fr) 250px; gap: 16px; }
+}
+@media (max-width: 767px) {
+    .page-connect4 .connect4-shell { padding: 18px 12px 32px; }
+    .page-connect4 .connect4-game-header { padding-inline: 0; margin-bottom: 14px; gap: 12px; align-items: flex-start; }
+    body.page-connect4 .connect4-game-header h1 { font-size: 32px; }
+    .page-connect4 .connect4-kicker { margin-bottom: 5px; font-size: 10px; }
+    .page-connect4 .connect4-intro { font-size: 13px; margin-top: 6px; line-height: 1.5; max-width: 290px; }
+    .page-connect4 .connect4-help-button { width: 44px; padding: 8px; }
+    .page-connect4 .connect4-help-button span { display: none; }
+    .page-connect4 .connect4-tool-rail { margin-bottom: 12px; padding-bottom: 12px; gap: 10px 8px; }
+    .page-connect4 .connect4-mode-toggle { flex: 1; min-width: 0; }
+    .page-connect4 .connect4-mode-toggle button { padding: 7px 6px; min-height: 40px; font-size: 12px; gap: 5px; }
+    .page-connect4 .connect4-mode-toggle button svg { width: 14px; flex-shrink: 0; }
+    .page-connect4 .connect4-share-button { min-width: 44px; padding: 10px 8px; }
+    .page-connect4 .connect4-presets { gap: 12px; justify-content: flex-start; order: 3; flex: 0 0 100%; overflow: visible; }
+    .page-connect4 .connect4-rail-label { display: none; }
+    .page-connect4 .connect4-presets button { flex: none; padding: 0; min-height: 44px; font-size: 12px; }
+    .page-connect4 .connect4-workspace { display: block; }
+    .page-connect4 .connect4-settings-desktop { display: none; }
+    body.page-connect4 .connect4-board-card { padding: 14px; }
+    .page-connect4 .connect4-inline-status { margin-bottom: 12px; }
+    body.page-connect4 .connect4-board-stage { padding: 8px; border-width: 1px; }
+    .page-connect4 .connect4-grid { gap: 6px; padding: 5px; }
+    .page-connect4 .connect4-evaluation-row { gap: 6px; padding-inline: 5px; margin-bottom: 6px; }
+    .page-connect4 .connect4-evaluation { height: 28px; font-size: 12px; }
+    .page-connect4 .connect4-evaluation-column { display: none; }
+    .page-connect4 .connect4-cell { width: 100%; }
+    .page-connect4 .connect4-move-caption { font-size: 11px; margin-top: 10px; }
+    .page-connect4 .connect4-board-controls { margin-top: 10px; gap: 10px; }
+    .page-connect4 .connect4-strength-labels { font-size: 10px; }
+    .page-connect4 .connect4-difficulty-picker { flex: 0 0 100%; order: 3; }
+}
+@media (max-width: 360px) {
+    .page-connect4 .connect4-mode-toggle button svg { display: none; }
+    .page-connect4 .connect4-mode-toggle button { font-size: 11px; }
+    body.page-connect4 .connect4-board-card { padding: 10px; }
+    .page-connect4 .connect4-result-strip { padding: 10px; }
+    .page-connect4 .connect4-result-player { display: block; margin: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .page-connect4 .connect4-disc { transition: none; }
+}
+/* Practice uses the same centered game table without an empty settings column. */
+.page-connect4 .connect4-workspace:not(:has(.connect4-settings-desktop)) { grid-template-columns: minmax(0, 720px); justify-content: center; }
+.page-connect4 .connect4-game-header h1 { max-width: none; }
+.page-connect4 .connect4-primary-action span { white-space: nowrap; }
+.page-connect4 .connect4-result-strip strong.text-red-600 { color: #f1a39b; }
+.page-connect4 .connect4-mobile-target .connect4-strength-labels { margin-bottom: 0; }
+@media (max-width: 767px) {
+    .page-connect4 .connect4-shell { padding-top: 18px; }
+    .page-connect4 .connect4-presets { gap: 18px; }
+}
+.page-connect4 .connect4-action-row { grid-template-columns: 44px 44px minmax(0, 1fr) 44px; }
+.page-connect4 .connect4-primary-action { min-width: 0; padding-inline: 8px; }
+.page-connect4 .connect4-result-copy > p { overflow-wrap: anywhere; }
+.page-connect4 .connect4-target-option { min-height: 44px; }
+@media (max-width: 767px) {
+    .page-connect4 .navbar > .container .h-16 { height: 52px; }
+    .page-connect4 .connect4-kicker { display: none; }
+    .page-connect4 .connect4-intro { max-width: none; font-size: 12px; }
+    .page-connect4 .connect4-game-header { gap: 8px; }
+    .page-connect4 .connect4-action-row { gap: 6px; }
+    .page-connect4 .connect4-primary-action { font-size: 12px; }
+    .page-connect4 .connect4-primary-action span { gap: 4px; }
+}
+@media (max-width: 360px) {
+    .page-connect4 .connect4-primary-action { font-size: 11px; padding-inline: 4px; }
+    .page-connect4 .connect4-primary-action svg { display: none; }
+}
+.page-connect4 .connect4-board-stage { overflow: hidden; }
+.page-connect4 .connect4-winning-cell::after { border: 2px solid #e0e9e7; box-shadow: 0 0 0 2px #b5d8cc; }
+.page-connect4 .connect4-mobile-guide { margin-top: 14px; border-top: 1px solid hsl(var(--border)); padding-top: 10px; }
+.page-connect4 .connect4-mobile-guide summary { min-height: 44px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: hsl(var(--muted-foreground)); font-size: 12px; }
+.page-connect4 .connect4-mobile-guide summary::after { content: '+'; margin-left: auto; color: hsl(var(--primary)); font-size: 18px; }
+.page-connect4 .connect4-mobile-guide[open] summary::after { content: '−'; }
+.page-connect4 .connect4-mobile-guide p { color: hsl(var(--muted-foreground)); font-size: 12px; line-height: 1.7; padding: 6px 0; }
+.page-connect4 .connect4-mobile-guide strong { color: hsl(var(--primary)); font-family: var(--font-mono); }
+.page-connect4 dialog button { min-height: 44px; }
+/* Pieces must paint above the inset hole after their drop animation finishes. */
+.page-connect4 .connect4-disc { position: relative; z-index: 1; }
+.page-connect4 .connect4-last-move { z-index: 2; }

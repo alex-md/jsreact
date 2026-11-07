@@ -43,15 +43,15 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, icon, accent }: MetricCardProps) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-slate-500">{title}</p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{value}</p>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{value}</p>
         </div>
         <div className={`rounded-md p-2 ${accent}`}>{icon}</div>
       </div>
-      <p className="mt-3 text-sm text-slate-500">{subtitle}</p>
+      <p className="mt-3 text-sm text-muted-foreground">{subtitle}</p>
     </div>
   );
 }
@@ -87,7 +87,7 @@ function SimpleLineChart({ data }: SimpleLineChartProps) {
 
   return (
     <div>
-      <div className="flex justify-end text-sm font-medium text-slate-600">Peak {formatCompact(maxValue)}</div>
+      <div className="flex justify-end text-sm font-medium text-muted-foreground">Peak {formatCompact(maxValue)}</div>
       <div className="mt-6 overflow-hidden">
         <svg viewBox="0 0 720 260" className="h-72 w-full" role="img" aria-label="Daily views trend">
           <defs>
@@ -112,7 +112,7 @@ function SimpleLineChart({ data }: SimpleLineChartProps) {
           ))}
         </svg>
       </div>
-      <div className="mt-2 flex justify-between text-xs text-slate-500">
+      <div className="mt-2 flex justify-between text-xs text-muted-foreground">
         <span>{data[0]?.label}</span>
         <span>{data[Math.floor(data.length / 2)]?.label}</span>
         <span>{data[data.length - 1]?.label}</span>
@@ -125,41 +125,41 @@ function RealtimeCard({ data }: { data: AnalyticsData }) {
   const max = Math.max(1, ...data.realtimeMinutes.map(item => item.views));
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-base font-semibold text-slate-950">Realtime</h2>
-          <p className="text-sm text-slate-500">Last 30 minutes</p>
+          <h2 className="text-base font-semibold text-foreground">Realtime</h2>
+          <p className="text-sm text-muted-foreground">Last 30 minutes</p>
         </div>
         <div className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Live</div>
       </div>
       <div className="mt-6 grid grid-cols-2 gap-4">
         <div>
-          <p className="text-sm text-slate-500">Active users</p>
-          <p className="mt-1 text-3xl font-semibold text-slate-950">{formatNumber(data.activeUsers)}</p>
+          <p className="text-sm text-muted-foreground">Active users</p>
+          <p className="mt-1 text-3xl font-semibold text-foreground">{formatNumber(data.activeUsers)}</p>
         </div>
         <div>
-          <p className="text-sm text-slate-500">Views</p>
-          <p className="mt-1 text-3xl font-semibold text-slate-950">{formatNumber(data.last30Minutes)}</p>
+          <p className="text-sm text-muted-foreground">Views</p>
+          <p className="mt-1 text-3xl font-semibold text-foreground">{formatNumber(data.last30Minutes)}</p>
         </div>
       </div>
       <div className="mt-6 flex h-32 items-end gap-1">
         {data.realtimeMinutes.map((item, index) => (
           <div key={`${item.minute}-${index}`} className="flex min-w-0 flex-1 flex-col items-center gap-2">
             <div
-              className="w-full rounded-t bg-blue-500 transition-all"
+              className="w-full rounded-t bg-primary transition-all"
               style={{ height: `${Math.max(8, (item.views / max) * 100)}%` }}
               title={`${item.minute}: ${formatNumber(item.views)} views`}
             />
             {index % 10 === 0 || index === data.realtimeMinutes.length - 1 ? (
-              <span className="text-[10px] text-slate-400">{item.minute}</span>
+              <span className="text-[10px] text-muted-foreground">{item.minute}</span>
             ) : (
               <span className="h-3" />
             )}
           </div>
         ))}
       </div>
-      <p className="mt-4 text-sm text-slate-600">
+      <p className="mt-4 text-sm text-muted-foreground">
         Current pace is {formatNumber(data.currentHourlyRate)} views per hour with steady minute-level activity.
       </p>
     </div>
@@ -168,20 +168,20 @@ function RealtimeCard({ data }: { data: AnalyticsData }) {
 
 function BreakdownCard({ title, icon, items }: { title: string; icon: React.ReactNode; items: BreakdownItem[] }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
       <div className="mb-5 flex items-center gap-2">
-        <div className="text-slate-500">{icon}</div>
-        <h2 className="text-base font-semibold text-slate-950">{title}</h2>
+        <div className="text-muted-foreground">{icon}</div>
+        <h2 className="text-base font-semibold text-foreground">{title}</h2>
       </div>
       <div className="space-y-4">
         {items.map(item => (
           <div key={item.label}>
             <div className="flex items-center justify-between gap-3 text-sm">
-              <span className="font-medium text-slate-700">{item.label}</span>
-              <span className="text-slate-500">{formatNumber(item.value)}</span>
+              <span className="font-medium text-foreground">{item.label}</span>
+              <span className="text-muted-foreground">{formatNumber(item.value)}</span>
             </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-              <div className="h-full rounded-full bg-blue-500" style={{ width: `${item.percent}%` }} />
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${item.percent}%` }} />
             </div>
           </div>
         ))}
@@ -194,23 +194,23 @@ function HourlyCurve({ data }: { data: AnalyticsData }) {
   const max = Math.max(1, ...data.hourlyCurve.map(item => item.value));
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-slate-950">Hourly curve</h2>
-          <p className="text-sm text-slate-500">Projected distribution through the UTC day</p>
+          <h2 className="text-base font-semibold text-foreground">Hourly curve</h2>
+          <p className="text-sm text-muted-foreground">Projected distribution through the UTC day</p>
         </div>
-        <Clock3 className="h-5 w-5 text-slate-400" />
+        <Clock3 className="h-5 w-5 text-muted-foreground" />
       </div>
       <div className="flex h-44 items-end gap-1">
         {data.hourlyCurve.map(item => (
           <div key={item.hour} className="flex min-w-0 flex-1 flex-col items-center gap-2">
             <div
-              className={`w-full rounded-t ${item.isCurrent ? 'bg-emerald-500' : 'bg-slate-300'}`}
+              className={`w-full rounded-t ${item.isCurrent ? 'bg-emerald-500' : 'bg-card'}`}
               style={{ height: `${Math.max(5, (item.value / max) * 100)}%` }}
               title={`${item.hour}: ${formatNumber(item.value)} views`}
             />
-            {item.hour.endsWith(':00') ? <span className="text-[10px] text-slate-400">{item.hour}</span> : <span className="h-3" />}
+            {item.hour.endsWith(':00') ? <span className="text-[10px] text-muted-foreground">{item.hour}</span> : <span className="h-3" />}
           </div>
         ))}
       </div>
@@ -220,7 +220,7 @@ function HourlyCurve({ data }: { data: AnalyticsData }) {
 
 function InsightCard({ insight }: { insight: InsightData }) {
   const toneClass = {
-    blue: 'border-blue-200 bg-blue-50 text-blue-800',
+    blue: 'border-primary/30 bg-primary/10 text-primary',
     green: 'border-emerald-200 bg-emerald-50 text-emerald-800',
     amber: 'border-amber-200 bg-amber-50 text-amber-800',
     rose: 'border-rose-200 bg-rose-50 text-rose-800'
@@ -271,10 +271,10 @@ const AnalyticsDashboard: React.FC = () => {
 
   if (loading || !data) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
-          <p className="text-sm font-medium text-slate-500">Loading analytics...</p>
+          <p className="text-sm font-medium text-muted-foreground">Loading analytics...</p>
         </div>
       </div>
     );
@@ -282,18 +282,18 @@ const AnalyticsDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-        <div className="max-w-md rounded-lg border border-rose-200 bg-white p-6 text-center shadow-sm">
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="max-w-md rounded-lg border border-rose-200 bg-card p-6 text-center shadow-sm">
           <Activity className="mx-auto h-8 w-8 text-rose-500" />
-          <h1 className="mt-4 text-lg font-semibold text-slate-950">Analytics unavailable</h1>
-          <p className="mt-2 text-sm text-slate-500">The dashboard could not refresh. Try again in a moment.</p>
+          <h1 className="mt-4 text-lg font-semibold text-foreground">Analytics unavailable</h1>
+          <p className="mt-2 text-sm text-muted-foreground">The dashboard could not refresh. Try again in a moment.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
+    <div className="min-h-screen bg-background text-foreground">
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <header className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -301,16 +301,16 @@ const AnalyticsDashboard: React.FC = () => {
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               Live overview
             </div>
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Realtime overview</h1>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Realtime overview</h1>
+            <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
               Current traffic, acquisition mix, device split, and page activity for JSreact.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             {data.source === 'local' && (
               <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 font-medium text-amber-700">Estimated refresh</span>
             )}
-            <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 shadow-sm">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 shadow-sm">
               <RefreshCw className="h-3.5 w-3.5" />
               Updated {data.lastUpdated}
             </span>
@@ -322,8 +322,8 @@ const AnalyticsDashboard: React.FC = () => {
             title="Total views"
             value={formatNumber(data.totalViews)}
             subtitle={`${formatNumber(data.viewsToday)} views today`}
-            icon={<Eye className="h-5 w-5 text-blue-700" />}
-            accent="bg-blue-50"
+            icon={<Eye className="h-5 w-5 text-primary" />}
+            accent="bg-primary/10"
           />
           <MetricCard
             title="Last 30 minutes"
@@ -349,13 +349,13 @@ const AnalyticsDashboard: React.FC = () => {
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm lg:col-span-2">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h2 className="text-base font-semibold text-slate-950">Traffic trend</h2>
-                <p className="text-sm text-slate-500">Daily views across the selected range</p>
+                <h2 className="text-base font-semibold text-foreground">Traffic trend</h2>
+                <p className="text-sm text-muted-foreground">Daily views across the selected range</p>
               </div>
-              <div className="flex rounded-md border border-slate-200 bg-slate-50 p-1">
+              <div className="flex rounded-md border border-border bg-background p-1">
                 {ranges.map(range => (
                   <button
                     key={range}
@@ -363,8 +363,8 @@ const AnalyticsDashboard: React.FC = () => {
                     onClick={() => setRangeDays(range)}
                     className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
                       rangeDays === range
-                        ? 'bg-white text-blue-700 shadow-sm'
-                        : 'text-slate-500 hover:text-slate-900'
+                        ? 'bg-card text-primary shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {range}d
@@ -387,10 +387,10 @@ const AnalyticsDashboard: React.FC = () => {
           <div className="lg:col-span-2">
             <HourlyCurve data={data} />
           </div>
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
             <div className="mb-5 flex items-center gap-2">
-              <MousePointer2 className="h-5 w-5 text-slate-500" />
-              <h2 className="text-base font-semibold text-slate-950">Traffic notes</h2>
+              <MousePointer2 className="h-5 w-5 text-muted-foreground" />
+              <h2 className="text-base font-semibold text-foreground">Traffic notes</h2>
             </div>
             <div className="space-y-3">
               {data.insights.map(insight => (

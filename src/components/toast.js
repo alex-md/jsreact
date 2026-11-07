@@ -25,8 +25,8 @@ export function showToast(message, type = 'info') {
     // Type-specific styles
     const typeStyles = {
         info: {
-            icon: '<i class="fas fa-info-circle text-blue-500"></i>',
-            additionalClasses: 'border-blue-100 dark:border-blue-900/50'
+            icon: '<i class="fas fa-info-circle text-primary"></i>',
+            additionalClasses: 'border-primary/30 dark:border-blue-900/50'
         },
         success: {
             icon: '<i class="fas fa-check-circle text-green-500"></i>',

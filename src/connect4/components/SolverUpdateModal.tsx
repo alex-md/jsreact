@@ -32,7 +32,7 @@ const SolverUpdateModal: React.FC<SolverUpdateModalProps> = ({ isOpen, onClose }
                 aria-describedby="solver-update-description"
             >
                 <div className="flex items-start gap-3 border-b border-border px-5 py-4">
-                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-500/10 text-primary-600">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                         <FileText aria-hidden="true" size={18} />
                     </span>
                     <div className="min-w-0 flex-1">
@@ -64,15 +64,15 @@ const SolverUpdateModal: React.FC<SolverUpdateModalProps> = ({ isOpen, onClose }
                     <h3 className="mt-4 text-sm font-bold text-foreground">What changed</h3>
                     <ul className="mt-3 space-y-2.5 text-sm leading-5 text-muted-foreground">
                         <li className="flex gap-2.5">
-                            <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-primary-600" size={16} />
+                            <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-primary" size={16} />
                             <span><strong className="text-foreground">Stronger analysis:</strong> improved threat detection, move ordering, and deeper Expert searches.</span>
                         </li>
                         <li className="flex gap-2.5">
-                            <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-primary-600" size={16} />
+                            <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-primary" size={16} />
                             <span><strong className="text-foreground">More natural Human mode:</strong> a consistent playing style throughout each game, without missing immediate wins or blocks.</span>
                         </li>
                         <li className="flex gap-2.5">
-                            <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-primary-600" size={16} />
+                            <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-primary" size={16} />
                             <span><strong className="text-foreground">More capable Master mode:</strong> attempts to prove the position before using deep time-limited analysis.</span>
                         </li>
                     </ul>
@@ -83,7 +83,7 @@ const SolverUpdateModal: React.FC<SolverUpdateModalProps> = ({ isOpen, onClose }
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition hover:border-primary-300 hover:text-primary-700"
+                        className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition hover:border-primary-300 hover:text-primary"
                     >
                         Got it!
                     </button>

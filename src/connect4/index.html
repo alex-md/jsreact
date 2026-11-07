@@ -3,6 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
+        <meta name="theme-color" content="#182730">
 
         <title>Connect 4 Solver &amp; Best Move Calculator | AI Helper Tool</title>
         <meta name="description"
@@ -144,9 +145,11 @@
                 }
             );
         </script>
+        <link rel="stylesheet" href="/assets/styles/global.css">
     </head>
 
-    <body class="bg-gray-50">
+    <body class="page-connect4 bg-background">
+        <a class="connect4-skip" href="#connect4-main">Skip to the solver</a>
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
             initPageShell();
@@ -154,7 +157,7 @@
 
         <div id="header"></div>
 
-        <main class="container mx-auto px-3 py-2 sm:px-4 sm:py-3 max-w-7xl min-h-[calc(100vh-300px)]">
+        <main id="connect4-main" tabindex="-1" class="connect4-main">
             <div id="root"></div>
         </main>
 

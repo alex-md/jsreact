@@ -26,13 +26,14 @@ const AiStrengthControl: React.FC<AiStrengthControlProps> = ({
                 <label htmlFor={compact ? 'ai-strength-mobile' : 'ai-strength-desktop'} className="text-xs font-semibold text-muted-foreground">
                     AI strength
                 </label>
-                <span className="rounded-full bg-primary-500/10 px-2 py-1 text-xs font-bold text-primary-700">
+                <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-bold text-primary">
                     {selected.label}
                 </span>
             </div>
             <input
                 id={compact ? 'ai-strength-mobile' : 'ai-strength-desktop'}
                 className="connect4-strength-slider"
+                name="analysis-strength"
                 type="range"
                 min="0"
                 max={AI_STRENGTHS.length - 1}

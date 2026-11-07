@@ -28,6 +28,7 @@ export const useFlipCalculation = (
             return;
         }
 
+        let active = true;
         setCalculatingFlips(true);
 
         const params = {
@@ -38,12 +39,14 @@ export const useFlipCalculation = (
         };
 
         getStableFlipSuggestions(mapping, fiveMin, latestPrices, hourlyPrices, params)
-            .then(setFlips)
+            .then(result => { if (active) setFlips(result); })
             .catch(err => {
                 console.error('Error calculating flips:', err);
-                setFlips([]);
+                if (active) setFlips([]);
             })
-            .finally(() => setCalculatingFlips(false));
+            .finally(() => { if (active) setCalculatingFlips(false); });
+
+        return () => { active = false; };
 
     }, [hasData, mapping, fiveMin, latestPrices, hourlyPrices, budget]);
 

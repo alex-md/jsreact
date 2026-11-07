@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Clipboard, RotateCcw, Share2, Sparkles } from 'lucide-react';
+import { Check, Share2, Crosshair, Swords } from 'lucide-react';
 
 export type Connect4Mode = 'solver' | 'practice';
 export type PracticeDifficulty = 'easy' | 'standard' | 'optimal';
@@ -10,7 +10,6 @@ interface SolverToolbarProps {
     practiceDifficulty: PracticeDifficulty;
     onPracticeDifficultyChange: (difficulty: PracticeDifficulty) => void;
     onPreset: (sequence: string) => void;
-    onReset: () => void;
     onShare: () => void;
     shareCopied: boolean;
 }
@@ -20,8 +19,8 @@ const DIFFICULTIES: Array<{
     label: string;
     detail: string;
 }> = [
-    { id: 'easy', label: 'Easy', detail: 'depth 3' },
-    { id: 'standard', label: 'Standard', detail: 'depth 4–5' },
+    { id: 'easy', label: 'Easy', detail: 'Learn the basics' },
+    { id: 'standard', label: 'Standard', detail: 'A balanced game' },
     { id: 'optimal', label: 'Master', detail: 'deep analysis' },
 ];
 
@@ -31,7 +30,6 @@ const SolverToolbar: React.FC<SolverToolbarProps> = ({
     practiceDifficulty,
     onPracticeDifficultyChange,
     onPreset,
-    onReset,
     onShare,
     shareCopied,
 }) => (
@@ -43,7 +41,7 @@ const SolverToolbar: React.FC<SolverToolbarProps> = ({
                 aria-pressed={mode === 'solver'}
                 onClick={() => onModeChange('solver')}
             >
-                Solver / Analysis
+                <Crosshair aria-hidden="true" size={16} /> Analyze a board
             </button>
             <button
                 type="button"
@@ -51,7 +49,7 @@ const SolverToolbar: React.FC<SolverToolbarProps> = ({
                 aria-pressed={mode === 'practice'}
                 onClick={() => onModeChange('practice')}
             >
-                Practice vs AI
+                <Swords aria-hidden="true" size={16} /> Play against AI
             </button>
         </div>
 
@@ -72,24 +70,16 @@ const SolverToolbar: React.FC<SolverToolbarProps> = ({
             </div>
         ) : (
             <div className="connect4-presets" aria-label="Quick-start board positions">
-                <span className="connect4-rail-label">
-                    <Sparkles aria-hidden="true" size={14} />
-                    Quick start
-                </span>
-                <button type="button" onClick={() => onPreset('4')}>Middle Column Opening</button>
-                <button type="button" onClick={() => onPreset('443454')}>Trap Scenario</button>
-                <button type="button" onClick={onReset}>
-                    <RotateCcw aria-hidden="true" size={14} />
-                    Reset Board
-                </button>
+                <span className="connect4-rail-label">Try a position</span>
+                <button type="button" onClick={() => onPreset('4')}>Center opening <span aria-hidden="true">↗</span></button>
+                <button type="button" onClick={() => onPreset('443454')}>Practice a trap <span aria-hidden="true">↗</span></button>
             </div>
         )}
 
         <button type="button" className="connect4-share-button" onClick={onShare}>
             {shareCopied ? <Check aria-hidden="true" size={16} /> : <Share2 aria-hidden="true" size={16} />}
-            <span className="hidden sm:inline">{shareCopied ? 'Link copied' : 'Share Board Position'}</span>
+            <span className="hidden sm:inline">{shareCopied ? 'Link copied' : 'Share board'}</span>
             <span className="sm:hidden">{shareCopied ? 'Copied' : 'Share'}</span>
-            <Clipboard aria-hidden="true" className="connect4-share-clipboard" size={12} />
         </button>
     </section>
 );

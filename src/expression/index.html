@@ -3,6 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
+        <meta name="theme-color" content="#182730">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -27,9 +28,10 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <!-- MathJS (Optional, robust fallback included in JS) -->
         <script defer src="https://cdn.jsdelivr.net/npm/mathjs@12.2.1/lib/browser/math.js"></script>
+        <link rel="stylesheet" href="/assets/styles/global.css">
     </head>
 
-    <body class="bg-gray-50 min-h-screen flex flex-col page-expression">
+    <body class="bg-background min-h-screen flex flex-col page-expression">
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
             initPageShell();
@@ -42,22 +44,22 @@
             <!-- Info Button (Top Right) -->
             <div class="flex justify-end mb-4">
                 <button id="info-toggle"
-                    class="text-gray-500 hover:text-primary transition-colors flex items-center gap-2 text-sm font-medium">
+                    class="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 text-sm font-medium">
                     <i class="fas fa-question-circle"></i> How it works
                 </button>
             </div>
 
             <!-- Floating Info Card -->
             <div id="calculator-description"
-                class="hidden absolute right-4 top-16 w-80 bg-white rounded-xl p-5 text-gray-600 shadow-2xl border border-gray-100 z-50 transform transition-all duration-300 translate-y-4 opacity-0">
-                <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+                class="hidden absolute right-4 top-16 w-80 bg-card rounded-xl p-5 text-muted-foreground shadow-2xl border border-border z-50 transform transition-all duration-300 translate-y-4 opacity-0">
+                <h3 class="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
                     <i class="fas fa-calculator text-primary"></i> Expression Finder
                 </h3>
                 <p class="mb-3 text-sm leading-relaxed">
                     Enter a set of numbers and a target. The algorithm attempts to combine your numbers using standard
                     math operations to equal the target.
                 </p>
-                <div class="bg-gray-50 p-3 rounded-lg text-xs font-mono border border-gray-200">
+                <div class="bg-background p-3 rounded-lg text-xs font-mono border border-border">
                     <p>Nums: 1, 3, 4</p>
                     <p>Target: 24</p>
                     <p class="text-primary font-bold mt-1">Result: (1 + 3) * 4 = 24</p>
@@ -66,13 +68,13 @@
 
             <!-- View Toggles -->
             <div class="flex justify-center mb-8">
-                <div class="bg-gray-200 p-1 rounded-xl inline-flex relative">
+                <div class="bg-muted p-1 rounded-xl inline-flex relative">
                     <button id="view-solver"
-                        class="px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-gray-800">
+                        class="px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-card text-foreground">
                         <i class="fas fa-calculator mr-2"></i>Solver
                     </button>
                     <button id="view-challenge"
-                        class="px-6 py-2 rounded-lg text-sm font-semibold transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                        class="px-6 py-2 rounded-lg text-sm font-semibold transition-all text-muted-foreground hover:text-foreground hover:bg-muted">
                         <i class="fas fa-trophy mr-2"></i>Challenge
                     </button>
                 </div>
@@ -80,15 +82,15 @@
 
             <!-- Solver View -->
             <div id="solver-view"
-                class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-300">
+                class="bg-card rounded-2xl shadow-xl border border-border overflow-hidden transition-all duration-300">
                 <!-- Header Stripe -->
                 <div class="h-2 bg-gradient-to-r from-primary-400 to-primary-600"></div>
 
                 <div class="p-6 md:p-8 space-y-6">
 
                     <div class="text-center mb-6">
-                        <h1 class="text-2xl font-bold text-gray-800">Expression Solver</h1>
-                        <p class="text-gray-500 text-sm">Find the formula to reach your target</p>
+                        <h1 class="text-2xl font-bold text-foreground">Expression Solver</h1>
+                        <p class="text-muted-foreground text-sm">Find the formula to reach your target</p>
                     </div>
 
                     <form id="expression-form" class="space-y-6">
@@ -97,15 +99,15 @@
                         <div class="grid gap-6 md:grid-cols-2">
                             <!-- Numbers Input -->
                             <div class="md:col-span-2">
-                                <label for="numbers-input" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <label for="numbers-input" class="block text-sm font-semibold text-foreground mb-2">
                                     Available Numbers
                                 </label>
                                 <div class="flex gap-2">
                                     <input type="text" id="numbers-input" required
-                                        class="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-gray-900 font-mono"
+                                        class="flex-1 px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-foreground font-mono"
                                         placeholder="e.g., 2, 4, 6, 8">
                                     <button id="random-numbers-button" type="button"
-                                        class="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors text-sm font-medium border border-gray-200 whitespace-nowrap"
+                                        class="px-4 py-2 bg-muted text-muted-foreground rounded-xl hover:bg-muted transition-colors text-sm font-medium border border-border whitespace-nowrap"
                                         title="Generate Random Numbers">
                                         <i class="fas fa-dice text-lg"></i>
                                     </button>
@@ -114,64 +116,66 @@
 
                             <!-- Target Input -->
                             <div class="md:col-span-2">
-                                <label for="target-input" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <label for="target-input" class="block text-sm font-semibold text-foreground mb-2">
                                     Target Value
                                 </label>
                                 <input type="number" id="target-input" required
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-gray-900 font-mono text-lg"
+                                    class="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-foreground font-mono text-lg"
                                     placeholder="e.g., 24">
                             </div>
                         </div>
 
                         <!-- Advanced Settings Accordion -->
-                        <div class="border border-gray-100 rounded-xl overflow-hidden">
+                        <div class="border border-border rounded-xl overflow-hidden">
                             <button type="button" id="advanced-settings-toggle"
-                                class="w-full px-4 py-3 bg-gray-50 text-gray-600 text-sm font-medium flex justify-between items-center hover:bg-gray-100 transition-colors">
+                                class="w-full px-4 py-3 bg-background text-muted-foreground text-sm font-medium flex justify-between items-center hover:bg-muted transition-colors">
                                 Advanced Settings <i class="fas fa-chevron-down"></i>
                             </button>
 
-                            <div id="advanced-settings" class="hidden p-4 bg-white space-y-4 text-sm">
+                            <div id="advanced-settings" class="hidden p-4 bg-card space-y-4 text-sm">
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label
-                                            class="block text-xs font-bold text-gray-500 uppercase mb-1">Count</label>
+                                            class="block text-xs font-bold text-muted-foreground uppercase mb-1">Count</label>
                                         <input type="number" id="num-integers-input" placeholder="6"
                                             class="w-full px-3 py-2 border rounded-lg">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Max
+                                        <label class="block text-xs font-bold text-muted-foreground uppercase mb-1">Max
                                             Value</label>
                                         <input type="number" id="max-number-input" placeholder="25"
                                             class="w-full px-3 py-2 border rounded-lg">
                                     </div>
                                 </div>
 
-                                <div class="space-y-2 pt-2 border-t border-gray-100">
+                                <div class="space-y-2 pt-2 border-t border-border">
+                                    <p class="expression-settings-help">Checked operations must appear in the solution. Unchecked operations are excluded.</p>
                                     <label
-                                        class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded-lg">
+                                        class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-background rounded-lg">
                                         <input type="checkbox" id="exponents-checkbox"
                                             class="toggle toggle-sm toggle-primary">
-                                        <span class="text-gray-700">Allow Exponents (^)</span>
+                                        <span class="text-foreground">Require an exponent (^)</span>
                                     </label>
                                     <label
-                                        class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded-lg">
+                                        class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-background rounded-lg">
                                         <input type="checkbox" id="sqrt-checkbox"
                                             class="toggle toggle-sm toggle-primary">
-                                        <span class="text-gray-700">Allow Square Roots (√)</span>
+                                        <span class="text-foreground">Require a square root (√)</span>
                                     </label>
                                     <label
-                                        class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded-lg">
+                                        class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-background rounded-lg">
                                         <input type="checkbox" id="no-parentheses-checkbox"
                                             class="toggle toggle-sm toggle-primary">
-                                        <span class="text-gray-700">Ignore Order of Operations (No Parentheses)</span>
+                                        <span class="text-foreground">24-style steps (use intermediate results)</span>
                                     </label>
+                                    <p class="expression-settings-help">24-style working combines available values one move at a time. The full equation keeps the parentheses needed for normal order of operations.</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Action Button -->
                         <button type="submit" id="submit-button"
-                            class="w-full py-4 bg-primary text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all focus:ring-4 focus:ring-primary-200">
+                            class="w-full py-4 bg-primary text-primary-foreground font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all focus:ring-4 focus:ring-primary-200">
                             Solve Expression
                         </button>
                     </form>
@@ -185,7 +189,7 @@
 
             <!-- Challenge View (Hidden by Default) -->
             <div id="challenge-view"
-                class="hidden bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
+                class="hidden bg-card rounded-2xl shadow-xl border border-border overflow-hidden relative">
                 <!-- Header Stripe -->
                 <div class="h-2 bg-gradient-to-r from-yellow-400 to-orange-500"></div>
 
@@ -193,12 +197,12 @@
 
                     <div class="flex justify-between items-center mb-4">
                         <div class="text-left">
-                            <h2 class="text-2xl font-bold text-gray-800">Speed Challenge</h2>
-                            <p class="text-xs text-gray-500 uppercase tracking-wider font-bold">Race against the clock
+                            <h2 class="text-2xl font-bold text-foreground">Speed Challenge</h2>
+                            <p class="text-xs text-muted-foreground uppercase tracking-wider font-bold">Race against the clock
                             </p>
                         </div>
-                        <div class="bg-gray-100 rounded-lg px-4 py-2 flex items-center gap-2">
-                            <span class="text-xs text-gray-500 font-bold uppercase">Score</span>
+                        <div class="bg-muted rounded-lg px-4 py-2 flex items-center gap-2">
+                            <span class="text-xs text-muted-foreground font-bold uppercase">Score</span>
                             <span id="game-score" class="text-xl font-bold text-primary">0</span>
                         </div>
                     </div>
@@ -208,8 +212,8 @@
 
                         <!-- Target Display -->
                         <div class="relative inline-block">
-                            <div class="text-xs font-bold text-gray-400 uppercase mb-1">Target Number</div>
-                            <div id="game-target" class="text-5xl font-mono font-bold text-gray-800 tracking-tight">?
+                            <div class="text-xs font-bold text-muted-foreground uppercase mb-1">Target Number</div>
+                            <div id="game-target" class="text-5xl font-mono font-bold text-foreground tracking-tight">?
                             </div>
                             <!-- Timer Overlay -->
                             <div id="game-timer-bar"
@@ -218,9 +222,9 @@
                         </div>
 
                         <!-- Drop Zone / Current Expression -->
-                        <div class="min-h-[80px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex flex-wrap items-center justify-center p-4 gap-2 transition-colors"
+                        <div class="min-h-[80px] bg-background rounded-xl border-2 border-dashed border-border flex flex-wrap items-center justify-center p-4 gap-2 transition-colors"
                             id="builder-zone">
-                            <span class="text-gray-400 pointer-events-none select-none text-sm">Tap numbers and
+                            <span class="text-muted-foreground pointer-events-none select-none text-sm">Tap numbers and
                                 operators to build expression</span>
                         </div>
 
@@ -228,22 +232,22 @@
                         <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto">
                             <!-- Operators -->
                             <button
-                                class="h-12 bg-indigo-50 text-indigo-700 rounded-lg font-bold text-lg hover:bg-indigo-100 transition-colors game-op"
+                                class="h-12 bg-primary/10 text-primary rounded-lg font-bold text-lg hover:bg-primary/10 transition-colors game-op"
                                 data-val="+">+</button>
                             <button
-                                class="h-12 bg-indigo-50 text-indigo-700 rounded-lg font-bold text-lg hover:bg-indigo-100 transition-colors game-op"
+                                class="h-12 bg-primary/10 text-primary rounded-lg font-bold text-lg hover:bg-primary/10 transition-colors game-op"
                                 data-val="-">-</button>
                             <button
-                                class="h-12 bg-indigo-50 text-indigo-700 rounded-lg font-bold text-lg hover:bg-indigo-100 transition-colors game-op"
+                                class="h-12 bg-primary/10 text-primary rounded-lg font-bold text-lg hover:bg-primary/10 transition-colors game-op"
                                 data-val="*">×</button>
                             <button
-                                class="h-12 bg-indigo-50 text-indigo-700 rounded-lg font-bold text-lg hover:bg-indigo-100 transition-colors game-op"
+                                class="h-12 bg-primary/10 text-primary rounded-lg font-bold text-lg hover:bg-primary/10 transition-colors game-op"
                                 data-val="/">÷</button>
                             <button
-                                class="h-12 bg-indigo-50 text-indigo-700 rounded-lg font-bold text-lg hover:bg-indigo-100 transition-colors game-op"
+                                class="h-12 bg-primary/10 text-primary rounded-lg font-bold text-lg hover:bg-primary/10 transition-colors game-op"
                                 data-val="(">(</button>
                             <button
-                                class="h-12 bg-indigo-50 text-indigo-700 rounded-lg font-bold text-lg hover:bg-indigo-100 transition-colors game-op"
+                                class="h-12 bg-primary/10 text-primary rounded-lg font-bold text-lg hover:bg-primary/10 transition-colors game-op"
                                 data-val=")">)</button>
                             <button
                                 class="col-span-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition-colors h-12"
@@ -257,7 +261,7 @@
 
                         <!-- Main Game Action -->
                         <button id="game-action-btn"
-                            class="w-full py-4 bg-gray-800 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all">
+                            class="w-full py-4 bg-card text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform transition-all">
                             Start Game
                         </button>
 
@@ -267,7 +271,7 @@
             </div>
         </main>
 
-        <script type="module" src="@components/toast.js"></script>
+        <script type="module" src="/components/toast.js"></script>
         <script type="module" src="./index.js"></script>
     </body>
 

@@ -9,6 +9,7 @@ export const useOsrsData = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [lastUpdate, setLastUpdate] = useState(null);
+    const [, setClock] = useState(0);
     const [refreshKey, setRefreshKey] = useState(0); // Trigger fetches
 
     const fetchData = useCallback(async () => {
@@ -41,7 +42,7 @@ export const useOsrsData = () => {
     // Effect to update 'lastUpdate' display periodically without refetching
     useEffect(() => {
         const interval = setInterval(() => {
-            setLastUpdate((prev) => prev); // Trigger re-render without changing value
+            setClock(previous => previous + 1); // Keep the relative fetch time current.
         }, 60000); // Update every minute
         return () => clearInterval(interval);
     }, []);

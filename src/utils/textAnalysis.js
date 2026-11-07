@@ -536,7 +536,7 @@ export function highlightText(text, keywordsToHighlight, matchingStrategy = 'exa
         if (matchedPKeywords.size > 0) {
             const uniqueColorClasses = [...new Set(Array.from(matchedPKeywords).map(pk => pk.colorClass))].join(' ');
             const opacity = matchedPKeywords.size > 1 ? 'bg-opacity-75' : 'bg-opacity-50';
-            const border = matchedPKeywords.size > 1 ? 'ring-1 ring-slate-400 dark:ring-slate-600 ring-offset-1' : '';
+            const border = matchedPKeywords.size > 1 ? 'ring-1 ring-border dark:ring-border ring-offset-1' : '';
             highlightedOutput += `<mark class="${cn(uniqueColorClasses, opacity, border, 'rounded-sm', 'px-0.5', 'mx-px', 'font-semibold')}">${segment}</mark>`;
         } else {
             highlightedOutput += segment;
@@ -559,7 +559,7 @@ const utils = {
     detectTopPhrases,
     calculateSpreadScore,
     calculateComplexity
-    ,analyzeDocument
+    , analyzeDocument
 };
 
 /**

@@ -3,41 +3,12 @@
 
     <head>
         <meta charset="UTF-8">
+        <meta name="theme-color" content="#182730">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-        <!-- Tailwind config to align with JSreact theme -->
-        <script>
-            window.tailwind_config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            border: 'hsl(var(--border))',
-                            input: 'hsl(var(--input))',
-                            ring: 'hsl(var(--ring))',
-                            background: 'hsl(var(--background))',
-                            foreground: 'hsl(var(--foreground))',
-                            primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
-                            secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
-                            muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
-                            accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
-                            card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' }
-                        },
-                        boxShadow: {
-                            'sm-soft': '0 1px 2px 0 rgba(0,0,0,0.04)',
-                            'md-soft': '0 8px 30px rgba(0,0,0,0.06)'
-                        },
-                        borderRadius: { '2xl': '1rem' }
-                    }
-                },
-                darkMode: ['class']
-            };
-        </script>
-        <script src="https://cdn.tailwindcss.com"></script>
 
         <script type="module">
             import { createHead } from '@components/head.js';
@@ -50,9 +21,10 @@
                 }
             );
         </script>
+        <link rel="stylesheet" href="/assets/styles/global.css">
     </head>
 
-    <body class="bg-background text-foreground min-h-screen antialiased selection:bg-primary/20">
+    <body class="page-oeis bg-background text-foreground min-h-screen antialiased selection:bg-primary/20">
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
             initPageShell();
@@ -75,7 +47,7 @@
                     <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Exact Patterns &amp; Statistical Forecasts</span>
                 </div>
                 <h1
-                    class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
+                    class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-foreground">
                     Smart Sequence <br class="md:hidden" /> Extrapolator
                 </h1>
                 <p class="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
@@ -170,7 +142,7 @@
                                     <div class="flex items-center gap-1.5"><span
                                             class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>Historical</div>
                                     <div class="flex items-center gap-1.5"><span
-                                            class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white/20"></span>Forecast
+                                            class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-border/20"></span>Forecast
                                     </div>
                                 </div>
                             </div>

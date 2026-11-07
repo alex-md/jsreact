@@ -32,23 +32,16 @@
         <!-- Viewport meta tag for responsiveness -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+        <link rel="stylesheet" href="/assets/styles/global.css">
     </head>
 
-    <body class="bg-gray-50 page-minify">
+    <body class="bg-background page-minify">
         <script type="module">
             import { initPageShell } from '@components/pageShell.js';
-            initPageShell();
+            initPageShell({ title: 'Code Minifier', description: 'Minify JavaScript, CSS, and HTML code' });
         </script>
 
         <div id="header"></div>
-        <!-- <script type="module">
-            import { createHeader } from '@components/header.js';
-            const header = createHeader(
-                'Code Minifier',
-                'Minify JavaScript, CSS, and HTML code'
-            );
-            document.getElementById('header').appendChild(header);
-        </script> -->
 
         <main class="container mx-auto px-4 py-12 max-w-7xl">
             <div class="layout-container">
@@ -57,17 +50,17 @@
                     <div class="code-container">
                         <!-- Input Box -->
                         <div
-                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            class="code-box bg-card rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
                             <div class="p-6 space-y-4">
-                                <label for="input-code" class="block text-sm font-medium text-gray-700">
+                                <label for="input-code" class="block text-sm font-medium text-foreground">
                                     Input Code
                                 </label>
                                 <textarea id="input-code" placeholder="Paste your code here..."
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                    class="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-foreground font-mono"></textarea>
                                 <div class="input-card-footer">
-                                    <p id="input-size" class="text-sm text-gray-500">0 bytes</p>
+                                    <p id="input-size" class="text-sm text-muted-foreground">0 bytes</p>
                                     <button id="minify-button"
-                                        class="px-6 py-3 bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                        class="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
                                         <i class="fas fa-compress-alt mr-2"></i>
                                         Minify Code
                                     </button>
@@ -77,23 +70,23 @@
 
                         <!-- Output Box -->
                         <div
-                            class="code-box bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
+                            class="code-box bg-card rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
                             <div class="p-6 space-y-4">
-                                <label for="output-code" class="block text-sm font-medium text-gray-700">
+                                <label for="output-code" class="block text-sm font-medium text-foreground">
                                     Minified Code
                                 </label>
                                 <textarea id="output-code" readonly
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-gray-900 font-mono"></textarea>
+                                    class="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow text-foreground font-mono"></textarea>
                                 <div class="flex justify-between items-center">
-                                    <p id="output-size" class="text-sm text-gray-500">0 bytes</p>
+                                    <p id="output-size" class="text-sm text-muted-foreground">0 bytes</p>
                                     <div class="flex gap-4">
                                         <button id="copy-button"
-                                            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                            class="px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted transition-colors">
                                             <i class="fas fa-copy mr-2"></i>
                                             Copy Output
                                         </button>
                                         <button id="clear-button"
-                                            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                            class="px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted transition-colors">
                                             <i class="fas fa-trash-alt mr-2"></i>
                                             Clear All
                                         </button>
@@ -107,9 +100,9 @@
                 <!-- Right Column: Options -->
                 <div class="options-sidebar">
                     <div
-                        class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200">
-                        <div class="border-b border-gray-200 px-6 py-4">
-                            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        class="bg-card rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-border">
+                        <div class="border-b border-border px-6 py-4">
+                            <h2 class="text-lg font-semibold text-foreground flex items-center gap-2">
                                 <i class="fas fa-cog text-primary"></i>
                                 Settings
                             </h2>
@@ -117,9 +110,9 @@
                         <div class="p-6 space-y-6">
                             <!-- File Type Selection -->
                             <div class="option-group space-y-3">
-                                <label class="block text-sm font-medium text-gray-700">File Type</label>
+                                <label class="block text-sm font-medium text-foreground">File Type</label>
                                 <select id="file-type"
-                                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                                    class="w-full px-4 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
                                     <option value="js">JavaScript</option>
                                     <option value="html">HTML</option>
                                     <option value="css">CSS</option>
@@ -129,57 +122,57 @@
                             <!-- JavaScript-specific Options -->
                             <div id="js-options" class="space-y-4">
                                 <div class="option-group space-y-3">
-                                    <label class="block text-sm font-medium text-gray-700">Optimization Options</label>
+                                    <label class="block text-sm font-medium text-foreground">Optimization Options</label>
                                     <div class="space-y-3">
                                         <label class="flex items-center gap-2 group">
                                             <input type="checkbox" id="compress-code" checked
-                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Compress
+                                                class="w-4 h-4 text-primary border-border rounded focus:ring-primary">
+                                            <span class="text-sm text-foreground group-hover:text-foreground">Compress
                                                 Code</span>
                                         </label>
                                         <label class="flex items-center gap-2 group">
                                             <input type="checkbox" id="mangle-names" checked
-                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Mangle
+                                                class="w-4 h-4 text-primary border-border rounded focus:ring-primary">
+                                            <span class="text-sm text-foreground group-hover:text-foreground">Mangle
                                                 Names</span>
                                         </label>
                                         <label class="flex items-center gap-2 group">
                                             <input type="checkbox" id="remove-comments" checked
-                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Remove
+                                                class="w-4 h-4 text-primary border-border rounded focus:ring-primary">
+                                            <span class="text-sm text-foreground group-hover:text-foreground">Remove
                                                 Comments</span>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div class="option-group space-y-3">
-                                    <label class="block text-sm font-medium text-gray-700">Advanced Options</label>
+                                    <label class="block text-sm font-medium text-foreground">Advanced Options</label>
                                     <div class="space-y-3">
                                         <label class="flex items-center gap-2 group">
                                             <input type="checkbox" id="module-type"
-                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Process as ES
+                                                class="w-4 h-4 text-primary border-border rounded focus:ring-primary">
+                                            <span class="text-sm text-foreground group-hover:text-foreground">Process as ES
                                                 Module</span>
                                         </label>
                                         <label class="flex items-center gap-2 group">
                                             <input type="checkbox" id="keep-fnames"
-                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Keep Function
+                                                class="w-4 h-4 text-primary border-border rounded focus:ring-primary">
+                                            <span class="text-sm text-foreground group-hover:text-foreground">Keep Function
                                                 Names</span>
                                         </label>
                                         <label class="flex items-center gap-2 group">
                                             <input type="checkbox" id="keep-classnames"
-                                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                            <span class="text-sm text-gray-700 group-hover:text-gray-900">Keep Class
+                                                class="w-4 h-4 text-primary border-border rounded focus:ring-primary">
+                                            <span class="text-sm text-foreground group-hover:text-foreground">Keep Class
                                                 Names</span>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div class="option-group space-y-3">
-                                    <label class="block text-sm font-medium text-gray-700">Target Environment</label>
+                                    <label class="block text-sm font-medium text-foreground">Target Environment</label>
                                     <select id="ecma-version"
-                                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                                        class="w-full px-4 py-2 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
                                         <option value="5">ES5 (Highest Compatibility)</option>
                                         <option value="2015">ES2015 (ES6)</option>
                                         <option value="2020" selected>ES2020 (Modern)</option>
@@ -188,8 +181,8 @@
                             </div>
 
                             <!-- Info Message -->
-                            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-                                <p class="text-sm text-blue-700">
+                            <div class="mt-4 p-4 bg-primary/10 rounded-lg">
+                                <p class="text-sm text-primary">
                                     <i class="fas fa-info-circle mr-2"></i>
                                     HTML and CSS files use basic minification. JavaScript files use advanced Terser
                                     minification.
@@ -200,7 +193,7 @@
                 </div>
             </div>
         </main>
-        <script type="module" src="@components/toast.js"></script>
+        <script type="module" src="/components/toast.js"></script>
         <script type="module" src="./index.js"></script>
     </body>
 

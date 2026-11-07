@@ -29,18 +29,19 @@
             content="keyword inserter, text insertion tool, natural keyword insertion, SEO keyword tool, content editing tool, insert keywords into text" />
         <meta name="author" content="JSreact" />
         <meta name="robots" content="index, follow" />
+        <link rel="stylesheet" href="/assets/styles/global.css">
     </head>
 
-    <body class="bg-gray-50 text-gray-800 antialiased pt-20 md:pt-16">
+    <body class="page-insert bg-background text-foreground antialiased pt-20 md:pt-16">
         <!--
     sticky navbar is ~4rem tall;
     on mobile, extra menu adds ~1rem,
     so pt-20 (5rem) mobile → md:pt-16 (4rem) desktop
   -->
         <main class="flex items-center justify-center max-h">
-            <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8 space-y-6">
+            <div class="w-full max-w-3xl bg-card rounded-2xl shadow-lg p-8 space-y-6">
                 <!-- Title -->
-                <h1 class="text-4xl font-extrabold text-center text-gray-900">
+                <h1 class="text-4xl font-extrabold text-center text-foreground">
                     Natural Keyword Inserter
                 </h1>
 
@@ -51,27 +52,27 @@
                 <div class="space-y-6">
                     <!-- Text Input -->
                     <div>
-                        <label for="text-input" class="block text-sm font-medium text-gray-700">Enter your text</label>
+                        <label for="text-input" class="block text-sm font-medium text-foreground">Enter your text</label>
                         <textarea id="text-input" rows="6" placeholder="Paste or type your text here…"
-                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"></textarea>
+                            class="mt-1 block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"></textarea>
                     </div>
 
                     <!-- Keyword Input -->
                     <div>
-                        <label for="keyword-input" class="block text-sm font-medium text-gray-700">Enter keyword (must
+                        <label for="keyword-input" class="block text-sm font-medium text-foreground">Enter keyword (must
                             end in 'ing')</label>
                         <input type="text" id="keyword-input" placeholder="e.g., running, thinking, developing"
-                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            class="mt-1 block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
                     <!-- Frequency Slider -->
                     <div>
                         <div class="flex justify-between items-center">
-                            <label for="frequency-slider" class="text-sm font-medium text-gray-700">
+                            <label for="frequency-slider" class="text-sm font-medium text-foreground">
                                 Insertion Frequency
-                                <span class="text-xs text-gray-500">(1 = Few, 10 = Many)</span>
+                                <span class="text-xs text-muted-foreground">(1 = Few, 10 = Many)</span>
                             </label>
-                            <span id="frequency-value" class="text-sm font-semibold text-blue-600">5</span>
+                            <span id="frequency-value" class="text-sm font-semibold text-primary">5</span>
                         </div>
                         <input type="range" id="frequency-slider" min="1" max="10" value="5"
                             class="w-full mt-2 accent-blue-600" />
@@ -80,16 +81,16 @@
 
                 <!-- Action Button -->
                 <button id="process-button"
-                    class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-colors">
+                    class="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg shadow hover:bg-primary focus:outline-none focus:ring-4 focus:ring-blue-300 transition-colors">
                     Insert Keyword
                 </button>
 
                 <!-- Output -->
-                <div id="output-area" class="mt-8 bg-gray-100 rounded-lg p-6 border border-gray-200 space-y-4">
+                <div id="output-area" class="mt-8 bg-muted rounded-lg p-6 border border-border space-y-4">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-gray-800">Modified Text</h2>
+                        <h2 class="text-2xl font-bold text-foreground">Modified Text</h2>
                         <button id="copy-result-button"
-                            class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm font-medium flex items-center gap-2">
+                            class="px-4 py-2 bg-card text-foreground border border-border rounded-lg hover:bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm font-medium flex items-center gap-2">
                             <i class="fas fa-copy"></i> Copy
                         </button>
                     </div>
@@ -97,13 +98,13 @@
                         Keywords inserted: 0
                     </p>
                     <div id="result-text"
-                        class="bg-white p-4 rounded-md border border-gray-300 font-mono whitespace-pre-wrap min-h-[4rem]">
+                        class="bg-card p-4 rounded-md border border-border font-mono whitespace-pre-wrap min-h-[4rem]">
                     </div>
                 </div>
             </div>
         </main>
 
-        <script type="module" src="@components/toast.js"></script>
+        <script type="module" src="/components/toast.js"></script>
         <script type="module" src="./index.js"></script>
 
         <script type="module">

@@ -133,7 +133,6 @@ export default {
             /** Typography - editorial sans + serif pairing */
             fontFamily: {
                 sans: [
-                    'Libre Franklin',
                     'Source Sans 3',
                     'Segoe UI',
                     'system-ui',

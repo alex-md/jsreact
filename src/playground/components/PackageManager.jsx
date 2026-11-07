@@ -181,13 +181,13 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center relative">
-                    <div className="absolute -left-24 text-gray-400 transform -rotate-90 text-sm tracking-wider">PACKAGE MANAGER</div>
+            <div className="w-full max-w-2xl bg-card rounded-lg shadow-xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-border flex justify-between items-center relative">
+                    <div className="absolute -left-24 text-muted-foreground transform -rotate-90 text-sm tracking-wider">PACKAGE MANAGER</div>
                     <h2 className="text-xl font-semibold">Package Manager</h2>
                     <button
                         onClick={onClose}
-                        className="p-1 rounded-full hover:bg-gray-100"
+                        className="p-1 rounded-full hover:bg-muted"
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -203,7 +203,7 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                                     value={searchQuery}
                                     onChange={handleSearchChange}
                                     placeholder="Search for npm packages..."
-                                    className="flex-1 px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-300"
+                                    className="flex-1 px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-card border-border"
                                     disabled={isGeneratingUrl}
                                 />
                                 <input
@@ -211,13 +211,13 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                                     value={newPackageUrl}
                                     onChange={(e) => setNewPackageUrl(e.target.value)}
                                     placeholder="or enter CDN URL directly"
-                                    className="flex-1 px-3 py-2 border-t border-b focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-300"
+                                    className="flex-1 px-3 py-2 border-t border-b focus:outline-none focus:ring-2 focus:ring-blue-500 bg-card border-border"
                                     disabled={isGeneratingUrl}
                                 />
                                 <button
                                     onClick={handleAddPackage}
                                     disabled={isGeneratingUrl}
-                                    className={`px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[40px]`}
+                                    className={`px-4 py-2 bg-primary text-white rounded-r-md hover:bg-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[40px]`}
                                 >
                                     {isGeneratingUrl ? (
                                         <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -231,26 +231,26 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                             </div>
 
                             {showDropdown && searchResults.length > 0 && (
-                                <div className="absolute z-10 w-full mt-1 border rounded-md shadow-lg bg-white border-gray-200"
+                                <div className="absolute z-10 w-full mt-1 border rounded-md shadow-lg bg-card border-border"
                                     style={{ maxHeight: '300px', overflowY: 'auto' }}>
                                     {isLoading ? (
-                                        <div className="p-4 text-center text-gray-600">
+                                        <div className="p-4 text-center text-muted-foreground">
                                             Loading...
                                         </div>
                                     ) : (
-                                        <ul className="divide-y divide-gray-200">
+                                        <ul className="divide-y divide-border">
                                             {searchResults.map((pkg) => (
                                                 <li
                                                     key={pkg.name}
                                                     onClick={() => !isGeneratingUrl && handleSelectPackage(pkg)}
-                                                    className={`p-3 cursor-pointer hover:bg-blue-50 ${isGeneratingUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                    className={`p-3 cursor-pointer hover:bg-primary/10 ${isGeneratingUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 >
                                                     <div className="font-medium">{pkg.name}</div>
-                                                    <div className="text-sm text-gray-500">
+                                                    <div className="text-sm text-muted-foreground">
                                                         {pkg.version}
                                                     </div>
                                                     {pkg.description && (
-                                                        <div className="text-sm text-gray-500">
+                                                        <div className="text-sm text-muted-foreground">
                                                             {pkg.description}
                                                         </div>
                                                     )}
@@ -262,7 +262,7 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                             )}
                         </div>
                         {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-                        {isGeneratingUrl && <p className="mt-2 text-sm text-blue-500">Generating CDN URL...</p>}
+                        {isGeneratingUrl && <p className="mt-2 text-sm text-primary">Generating CDN URL...</p>}
                     </div>
 
                     <div className="mb-6">
@@ -272,7 +272,7 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                                 <button
                                     key={pkg.url}
                                     onClick={() => addPackage(pkg.url)}
-                                    className="text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                                    className="text-left px-3 py-2 text-sm rounded-md hover:bg-muted focus:bg-muted focus:outline-none"
                                 >
                                     {pkg.name}
                                 </button>
@@ -283,15 +283,15 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                     <div>
                         <h3 className="text-sm font-medium mb-2">Current Packages</h3>
                         {packages.length === 0 ? (
-                            <p className="text-sm text-gray-500">No packages added yet.</p>
+                            <p className="text-sm text-muted-foreground">No packages added yet.</p>
                         ) : (
-                            <ul className="border rounded-md divide-y border-gray-200 divide-gray-200">
+                            <ul className="border rounded-md divide-y border-border divide-border">
                                 {packages.map((pkg) => (
                                     <li key={pkg} className="flex items-center justify-between py-2 px-3">
                                         <span className="text-sm truncate flex-1">{pkg}</span>
                                         <button
                                             onClick={() => removePackage(pkg)}
-                                            className="p-1 rounded-md hover:bg-gray-100 text-red-500"
+                                            className="p-1 rounded-md hover:bg-muted text-red-500"
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </button>
@@ -302,10 +302,10 @@ const PackageManager = ({ packages, addPackage, removePackage, onClose }) => {
                     </div>
                 </div>
 
-                <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
+                <div className="px-6 py-4 border-t border-border flex justify-end">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="px-4 py-2 rounded-md bg-muted hover:bg-card focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                         Close
                     </button>

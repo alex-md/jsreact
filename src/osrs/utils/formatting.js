@@ -18,8 +18,6 @@ export function formatTimeSince(timestamp) {
 }
 
 export function formatGrandExchangePrice(price) {
-    if (price == null || typeof price !== 'number') return '-';
-    if (price >= 10_000_000) return `${(price / 1_000_000).toFixed(1)}M`;
-    if (price >= 10_000) return `${(price / 1_000).toFixed(1)}K`;
-    return price.toLocaleString();
+    if (!Number.isFinite(price)) return '—';
+    return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(price);
 }
