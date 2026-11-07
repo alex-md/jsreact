@@ -1,0 +1,178 @@
+/* CSS variables for light/dark themes (shadcn-like) */
+:root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --ring: 215 20.2% 65.1%;
+    --radius: 0.75rem;
+}
+
+.dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --ring: 215 20.2% 65.1%;
+}
+
+html,
+body {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+}
+
+.card {
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow, 0 1px 2px rgba(0, 0, 0, .04));
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    height: 2.5rem;
+    padding: 0 .9rem;
+    border-radius: calc(var(--radius) - 2px);
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: transform .06s ease, background .2s ease, border-color .2s ease;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: color-mix(in oklab, hsl(var(--primary)) 90%, white);
+}
+
+.btn-emerald {
+    background: #059669;
+    color: white;
+}
+
+.btn-emerald:hover:not(:disabled) {
+    background: #047857;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: hsl(var(--foreground));
+    border-color: hsl(var(--border));
+}
+
+.input,
+.textarea {
+    width: 100%;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--input));
+    border-radius: calc(var(--radius) - 2px);
+    padding: .65rem .75rem;
+    outline: none;
+}
+
+.input:focus,
+.textarea:focus {
+    box-shadow: 0 0 0 3px hsl(var(--ring) / .25);
+    border-color: hsl(var(--ring));
+}
+
+.headline-gradient {
+    background: radial-gradient(1200px 300px at 50% -20%, rgba(120, 119, 198, .18), transparent), radial-gradient(600px 200px at 80% 0%, rgba(120, 119, 198, .12), transparent);
+}
+
+.table th,
+.table td {
+    padding: .5rem .5rem;
+}
+
+.badge {
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+    background: hsl(var(--muted));
+    border-radius: 999px;
+    font-size: .75rem;
+    padding: .25rem .55rem;
+}
+
+.copyable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.copyable:hover {
+    background-color: hsl(var(--accent));
+}
+
+/* Sparkline helpers */
+#sparkline {
+    display: block;
+    width: 100%;
+    height: 64px;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border));
+}
+
+/* Forecast list progressive reveal */
+#forecastList.collapsed {
+    max-height: 7.5rem;
+    /* roughly 5 items */
+    overflow: hidden;
+    position: relative;
+}
+
+#forecastList.collapsed::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2.25rem;
+    background: linear-gradient(to bottom, transparent, hsl(var(--card)) 80%);
+}
