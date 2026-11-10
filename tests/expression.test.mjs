@@ -51,7 +51,7 @@ const evaluate = expression => Function(`"use strict"; return (${expression.repl
 const verify = (numbers, target, config) => {
     const response = solveExpression(numbers, target, config);
     assert.equal(response.success, true, response.error);
-    assert.equal(evaluate(response.result.expr), target, response.result.expr);
+    assert.ok(Math.abs(evaluate(response.result.expr) - target) < 1e-10, response.result.expr);
     const available = [...numbers];
     const take = value => {
         const index = available.indexOf(value);
@@ -60,16 +60,17 @@ const verify = (numbers, target, config) => {
     };
     for (const step of response.result.steps) {
         const [expression, value] = step.split(' = ');
-        assert.equal(evaluate(expression), Number(value), step);
+        const result = evaluate(value);
+        assert.ok(Math.abs(evaluate(expression) - result) < 1e-10, step);
         if (expression.startsWith('sqrt(')) {
-            take(Number(expression.slice(5, -1)));
+            take(evaluate(expression.slice(5, -1)));
         } else {
-            const operands = expression.match(/^\(?(-?\d+)\)? [^ ]+ \(?(-?\d+)\)?$/);
+            const operands = expression.match(/^\(?(-?\d+(?: \/ \d+)?)\)? [^ ]+ \(?(-?\d+(?: \/ \d+)?)\)?$/);
             assert.ok(operands, expression);
-            take(Number(operands[1]));
-            take(Number(operands[2]));
+            take(evaluate(operands[1]));
+            take(evaluate(operands[2]));
         }
-        available.push(Number(value));
+        available.push(result);
     }
     assert.deepEqual(available, [target], 'Every input is used exactly once');
     if (config.useExponents) assert.equal(response.result.usedExponents, true);
@@ -111,6 +112,33 @@ test('24-style working supports separate intermediate results and ordinary prece
     assert.equal(result.steps.length, 3);
     verify([2, 3, 4], 20, { stepByStep: true });
     verify([87, 45, 77, 72, 34, 90], 5, { stepByStep: true, useExponents: true, useSqrt: true });
+});
+test('finds 24 using fractional intermediates in both display modes', () => {
+    for (const stepByStep of [false, true]) {
+        const result = verify([1, 3, 4, 6], 24, { stepByStep });
+        assert.equal(result.expr, '6 / (1 - 3 / 4)');
+        assert.deepEqual(result.steps, ['3 / 4 = 3 / 4', '1 - 3 / 4 = 1 / 4', '6 / (1 / 4) = 24']);
+        for (const step of result.steps) {
+            const [expression, value] = step.split(' = ');
+            assert.doesNotThrow(() => expressionToTex(expression));
+            assert.doesNotThrow(() => expressionToTex(value));
+        }
+    }
+    verify([3, 3, 8, 8], 24, {});
+});
+
+import { rational, calculate, squareRoot } from '../src/expression/rational.js';
+test('fraction arithmetic stays exact and rejects undefined or oversized values', () => {
+    assert.deepEqual(calculate(rational(1n, 3n), rational(2n, 3n), '+'), rational(1n));
+    assert.equal(calculate(rational(1n), rational(0n), '/'), null);
+    assert.equal(calculate(rational(0n), rational(0n), '**', 500000), null);
+    assert.deepEqual(calculate(rational(2n, 3n), rational(-2n), '**', 500000), rational(9n, 4n));
+    assert.deepEqual(squareRoot(rational(9n, 16n)), rational(3n, 4n));
+    assert.equal(squareRoot(rational(2n, 3n)), null);
+    assert.equal(rational(BigInt(Number.MAX_SAFE_INTEGER) + 1n), null);
+    // Close fractions must not round to a false match for an integer target.
+    assert.equal(solveExpression([Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER - 1], 1).success, true);
+    assert.equal(solveExpression([Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER - 2], 1).success, false);
 });
 test('required-operation tracking survives equivalent numeric intermediate states', () => {
     verify([1, 2, 3, 4], 10, { useSqrt: true });
