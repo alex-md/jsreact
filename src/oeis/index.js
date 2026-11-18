@@ -75,7 +75,7 @@ import './index.css';
         exportCsv() {
             if (!this.lastResults) return;
 
-            const { sequence, ensembleForecast } = this.lastResults;
+            const { sequence, ensembleForecast, significantDigits } = this.lastResults;
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += "Index,Type,Value,ApproximateLowerBound,ApproximateUpperBound\n";
 
@@ -85,7 +85,7 @@ import './index.css';
 
             ensembleForecast.forEach((f, i) => {
                 const idx = sequence.length + i + 1;
-                csvContent += `${idx},Forecast,${forecastValue(f.value)},${forecastValue(f.lo)},${forecastValue(f.hi)}\n`;
+                csvContent += `${idx},Forecast,${forecastValue(f.value, significantDigits)},${forecastValue(f.lo, significantDigits)},${forecastValue(f.hi, significantDigits)}\n`;
             });
 
             const encodedUri = encodeURI(csvContent);
@@ -97,7 +97,7 @@ import './index.css';
             document.body.removeChild(link);
         },
 
-        renderStream(sequence, ensembleForecast) {
+        renderStream(sequence, ensembleForecast, significantDigits) {
             const container = this.elements.sequenceStream;
             container.innerHTML = '';
 
@@ -125,10 +125,10 @@ import './index.css';
                 const prev = i === 0 ? sequence[sequence.length - 1] : ensembleForecast[i - 1].value;
                 const tile = this.createTile({
                     index: sequence.length + i + 1,
-                    value: forecastValue(f.value),
+                    value: forecastValue(f.value, significantDigits),
                     type: 'forecast',
                     trend: getTrend(prev, f.value),
-                    tooltip: f.lo === null ? 'Exact continuation under the detected rule' : `Predicted #${sequence.length + i + 1}\nApproximate range: [${formatForecast(f.lo)} — ${formatForecast(f.hi)}]`,
+                    tooltip: f.lo === null ? 'Exact continuation under the detected rule' : `Predicted #${sequence.length + i + 1}\nApproximate range: [${formatForecast(f.lo, significantDigits)} — ${formatForecast(f.hi, significantDigits)}]`,
                     delay: (sequence.length + i) * 50
                 });
                 container.appendChild(tile);
@@ -298,8 +298,8 @@ import './index.css';
             this.elements.sequenceStream.textContent = message;
         },
 
-        updateUI({ sequence, fits, bestFit, weights, ensembleForecast, exact, exploration, scoreMetric = 'Validation RMSE', forecastNote }) {
-            this.renderStream(sequence, ensembleForecast);
+        updateUI({ sequence, fits, bestFit, weights, ensembleForecast, exact, exploration, scoreMetric = 'Validation RMSE', forecastNote, significantDigits, reboundAlternatives = [] }) {
+            this.renderStream(sequence, ensembleForecast, significantDigits);
             const node = (tag, text, className = '') => {
                 const el = document.createElement(tag);
                 if (text !== undefined) el.textContent = text;
@@ -316,7 +316,11 @@ import './index.css';
             if (!exact) {
                 info.append(node('p', `${scoreMetric}: ${fmtNum(bestFit.score)}`, 'font-mono text-sm my-2'));
                 info.append(node('p', forecastNote, 'text-sm text-muted-foreground my-3'));
-                info.append(node('p', 'Predicted values are rounded to whole numbers.', 'text-xs text-muted-foreground'));
+                info.append(node('p', significantDigits ? 'Predicted values are rounded to one significant figure; raw model values are retained for calculation.' : 'Predicted values are rounded to whole numbers.', 'text-xs text-muted-foreground'));
+            }
+            if (reboundAlternatives.length) {
+                info.append(node('p', 'Alternative rebound assumptions (excluded from this forecast): ' + reboundAlternatives.map(f =>
+                    `${f.name}: ≈${formatForecast(f.value, significantDigits)}`).join('; '), 'text-xs text-muted-foreground my-3'));
             }
             for (const [key, value] of Object.entries(bestFit.params)) {
                 info.append(node('p', `${key}: ${typeof value === 'number' ? fmtNum(value) : value}`, 'text-xs font-mono my-1'));
@@ -329,12 +333,12 @@ import './index.css';
             this.elements.forecastList.replaceChildren();
             ensembleForecast.forEach((item, i) => {
                 const li = node('li', undefined, 'forecast-result p-3 rounded-lg border border-border copyable cursor-copy');
-                li.dataset.copyValue = forecastValue(item.value);
+                li.dataset.copyValue = forecastValue(item.value, significantDigits);
                 const heading = node('div', undefined, 'forecast-result-heading');
                 heading.append(node('span', `#${sequence.length + i + 1}`, 'text-xs text-muted-foreground'),
-                    node('span', formatForecast(item.value), 'forecast-result-value font-bold text-primary'));
+                    node('span', formatForecast(item.value, significantDigits), 'forecast-result-value font-bold text-primary'));
                 li.append(heading);
-                li.append(node('div', exact ? 'Rule continuation' : `Approx. range [${formatForecast(item.lo)} — ${formatForecast(item.hi)}]`, 'forecast-result-range text-xs text-muted-foreground'));
+                li.append(node('div', exact ? 'Rule continuation' : `Approx. range [${formatForecast(item.lo, significantDigits)} — ${formatForecast(item.hi, significantDigits)}]`, 'forecast-result-range text-xs text-muted-foreground'));
                 this.elements.forecastList.append(li);
             });
             const table = node('table', undefined, 'table w-full text-left text-xs');

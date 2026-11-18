@@ -307,3 +307,35 @@ test('forecast display, copy and CSV values round consistently without changing 
     const r=fitAndForecast([4,400,40000,5000000,70000000],3);
     assert.ok(r.ensembleForecast.every(f=>Number.isFinite(f.value)&&/^\d+$/.test(forecastValue(f.value))));
 });
+
+test('sharp slowdown prevents accelerating ensemble paths and exposes rebound assumptions', () => {
+    for (const scale of [1, 0.01, 100]) {
+        const sequence=[4,400,40000,5000000,70000000].map(v=>v*scale);
+        const r=fitAndForecast(sequence,10);
+        let previous=sequence.at(-1), factor=14;
+        for (const f of r.ensembleForecast) {
+            const nextFactor=f.value/previous;
+            assert.ok(nextFactor>1 && nextFactor<=factor+1e-9);
+            factor=nextFactor; previous=f.value;
+        }
+        assert.ok(r.reboundAlternatives.some(f=>f.name.startsWith('Exponential')));
+        assert.match(r.forecastNote,/cautious assumption/);
+        assert.equal(r.significantDigits,1);
+        assert.ok(r.ensembleForecast[0].value>300e6*scale && r.ensembleForecast[0].value<1e9*scale);
+        structuredClone(r);
+    }
+    for (const sequence of [[4,400,40000,5000000,700000000], [4,400,40,5000000,70000000]]) {
+        assert.deepEqual(fitAndForecast(sequence,3).reboundAlternatives,[]);
+    }
+});
+
+test('apparent input precision is a hint and leaves exact rules and raw calculations intact', () => {
+    assert.equal(forecastValue(707856509.291811,1),'700000000');
+    assert.equal(formatForecast(707856509.291811,1),'700,000,000');
+    assert.equal(forecastValue(0.001234,1),'0.001');
+    assert.equal(forecastValue('123456789',1),'123456789');
+    const exact=fitAndForecast([4,400,40000,4000000],2);
+    assert.equal(exact.exact,true);
+    assert.equal(exact.ensembleForecast[0].value,'400000000');
+    assert.equal(fitAndForecast([4.1,401,40002,5000003,70000004],2).significantDigits,null);
+});

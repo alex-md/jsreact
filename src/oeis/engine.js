@@ -541,6 +541,19 @@ export function fitAndForecast(sequence, horizon) {
         ? sequence.slice(1).every((v, i) => v >= sequence[i] * 1.1) && sequence.at(-1) >= sequence[0] * 4 ? 1
         : sequence.slice(1).every((v, i) => v <= sequence[i] / 1.1) && sequence[0] >= sequence.at(-1) * 4 ? -1 : 0
         : 0;
+    const logChanges = growthDirection
+        ? sequence.slice(1).map((v, i) => ln(v) - ln(sequence[i])) : [];
+    // A single sharp slowdown is evidence for a cautious assumption, not proof
+    // of a permanent regime. Apply only to consistently rapid growth, never
+    // oscillating data, and keep rebound alternatives visible to the caller.
+    const slowdown = growthDirection > 0 && logChanges.length >= 3 &&
+        logChanges.at(-1) < logChanges.at(-2) - ln(3) &&
+        logChanges.at(-1) < STATS_ENGINE.median(logChanges.slice(0, -1)) - ln(3);
+    // Numeric values cannot establish intended precision. Treat this as a
+    // presentation hint only; exact rule discovery has already taken priority.
+    const significantDigits = sequence.length >= 4 && sequence.every(v => v > 0 &&
+        abs(v / 10 ** Math.floor(Math.log10(v)) - Math.round(v / 10 ** Math.floor(Math.log10(v)))) < 1e-10) &&
+        max(...sequence) / min(...sequence) >= 100 ? 1 : null;
     const scoreMetric = growthDirection ? 'RMS log error' : 'Validation RMSE';
     const minTrainSize = max(2, sequence.length - 5, Math.floor(sequence.length * 0.7));
 
@@ -554,7 +567,7 @@ export function fitAndForecast(sequence, horizon) {
     if (scoredModels.length === 0) throw new Error("No models could be successfully cross-validated.");
     scoredModels.sort((a, b) => a.score - b.score);
 
-    const fits = scoredModels.map(({ model, score }) => {
+    const candidateFits = scoredModels.map(({ model, score }) => {
         try {
             const fitResult = model.fit(sequence);
             return { key: model.key, name: fitResult.name || model.name, score, scoreMetric, ...fitResult };
@@ -566,6 +579,19 @@ export function fitAndForecast(sequence, horizon) {
             const previous = i ? predictions[i - 1] : sequence.at(-1);
             return v > 0 && (growthDirection > 0 ? v > previous : v < previous);
         }));
+
+    const fits = slowdown ? candidateFits.filter(f => {
+        let previous = sequence.at(-1), lastRate = logChanges.at(-1);
+        for (let h = 1; h <= horizon; h++) {
+            const value = f.predict(sequence.length + h), rate = ln(value) - ln(previous);
+            if (rate > lastRate + 1e-10) return false;
+            previous = value; lastRate = rate;
+        }
+        return true;
+    }) : candidateFits;
+    const reboundAlternatives = slowdown ? candidateFits.filter(f => !fits.includes(f)).map(f => ({
+        name: f.name, value: f.predict(sequence.length + 1)
+    })) : [];
 
     if (fits.length === 0) throw new Error("No valid model could be fit to the provided data.");
 
@@ -616,10 +642,11 @@ export function fitAndForecast(sequence, horizon) {
     if (ensembleForecast.some(f => ![f.value, f.lo, f.hi].every(Number.isFinite))) throw Error('Forecast exceeds the supported numeric range.');
     // Functions cannot cross the worker boundary.
     const serialize = ({ predict, interval, ...fit }) => fit;
-    return { sequence, fits: fits.map(serialize), bestFit: serialize(bestFit), weights, ensembleForecast, exact: false, exploration, scoreMetric,
-        forecastNote: growthDirection
+    return { sequence, fits: fits.map(serialize), bestFit: serialize(bestFit), weights, ensembleForecast, exact: false, exploration, scoreMetric, significantDigits, reboundAlternatives,
+        forecastNote: (significantDigits ? 'Inputs appear rounded to one significant figure; estimates are displayed at that precision. This does not establish the inputs’ true uncertainty. ' : '') +
+            (slowdown ? 'A sharp slowdown was observed. The forecast assumes growth factors continue to ease, excluding models that rebound above the latest factor or accelerate later. This is a cautious assumption, not a detected law. Saturation and a noisy dip remain possible; a short prefix cannot distinguish them. ' : '') + (growthDirection
             ? 'No exact rule was found. This growth estimate compares proportional errors, anchors recent-trend models to the latest value, and excludes forecast paths that reverse the consistent rapid trend. The trend may still change; the next value is not established.' + (bestFit.score > ln(2) ? ' Recent backtests had large proportional errors, so this estimate is especially uncertain.' : '')
-            : 'No exact rule was found. These are statistical estimates; a short prefix may not identify the intended sequence.' };
+            : 'No exact rule was found. These are statistical estimates; a short prefix may not identify the intended sequence.') };
 }
 
 export { STATS_ENGINE, MODELS };
