@@ -44,6 +44,7 @@ import './index.css';
                 modelInfo: document.getElementById('modelInfo'),
                 forecastList: document.getElementById('forecastList'),
                 details: document.getElementById('details'),
+                seekerResults: document.getElementById('seekerResults'),
                 parseWarning: document.getElementById('parseWarning'),
                 sequenceStream: document.getElementById('sequenceStream'),
             };
@@ -229,6 +230,7 @@ import './index.css';
                  </div>`;
             this.elements.forecastList.innerHTML = `<li class="text-sm text-muted-foreground/60 italic text-center py-8">No forecast available yet.</li>`;
             this.elements.details.innerHTML = `<div class="h-20 flex items-center justify-center text-xs italic opacity-60">Run analysis to see comparison.</div>`;
+            this.elements.seekerResults.textContent = 'Run analysis to explore transformations and mathematical clues.';
         },
 
         handleCopy(e) {
@@ -287,6 +289,7 @@ import './index.css';
             this.elements.modelInfo.textContent = 'Analysis Required';
             this.elements.forecastList.replaceChildren();
             this.elements.details.textContent = 'Run analysis to see comparison.';
+            this.elements.seekerResults.textContent = 'Run analysis to explore transformations and mathematical clues.';
         },
 
         showError(message) {
@@ -294,7 +297,7 @@ import './index.css';
             this.elements.sequenceStream.textContent = message;
         },
 
-        updateUI({ sequence, fits, bestFit, weights, ensembleForecast, exact }) {
+        updateUI({ sequence, fits, bestFit, weights, ensembleForecast, exact, exploration }) {
             this.renderStream(sequence, ensembleForecast);
             const node = (tag, text, className = '') => {
                 const el = document.createElement(tag);
@@ -331,16 +334,63 @@ import './index.css';
             });
             const table = node('table', undefined, 'table w-full text-left text-xs');
             const head = node('thead'), header = node('tr');
-            for (const title of ['Strategy', 'Validation RMSE', 'Influence']) header.append(node('th', title, 'p-2'));
+            for (const title of ['Strategy', exact ? 'Rule check' : 'Validation RMSE', exact ? 'Used for forecast' : 'Influence']) header.append(node('th', title, 'p-2'));
             head.append(header); table.append(head);
             const body = node('tbody');
             fits.forEach((fit, i) => {
                 const row = node('tr', undefined, 'border-b border-border/40');
-                for (const text of [fit.name, exact ? 'Exact checks' : fmtNum(fit.score), `${(100 * weights[i]).toFixed(1)}%`]) row.append(node('td', text, 'p-2'));
+                for (const text of [fit.name, exact ? 'Exact checks' : fmtNum(fit.score), exact ? (i === 0 ? 'Yes' : 'Alternative') : `${(100 * weights[i]).toFixed(1)}%`]) row.append(node('td', text, 'p-2'));
                 body.append(row);
             });
             table.append(body);
             this.elements.details.replaceChildren(table);
+            const seeker = this.elements.seekerResults;
+            seeker.replaceChildren(node('p', exploration.methods));
+            const attribution = node('a', 'Methods inspired by N. J. A. Sloane’s Superseeker and its contributors ↗', 'text-primary underline block');
+            attribution.href = 'https://oeis.org/ol_source.txt'; attribution.target = '_blank'; attribution.rel = 'noopener noreferrer';
+            seeker.append(attribution);
+            seeker.append(node('p', 'These are local mathematical tests, not confirmed OEIS matches. Search links send the displayed terms to OEIS only when you open them.', 'text-xs'));
+            if (exact && fits.length > 1) {
+                const disagree = fits.some(f => f.continuation.some((v, i) => v !== ensembleForecast[i].value));
+                seeker.append(node('p', disagree
+                    ? 'Multiple rules pass exact checks and predict different continuations. The simplest rule supplies the forecast above.'
+                    : 'Multiple rules pass exact checks and agree over the requested horizon.', 'font-medium text-foreground'));
+                const alternatives = node('details');
+                alternatives.append(node('summary', `Compare ${fits.length} matching rules`, 'cursor-pointer text-primary'));
+                fits.forEach(f => {
+                    const box = node('div', undefined, 'my-3 p-3 rounded border border-border');
+                    box.append(node('p', f.name, 'font-medium text-foreground'), node('p', `Next terms: ${f.continuation.slice(0, 8).join(', ')}${f.continuation.length > 8 ? ', …' : ''}`, 'font-mono text-xs break-words my-2'));
+                    Object.entries(f.params).forEach(([k, v]) => box.append(node('p', `${k}: ${v}`, 'text-xs break-words')));
+                    alternatives.append(box);
+                });
+                seeker.append(alternatives);
+            }
+            if (exploration.beatty) {
+                const b = exploration.beatty;
+                seeker.append(node('p', 'Beatty-compatible prefix', 'font-medium text-foreground'),
+                    node('p', `α ∈ [${b.lower}, ${b.upper}); example α = ${b.example}. ${b.note}`, 'text-xs break-words'));
+            }
+            const appendRows = (title, rows) => {
+                if (!rows.length) return;
+                const group = node('details');
+                group.append(node('summary', `${title} (${rows.length})`, 'cursor-pointer text-primary'));
+                for (const row of rows) {
+                    const box = node('div', undefined, 'my-3 p-3 rounded border border-border min-w-0');
+                    box.append(node('p', `${row.code} · ${row.name}`, 'font-medium text-foreground'),
+                        node('p', row.values.slice(0, 12).join(', ') + (row.values.length > 12 ? ', …' : ''), 'font-mono text-xs break-words my-2'));
+                    if (row.searchable) {
+                        const link = node('a', 'Search transformed terms on OEIS ↗', 'text-primary underline text-xs');
+                        link.href = `https://oeis.org/search?q=${encodeURIComponent(row.values.slice(0, 12).join(','))}`;
+                        link.target = '_blank'; link.rel = 'noopener noreferrer'; box.append(link);
+                    } else box.append(node('p', 'OEIS search needs at least three integer terms.', 'text-xs'));
+                    group.append(box);
+                }
+                seeker.append(group);
+            };
+            appendRows('Binary associated sequences', exploration.binary);
+            appendRows('Sequence transformations', exploration.transforms);
+            if (exploration.termsUsed) seeker.append(node('p', `Transform previews use the first ${exploration.termsUsed} input terms (maximum 32); binary associates use the full input. Each preview shows up to 12 terms. Exact candidate rules are checked against the full input. ${exploration.skipped.length} transforms were empty, undefined, or exceeded arithmetic limits. T095–T098 are unimplemented in the original source and are omitted here.`, 'text-xs'));
+
         },
     };
 

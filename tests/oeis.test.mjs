@@ -108,3 +108,122 @@ test('seasonal ARIMA searches noncalendar factors and preserves forecast trend',
     assert.ok(predictions.every(Number.isFinite));
     assert.ok(Math.abs(predictions[3]-predictions[0]-0.6)<1);
 });
+
+// Superseeker ports: independent mathematical fixtures and inverse identities.
+import { rat, eq, str } from '../src/oeis/rational.js';
+import { transform, TRANSFORM_CATALOG, exploreTransforms } from '../src/oeis/transforms.js';
+import { beattyTest } from '../src/oeis/superseeker.js';
+const rationals = a => a.map(v => rat(BigInt(v)));
+const transformed = (id, a) => transform(id, rationals(a)).map(str);
+
+test('Rate quotient and holonomic methods continue factorial, Catalan and central binomial sequences', () => {
+    for (const [seq, expected] of [
+        [[1,2,6,24,120,720,5040], ['40320','362880','3628800']],
+        [[1,1,2,5,14,42,132,429,1430,4862,16796,58786], ['208012','742900','2674440']],
+        [[1,2,6,20,70,252,924,3432,12870,48620], ['184756','705432','2704156']],
+        [[1,2,8,64,1024,32768], ['2097152','268435456','68719476736']],
+        // Motzkin needs an order-2 recurrence or algebraic GF.
+        [[1,1,2,4,9,21,51,127,323,835,2188,5798,15511,41835], ['113634','310572','853467']],
+    ]) {
+        const r = findExactPattern(seq, 3);
+        assert.ok(r, seq.join(','));
+        assert.deepEqual(r.ensembleForecast.map(v => v.value), expected);
+        structuredClone(r);
+    }
+});
+
+test('periodic differences wrap correctly for arbitrary horizons', () => {
+    const seq=[0,1,4,6,7,10,12,13,16,18,19,22];
+    const result=findExactPattern(seq,8);
+    const fit=result.fits.find(f=>f.key==='periodic-differences');
+    assert.ok(fit);
+    assert.deepEqual(fit.continuation,['24','25','28','30','31','34','36','37']);
+});
+
+test('fan, transformed recognition, algebraic GF and interleaving expose exact alternatives', () => {
+    const fan=findExactPattern([1,2,4,8,16,32,64,128],3).fits.find(f=>f.key.startsWith('difference-fan'));
+    assert.ok(fan);
+    assert.deepEqual(fan.continuation,['256','512','1024']);
+    const catalan=findExactPattern([1,1,2,5,14,42,132,429,1430,4862],3);
+    const gf=catalan.fits.find(f=>f.key==='algebraic-gf');
+    assert.ok(gf);
+    assert.deepEqual(gf.continuation,['16796','58786','208012']);
+    const bell=findExactPattern([1,2,5,15,52,203,877,4140,21147,115975],3);
+    assert.deepEqual(bell.fits.find(f=>f.key==='transform-115').continuation,['678570','4213597','27644437']);
+    const interleaved=findExactPattern([1,3,2,9,3,27,4,81,5,243,6,729],3);
+    assert.deepEqual(interleaved.fits.find(f=>f.key==='interleaved-2').continuation,['7','2187','8']);
+});
+
+test('rational OGF numerator/denominator follow zero-based Fibonacci coefficients', () => {
+    const fit=findExactPattern([0,1,1,2,3,5,8,13],3).fits.find(f=>f.key==='recurrence');
+    assert.equal(fit.params['OGF numerator (ascending powers)'],'0, 1');
+    assert.equal(fit.params['OGF denominator (ascending powers)'],'1, -1, -1');
+});
+
+test('transform catalog implements the 111 operational transforms, leaving original placeholders out', () => {
+    assert.equal(TRANSFORM_CATALOG.length,111);
+    assert.equal(new Set(TRANSFORM_CATALOG.map(t=>t.id)).size,111);
+    for (const id of [95,96,97,98]) assert.ok(!TRANSFORM_CATALOG.some(t=>t.id===id));
+    const a=rationals([1,2,3,4,5,6]);
+    for (const t of TRANSFORM_CATALOG) {
+        const result=transform(t.id,a);
+        assert.ok(Array.isArray(result),t.code);
+        assert.ok(result.every(v=>v.length===2&&typeof v[0]==='bigint'&&v[1]>0n),t.code);
+    }
+    for (const [forward,inverse] of [[100,101],[104,105],[114,115],[112,111],[108,109],[102,103],[15,15]]) {
+        for (const seq of [[1,-2,3,0,5,6],[1,1,1,1,1,1]]) {
+            const a=rationals(seq), b=transform(inverse,transform(forward,a));
+            assert.equal(b.length,a.length);
+            assert.ok(b.every((v,i)=>eq(v,a[i])),`${forward}/${inverse}`);
+        }
+    }
+});
+
+test('classical transform fixtures retain signs, factorial indexing, and completed runs', () => {
+    assert.deepEqual(transformed(100,[1,1,1,1,1]),['1','2','4','8','16']);
+    assert.deepEqual(transformed(101,[1,2,4,8,16]),['1','1','1','1','1']);
+    assert.deepEqual(transformed(104,[1,1,1,1,1,1,1,1]),['1','2','3','5','7','11','15','22']);
+    assert.deepEqual(transformed(106,[1,1,1,1,1,1]),['1','2','5','15','52','203']);
+    assert.deepEqual(transformed(110,[1,2,5,15,52,203]),['1','1','1','1','1','1']);
+    assert.deepEqual(transformed(114,[1,1,1,1,1,1]),['1','2','5','15','52','203']);
+    assert.deepEqual(transformed(112,[1,1,1,1,1,1]),['1','2','2','3','2','4']);
+    assert.deepEqual(transformed(14,[1,1,1,1]),['1','2','3','4']);
+    assert.deepEqual(transformed(55,[1,1,1,1]),['1','2','4','8']);
+    assert.deepEqual(transformed(8,[1,1,2,6,24]),['1','1','1','1','1']);
+    assert.deepEqual(transformed(10,[1,2,6,24,120]),['1','1','1','1','1']);
+    assert.deepEqual(transformed(5,[99,42,6,12,18]),['1','2','3']);
+    const binary=exploreTransforms([5,5,-2,-2,-2,5,-2]).binary;
+    assert.deepEqual(binary.map(b=>b.values),[
+        ['1','1','2','2','2','1','2'],['2','2','1','1','1','2','1'],['1','2','6'],['3','4','5','7'],['2','3','1'],['2','5','6'],
+    ]);
+});
+
+test('diagonal transforms preserve the source’s shifted and factorial conventions', () => {
+    assert.deepEqual(transformed(50,[1,1,1,1]),['1','-1','1','-1']);
+    assert.deepEqual(transformed(51,[1,1,1,1]),['1','3','7','15']);
+    assert.deepEqual(transformed(52,[1,1,1,1]),['1','3','10','35']);
+    assert.deepEqual(transformed(53,[1,1,1,1]),['1','-1','4','-13']);
+    assert.deepEqual(transformed(91,[1,2,6,24]),['1','-1','2','-6']);
+});
+
+test('Beatty reports an exact half-open interval rather than an unjustified exact forecast', () => {
+    const seq=Array.from({length:15},(_,i)=>Math.floor((i+1)*Math.sqrt(2)));
+    const r=beattyTest(rationals(seq));
+    assert.ok(r);
+    const value=s=>s.split('/').map(Number).reduce((n,d)=>n/d);
+    assert.ok(value(r.lower)<=Math.sqrt(2)&&value(r.upper)>Math.sqrt(2));
+    assert.equal(beattyTest(rationals([2,1,20])),null);
+    assert.equal(beattyTest(rationals([0,2,3])),null); // empty interval at an excluded upper bound
+});
+
+test('new rule guesses reject perturbed holdouts, handle singularities and bound previews', () => {
+    assert.equal(findExactPattern([1,2,6,24,120,720,5041],3),null);
+    assert.equal(findExactPattern([1,1,2,5,14,42,132,429,1430,4863],3),null);
+    const result=fitAndForecast(Array.from({length:40},(_,i)=>i+1),3);
+    assert.equal(result.exploration.termsUsed,32);
+    assert.ok(result.exploration.transforms.every(t=>t.values.length<=33));
+    assert.ok(exploreTransforms([0,1,2,3]).skipped.includes('T015'));
+    assert.ok(exploreTransforms([-1,0,1,2]).transforms.find(t=>t.code==='T011').values.includes('-2'));
+    assert.deepEqual(exploreTransforms([1.2,3.4,5.6]).transforms,[]);
+    structuredClone(result);
+});

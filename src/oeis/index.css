@@ -235,3 +235,7 @@
 .forecast-result-heading > :first-child { flex-shrink: 0; }
 .forecast-result-value { display: block; min-width: 0; overflow-x: auto; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .forecast-result-range { margin-top: 0.5rem; overflow-wrap: anywhere; }
+
+#seekerResults { min-width: 0; overflow-wrap: anywhere; }
+#seekerResults details > summary { padding-block: 0.4rem; }
+#modelInfo { overflow-wrap: anywhere; }

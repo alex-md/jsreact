@@ -22,7 +22,7 @@ The original review correctly identified a mismatch between sequence discovery a
 
 The page provides an explicit [OEIS sequence search](https://oeis.org/hints.html) link for integer inputs. It does not automatically send input to a third party, depend on cross-origin API availability, or claim a database match. Statistical fitting and rule discovery remain local.
 
-This is bounded browser-based discovery, not a general symbolic solver or an exhaustive implementation of OEIS. It does not identify arbitrary prime, factorial, combinatorial, nonlinear, or piecewise rules. Statistical optimization remains a bounded conditional-SSE Nelder–Mead search with finite iterations; it does not guarantee a global optimum, maximum likelihood estimates, or calibrated uncertainty. Decimal inputs use floating-point statistical forecasts, while exact rule discovery applies to safe integer inputs.
+The page now includes a bounded JavaScript implementation of Superseeker methods, including factorial and combinatorial rule discovery, 111 sequence transformations, and exact generating-function tests. See [the source-to-implementation map](superseeker.md) for provenance, algorithm bounds, indexing conventions, validation, and unimplemented database/CAS features. This remains bounded browser-based discovery, not a general symbolic solver or an exhaustive implementation of OEIS. It does not identify arbitrary prime, nonlinear, or piecewise rules. Statistical optimization remains a bounded conditional-SSE Nelder–Mead search with finite iterations; it does not guarantee a global optimum, maximum likelihood estimates, or calibrated uncertainty. Decimal inputs use floating-point statistical forecasts, while exact rule discovery applies to safe integer inputs.
 
 ## Validation
 

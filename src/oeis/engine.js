@@ -1,4 +1,7 @@
 import { findExactPattern } from './exact.js';
+import { exploreTransforms } from './transforms.js';
+import { beattyTest } from './superseeker.js';
+import { rat } from './rational.js';
 import { validateInput } from './input.js';
 // --- CONSTANTS ---
 const ERROR_BAND_MULTIPLIER = 1.96;
@@ -495,7 +498,13 @@ function runTimeSeriesCV(model, sequence, minTrainSize) {
 export function fitAndForecast(sequence, horizon) {
     validateInput(sequence, horizon);
     const exact = findExactPattern(sequence, horizon);
-    if (exact) return exact;
+    const exploration = exploreTransforms(sequence);
+    exploration.beatty = sequence.every(Number.isSafeInteger) ? beattyTest(sequence.map(v => rat(BigInt(v)))) : null;
+    exploration.methods = sequence.every(Number.isSafeInteger)
+        ? 'Polynomial differences; periodic differences; constant and polynomial-coefficient recurrences; rational index and quotient rules; inverse-binomial fans; reversible transforms; rational generating functions.' +
+          (sequence.length <= 40 ? ' Bounded algebraic generating-function search.' : ' Algebraic generating-function search skipped above 40 terms.')
+        : 'Exact Superseeker methods require integer inputs. Statistical forecasting remains available for decimals.';
+    if (exact) return { ...exact, exploration };
     const minTrainSize = max(2, sequence.length - 5, Math.floor(sequence.length * 0.7));
 
     const scoredModels = MODELS.filter(M => {
@@ -555,7 +564,7 @@ export function fitAndForecast(sequence, horizon) {
     if (ensembleForecast.some(f => ![f.value, f.lo, f.hi].every(Number.isFinite))) throw Error('Forecast exceeds the supported numeric range.');
     // Functions cannot cross the worker boundary.
     const serialize = ({ predict, interval, ...fit }) => fit;
-    return { sequence, fits: fits.map(serialize), bestFit: serialize(bestFit), weights, ensembleForecast, exact: false };
+    return { sequence, fits: fits.map(serialize), bestFit: serialize(bestFit), weights, ensembleForecast, exact: false, exploration };
 }
 
 export { STATS_ENGINE, MODELS };

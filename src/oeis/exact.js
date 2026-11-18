@@ -1,43 +1,7 @@
-// Rational arithmetic avoids accepting approximate fits as exact patterns.
-const gcd = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) [a, b] = [b, a % b]; return a; };
-function rat(n, d = 1n) {
-    if (!d) throw new Error('Zero denominator');
-    if (d < 0n) { n = -n; d = -d; }
-    const g = gcd(n, d);
-    return [n / g, d / g];
-}
-const add = (a, b) => rat(a[0] * b[1] + b[0] * a[1], a[1] * b[1]);
-const neg = a => [-a[0], a[1]];
-const sub = (a, b) => add(a, neg(b));
-const mul = (a, b) => rat(a[0] * b[0], a[1] * b[1]);
-const div = (a, b) => rat(a[0] * b[1], a[1] * b[0]);
-const eq = (a, b) => a[0] === b[0] && a[1] === b[1];
-const str = a => a[1] === 1n ? String(a[0]) : `${a[0]}/${a[1]}`;
+import { rat, add, sub, mul, neg, eq, str, solve } from './rational.js';
+import { seekerCandidates } from './superseeker.js';
 
-// Solve all available training equations. Require full rank, then verify separately
-// on held-out terms; a polynomial through every supplied point proves nothing.
-function solve(rows, order) {
-    let pivot = 0;
-    for (let col = 0; col < order; col++) {
-        const k = rows.findIndex((row, i) => i >= pivot && row[col][0] !== 0n);
-        if (k < 0) return null;
-        [rows[k], rows[pivot]] = [rows[pivot], rows[k]];
-        const divisor = rows[pivot][col];
-        rows[pivot] = rows[pivot].map(v => div(v, divisor));
-        for (let i = 0; i < rows.length; i++) {
-            if (i === pivot) continue;
-            const factor = rows[i][col];
-            rows[i] = rows[i].map((v, j) => sub(v, mul(factor, rows[pivot][j])));
-        }
-        pivot++;
-    }
-    if (rows.slice(order).some(row => row[order][0] !== 0n)) return null;
-    return rows.slice(0, order).map(row => row[order]);
-}
-
-export function findExactPattern(sequence, horizon) {
-    if (!sequence.every(Number.isSafeInteger)) return null;
-    const values = sequence.map(v => rat(BigInt(v)));
+export function basicCandidates(values) {
     const n = values.length;
     const candidates = [];
     let layer = values;
@@ -75,18 +39,40 @@ export function findExactPattern(sequence, horizon) {
         if (!values.slice(order).every((v, j) => eq(v, next(values.slice(0, j + order))))) continue;
         const history = values.slice();
         candidates.push({ key: 'recurrence', name: `Exact linear recurrence (order ${order})`, complexity: order,
-            params: Object.fromEntries(weights.map((v, j) => [`a(n−${j + 1}) coefficient`, str(v)])),
+            params: {
+                ...Object.fromEntries(weights.map((v, j) => [`a(n−${j + 1}) coefficient`, str(v)])),
+                'OGF denominator (ascending powers)': [rat(1n), ...weights.map(neg)].map(str).join(', '),
+                'OGF numerator (ascending powers)': values.slice(0, order).map((v, i) =>
+                    weights.slice(0, i).reduce((s, w, j) => sub(s, mul(w, values[i - j - 1])), v)).map(str).join(', '),
+                'OGF definition': 'F(x) = Σ a(n)x^n = numerator/denominator; n starts at 0',
+            },
             predict: () => { const v = next(history); history.push(v); return v; } });
         break;
     }
+    return candidates;
+}
+
+export function findExactPattern(sequence, horizon) {
+    if (!sequence.every(Number.isSafeInteger)) return null;
+    const values = sequence.map(v => rat(BigInt(v)));
+    const candidates = [...basicCandidates(values), ...seekerCandidates(values, basicCandidates)];
     if (!candidates.length) return null;
     candidates.sort((a, b) => a.complexity - b.complexity);
-    const best = candidates[0];
-    const forecast = Array.from({ length: horizon }, () => ({ value: str(best.predict()), lo: null, hi: null }));
+    // Singularities and explosive rational growth invalidate a candidate, not the run.
+    const viable = [];
+    for (const candidate of candidates) {
+        try {
+            const forecast = Array.from({ length: horizon }, () => ({ value: str(candidate.predict()), lo: null, hi: null }));
+            viable.push({ ...candidate, forecast });
+        } catch { /* Bounded exact search: try the next rule. */ }
+    }
+    if (!viable.length) return null;
+    const best = viable[0];
+    const forecast = best.forecast;
     return {
         sequence, exact: true,
-        fits: candidates.map(({ predict, complexity, ...c }) => ({ ...c, yhat: sequence, score: null })),
+        fits: viable.map(({ predict, complexity, forecast, ...c }) => ({ ...c, continuation: forecast.map(f => f.value), yhat: sequence, score: null })),
         bestFit: { key: best.key, name: best.name, params: best.params, yhat: sequence, score: null },
-        weights: candidates.map((_, i) => i === 0 ? 1 : 0), ensembleForecast: forecast,
+        weights: viable.map((_, i) => i === 0 ? 1 : 0), ensembleForecast: forecast,
     };
 }
