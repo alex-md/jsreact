@@ -239,3 +239,7 @@
 #seekerResults { min-width: 0; overflow-wrap: anywhere; }
 #seekerResults details > summary { padding-block: 0.4rem; }
 #modelInfo { overflow-wrap: anywhere; }
+
+/* Whole-number forecasts can be much wider than scientific notation. */
+.stream-tile { max-width: 100%; }
+.stream-tile .tile-value { display: block; max-width: 100%; overflow-x: auto; white-space: nowrap; }

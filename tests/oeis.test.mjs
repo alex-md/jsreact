@@ -227,3 +227,83 @@ test('new rule guesses reject perturbed holdouts, handle singularities and bound
     assert.deepEqual(exploreTransforms([1.2,3.4,5.6]).transforms,[]);
     structuredClone(result);
 });
+
+import { forecastValue, formatForecast } from '../src/oeis/forecast-format.js';
+
+test('reported factorial-driven sequence predicts 416386 using a discovered rule', () => {
+    const result=fitAndForecast([1,3,10,37,167,924,6131,47375],5);
+    assert.equal(result.exact,true);
+    assert.equal(result.bestFit.key,'factorial-recurrence');
+    assert.deepEqual(result.ensembleForecast.map(f=>f.value),['416386','4092561','44425747','527519908','6798966455']);
+    assert.equal(result.bestFit.params['a(n−1) coefficient'],'1');
+    assert.equal(result.bestFit.params['a(n−2) coefficient'],'1');
+    assert.equal(result.bestFit.params['factorial coefficient'],'1');
+    assert.equal(result.bestFit.params['factorial index offset'],1);
+    // No lookup table: different initial values, weights and index offsets.
+    for (const offset of [0,2,3]) {
+        const factorial=n=>{let f=1n;for(let k=2;k<=n;k++)f*=BigInt(k);return f;};
+        const values=[2n,7n];
+        for(let n=2;n<13;n++) values.push(2n*values[n-1]-values[n-2]+3n*factorial(n+offset));
+        const r=fitAndForecast(values.slice(0,10).map(Number),3);
+        assert.equal(r.bestFit.key,'factorial-recurrence');
+        assert.deepEqual(r.ensembleForecast.map(f=>f.value),values.slice(10).map(String));
+    }
+    const changed=findExactPattern([1,3,10,37,167,924,6131,47376],3);
+    assert.ok(!changed || !changed.fits.some(f=>f.key==='factorial-recurrence'));
+});
+
+test('rapid growth fallback uses relative errors and rejects reversing forecast paths', () => {
+    const sequence=[4,400,40000,5000000,70000000];
+    const r=fitAndForecast(sequence,10);
+    assert.equal(r.exact,false);
+    assert.equal(r.scoreMetric,'RMS log error');
+    assert.ok(r.fits.some(f=>f.key==='local-growth'));
+    assert.ok(!r.fits.some(f=>f.key==='naive'));
+    assert.ok(r.ensembleForecast.every((f,i,all)=>f.value>(i ? all[i-1].value : sequence.at(-1))));
+    assert.ok(r.ensembleForecast.every(f=>f.lo>0 && f.lo<f.value && f.value<f.hi));
+    const origins=[3,4];
+    const model=MODELS.find(m=>m.key==='local-growth');
+    const expected=Math.sqrt(origins.reduce((sum,i)=>sum+(Math.log(sequence[i])-Math.log(model.fit(sequence.slice(0,i)).predict(i+1)))**2,0)/origins.length);
+    assert.ok(Math.abs(r.fits.find(f=>f.key==='local-growth').score-expected)<1e-12);
+    assert.ok(Math.abs(r.weights.reduce((sum,w)=>sum+w,0)-1)<1e-12);
+    structuredClone(r);
+});
+
+test('growth heuristics support decay while leaving mixed and seasonal data unconstrained', () => {
+    const decay=[10000,800,90,7,0.6];
+    const r=fitAndForecast(decay,10);
+    assert.equal(r.exact,false);
+    assert.equal(r.scoreMetric,'RMS log error');
+    assert.ok(r.ensembleForecast.every((f,i,all)=>f.value>0 && f.value<(i?all[i-1].value:decay.at(-1))));
+    for(const seq of [[5.2,1.1,8.7,2.4,9.1],[-4.2,-40.8,-400.2,-5000.1,-7000.3],[10.1,10.2,10.25,10.3,10.4]]) {
+        const fit=fitAndForecast(seq,5);
+        assert.equal(fit.exact,false);
+        assert.equal(fit.scoreMetric,'Validation RMSE');
+        assert.ok(fit.ensembleForecast.every(f=>[f.value,f.lo,f.hi].every(Number.isFinite)));
+    }
+});
+
+test('recent growth model is anchored, damped and independent of a fitted global intercept', () => {
+    const growth=MODELS.find(m=>m.key==='local-growth').fit([4,400,40000,5000000,70000000]);
+    assert.ok(Math.abs(growth.predict(6)/(70000000*14**0.9)-1)<1e-12);
+    const forecasts=Array.from({length:10},(_,i)=>growth.predict(i+6));
+    assert.ok(forecasts[1]/forecasts[0] < forecasts[0]/70000000);
+    // Historical predictions cannot use the observation being predicted.
+    const additive=MODELS.find(m=>m.key==='local-drift');
+    const prefix=[1,2,4,8], extended=[...prefix,1000];
+    assert.deepEqual(additive.fit(prefix).yhat,additive.fit(extended).yhat.slice(0,4));
+    assert.equal(additive.fit(extended).yhat.at(-1),additive.fit(prefix).predict(5));
+});
+
+test('forecast display, copy and CSV values round consistently without changing exact strings', () => {
+    assert.equal(forecastValue(79998.26410175193),'79998');
+    assert.equal(formatForecast(79998.26410175193),'79,998');
+    assert.equal(forecastValue(123.9),'124');
+    assert.equal(forecastValue(-123.9),'-124');
+    assert.equal(forecastValue(null),'');
+    assert.equal(forecastValue('9007199254740993123456789'),'9007199254740993123456789');
+    assert.equal(forecastValue('3/2'),'3/2');
+    assert.match(forecastValue(1.23e25),/^\d+$/);
+    const r=fitAndForecast([4,400,40000,5000000,70000000],3);
+    assert.ok(r.ensembleForecast.every(f=>Number.isFinite(f.value)&&/^\d+$/.test(forecastValue(f.value))));
+});

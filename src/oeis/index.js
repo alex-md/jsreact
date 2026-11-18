@@ -1,3 +1,4 @@
+import { forecastValue, formatForecast } from './forecast-format.js';
 import { parseSequence, validateInput } from './input.js';
 import '@styles/global.css';
 import './index.css';
@@ -84,7 +85,7 @@ import './index.css';
 
             ensembleForecast.forEach((f, i) => {
                 const idx = sequence.length + i + 1;
-                csvContent += `${idx},Forecast,${f.value},${f.lo ?? ''},${f.hi ?? ''}\n`;
+                csvContent += `${idx},Forecast,${forecastValue(f.value)},${forecastValue(f.lo)},${forecastValue(f.hi)}\n`;
             });
 
             const encodedUri = encodeURI(csvContent);
@@ -124,10 +125,10 @@ import './index.css';
                 const prev = i === 0 ? sequence[sequence.length - 1] : ensembleForecast[i - 1].value;
                 const tile = this.createTile({
                     index: sequence.length + i + 1,
-                    value: f.value,
+                    value: forecastValue(f.value),
                     type: 'forecast',
                     trend: getTrend(prev, f.value),
-                    tooltip: f.lo === null ? 'Exact continuation under the detected rule' : `Predicted #${sequence.length + i + 1}\nApproximate range: [${fmtComma(f.lo)} — ${fmtComma(f.hi)}]`,
+                    tooltip: f.lo === null ? 'Exact continuation under the detected rule' : `Predicted #${sequence.length + i + 1}\nApproximate range: [${formatForecast(f.lo)} — ${formatForecast(f.hi)}]`,
                     delay: (sequence.length + i) * 50
                 });
                 container.appendChild(tile);
@@ -297,7 +298,7 @@ import './index.css';
             this.elements.sequenceStream.textContent = message;
         },
 
-        updateUI({ sequence, fits, bestFit, weights, ensembleForecast, exact, exploration }) {
+        updateUI({ sequence, fits, bestFit, weights, ensembleForecast, exact, exploration, scoreMetric = 'Validation RMSE', forecastNote }) {
             this.renderStream(sequence, ensembleForecast);
             const node = (tag, text, className = '') => {
                 const el = document.createElement(tag);
@@ -312,7 +313,11 @@ import './index.css';
                     ? 'This rule matches the supplied terms and held-out checks exactly. A finite sequence can follow many rules; these next values assume this one continues.'
                     : 'Forecasts blend models using rolling one-step validation. Ranges are approximate model-error bands, not calibrated probabilities. Long-range errors can grow.',
                     'text-sm text-muted-foreground my-3'));
-            if (!exact) info.append(node('p', `Validation RMSE: ${fmtNum(bestFit.score)}`, 'font-mono text-sm my-2'));
+            if (!exact) {
+                info.append(node('p', `${scoreMetric}: ${fmtNum(bestFit.score)}`, 'font-mono text-sm my-2'));
+                info.append(node('p', forecastNote, 'text-sm text-muted-foreground my-3'));
+                info.append(node('p', 'Predicted values are rounded to whole numbers.', 'text-xs text-muted-foreground'));
+            }
             for (const [key, value] of Object.entries(bestFit.params)) {
                 info.append(node('p', `${key}: ${typeof value === 'number' ? fmtNum(value) : value}`, 'text-xs font-mono my-1'));
             }
@@ -324,17 +329,17 @@ import './index.css';
             this.elements.forecastList.replaceChildren();
             ensembleForecast.forEach((item, i) => {
                 const li = node('li', undefined, 'forecast-result p-3 rounded-lg border border-border copyable cursor-copy');
-                li.dataset.copyValue = item.value;
+                li.dataset.copyValue = forecastValue(item.value);
                 const heading = node('div', undefined, 'forecast-result-heading');
                 heading.append(node('span', `#${sequence.length + i + 1}`, 'text-xs text-muted-foreground'),
-                    node('span', fmtComma(item.value), 'forecast-result-value font-bold text-primary'));
+                    node('span', formatForecast(item.value), 'forecast-result-value font-bold text-primary'));
                 li.append(heading);
-                li.append(node('div', exact ? 'Rule continuation' : `Approx. range [${fmtComma(item.lo)} — ${fmtComma(item.hi)}]`, 'forecast-result-range text-xs text-muted-foreground'));
+                li.append(node('div', exact ? 'Rule continuation' : `Approx. range [${formatForecast(item.lo)} — ${formatForecast(item.hi)}]`, 'forecast-result-range text-xs text-muted-foreground'));
                 this.elements.forecastList.append(li);
             });
             const table = node('table', undefined, 'table w-full text-left text-xs');
             const head = node('thead'), header = node('tr');
-            for (const title of ['Strategy', exact ? 'Rule check' : 'Validation RMSE', exact ? 'Used for forecast' : 'Influence']) header.append(node('th', title, 'p-2'));
+            for (const title of ['Strategy', exact ? 'Rule check' : scoreMetric, exact ? 'Used for forecast' : 'Influence']) header.append(node('th', title, 'p-2'));
             head.append(header); table.append(head);
             const body = node('tbody');
             fits.forEach((fit, i) => {

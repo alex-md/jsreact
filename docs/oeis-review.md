@@ -27,3 +27,14 @@ The page now includes a bounded JavaScript implementation of Superseeker methods
 ## Validation
 
 `npm run test:oeis` exercises known exact sequences, held-out rejection, large integer preservation, parsing, horizon bounds, seasonal periods, constant/zero metrics, regression leverage, exponential back-transformation, nonseasonal and seasonal ARIMA, and finite worker-serializable forecasts. `npm run build` verifies the Vite module worker bundle. Browser checks cover exact/noisy analyses, URL loading, input errors, mobile layout, cancellation, copying, and CSV download.
+
+
+## Rapid-growth and presentation correction
+
+The reported prefix `1,3,10,37,167,924,6131,47375` exposed a missing exact family: recurrences with a factorial forcing term. The solver now fits lag weights and a scaled factorial term with a bounded index offset, reserves two terms, and checks the whole input. It infers the rule giving `416386,4092561,44425747`; this is not a sequence lookup or a hardcoded result.
+
+The reported `4,400,40000,5000000,70000000` exposed two fallback weaknesses: a global fit could forecast below the latest observation, and raw-scale validation plus arithmetic blending could favor a flat baseline or allow an explosive model to dominate. Recent additive and damped multiplicative models are now anchored to the last observation. For positive inputs of at least four terms that move consistently by at least 10% each step and at least a factor of four overall, candidates are validated by RMS log error, forecast paths that reverse that trend are excluded, and retained predictions are combined geometrically. Growth bands combine held-out log errors and model disagreement; these remain approximate and uncalibrated. Large proportional validation errors are disclosed. This is an explicit continuation assumption, not a mathematical guarantee that increasing observations can never turn downward. Exact rules, mixed-direction (including oscillating seasonal), signed and ordinary low-growth series do not receive this constraint. Positive rapid decay uses the analogous treatment.
+
+Statistical outputs remain at full precision inside the engine. The stream, next-values list, tooltips, copy payloads and CSV forecast values/bounds round to whole numbers consistently; historical decimals and exact fraction strings remain intact. Model coefficients and validation errors retain useful precision.
+
+Validation for this correction: all 25 OEIS tests pass; the production build succeeds; development and built-site browser checks reproduce `416386`, an increasing rounded growth estimate, consistent copied/downloaded integers, historical decimal preservation, input validation, and a 390-pixel layout with a 50-term horizon. No browser runtime errors were observed. These changes have not been deployed.

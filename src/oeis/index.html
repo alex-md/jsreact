@@ -121,7 +121,7 @@
                                     class="bg-muted text-[10px] px-1.5 py-0.5 rounded text-muted-foreground border border-border">?</span>
                                 <div
                                     class="invisible group-hover:visible absolute right-0 bottom-full mb-2 w-48 p-2 bg-popover text-popover-foreground text-xs rounded shadow-lg border border-border z-20">
-                                    Lower validation RMSE means smaller errors on held-out next terms. Exact rules are checked separately.
+                                    Lower validation error means smaller errors on held-out next terms. Consistent rapid growth uses proportional errors. Exact rules are checked separately.
                                 </div>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
                 </div>
 
                 <!-- Results column -->
-                <div class="lg:col-span-8 space-y-6">
+                <div class="lg:col-span-8 space-y-6 min-w-0">
                     <div class="card p-1 shadow-lg shadow-black/5 border-border/60 relative overflow-hidden">
                         <div class="p-4 md:p-6 min-h-[280px] md:min-h-[320px] flex flex-col">
                             <div class="flex items-center justify-between mb-4">

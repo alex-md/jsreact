@@ -1,6 +1,6 @@
 // Independent, bounded implementations of methods described in OEIS Superseeker.
 // Algorithm/source map and differences from the legacy service: docs/superseeker.md.
-import { rat, add, sub, mul, div, eq, str } from './rational.js';
+import { rat, add, sub, mul, div, eq, str, solve } from './rational.js';
 import { binomial, transform } from './transforms.js';
 const zero = () => rat(0n);
 const diff = a => a.slice(1).map((v, i) => sub(v, a[i]));
@@ -140,6 +140,40 @@ function holonomic(values) {
     return null;
 }
 
+// a(n) = sum_j c_j a(n-j) + c (n+offset)!: infer every coefficient,
+// reserve two terms, and verify the complete prefix. Offsets allow pasted
+// sequences to start at a(0), a(1), a(2), or a(3), without an OEIS lookup.
+function factorialRecurrence(values) {
+    const factorials = [1n];
+    const factorial = n => {
+        while (factorials.length <= n) factorials.push(factorials.at(-1) * BigInt(factorials.length));
+        return rat(factorials[n]);
+    };
+    for (let order = 1; order <= 3; order++) for (let offset = 0; offset <= 3; offset++) {
+        const columns = order + 1;
+        if (values.length - order - 2 < columns) continue;
+        const features = n => [...Array.from({ length: order }, (_, j) => values[n - j - 1]), factorial(n + offset)];
+        const rows = Array.from({ length: Math.min(32, values.length - order - 2) }, (_, i) => {
+            const n = i + order;
+            return [...features(n), values[n]];
+        });
+        const coefficients = solve(rows, columns);
+        if (!coefficients || !coefficients[order][0] || !coefficients[order - 1][0]) continue;
+        if (!values.slice(order).every((v, i) => eq(v, dot(features(i + order), coefficients)))) continue;
+        const history = values.slice();
+        return { key: 'factorial-recurrence', name: `Factorial-driven recurrence (order ${order})`, complexity: order + 3,
+            params: { equation: `a(n) = Σ c_j a(n−j) + c (n+${offset})!; n starts at 0`,
+                ...Object.fromEntries(coefficients.slice(0, order).map((v, j) => [`a(n−${j + 1}) coefficient`, str(v)])),
+                'factorial coefficient': str(coefficients[order]), 'factorial index offset': offset },
+            predict() {
+                const n = history.length;
+                const v = dot([...Array.from({ length: order }, (_, j) => history[n - j - 1]), factorial(n + offset)], coefficients);
+                history.push(v); return v;
+            } };
+    }
+    return null;
+}
+
 export function convolution(a, b, length = a.length) {
     return Array.from({ length }, (_, n) => {
         let s = zero();
@@ -206,6 +240,7 @@ export function seekerCandidates(values, basic) {
     });
     attempt(() => rateCandidates(values));
     attempt(() => holonomic(values));
+    attempt(() => factorialRecurrence(values));
     // Cubic formal series are expensive for long prefixes; recurrence methods
     // above cover many of the same families at much lower cost.
     if (values.length <= 40) attempt(() => algebraic(values));

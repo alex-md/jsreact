@@ -219,6 +219,34 @@ const MODELS = [{ key: 'naive', name: 'Last-value baseline', valid: y => y.lengt
         return { params: {}, yhat, sse, k: 1, stderr: sqrt(sse / (y.length - 1)), predict: () => y.at(-1) };
     } }];
 
+// Recent changes are anchored to the last observation, so refitting a global
+// intercept cannot place the next forecast behind a rapidly growing series.
+MODELS.push({ key: 'local-drift', name: 'Recent additive trend', valid: y => y.length >= 2,
+    fit: y => {
+        const changes = y.slice(1).map((v, i) => v - y[i]);
+        const drift = STATS_ENGINE.median(changes.slice(-3));
+        const yhat = y.map((v, i) => i < 2 ? y[0] : y[i - 1] + STATS_ENGINE.median(changes.slice(Math.max(0, i - 4), i - 1)));
+        const sse = STATS_ENGINE.metrics(y, yhat).sse;
+        return { params: { 'recent change': drift }, yhat, sse, k: 1, stderr: sqrt(sse / max(1, y.length - 1)),
+            predict: t => y.at(-1) + (t - y.length) * drift };
+    } });
+
+MODELS.push({ key: 'local-growth', name: 'Recent multiplicative growth (damped)',
+    valid: y => y.length >= 2 && y.every(v => v > 0),
+    fit: y => {
+        const logs = y.map(ln), changes = logs.slice(1).map((v, i) => v - logs[i]);
+        const rate = changes.at(-1), damping = 0.9;
+        const yhat = y.map((v, i) => i < 2 ? v : exp(logs[i - 1] + damping * changes[i - 2]));
+        const sse = STATS_ENGINE.metrics(y, yhat).sse;
+        return { params: { 'last growth factor': exp(rate), damping }, yhat, sse, k: 1,
+            stderr: sqrt(sse / max(1, y.length - 2)), scale: 'log',
+            predict: t => {
+                const h = t - y.length;
+                const cumulative = damping * (1 - pow(damping, h)) / (1 - damping);
+                return exp(logs.at(-1) + rate * cumulative);
+            } };
+    } });
+
 MODELS.push({
     key: "linear", name: "Linear: y = a + b·n", valid: y => y.length >= 3,
     fit: y => {
@@ -479,7 +507,7 @@ MODELS.push({
     }
 });
 
-function runTimeSeriesCV(model, sequence, minTrainSize) {
+function runTimeSeriesCV(model, sequence, minTrainSize, logarithmic = false) {
     const errors = [];
     // Same last five rolling origins for every model; an unavailable or failed
     // fold rejects the model rather than giving it an easier validation set.
@@ -489,7 +517,8 @@ function runTimeSeriesCV(model, sequence, minTrainSize) {
         try {
             const prediction = model.fit(train).predict(i + 1);
             if (!Number.isFinite(prediction)) return Infinity;
-            errors.push((sequence[i] - prediction) ** 2);
+            if (logarithmic && prediction <= 0) return Infinity;
+            errors.push(logarithmic ? (ln(sequence[i]) - ln(prediction)) ** 2 : (sequence[i] - prediction) ** 2);
         } catch { return Infinity; }
     }
     return sqrt(errors.reduce((a, b) => a + b, 0) / errors.length);
@@ -501,16 +530,24 @@ export function fitAndForecast(sequence, horizon) {
     const exploration = exploreTransforms(sequence);
     exploration.beatty = sequence.every(Number.isSafeInteger) ? beattyTest(sequence.map(v => rat(BigInt(v)))) : null;
     exploration.methods = sequence.every(Number.isSafeInteger)
-        ? 'Polynomial differences; periodic differences; constant and polynomial-coefficient recurrences; rational index and quotient rules; inverse-binomial fans; reversible transforms; rational generating functions.' +
+        ? 'Polynomial differences; periodic differences; constant, factorial-driven and polynomial-coefficient recurrences; rational index and quotient rules; inverse-binomial fans; reversible transforms; rational generating functions.' +
           (sequence.length <= 40 ? ' Bounded algebraic generating-function search.' : ' Algebraic generating-function search skipped above 40 terms.')
         : 'Exact Superseeker methods require integer inputs. Statistical forecasting remains available for decimals.';
     if (exact) return { ...exact, exploration };
+    // Use proportional validation errors only for unambiguously large,
+    // consistent multiplicative movement. No constraint applies to exact rules,
+    // oscillating, sign-changing, or ordinary low-growth sequences.
+    const growthDirection = sequence.length >= 4 && sequence.every(v => v > 0)
+        ? sequence.slice(1).every((v, i) => v >= sequence[i] * 1.1) && sequence.at(-1) >= sequence[0] * 4 ? 1
+        : sequence.slice(1).every((v, i) => v <= sequence[i] / 1.1) && sequence[0] >= sequence.at(-1) * 4 ? -1 : 0
+        : 0;
+    const scoreMetric = growthDirection ? 'RMS log error' : 'Validation RMSE';
     const minTrainSize = max(2, sequence.length - 5, Math.floor(sequence.length * 0.7));
 
     const scoredModels = MODELS.filter(M => {
         try { return M.valid(sequence); } catch { return false; }
     }).map(M => {
-        const cvScore = runTimeSeriesCV(M, sequence, minTrainSize);
+        const cvScore = runTimeSeriesCV(M, sequence, minTrainSize, Boolean(growthDirection));
         return { model: M, score: cvScore };
     }).filter(item => Number.isFinite(item.score));
 
@@ -520,10 +557,15 @@ export function fitAndForecast(sequence, horizon) {
     const fits = scoredModels.map(({ model, score }) => {
         try {
             const fitResult = model.fit(sequence);
-            return { key: model.key, name: fitResult.name || model.name, score, ...fitResult };
+            return { key: model.key, name: fitResult.name || model.name, score, scoreMetric, ...fitResult };
         } catch { return null; }
     }).filter(f => f && Number.isFinite(f.sse) && Number.isFinite(f.stderr) &&
-        f.yhat.every(Number.isFinite) && Array.from({ length: horizon }, (_, i) => f.predict(sequence.length + i + 1)).every(Number.isFinite));
+        f.yhat.every(Number.isFinite) && Array.from({ length: horizon }, (_, i) => f.predict(sequence.length + i + 1)).every((v, i, predictions) => {
+            if (!Number.isFinite(v)) return false;
+            if (!growthDirection) return true;
+            const previous = i ? predictions[i - 1] : sequence.at(-1);
+            return v > 0 && (growthDirection > 0 ? v > previous : v < previous);
+        }));
 
     if (fits.length === 0) throw new Error("No valid model could be fit to the provided data.");
 
@@ -540,6 +582,16 @@ export function fitAndForecast(sequence, horizon) {
 
     for (let i = 0; i < horizon; i++) {
         const t = startIdx + i;
+        if (growthDirection) {
+            // Geometric aggregation preserves relative-scale forecasts; a tiny
+            // weight on an explosive model cannot dominate an arithmetic sum.
+            const logPredictions = fits.map(f => ln(f.predict(t)));
+            const center = logPredictions.reduce((s, v, j) => s + weights[j] * v, 0);
+            const variance = logPredictions.reduce((s, v, j) => s + weights[j] * ((v - center) ** 2 + fits[j].score ** 2 * (i + 1)), 0);
+            const width = ERROR_BAND_MULTIPLIER * sqrt(variance);
+            ensembleForecast.push({ value: exp(center), lo: exp(center - width), hi: exp(center + width) });
+            continue;
+        }
         const components = fits.map((f, j) => {
             const prediction = f.predict(t);
             const bounds = f.interval?.(t, ERROR_BAND_MULTIPLIER, prediction);
@@ -564,7 +616,10 @@ export function fitAndForecast(sequence, horizon) {
     if (ensembleForecast.some(f => ![f.value, f.lo, f.hi].every(Number.isFinite))) throw Error('Forecast exceeds the supported numeric range.');
     // Functions cannot cross the worker boundary.
     const serialize = ({ predict, interval, ...fit }) => fit;
-    return { sequence, fits: fits.map(serialize), bestFit: serialize(bestFit), weights, ensembleForecast, exact: false, exploration };
+    return { sequence, fits: fits.map(serialize), bestFit: serialize(bestFit), weights, ensembleForecast, exact: false, exploration, scoreMetric,
+        forecastNote: growthDirection
+            ? 'No exact rule was found. This growth estimate compares proportional errors, anchors recent-trend models to the latest value, and excludes forecast paths that reverse the consistent rapid trend. The trend may still change; the next value is not established.' + (bestFit.score > ln(2) ? ' Recent backtests had large proportional errors, so this estimate is especially uncertain.' : '')
+            : 'No exact rule was found. These are statistical estimates; a short prefix may not identify the intended sequence.' };
 }
 
 export { STATS_ENGINE, MODELS };
